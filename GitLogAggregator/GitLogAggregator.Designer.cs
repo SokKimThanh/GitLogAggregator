@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GitLogAggregator));
-            this.authorsComboBox = new System.Windows.Forms.ComboBox();
+            this.cboAuthorCommit = new System.Windows.Forms.ComboBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.selectGitFolderButton = new System.Windows.Forms.Button();
-            this.startDatePicker = new System.Windows.Forms.DateTimePicker();
+            this.txtInternshipDate = new System.Windows.Forms.DateTimePicker();
             this.resultRichTextBox = new System.Windows.Forms.RichTextBox();
             this.aggregateButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -54,14 +54,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // authorsComboBox
+            // cboAuthorCommit
             // 
-            this.authorsComboBox.FormattingEnabled = true;
-            this.authorsComboBox.Location = new System.Drawing.Point(220, 69);
-            this.authorsComboBox.Margin = new System.Windows.Forms.Padding(4);
-            this.authorsComboBox.Name = "authorsComboBox";
-            this.authorsComboBox.Size = new System.Drawing.Size(350, 25);
-            this.authorsComboBox.TabIndex = 0;
+            this.cboAuthorCommit.FormattingEnabled = true;
+            this.cboAuthorCommit.Location = new System.Drawing.Point(220, 69);
+            this.cboAuthorCommit.Margin = new System.Windows.Forms.Padding(4);
+            this.cboAuthorCommit.Name = "cboAuthorCommit";
+            this.cboAuthorCommit.Size = new System.Drawing.Size(350, 25);
+            this.cboAuthorCommit.TabIndex = 0;
             // 
             // selectGitFolderButton
             // 
@@ -74,13 +74,13 @@
             this.selectGitFolderButton.UseVisualStyleBackColor = true;
             this.selectGitFolderButton.Click += new System.EventHandler(this.selectGitFolderButton_Click);
             // 
-            // startDatePicker
+            // txtInternshipDate
             // 
-            this.startDatePicker.Location = new System.Drawing.Point(220, 104);
-            this.startDatePicker.Margin = new System.Windows.Forms.Padding(4);
-            this.startDatePicker.Name = "startDatePicker";
-            this.startDatePicker.Size = new System.Drawing.Size(351, 25);
-            this.startDatePicker.TabIndex = 3;
+            this.txtInternshipDate.Location = new System.Drawing.Point(220, 104);
+            this.txtInternshipDate.Margin = new System.Windows.Forms.Padding(4);
+            this.txtInternshipDate.Name = "txtInternshipDate";
+            this.txtInternshipDate.Size = new System.Drawing.Size(351, 25);
+            this.txtInternshipDate.TabIndex = 3;
             // 
             // resultRichTextBox
             // 
@@ -175,7 +175,7 @@
             this.weekListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
             this.weekListView.HideSelection = false;
-            this.weekListView.Location = new System.Drawing.Point(14, 172);
+            this.weekListView.Location = new System.Drawing.Point(13, 172);
             this.weekListView.Margin = new System.Windows.Forms.Padding(4);
             this.weekListView.Name = "weekListView";
             this.weekListView.Size = new System.Drawing.Size(206, 191);
@@ -187,7 +187,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Tên thư mục";
-            this.columnHeader1.Width = 168;
+            this.columnHeader1.Width = 259;
             // 
             // folderPathInternWeekLabel
             // 
@@ -196,6 +196,7 @@
             this.folderPathInternWeekLabel.Location = new System.Drawing.Point(364, 142);
             this.folderPathInternWeekLabel.Margin = new System.Windows.Forms.Padding(4);
             this.folderPathInternWeekLabel.Name = "folderPathInternWeekLabel";
+            this.folderPathInternWeekLabel.ReadOnly = true;
             this.folderPathInternWeekLabel.Size = new System.Drawing.Size(206, 25);
             this.folderPathInternWeekLabel.TabIndex = 13;
             // 
@@ -276,7 +277,7 @@
             // columnHeader2
             // 
             this.columnHeader2.Text = "Tên File";
-            this.columnHeader2.Width = 225;
+            this.columnHeader2.Width = 373;
             // 
             // GitLogAggregator
             // 
@@ -300,14 +301,16 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.aggregateButton);
             this.Controls.Add(this.resultRichTextBox);
-            this.Controls.Add(this.startDatePicker);
+            this.Controls.Add(this.txtInternshipDate);
             this.Controls.Add(this.selectGitFolderButton);
-            this.Controls.Add(this.authorsComboBox);
+            this.Controls.Add(this.cboAuthorCommit);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(600, 628);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(600, 628);
             this.Name = "GitLogAggregator";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "GitLogAggregator";
@@ -321,10 +324,10 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox authorsComboBox;
+        private System.Windows.Forms.ComboBox cboAuthorCommit;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button selectGitFolderButton;
-        private System.Windows.Forms.DateTimePicker startDatePicker;
+        private System.Windows.Forms.DateTimePicker txtInternshipDate;
         private System.Windows.Forms.RichTextBox resultRichTextBox;
         private System.Windows.Forms.Button aggregateButton;
         private System.Windows.Forms.Label label1;
