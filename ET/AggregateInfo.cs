@@ -11,6 +11,11 @@ namespace ET
     /// </summary>
     public class AggregateInfo
     {
+
+        /// <summary>
+        /// Đường dẫn gốc
+        /// </summary>
+        public string ProjectDirectory { get; set; }
         /// <summary>
         /// Tác giả thực hiện commit
         /// </summary>
@@ -24,9 +29,5 @@ namespace ET
         /// </summary>
         public List<string> Folders { get; set; }
 
-        /// <summary>
-        /// Đường dẫn gốc
-        /// </summary>
-        public string ProjectDirectory { get; set; }
     }
 }

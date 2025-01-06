@@ -175,6 +175,7 @@ echo Git command completed.
             string configFile = Path.Combine(configFolderPath, "config.txt");
             using (StreamWriter writer = new StreamWriter(configFile))
             {
+                writer.WriteLine($"ProjectDirectory={aggregateInfo.ProjectDirectory}");
                 writer.WriteLine($"Author={aggregateInfo.Author}");
                 writer.WriteLine($"StartDate={aggregateInfo.StartDate:yyyy-MM-dd}");
                 writer.WriteLine("Folders=");
@@ -193,6 +194,8 @@ echo Git command completed.
             }
 
             string author = "";
+            string projectDirectory = "";
+
             DateTime startDate = DateTime.Now;
             List<string> folders = new List<string>();
 
@@ -201,6 +204,8 @@ echo Git command completed.
             {
                 if (line.StartsWith("Author="))
                     author = line.Substring(7);
+                else if (line.StartsWith("ProjectDirectory="))
+                    projectDirectory = line.Substring(17);// bỏ 17 kí tự, trên dòng còn nhiêu kí tự lấy hết
                 else if (line.StartsWith("StartDate="))
                     DateTime.TryParseExact(line.Substring(10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate);
                 else if (!string.IsNullOrWhiteSpace(line) && line != "Folders=")
@@ -209,6 +214,7 @@ echo Git command completed.
 
             return new AggregateInfo
             {
+                ProjectDirectory = projectDirectory,
                 Author = author,
                 StartDate = startDate,
                 Folders = folders
