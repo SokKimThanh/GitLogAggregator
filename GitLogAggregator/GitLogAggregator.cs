@@ -61,87 +61,94 @@ namespace GitLogAggregator
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                // Lưu đường dẫn thư mục đã chọn
                 projectDirectory = folderBrowserDialog1.SelectedPath;
                 folderPathLabel.Text = projectDirectory;
 
-                // Kiểm tra xem thư mục có chứa thư mục .git không
-                string gitFolder = Path.Combine(projectDirectory, ".git");
-                if (!Directory.Exists(gitFolder))
+                if (!IsValidGitRepository(projectDirectory))
                 {
                     AppendTextWithScroll("Lỗi: Thư mục được chọn không chứa repository Git hợp lệ. Vui lòng chọn lại.\n");
                     return;
                 }
-                // Kiểm tra xem repository có commit nào không
-                string logFilePath = Path.Combine(projectDirectory, "git_log_output.txt");
-                bll.RunGitCommand("log --oneline", logFilePath, projectDirectory);
 
-                // Đọc nội dung file log để kiểm tra
-                string logOutput = File.Exists(logFilePath) ? File.ReadAllText(logFilePath) : string.Empty;
-                File.Delete(logFilePath);
-
-                // Xóa file log sau khi đọc
-                if (string.IsNullOrEmpty(logOutput))
+                if (!HasCommitsInRepository(projectDirectory))
                 {
                     AppendTextWithScroll("Lỗi: Repository Git này không chứa bất kỳ commit nào. Vui lòng chọn một repository khác hoặc tạo commit đầu tiên.\n");
                     return;
                 }
 
-                // Thông báo file hướng dẫn trong thư mục Cài đặt
                 AppendTextWithScroll("File hướng dẫn đã có trong thư mục cài đặt tên là ManualUsage.docx.\n");
 
                 string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
-                // Tạo thư mục 'internship_week' nếu chưa tồn tại
-                if (!Directory.Exists(internshipWeekFolder))
-                {
-                    Directory.CreateDirectory(internshipWeekFolder);
-                }
+                CreateDirectoryIfNotExists(internshipWeekFolder);
 
-                // Gắn đường dẫn lên textbox danh mục 8 tuần
                 folderPathInternWeekLabel.Text = internshipWeekFolder;
 
-                // Tải danh sách tác giả
                 LoadAuthorsCombobox(projectDirectory);
 
-                // Kiểm tra thông tin tổng hợp trước đó
-                string configFile = Path.Combine(internshipWeekFolder, "config.txt");
-                try
-                {
-                    if (File.Exists(configFile))
-                    {
-                        // Load aggregate information
-                        AggregateInfo aggregateInfo = bll.LoadAggregateInfo(configFile);
-
-                        // Update UI controls
-                        authorsComboBox.SelectedItem = aggregateInfo.Author;
-                        startDatePicker.Value = aggregateInfo.StartDate;
-                        folderPathLabel.Text = aggregateInfo.ProjectDirectory;
-
-                        DisplayFoldersInListView(aggregateInfo.Folders);
-                        AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {aggregateInfo.Author}\nNgày bắt đầu: {aggregateInfo.StartDate:dd/MM/yyyy}\n");
-
-                        // Disable/Enable UI elements
-                        aggregateButton.Enabled = false;
-                        deleteFolderButton.Enabled = true;
-                        selectGitFolderButton.Enabled = false;
-                    }
-                    else
-                    {
-                        // Enable controls for new aggregation
-                        authorsComboBox.Enabled = true;
-                        startDatePicker.Enabled = true;
-                        aggregateButton.Enabled = true;
-                        deleteFolderButton.Enabled = false;
-                        selectGitFolderButton.Enabled = false; // Prevent selecting a different folder
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Handle exceptions, e.g., show an error message to the user
-                    MessageBox.Show($"An error occurred: {ex.Message}");
-                }
+                LoadAndDisplayAggregateInfo(internshipWeekFolder);
             }
         }
+
+        private bool IsValidGitRepository(string directory)
+        {
+            string gitFolder = Path.Combine(directory, ".git");
+            return Directory.Exists(gitFolder);
+        }
+
+        private bool HasCommitsInRepository(string directory)
+        {
+            string logFilePath = Path.Combine(directory, "git_log_output.txt");
+            bll.RunGitCommand("log --oneline", logFilePath, directory);
+
+            string logOutput = File.Exists(logFilePath) ? File.ReadAllText(logFilePath) : string.Empty;
+            File.Delete(logFilePath);
+
+            return !string.IsNullOrEmpty(logOutput);
+        }
+
+        private void CreateDirectoryIfNotExists(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+
+        private void LoadAndDisplayAggregateInfo(string internshipWeekFolder)
+        {
+            string configFile = Path.Combine(internshipWeekFolder, "config.txt");
+            try
+            {
+                if (File.Exists(configFile))
+                {
+                    AggregateInfo aggregateInfo = bll.LoadAggregateInfo(configFile);
+
+                    authorsComboBox.SelectedItem = aggregateInfo.Author;
+                    startDatePicker.Value = aggregateInfo.StartDate;
+                    folderPathLabel.Text = aggregateInfo.ProjectDirectory;
+
+                    DisplayFoldersInListView(aggregateInfo.Folders);
+                    AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {aggregateInfo.Author}\nNgày bắt đầu: {aggregateInfo.StartDate:dd/MM/yyyy}\n");
+
+                    aggregateButton.Enabled = false;
+                    deleteFolderButton.Enabled = true;
+                    selectGitFolderButton.Enabled = false;
+                }
+                else
+                {
+                    authorsComboBox.Enabled = true;
+                    startDatePicker.Enabled = true;
+                    aggregateButton.Enabled = true;
+                    deleteFolderButton.Enabled = false;
+                    selectGitFolderButton.Enabled = false; // Prevent selecting a different folder
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}");
+            }
+        }
+
         /// <summary>
         /// Hiển thị danh sách tác giả trên combobox
         /// </summary>
@@ -167,14 +174,12 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void aggregateButton_Click(object sender, EventArgs e)
         {
-            // Kiểm tra xem thư mục dự án đã được chọn chưa
             if (string.IsNullOrEmpty(projectDirectory))
             {
                 AppendTextWithScroll("Vui lòng chọn thư mục dự án trước khi tổng hợp commit.\n");
                 return;
             }
 
-            // Kiểm tra trạng thái của chương trình, nếu đang chạy thì không cho nhấn
             if (isProcessing)
             {
                 AppendTextWithScroll("Chương trình đang xử lý, vui lòng chờ...\n");
@@ -183,25 +188,31 @@ namespace GitLogAggregator
 
             try
             {
-                // Đánh dấu trạng thái xử lý
                 isProcessing = true;
 
-                // Tạo thư mục internship_week nếu chưa tồn tại
                 string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
                 if (!Directory.Exists(internshipWeekFolder))
                 {
                     Directory.CreateDirectory(internshipWeekFolder);
                 }
 
-                // Lấy thông tin từ người dùng
                 string author = authorsComboBox.SelectedItem.ToString();
                 DateTime internshipStartDate = startDatePicker.Value;
+
+                // Lấy ngày commit đầu tiên
+                DateTime firstCommitDate = GetFirstCommitDate(projectDirectory);
+                if (internshipStartDate > firstCommitDate)
+                {
+                    AppendTextWithScroll("Lỗi: Ngày thực tập phải diễn ra trước ngày commit đầu tiên.\n");
+                    isProcessing = false;
+                    return;
+                }
+
                 DateTime projectStartDate = bll.GetProjectStartDate(projectDirectory);
                 int startingWeek = bll.CalculateWeekNumber(internshipStartDate, projectStartDate);
 
                 List<string> folders = new List<string>();
 
-                // Lặp qua từng tuần
                 for (int weekOffset = 0; weekOffset < 8; weekOffset++)
                 {
                     DateTime currentWeekStart = internshipStartDate.AddDays(weekOffset * 7);
@@ -209,16 +220,13 @@ namespace GitLogAggregator
                     string weekFolder = Path.Combine(internshipWeekFolder, "Week_" + currentWeek);
                     string combinedFile = Path.Combine(weekFolder, "combined_commits.txt");
 
-                    // Tạo thư mục tuần nếu chưa tồn tại
                     Directory.CreateDirectory(weekFolder);
 
-                    // Xóa file cũ nếu đã tồn tại
                     if (File.Exists(combinedFile))
                     {
                         File.Delete(combinedFile);
                     }
 
-                    // Duyệt từng ngày trong tuần
                     string[] days = { "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" };
                     foreach (string day in days)
                     {
@@ -228,12 +236,10 @@ namespace GitLogAggregator
                         string until = $"{currentWeekStart:yyyy-MM-dd} 23:59";
                         string gitLogCommand = $"log --author=\"{author}\" --since=\"{since}\" --until=\"{until}\"";
 
-                        // Chạy lệnh Git và ghi kết quả
                         bll.RunGitCommand(gitLogCommand, dailyFile, projectDirectory);
 
                         if (File.Exists(dailyFile))
                         {
-                            // Đọc và tổng hợp dữ liệu
                             using (StreamReader reader = new StreamReader(dailyFile))
                             using (StreamWriter writer = new StreamWriter(combinedFile, true))
                             {
@@ -249,14 +255,10 @@ namespace GitLogAggregator
                         currentWeekStart = currentWeekStart.AddDays(1);
                     }
 
-                    // Thêm thư mục tuần vào danh sách
                     folders.Add(weekFolder);
-
-                    // Thông báo hoàn tất tuần
                     AppendTextWithScroll($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}\n");
                 }
 
-                // Lưu thông tin tổng hợp
                 AggregateInfo aggregateInfo = new AggregateInfo
                 {
                     Author = author,
@@ -266,11 +268,9 @@ namespace GitLogAggregator
                 };
                 bll.SaveAggregateInfo(aggregateInfo);
 
-                // Cập nhật giao diện sau khi hoàn tất
                 DisplayDirectoriesInListView();
                 AppendTextWithScroll("Đã tổng hợp tất cả commit.\n");
 
-                // Đổi trạng thái nút
                 aggregateButton.Enabled = false;
                 deleteFolderButton.Enabled = true;
             }
@@ -280,9 +280,28 @@ namespace GitLogAggregator
             }
             finally
             {
-                isProcessing = false; // Luôn cập nhật trạng thái xử lý
+                isProcessing = false;
             }
         }
+
+        private DateTime GetFirstCommitDate(string directory)
+        {
+            string logFilePath = Path.Combine(directory, "git_log_output.txt");
+            bll.RunGitCommand("log --reverse --date=iso --pretty=format:\"%ad\" -1", logFilePath, directory);
+
+            string firstCommitDateStr = File.Exists(logFilePath) ? File.ReadAllText(logFilePath).Trim() : string.Empty;
+            File.Delete(logFilePath);
+
+            if (DateTime.TryParse(firstCommitDateStr, out DateTime firstCommitDate))
+            {
+                return firstCommitDate;
+            }
+            else
+            {
+                throw new InvalidOperationException("Không thể xác định ngày commit đầu tiên.");
+            }
+        }
+
 
         /// <summary>
         /// hiển thị danh sách thư mục trong internship_week
@@ -321,6 +340,8 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
 
                 aggregateButton.Enabled = true; // Bật lại nút tổng hợp commit
+                authorsComboBox.Enabled = true; // bật lại nút tác giả
+                startDatePicker.Enabled = true; // bật lại lịch thực tập
 
                 // Làm trống weekListView sau khi xóa thư mục
                 weekListView.Items.Clear();  // Xóa tất cả mục trong ListView

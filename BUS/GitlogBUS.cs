@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using ET;
 using GitLogAggregator.DataAccess;
-using GitLogAggregator.Entities;
 
 namespace GitLogAggregator.BusinessLogic
 {
@@ -22,26 +21,6 @@ namespace GitLogAggregator.BusinessLogic
         public int CalculateWeekNumber(DateTime internshipStartDate, DateTime projectStartDate)
         {
             return dataAccess.CalculateWeekNumber(internshipStartDate, projectStartDate);
-        }
-        /// <summary>
-        /// Parse Git Log Output
-        /// </summary>
-        /// <param name="logOutput"></param>
-        /// <returns></returns>
-        public List<CommitEntity> ParseCommitLog(string logOutput)
-        {
-            return dataAccess.ParseCommitLog(logOutput);
-        }
-        /// <summary>
-        /// Organize Commits by Week
-        /// </summary>
-        /// <param name="commits"></param>
-        /// <param name="internshipStartDate"></param>
-        /// <param name="projectStartDate"></param>
-        /// <returns></returns>
-        public Dictionary<int, List<CommitEntity>> GroupCommitsByWeek(List<CommitEntity> commits, DateTime internshipStartDate, DateTime projectStartDate)
-        {
-            return dataAccess.GroupCommitsByWeek(commits, internshipStartDate, projectStartDate);
         }
 
         public void RunGitCommand(string command, string outputFile, string projectDirectory)
