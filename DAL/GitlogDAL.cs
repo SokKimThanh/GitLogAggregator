@@ -32,6 +32,27 @@ namespace GitLogAggregator.DataAccess
 
             return weekNumber;
         }
+        public string RunGitCommand(string command, string projectDirectory)
+        {
+            string batchFilePath = Path.Combine(projectDirectory, "runGitCommand.bat");
+            string outputFilePath = Path.Combine(projectDirectory, "output.txt");
+
+            // Tạo file batch
+            CreateBatchFile(batchFilePath, $"git {command} > \"{outputFilePath}\"", projectDirectory);
+
+            // Chạy lệnh từ file batch
+            RunBatchFile(batchFilePath);
+
+            // Đọc kết quả từ file output
+            string output = File.Exists(outputFilePath) ? File.ReadAllText(outputFilePath) : string.Empty;
+
+            // Xóa file batch và file output sau khi hoàn thành nhiệm vụ
+            File.Delete(batchFilePath);
+            File.Delete(outputFilePath);
+
+            return output;
+        }
+
 
         public void RunGitCommand(string command, string outputFile, string projectDirectory)
         {

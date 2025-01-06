@@ -296,18 +296,25 @@ namespace GitLogAggregator
 
                         bll.RunGitCommand(gitLogCommand, dailyFile, projectDirectory);
 
-                        if (File.Exists(dailyFile))
+                        // Chạy lệnh Git và lưu kết quả vào biến
+                        string logOutput = bll.RunGitCommand(gitLogCommand, projectDirectory);
+
+                        if (!string.IsNullOrEmpty(logOutput))
                         {
-                            using (StreamReader reader = new StreamReader(dailyFile))
-                            using (StreamWriter writer = new StreamWriter(combinedFile, true))
+                            // Nếu có commit, ghi kết quả vào file
+                            File.WriteAllText(dailyFile, logOutput);
+                            using (StreamWriter writer = new StreamWriter(Path.Combine(weekFolder, "combined_commits.txt"), true))
                             {
-                                writer.Write(reader.ReadToEnd());
-                                writer.WriteLine();
+                                writer.Write(logOutput); writer.WriteLine();
                             }
                         }
                         else
                         {
-                            throw new FileNotFoundException($"Không thể tìm thấy file {dailyFile}");
+                            // Xóa dailyFile nếu không có commit
+                            if (File.Exists(dailyFile))
+                            {
+                                File.Delete(dailyFile);
+                            }
                         }
 
                         currentWeekStart = currentWeekStart.AddDays(1);

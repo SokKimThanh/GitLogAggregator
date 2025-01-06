@@ -22,6 +22,10 @@ namespace GitLogAggregator.BusinessLogic
         {
             return dataAccess.CalculateWeekNumber(internshipStartDate, projectStartDate);
         }
+        public string RunGitCommand(string command, string projectDirectory)
+        {
+            return dataAccess.RunGitCommand(command, projectDirectory);
+        }
 
         public void RunGitCommand(string command, string outputFile, string projectDirectory)
         {
