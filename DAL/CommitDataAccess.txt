@@ -1,0 +1,201 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using GitLogAggregator.Entities;
+
+namespace GitLogAggregator.DataAccess
+{
+    public class CommitDataAccess
+    {
+        public void RunGitCommand(string command, string outputFile)
+        {
+            string batchFilePath = Path.Combine(projectDirectory, "runGitCommand.bat");
+
+            // Tạo file batch
+            CreateBatchFile(batchFilePath, $"git {command} > \"{outputFile}\"");
+
+            // Chạy lệnh từ file batch
+            RunBatchFile(batchFilePath);
+
+            // Kiểm tra sự tồn tại của file output
+            if (!File.Exists(outputFile))
+            {
+                AppendTextWithScroll($"File {outputFile} không được tạo ra.");
+                return;
+            }
+
+            // Xóa file batch sau khi hoàn thành nhiệm vụ
+            File.Delete(batchFilePath);
+        }
+        /// <summary>
+        /// Tạo batch file động để chạy lệnh Git và xử lý kết quả.
+        /// Sử dụng cmd hoặc PowerShell để chạy lệnh và đọc output.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="command"></param>
+        public void CreateBatchFile(string filePath, string command)
+        {
+            string batchContent = $@"
+@echo off
+cd /d ""{projectDirectory}""
+echo Running Git command...
+{command}
+echo Git command completed.
+";
+            File.WriteAllText(filePath, batchContent);
+        }
+
+        public void RunBatchFile(string filePath)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = $"/c \"{filePath}\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (Process process = new Process { StartInfo = startInfo })
+            {
+                if (!process.Start())
+                {
+                    throw new InvalidOperationException("Process failed to start.");
+                }
+
+                using (StreamReader reader = process.StandardOutput)
+                {
+                    try
+                    {
+                        string output = reader.ReadToEnd();
+                        Console.WriteLine(output);// Hiển thị kết quả của lệnh Git hoặc thông báo lỗi
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
+
+                process.WaitForExit();
+            }
+        }
+        public List<string> GetGitAuthors()
+        {
+            List<string> authors = new List<string>();
+            string batchFilePath = Path.Combine(projectDirectory, "getgitauthor.bat");
+            string command = $"git shortlog -sne > authors_output.txt";
+
+            // Tạo file batch
+            CreateBatchFile(batchFilePath, command);
+
+            // Chạy lệnh từ file batch
+            RunBatchFile(batchFilePath);
+
+            // Đọc kết quả từ file output
+            string outputFilePath = Path.Combine(projectDirectory, "authors_output.txt");
+            string[] lines = File.ReadAllLines(outputFilePath);
+            foreach (var line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    string author = line.Split('\t')[1];
+                    if (!authors.Contains(author))
+                    {
+                        authors.Add(author);
+                    }
+                }
+            }
+
+            // Xóa các file tạm thời sau khi hoàn thành nhiệm vụ
+            File.Delete(batchFilePath);
+            File.Delete(outputFilePath);
+
+            return authors;
+        }
+
+        public void SaveAggregateInfo(string author, DateTime startDate, List<string> folders)
+        {
+            string configFile = Path.Combine(projectDirectory, "internship_week", "config.txt");
+
+            using (StreamWriter writer = new StreamWriter(configFile))
+            {
+                writer.WriteLine($"Author={author}");
+                writer.WriteLine($"StartDate={startDate:yyyy-MM-dd}");
+                writer.WriteLine("Folders=");
+                foreach (var folder in folders)
+                {
+                    writer.WriteLine(folder);
+                }
+            }
+        }
+        public void LoadAggregateInfo()
+        {
+            string configFile = Path.Combine(projectDirectory, "internship_week", "config.txt");
+            if (File.Exists(configFile))
+            {
+                string author = "";
+                DateTime startDate = DateTime.Now;
+                List<string> folders = new List<string>();
+
+                string[] lines = File.ReadAllLines(configFile);
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("Author="))
+                        author = line.Substring(7);
+                    else if (line.StartsWith("StartDate="))
+                        startDate = DateTime.Parse(line.Substring(10));
+                    else if (!string.IsNullOrWhiteSpace(line) && line != "Folders=")
+                        folders.Add(line);
+                }
+
+                // Khôi phục trạng thái giao diện
+                authorsComboBox.SelectedItem = author;
+                startDatePicker.Value = startDate;
+                DisplayFoldersInListView(folders);
+
+                AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {author}\nNgày bắt đầu: {startDate:dd/MM/yyyy}\n");
+            }
+        }
+
+        /// <summary>
+        /// Lệnh Git tìm ngày commit đầu tiên
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public DateTime GetProjectStartDate()
+        {
+            string outputFilePath = Path.Combine(projectDirectory, "project_start_date.txt");
+            string batchFilePath = Path.Combine(projectDirectory, "get_project_start_date.bat");
+
+            // Sử dụng lệnh Git chính xác
+            string command = @"git log --reverse --pretty=format:""%%ad"" --date=short -n 1 > project_start_date.txt";
+            CreateBatchFile(batchFilePath, command);
+
+            // Chạy batch file
+            RunBatchFile(batchFilePath);
+
+            // Kiểm tra file đầu ra
+            if (!File.Exists(outputFilePath))
+            {
+                throw new Exception("Không thể tìm thấy file ngày bắt đầu dự án.");
+            }
+
+            // Đọc nội dung và kiểm tra định dạng ngày
+            string dateStr = File.ReadAllText(outputFilePath).Trim();
+            resultRichTextBox.Text += $"Ngày đọc được: {dateStr}\n";
+
+            if (DateTime.TryParseExact(dateStr, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime projectStartDate))
+            {
+                File.Delete(outputFilePath); // Xóa file sau khi đọc
+                File.Delete(batchFilePath); // Xóa file sau khi đọc
+                return projectStartDate;
+            }
+            else
+            {
+                throw new Exception($"Ngày không hợp lệ: {dateStr}");
+            }
+        }
+    }
+}
