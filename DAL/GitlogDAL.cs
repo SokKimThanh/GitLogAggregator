@@ -5,7 +5,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using ET;
-using GitLogAggregator.Entities;
 
 namespace GitLogAggregator.DataAccess
 {
@@ -33,62 +32,7 @@ namespace GitLogAggregator.DataAccess
 
             return weekNumber;
         }
-        /// <summary>
-        /// Parse Git Log Output
-        /// </summary>
-        /// <param name="logOutput"></param>
-        /// <returns></returns>
-        public List<CommitEntity> ParseCommitLog(string logOutput)
-        {
-            List<CommitEntity> commits = new List<CommitEntity>();
-            string[] commitLines = logOutput.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (string commitLine in commitLines)
-            {
-                string[] parts = commitLine.Split(new[] { "|" }, StringSplitOptions.None);
-                if (parts.Length >= 4)
-                {
-                    string author = parts[0];
-                    string dateStr = parts[1];
-                    string message = parts[2];
-
-                    DateTime date = DateTime.Parse(dateStr);
-
-                    commits.Add(new CommitEntity
-                    {
-
-                        Author = author,
-                        Date = date,
-                        Message = message
-                    });
-                }
-            }
-
-            return commits;
-        }
-        /// <summary>
-        /// Organize Commits by Week
-        /// </summary>
-        /// <param name="commits"></param>
-        /// <param name="internshipStartDate"></param>
-        /// <param name="projectStartDate"></param>
-        /// <returns></returns>
-        public Dictionary<int, List<CommitEntity>> GroupCommitsByWeek(List<CommitEntity> commits, DateTime internshipStartDate, DateTime projectStartDate)
-        {
-            var groupedCommits = new Dictionary<int, List<CommitEntity>>();
-
-            foreach (var commit in commits)
-            {
-                int weekNumber = CalculateWeekNumber(commit.Date, projectStartDate);
-                if (!groupedCommits.ContainsKey(weekNumber))
-                {
-                    groupedCommits[weekNumber] = new List<CommitEntity>();
-                }
-                groupedCommits[weekNumber].Add(commit);
-            }
-
-            return groupedCommits;
-        }
         public void RunGitCommand(string command, string outputFile, string projectDirectory)
         {
             string batchFilePath = Path.Combine(projectDirectory, "runGitCommand.bat");
