@@ -413,6 +413,7 @@ namespace GitLogAggregator
         private void DisplayFoldersInListView(List<string> folders)
         {
             weekListView.Items.Clear();
+            fileListView.Items.Clear();
             ImageList imageList = new ImageList();
             imageList.ImageSize = new Size(32, 32);
             imageList.Images.Add("folder", Properties.Resources.Git_commit_aggregation_tool); // Icon folder
@@ -424,12 +425,24 @@ namespace GitLogAggregator
                 // Lấy tên thư mục từ đường dẫn
                 string folderName = Path.GetFileName(folder);
 
-                ListViewItem item = new ListViewItem(folderName);
-                item.ImageKey = "folder";
-                item.Tag = folder; // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
-                weekListView.Items.Add(item);
+                ListViewItem folderItem = new ListViewItem(folderName);
+                folderItem.ImageKey = "folder";
+                folderItem.Tag = folder; // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
+                weekListView.Items.Add(folderItem);
+
+                // Lấy và thêm các file trong thư mục vào fileListView
+                var files = Directory.GetFiles(folder);
+                foreach (var file in files)
+                {
+                    string fileName = Path.GetFileName(file);
+                    ListViewItem fileItem = new ListViewItem(fileName);
+                    fileItem.Tag = file; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    fileListView.Items.Add(fileItem);
+                }
             }
         }
+
+
 
         /// <summary>
         /// Hiển thị danh sách thư mục thực tập
@@ -593,7 +606,7 @@ namespace GitLogAggregator
                 {
                     string directoryPath = selectedItem.Tag.ToString();
                     DisplayFilesInDirectory(directoryPath);
-                    AppendTextWithScroll($"{directoryPath}.\n");
+                    AppendTextWithScroll($"{directoryPath}\n");
                 }
                 else
                 {
@@ -602,5 +615,19 @@ namespace GitLogAggregator
             }
         }
 
+        private void fileListView_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (fileListView.SelectedItems.Count > 0)
+            {
+                // Lấy mục được chọn
+                ListViewItem selectedItem = fileListView.SelectedItems[0];
+
+                // Lấy đường dẫn đầy đủ của file từ thuộc tính Tag của ListViewItem
+                string filePath = selectedItem.Tag.ToString();
+
+                // Hiển thị đường dẫn đầy đủ của file
+                AppendTextWithScroll($"{filePath}\n");
+            }
+        }
     }
 }
