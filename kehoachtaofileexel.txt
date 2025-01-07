@@ -1,0 +1,34 @@
+List<string> commits = new List<string>;
+
+- Khâu lấy dữ liệu:
+for(..){
+ string logOP = ..;
+ Thêm logOP vào commits
+}
+
+- Khâu tạo file excel
+B1: Tạo 8 sheet tương ứng với 8 tuần dựa vào ngày bắt đầu thực tập.
+Ví dụ: Ngày thực tập là 02/12/2024 => Week 01 (02/12/2024-07/12/2024), Week 02 (09/12/2024 - 14/12/2024)...
+B2: Tình toán.
+_ Tổng số commits[total commits(ttc)] / 8 = số commits mỗi tuần[weekly commits(wc)]
+_ ttc - (wc*8) = số commits dư của kỳ thực tập[intern spare commits(isc)]
+_ wc +  isc = số commits của tuần 8 (có thể chọn)
+_ wc / 6 = số commits mỗi ngày [daily commits(dc)]
+_ wc - (dc * 6) = số commits dư của tuần [weekly spare commits(wsc)]
+_ dc + wsc = số commits của thứ 7 (có thể chọn)
+B3: Thao tác ghi excel.
+_ Ghi các commits đều vào các ngày trong tuần dựa vào số commits đã tính ở trên
+
+-Khâu thao tác giao diện
+B1: Chọn dự án ĐÃ clone trên thiết bị
+	_ Phần mềm kiểm tra và xác nhận thư mục là respo
+	_ Phần mềm lấy tên người tham gia và đổ dữ liệu lên combobox
+B2: Chọn người tham gia trên combobox
+B3: Chọn ngày bắt đầu thực tập
+B3a: Chọn số tuần thực tập
+B3b: Chọn số ngày thực tập trong tuần
+B3c: Chọn số tuần thực tập nhiều nhất (bận rộn?)
+B3d: Chọn số ngày thực tập nhiều nhất(bận rộn?)
+B4: Bấm nút Tổng hợp
+	_ Thông báo hoàn thành sau khi hoàn thành
+	_ Mở thư mục chứa file vừa tổng hợp
