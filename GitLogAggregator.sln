@@ -5,13 +5,13 @@ VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitLogAggregator", "GitLogAggregator\GitLogAggregator.csproj", "{BCD3493B-1942-4965-A93E-75279B2BA82A}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GitLogAggregatorSetup", "GitLogAggregatorSetup\GitLogAggregatorSetup.vdproj", "{AC6554C6-03A3-4151-BD3C-808E7A0971F7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ET", "ET\ET.csproj", "{5A6B3535-8B78-43A6-8EC0-64CFAC01CF22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{DC8CE95D-0862-4A31-ACDE-16DC64C3EF18}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUS", "BUS\BUS.csproj", "{CD14DFEE-D6C6-464D-96F1-AA860E4FDF33}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GitLogAggregatorSetup", "GitLogAggregatorSetup\GitLogAggregatorSetup.vdproj", "{F69FB191-9D80-44C5-96F6-9D7E2AB6965D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,8 +23,6 @@ Global
 		{BCD3493B-1942-4965-A93E-75279B2BA82A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCD3493B-1942-4965-A93E-75279B2BA82A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCD3493B-1942-4965-A93E-75279B2BA82A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC6554C6-03A3-4151-BD3C-808E7A0971F7}.Debug|Any CPU.ActiveCfg = Debug
-		{AC6554C6-03A3-4151-BD3C-808E7A0971F7}.Release|Any CPU.ActiveCfg = Release
 		{5A6B3535-8B78-43A6-8EC0-64CFAC01CF22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5A6B3535-8B78-43A6-8EC0-64CFAC01CF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A6B3535-8B78-43A6-8EC0-64CFAC01CF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -37,6 +35,8 @@ Global
 		{CD14DFEE-D6C6-464D-96F1-AA860E4FDF33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD14DFEE-D6C6-464D-96F1-AA860E4FDF33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD14DFEE-D6C6-464D-96F1-AA860E4FDF33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F69FB191-9D80-44C5-96F6-9D7E2AB6965D}.Debug|Any CPU.ActiveCfg = Debug
+		{F69FB191-9D80-44C5-96F6-9D7E2AB6965D}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
