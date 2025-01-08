@@ -80,7 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GitCommitDAL.cs" />
-    <Compile Include="GitlogDAL.cs" />
+    <Compile Include="GitLogDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

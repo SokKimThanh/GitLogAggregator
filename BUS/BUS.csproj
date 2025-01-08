@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GitCommitBUS.cs" />
-    <Compile Include="GitlogBUS.cs" />
+    <Compile Include="GitLogBUS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

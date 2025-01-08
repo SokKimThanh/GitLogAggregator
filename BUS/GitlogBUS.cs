@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using ET;
 using GitLogAggregator.DataAccess;
 
@@ -9,7 +11,7 @@ namespace GitLogAggregator.BusinessLogic
 {
     public class GitlogBUS
     {
-        public GitlogDAL dataAccess = new GitlogDAL();
+        public GitlogDAL data = new GitlogDAL();
 
 
         /// <summary>
@@ -20,16 +22,16 @@ namespace GitLogAggregator.BusinessLogic
         /// <returns></returns>
         public int CalculateWeekNumber(DateTime internshipStartDate, DateTime projectStartDate)
         {
-            return dataAccess.CalculateWeekNumber(internshipStartDate, projectStartDate);
+            return data.CalculateWeekNumber(internshipStartDate, projectStartDate);
         }
         public string RunGitCommand(string command, string projectDirectory)
         {
-            return dataAccess.RunGitCommand(command, projectDirectory);
+            return data.RunGitCommand(command, projectDirectory);
         }
 
         public List<string> GetGitAuthors(string projectDirectory)
         {
-            return dataAccess.GetGitAuthors(projectDirectory);
+            return data.GetGitAuthors(projectDirectory);
         }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace GitLogAggregator.BusinessLogic
         /// <param name="aggregateInfo"></param>
         public void SaveAggregateInfo(AggregateInfo aggregateInfo)
         {
-            dataAccess.SaveAggregateInfo(aggregateInfo);
+            data.SaveAggregateInfo(aggregateInfo);
         }
         /// <summary>
         /// Tải thông tin tổng hợp
@@ -47,7 +49,7 @@ namespace GitLogAggregator.BusinessLogic
         /// <returns></returns>
         public AggregateInfo LoadAggregateInfo(string aggregateInfoPath)
         {
-            return dataAccess.LoadAggregateInfo(aggregateInfoPath);
+            return data.LoadAggregateInfo(aggregateInfoPath);
         }
 
         /// <summary>
@@ -57,13 +59,31 @@ namespace GitLogAggregator.BusinessLogic
         /// <exception cref="Exception"></exception>
         public DateTime GetProjectStartDate(string projectDirectory)
         {
-            return dataAccess.GetProjectStartDate(projectDirectory);
+            return data.GetProjectStartDate(projectDirectory);
         }
 
-        
+
         public List<string> AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
         {
-            return dataAccess.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
+            return data.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
         }
+
+        /// <summary>
+        /// Hiển thị danh sách tác giả trên combobox
+        /// </summary>
+        public List<string> LoadAuthorsCombobox(string projectDirectory)
+        {
+            return data.LoadAuthorsCombobox(projectDirectory);
+        }
+
+        public List<string> GetAllCommits(string projectDirectory)
+        {
+            return data.GetAllCommits(projectDirectory);
+        }
+        public DataTable ConvertCommitsToDataTable(List<string> commits)
+        {
+            return data.ConvertCommitsToDataTable(commits);
+        }
+
     }
 }

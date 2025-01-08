@@ -28,6 +28,9 @@ namespace ET
         /// Danh sách thư mục 8 tuần
         /// </summary>
         public List<string> Folders { get; set; }
-
+        /// <summary>
+        /// Ngày commit đầu tiên
+        /// </summary>
+        public DateTime FirstCommitDate { get; set; }
     }
 }

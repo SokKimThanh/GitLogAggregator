@@ -52,7 +52,8 @@ namespace GitLogAggregator
 
             if (!string.IsNullOrEmpty(projectDirectory))
             {
-                LoadAuthorsCombobox(projectDirectory);
+                cboAuthorCommit.DataSource = gitLogBUS.LoadAuthorsCombobox(projectDirectory);
+
                 EnableControls();
             }
         }
@@ -87,17 +88,18 @@ namespace GitLogAggregator
 
                 // Mở tên folder và tác giả
                 txtDirectoryProjectPath.Text = projectDirectory;
-                LoadAuthorsCombobox(projectDirectory);
+                cboAuthorCommit.DataSource = gitLogBUS.LoadAuthorsCombobox(projectDirectory);
 
-                // Kiểm tra nếu thư mục internship_week tồn tại thì mở thêm thư mục
+                // Lấy ngày commit đầu tiên và hiển thị lên giao diện
+                DateTime firstCommitDate = gitLogBUS.GetProjectStartDate(projectDirectory);
+                txtFirstCommitDate.Value = firstCommitDate;
+
+                LoadDataIntoDataGridView();
+
+                // Kiểm tra nếu thư mục internship_week tồn tại thì mở thêm thư mục (file config.txt nằm trong thư mục này)
                 if (Directory.Exists(internshipWeekFolder))
                 {
                     LoadAndDisplayAggregateInfo(internshipWeekFolder);
-
-                    // Hiển thị nút xóa dữ liệu và tắt các nút tạo, tác giả, ngày
-                    DisableControls();
-                    btnDelete.Enabled = true;
-                    btnSelectGitFolder.Enabled = true;
                 }
                 else
                 {
@@ -106,6 +108,18 @@ namespace GitLogAggregator
                     btnDelete.Enabled = false;
                 }
             }
+        }
+        private void LoadDataIntoDataGridView()
+        {
+            // Xóa dữ liệu cũ trên DataGridView trước khi thêm dữ liệu mới
+            dataGridView1.DataSource = null;
+
+            // Hiển thị tất cả commit lên DataGridView
+            var allCommits = gitLogBUS.GetAllCommits(projectDirectory);
+            dataGridView1.DataSource = gitLogBUS.ConvertCommitsToDataTable(allCommits);
+
+            // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private bool IsValidGitRepository(string directory)
@@ -123,8 +137,6 @@ namespace GitLogAggregator
             // Kiểm tra nếu output rỗng
             return !string.IsNullOrEmpty(logOutput);
         }
-
-
 
         /// <summary>
         /// Load thông tin list view trống 
@@ -166,29 +178,12 @@ namespace GitLogAggregator
                     btnSelectGitFolder.Enabled = true;
                 }
             }
-            catch (Exception ex)
+            catch 
             {
-                MessageBox.Show($"An error occurred: {ex.Message}");
+                AppendTextWithScroll($"Lỗi: Không tìm thấy file {configFile}");
             }
         }
 
-
-
-        /// <summary>
-        /// Hiển thị danh sách tác giả trên combobox
-        /// </summary>
-        private void LoadAuthorsCombobox(string projectDirectory)
-        {
-            try
-            {
-                List<string> authors = gitLogBUS.GetGitAuthors(projectDirectory);
-                cboAuthorCommit.DataSource = authors;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading authors: " + ex.Message);
-            }
-        }
         private void EnableControls()
         {
             cboAuthorCommit.Enabled = true;
@@ -396,8 +391,6 @@ namespace GitLogAggregator
             }
         }
 
-
-
         /// <summary>
         /// Hiển thị danh sách thư mục thực tập
         /// </summary>
@@ -599,7 +592,6 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Không có dữ liệu để xuất.\n");
                 return;
             }
-            DateTime internshipStartDate = txtInternshipDate.Value;
 
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string filePath = Path.Combine(desktopPath, "commits.xlsx");

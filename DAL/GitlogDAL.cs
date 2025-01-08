@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using DocumentFormat.OpenXml.Spreadsheet;
 using ET;
 
 namespace GitLogAggregator.DataAccess
@@ -122,21 +125,20 @@ namespace GitLogAggregator.DataAccess
             return new List<string>(authors);
         }
 
+        /// <summary>
+        /// Truy cập file bằng streamwriter
+        /// </summary>
+        /// <param name="aggregateInfo"></param>
         public void SaveAggregateInfo(AggregateInfo aggregateInfo)
         {
-            string configFolderPath = Path.Combine(aggregateInfo.ProjectDirectory, "internship_week");
-            if (!Directory.Exists(configFolderPath))
-            {
-                Directory.CreateDirectory(configFolderPath);
-            }
-
-            string configFile = Path.Combine(configFolderPath, "config.txt");
+            string configFile = Path.Combine(aggregateInfo.ProjectDirectory, "internship_week", "config.txt");
             using (StreamWriter writer = new StreamWriter(configFile))
             {
-                writer.WriteLine($"ProjectDirectory={aggregateInfo.ProjectDirectory}");
-                writer.WriteLine($"Author={aggregateInfo.Author}");
-                writer.WriteLine($"StartDate={aggregateInfo.StartDate:yyyy-MM-dd}");
-                writer.WriteLine("Folders=");
+                writer.WriteLine($"Author: {aggregateInfo.Author}");
+                writer.WriteLine($"StartDate: {aggregateInfo.StartDate:yyyy-MM-dd}");
+                writer.WriteLine($"FirstCommitDate: {aggregateInfo.FirstCommitDate:yyyy-MM-dd}"); // Lưu ngày commit đầu tiên
+                writer.WriteLine($"ProjectDirectory: {aggregateInfo.ProjectDirectory}");
+                writer.WriteLine("Folders:");
                 foreach (var folder in aggregateInfo.Folders)
                 {
                     writer.WriteLine(folder);
@@ -144,40 +146,30 @@ namespace GitLogAggregator.DataAccess
             }
         }
 
-        public AggregateInfo LoadAggregateInfo(string aggregateInfoPath)
+        /// <summary>
+        /// Truy cập file config bằng streamreader
+        /// </summary>
+        /// <param name="configFile"></param>
+        /// <returns></returns>
+        public AggregateInfo LoadAggregateInfo(string configFile)
         {
-            if (!File.Exists(aggregateInfoPath))
+            AggregateInfo aggregateInfo = new AggregateInfo();
+            using (StreamReader reader = new StreamReader(configFile))
             {
-                throw new FileNotFoundException("Config file not found.");
+                aggregateInfo.Author = reader.ReadLine().Split(':')[1].Trim();
+                aggregateInfo.StartDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
+                aggregateInfo.FirstCommitDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim()); // Đọc ngày commit đầu tiên
+                aggregateInfo.ProjectDirectory = reader.ReadLine().Split(':')[1].Trim();
+                aggregateInfo.Folders = new List<string>();
+                reader.ReadLine(); // Bỏ qua dòng "Folders:"
+                while (!reader.EndOfStream)
+                {
+                    aggregateInfo.Folders.Add(reader.ReadLine().Trim());
+                }
             }
-
-            string author = "";
-            string projectDirectory = "";
-
-            DateTime startDate = DateTime.Now;
-            List<string> folders = new List<string>();
-
-            string[] lines = File.ReadAllLines(aggregateInfoPath);
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("Author="))
-                    author = line.Substring(7);
-                else if (line.StartsWith("ProjectDirectory="))
-                    projectDirectory = line.Substring(17);// bỏ 17 kí tự, trên dòng còn nhiêu kí tự lấy hết
-                else if (line.StartsWith("StartDate="))
-                    DateTime.TryParseExact(line.Substring(10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out startDate);
-                else if (!string.IsNullOrWhiteSpace(line) && line != "Folders=")
-                    folders.Add(line);
-            }
-
-            return new AggregateInfo
-            {
-                ProjectDirectory = projectDirectory,
-                Author = author,
-                StartDate = startDate,
-                Folders = folders
-            };
+            return aggregateInfo;
         }
+
 
         /// <summary>
         /// Lệnh Git tìm ngày commit đầu tiên
@@ -186,28 +178,20 @@ namespace GitLogAggregator.DataAccess
         /// <exception cref="Exception"></exception>
         public DateTime GetProjectStartDate(string projectDirectory)
         {
-            string outputFilePath = Path.Combine(projectDirectory, "project_start_date.txt");
-            string batchFilePath = Path.Combine(projectDirectory, "get_project_start_date.bat");
-
             // Sử dụng lệnh Git chính xác
-            string command = @"git log --reverse --pretty=format:""%%ad"" --date=short -n 1 > project_start_date.txt";
+            string command = "log --reverse --pretty=format:\"%ad\" --date=short -n 1";
+            string output = RunGitCommand(command, projectDirectory);
 
-            RunGitCommand(command, projectDirectory);
-
-            // Kiểm tra file đầu ra
-            if (!File.Exists(outputFilePath))
+            // Kiểm tra kết quả lệnh Git
+            if (string.IsNullOrEmpty(output))
             {
-                throw new Exception("Không thể tìm thấy file ngày bắt đầu dự án.");
+                throw new Exception("Không thể tìm thấy thông tin ngày bắt đầu dự án.");
             }
 
             // Đọc nội dung và kiểm tra định dạng ngày
-            string dateStr = File.ReadAllText(outputFilePath).Trim();
-            //resultRichTextBox.Text += $"Ngày đọc được: {dateStr}\n";
-
+            string dateStr = output.Trim();
             if (DateTime.TryParseExact(dateStr, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime projectStartDate))
             {
-                File.Delete(outputFilePath); // Xóa file sau khi đọc
-                File.Delete(batchFilePath); // Xóa file sau khi đọc
                 return projectStartDate;
             }
             else
@@ -215,6 +199,7 @@ namespace GitLogAggregator.DataAccess
                 throw new Exception($"Ngày không hợp lệ: {dateStr}");
             }
         }
+
 
         public List<string> AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
         {
@@ -272,9 +257,47 @@ namespace GitLogAggregator.DataAccess
                 }
 
                 folders.Add(weekFolder);
-                Console.Write($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}\n");
+                LogMessages.Add($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}\n");
             }
             return folders;
+        }
+        /// <summary>
+        /// Hiển thị danh sách tác giả trên combobox
+        /// </summary>
+        public List<string> LoadAuthorsCombobox(string projectDirectory)
+        {
+            List<string> authors;
+            try
+            {
+                authors = GetGitAuthors(projectDirectory);
+                //cboAuthorCommit.DataSource = authors;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error loading authors: " + ex.Message);
+            }
+            return authors;
+        }
+        public List<string> GetAllCommits(string projectDirectory)
+        {
+            string gitCommand = "log --pretty=format:\"%h - %an, %ar : %s\"";
+            string output = RunGitCommand(gitCommand, projectDirectory);
+
+            return output.Split(new[] { "\n" }, StringSplitOptions.None).ToList();
+        }
+        public DataTable ConvertCommitsToDataTable(List<string> commits)
+        {
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Commit");
+
+            foreach (var commit in commits)
+            {
+                var row = dataTable.NewRow();
+                row["Commit"] = commit;
+                dataTable.Rows.Add(row);
+            }
+
+            return dataTable;
         }
     }
 }
