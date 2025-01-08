@@ -2,28 +2,50 @@
 using ET;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace BUS
 {
     public class GitCommitBUS
     {
-        private readonly GitCommitDAL _gitCommitDAL;
+        private readonly GitCommitDAL data;
 
-        public List<string> LogMessages => _gitCommitDAL.LogMessages;
+        public List<string> LogMessages => data.LogMessages;
 
         public GitCommitBUS()
         {
-            _gitCommitDAL = new GitCommitDAL();
+            data = new GitCommitDAL();
         }
 
-        public List<WeekData> GetCommits(string projectDirectory, string author, DateTime startDate, int weeks)
+        public List<string> GetCommits(string projectDirectory, string author, DateTime startDate, int weeks)
         {
-            return _gitCommitDAL.GetCommits(projectDirectory, author, startDate, weeks);
+            return data.GetCommits(projectDirectory, author, startDate, weeks);
+        }
+        public void CreateExcelFile(string filePath, List<WeekData> commits)
+        {
+            data.CreateExcelFile(filePath, commits);
+        }
+        public List<WeekData> ConvertToWeekDataList(DataTable dataTable)
+        {
+            return data.ConvertToWeekDataList(dataTable);
         }
 
-        public void ExportCommitsToExcel(string filePath, List<WeekData> weekDataList)
+
+        public string RunGitCommand(string command, string projectDirectory)
         {
-            _gitCommitDAL.ExportCommitsToExcel(filePath, weekDataList);
+            return data.RunGitCommand(command, projectDirectory);
+        }
+        public DataTable ConvertToDataTable(List<WeekData> weekDataList)
+        {
+            return data.ConvertToDataTable(weekDataList);
+        }
+
+        public List<WeekData> LoadCommitsFromFolders(List<string> folderPaths)
+        {
+            return data.LoadCommitsFromFolders(folderPaths);
         }
     }
 }

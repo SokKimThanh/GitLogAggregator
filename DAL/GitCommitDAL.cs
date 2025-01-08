@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using ClosedXML.Excel;
 using ET;
 
@@ -16,55 +18,144 @@ namespace DAL
             LogMessages = new List<string>();
         }
 
-        public List<WeekData> GetCommits(string projectDirectory, string author, DateTime startDate, int weeks)
+        public List<string> GetCommits(string projectDirectory, string author, DateTime startDate, int weeks)
         {
-            List<WeekData> weekDataList = new List<WeekData>();
-            LogMessages.Clear();
+            List<string> commits = new List<string>();
 
             for (int week = 0; week < weeks; week++)
             {
                 DateTime weekStart = startDate.AddDays(week * 7);
                 DateTime weekEnd = weekStart.AddDays(6);
 
-                List<DayData> dayDataList = new List<DayData>();
-                string[] daysOfWeek = { "Thứ hai", "Thứ ba", "Thứ tư", "thứ năm", "Thứ sáu", "Thứ bảy", "Chủ Nhật" };
+                string[] daysOfWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
                 for (int day = 0; day < 7; day++)
                 {
                     DateTime currentDate = weekStart.AddDays(day);
-                    // Chỉ lấy nội dung tin nhắn commit
-                    string gitLogCommand = $"log --author=\"{author}\" --since=\"{currentDate:yyyy-MM-dd} 00:00\" --until=\"{currentDate:yyyy-MM-dd} 23:59\" --pretty=format:\"%s\"";
+                    string gitLogCommand = $"log --author=\"{author}\" --since=\"{currentDate:yyyy-MM-dd} 00:00\" --until=\"{currentDate:yyyy-MM-dd} 23:59\" --pretty=format:\"%s\""; // Chỉ lấy nội dung tin nhắn commit
                     string output = RunGitCommand(gitLogCommand, projectDirectory);
 
-                    DayData dayData = new DayData
+                    if (!string.IsNullOrEmpty(output))
                     {
-                        DayOfWeek = daysOfWeek[day],
-                        Session = "", // Có thể cập nhật sau
-                        Attendance = "", // Có thể cập nhật sau
-                        AssignedTasks = string.Join("\n", output.Split('\n')),
-                        AchievedResults = "", // Có thể cập nhật sau
-                        Comments = "", // Có thể cập nhật sau
-                        Notes = "" // Có thể cập nhật sau
-                    };
+                        commits.AddRange(output.Split('\n').Where(commit => !string.IsNullOrWhiteSpace(commit)).ToList());
+                    }
+                }
+            }
 
-                    dayDataList.Add(dayData);
+            return commits;
+        }
+        public void CreateExcelFile(string filePath, List<WeekData> weekDataList)
+        {
+            using (var workbook = new XLWorkbook())
+            {
+                int totalCommits = weekDataList.Sum(w => w.DayDataList.Sum(d => d.AssignedTasks.Split('\n').Length));
+                int weeklyCommits = totalCommits / 8;
+                int internSpareCommits = totalCommits % 8;
+
+                foreach (var weekData in weekDataList)
+                {
+                    var worksheet = workbook.Worksheets.Add($"Tuần {weekData.WeekNumber} ({weekData.StartDate:dd/MM/yyyy} - {weekData.EndDate:dd/MM/yyyy})");
+
+                    // Thiết lập tiêu đề bảng
+                    worksheet.Cell(1, 1).Value = "Tuần";
+                    worksheet.Cell(1, 2).Value = "Thứ";
+                    worksheet.Cell(1, 3).Value = "Buổi";
+                    worksheet.Cell(1, 4).Value = "Điểm danh vắng";
+                    worksheet.Cell(1, 5).Value = "Công việc được giao";
+                    worksheet.Cell(1, 6).Value = "Nội dung – kết quả đạt được";
+                    worksheet.Cell(1, 7).Value = "Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp";
+                    worksheet.Cell(1, 8).Value = "Ghi chú";
+
+                    int currentRow = 2;
+                    int dailyCommits = weeklyCommits / 6;
+                    int weeklySpareCommits = weeklyCommits % 6;
+
+                    int commitIndex = weekData.WeekNumber * weeklyCommits;
+
+                    for (int day = 0; day < 7; day++)
+                    {
+                        var dayData = weekData.DayDataList[day];
+                        DateTime currentDate = weekData.StartDate.AddDays(day);
+                        worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber} ({weekData.StartDate:dd/MM/yyyy} - {weekData.EndDate:dd/MM/yyyy})";
+                        worksheet.Cell(currentRow, 2).Value = dayData.DayOfWeek;
+                        worksheet.Cell(currentRow, 3).Value = dayData.Session;
+                        worksheet.Cell(currentRow, 4).Value = dayData.Attendance;
+
+                        if (day < 6)
+                        {
+                            var dayCommits = weekDataList.SelectMany(w => w.DayDataList).Skip(commitIndex).Take(dailyCommits).SelectMany(d => d.AssignedTasks.Split('\n')).ToList();
+                            worksheet.Cell(currentRow, 5).Value = string.Join("\n", dayCommits); // Công việc được giao
+                            commitIndex += dayCommits.Count;
+                        }
+                        else
+                        {
+                            var dayCommits = weekDataList.SelectMany(w => w.DayDataList).Skip(commitIndex).Take(dailyCommits + weeklySpareCommits).SelectMany(d => d.AssignedTasks.Split('\n')).ToList();
+                            worksheet.Cell(currentRow, 5).Value = string.Join("\n", dayCommits); // Công việc được giao
+                            commitIndex += dayCommits.Count;
+                        }
+
+                        worksheet.Cell(currentRow, 6).Value = dayData.AchievedResults; // Nội dung – kết quả đạt được
+                        worksheet.Cell(currentRow, 7).Value = dayData.Comments; // Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp
+                        worksheet.Cell(currentRow, 8).Value = dayData.Notes; // Ghi chú
+
+                        currentRow++;
+                    }
+
+                    // Thêm số commits dư của kỳ thực tập vào tuần cuối cùng
+                    if (weekData.WeekNumber == 8 && internSpareCommits > 0)
+                    {
+                        worksheet.Cell(currentRow, 1).Value = "Thêm commits dư của kỳ thực tập:";
+                        var spareCommits = weekDataList.SelectMany(w => w.DayDataList).Skip(commitIndex).Take(internSpareCommits).SelectMany(d => d.AssignedTasks.Split('\n')).ToList();
+                        worksheet.Cell(currentRow, 5).Value = string.Join("\n", spareCommits); // Công việc được giao
+                    }
+
+                    worksheet.Columns().AdjustToContents();
                 }
 
-                weekDataList.Add(new WeekData
-                {
-                    WeekNumber = week + 1,
-                    StartDate = weekStart,
-                    EndDate = weekEnd,
-                    DayDataList = dayDataList
-                });
+                workbook.SaveAs(filePath);
+            }
+        }
 
-                LogMessages.Add($"Đã lấy dữ liệu commit cho tuần {week + 1}");
+        public List<WeekData> ConvertToWeekDataList(DataTable dataTable)
+        {
+            var weekDataList = new List<WeekData>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                int weekNumber = Convert.ToInt32(row["Tuần"]);
+                DateTime startDate = DateTime.Now; // Giả sử bạn có phương thức để lấy giá trị này
+                DateTime endDate = startDate.AddDays(6); // Giả sử bạn có phương thức để lấy giá trị này
+
+                var weekData = weekDataList.Find(w => w.WeekNumber == weekNumber);
+                if (weekData == null)
+                {
+                    weekData = new WeekData
+                    {
+                        WeekNumber = weekNumber,
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        DayDataList = new List<DayData>()
+                    };
+                    weekDataList.Add(weekData);
+                }
+
+                weekData.DayDataList.Add(new DayData
+                {
+                    DayOfWeek = row["Thứ"].ToString(),
+                    Session = row["Buổi"].ToString(),
+                    Attendance = row["Điểm danh vắng"].ToString(),
+                    AssignedTasks = row["Công việc được giao"].ToString(),
+                    AchievedResults = row["Nội dung – kết quả đạt được"].ToString(),
+                    Comments = row["Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp"].ToString(),
+                    Notes = row["Ghi chú"].ToString()
+                });
             }
 
             return weekDataList;
         }
 
-        private string RunGitCommand(string command, string projectDirectory)
+
+        public string RunGitCommand(string command, string projectDirectory)
         {
             var processStartInfo = new ProcessStartInfo("git", command)
             {
@@ -84,48 +175,67 @@ namespace DAL
                 }
             }
         }
-
-
-        public void ExportCommitsToExcel(string filePath, List<WeekData> weekDataList)
+        public DataTable ConvertToDataTable(List<WeekData> weekDataList)
         {
-            using (var workbook = new XLWorkbook())
+            var dataTable = new DataTable(); dataTable.Columns.Add("Tuần", typeof(int));
+            dataTable.Columns.Add("Thứ", typeof(string));
+            dataTable.Columns.Add("Buổi", typeof(string));
+            dataTable.Columns.Add("Điểm danh vắng", typeof(string));
+            dataTable.Columns.Add("Công việc được giao", typeof(string));
+            dataTable.Columns.Add("Nội dung – kết quả đạt được", typeof(string));
+            dataTable.Columns.Add("Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp", typeof(string));
+            dataTable.Columns.Add("Ghi chú", typeof(string));
+            foreach (var weekData in weekDataList)
             {
-                foreach (var weekData in weekDataList)
+                foreach (var dayData in weekData.DayDataList)
                 {
-                    var worksheet = workbook.Worksheets.Add($"Tuần {weekData.WeekNumber}");
+                    var row = dataTable.NewRow();
+                    row["Tuần"] = weekData.WeekNumber;
+                    row["Thứ"] = dayData.DayOfWeek;
+                    row["Buổi"] = dayData.Session;
+                    row["Điểm danh vắng"] = dayData.Attendance;
+                    row["Công việc được giao"] = dayData.AssignedTasks;
+                    row["Nội dung – kết quả đạt được"] = dayData.AchievedResults;
+                    row["Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp"] = dayData.Comments;
+                    row["Ghi chú"] = dayData.Notes; dataTable.Rows.Add(row);
+                }
+            }
+            return dataTable;
+        }
 
-                    // Thiết lập tiêu đề bảng
-                    worksheet.Cell(1, 1).Value = "Tuần";
-                    worksheet.Cell(1, 2).Value = "Thứ";
-                    worksheet.Cell(1, 3).Value = "Buổi";
-                    worksheet.Cell(1, 4).Value = "Điểm danh vắng";
-                    worksheet.Cell(1, 5).Value = "Công việc được giao";
-                    worksheet.Cell(1, 6).Value = "Nội dung – kết quả đạt được";
-                    worksheet.Cell(1, 7).Value = "Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp";
-                    worksheet.Cell(1, 8).Value = "Ghi chú";
+        public List<WeekData> LoadCommitsFromFolders(List<string> folderPaths)
+        {
+            var weekDataList = new List<WeekData>();
 
-                    int currentRow = 2;
-
-                    foreach (var dayData in weekData.DayDataList)
-                    {
-                        worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber} Từ {weekData.StartDate:dd/MM/yyyy} Đến {weekData.EndDate:dd/MM/yyyy}";
-                        worksheet.Cell(currentRow, 2).Value = dayData.DayOfWeek;
-                        worksheet.Cell(currentRow, 3).Value = dayData.Session;
-                        worksheet.Cell(currentRow, 4).Value = dayData.Attendance;
-                        worksheet.Cell(currentRow, 5).Value = dayData.AssignedTasks;
-                        worksheet.Cell(currentRow, 6).Value = dayData.AchievedResults;
-                        worksheet.Cell(currentRow, 7).Value = dayData.Comments;
-                        worksheet.Cell(currentRow, 8).Value = dayData.Notes;
-                        currentRow++;
-                    }
-
-                    worksheet.Columns().AdjustToContents();
+            foreach (var folderPath in folderPaths)
+            {
+                var weekData = new WeekData();
+                string weekNumberStr = Path.GetFileName(folderPath).Replace("Week_", "");
+                if (int.TryParse(weekNumberStr, out int weekNumber))
+                {
+                    weekData.WeekNumber = weekNumber;
                 }
 
-                workbook.SaveAs(filePath);
+                var dayDataList = new List<DayData>();
+                string[] dayFiles = Directory.GetFiles(folderPath, "*_commits.txt");
+
+                foreach (var dayFile in dayFiles)
+                {
+                    var dayData = new DayData();
+                    string dayOfWeek = Path.GetFileName(dayFile).Replace("_commits.txt", "");
+                    dayData.DayOfWeek = dayOfWeek;
+
+                    string[] commitMessages = File.ReadAllLines(dayFile);
+                    dayData.AssignedTasks = string.Join("\n", commitMessages);
+                    dayDataList.Add(dayData);
+                }
+
+                weekData.DayDataList = dayDataList;
+                weekDataList.Add(weekData);
             }
 
-            LogMessages.Add("Xuất Excel thành công!");
+            return weekDataList;
         }
+
     }
 }

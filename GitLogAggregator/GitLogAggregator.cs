@@ -26,10 +26,10 @@ namespace GitLogAggregator
         private bool isError = false;
 
         // Git log BUS
-        private readonly GitlogBUS bll = new GitlogBUS();
+        private readonly GitlogBUS gitLogBUS = new GitlogBUS();
 
-        // Task Manager BUS
-        private readonly GitCommitBUS _commitManager = new GitCommitBUS();
+        // Git commit BUS
+        private readonly GitCommitBUS gitCommitBUS = new GitCommitBUS();
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -118,7 +118,7 @@ namespace GitLogAggregator
         {
             // Chạy lệnh Git để lấy các commit
             string gitCommand = "log --oneline";
-            string logOutput = bll.RunGitCommand(gitCommand, directory);
+            string logOutput = gitLogBUS.RunGitCommand(gitCommand, directory);
 
             // Kiểm tra nếu output rỗng
             return !string.IsNullOrEmpty(logOutput);
@@ -137,7 +137,7 @@ namespace GitLogAggregator
             {
                 if (File.Exists(configFile))
                 {
-                    AggregateInfo aggregateInfo = bll.LoadAggregateInfo(configFile);
+                    AggregateInfo aggregateInfo = gitLogBUS.LoadAggregateInfo(configFile);
 
                     cboAuthorCommit.SelectedItem = aggregateInfo.Author;
                     txtInternshipDate.Value = aggregateInfo.StartDate;
@@ -146,6 +146,10 @@ namespace GitLogAggregator
 
                     DisplayFoldersInListView(aggregateInfo.Folders);
                     AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {aggregateInfo.Author}\nNgày bắt đầu: {aggregateInfo.StartDate:dd/MM/yyyy}\n");
+
+                    // Load và hiển thị các commits từ các thư mục
+                    var weekDataList = gitCommitBUS.LoadCommitsFromFolders(aggregateInfo.Folders);
+                    dataGridView1.DataSource = gitCommitBUS.ConvertToDataTable(weekDataList);
 
                     btnAggregator.Enabled = false;
                     btnDelete.Enabled = true;
@@ -169,6 +173,7 @@ namespace GitLogAggregator
         }
 
 
+
         /// <summary>
         /// Hiển thị danh sách tác giả trên combobox
         /// </summary>
@@ -176,7 +181,7 @@ namespace GitLogAggregator
         {
             try
             {
-                List<string> authors = bll.GetGitAuthors(projectDirectory);
+                List<string> authors = gitLogBUS.GetGitAuthors(projectDirectory);
                 cboAuthorCommit.DataSource = authors;
             }
             catch (Exception ex)
@@ -247,7 +252,7 @@ namespace GitLogAggregator
                 string author = cboAuthorCommit.SelectedItem.ToString();
                 DateTime internshipStartDate = txtInternshipDate.Value;
 
-                DateTime firstCommitDate = bll.GetProjectStartDate(projectDirectory);
+                DateTime firstCommitDate = gitLogBUS.GetProjectStartDate(projectDirectory);
 
                 if (internshipStartDate > firstCommitDate)
                 {
@@ -260,8 +265,8 @@ namespace GitLogAggregator
                     return;
                 }
 
-                //Dữ liệu được tổng hợp theo chức năng cũ bll.
-                List<string> folders = bll.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
+                //Dữ liệu được tổng hợp theo chức năng cũ gitLogBUS.
+                List<string> folders = gitLogBUS.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
                 AggregateInfo aggregateInfo = new AggregateInfo
                 {
                     Author = author,
@@ -271,17 +276,11 @@ namespace GitLogAggregator
                 };
 
                 // Lưu thông tin vào file text
-                bll.SaveAggregateInfo(aggregateInfo);
+                gitLogBUS.SaveAggregateInfo(aggregateInfo);
 
                 // Hiển thị lên list view
                 DisplayDirectoriesInListView();
 
-                //Tạo danh sách commit cho DataGridView
-                int weeks = 8; //Số tuần
-                var commitList = _commitManager.GetCommits(projectDirectory, author, internshipStartDate, weeks);
-
-                //Hiển thị dữ liệu lên dataGridView
-                dataGridView1.DataSource = ConvertToDataTable(commitList);
                 AppendTextWithScroll("Đã tổng hợp tất cả commit.\n");
 
             }
@@ -480,7 +479,7 @@ namespace GitLogAggregator
 
         private void AppendLogMessages()
         {
-            foreach (var message in _commitManager.LogMessages)
+            foreach (var message in gitCommitBUS.LogMessages)
             {
                 AppendTextWithScroll(message + "\n");
             }
@@ -600,89 +599,18 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Không có dữ liệu để xuất.\n");
                 return;
             }
+            DateTime internshipStartDate = txtInternshipDate.Value;
 
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string filePath = Path.Combine(desktopPath, "commits.xlsx");
 
             var dataTable = (DataTable)dataGridView1.DataSource;
-            var weekDataList = ConvertToWeekDataList(dataTable);
+            List<WeekData> weekDataList = gitCommitBUS.ConvertToWeekDataList(dataTable);
 
-            _commitManager.ExportCommitsToExcel(filePath, weekDataList);
+            gitCommitBUS.CreateExcelFile(filePath, weekDataList);
 
-            AppendLogMessages(); // Hiển thị các thông báo
+            AppendTextWithScroll("Xuất Excel thành công! File đã được lưu trên Desktop của bạn.\n");
         }
-
-        private DataTable ConvertToDataTable(List<WeekData> weekDataList)
-        {
-            var dataTable = new DataTable();
-            dataTable.Columns.Add("Tuần", typeof(int));
-            dataTable.Columns.Add("Thứ", typeof(string));
-            dataTable.Columns.Add("Buổi", typeof(string));
-            dataTable.Columns.Add("Điểm danh vắng", typeof(string));
-            dataTable.Columns.Add("Công việc được giao", typeof(string));
-            dataTable.Columns.Add("Nội dung – kết quả đạt được", typeof(string));
-            dataTable.Columns.Add("Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp", typeof(string));
-            dataTable.Columns.Add("Ghi chú", typeof(string));
-
-            foreach (var weekData in weekDataList)
-            {
-                foreach (var dayData in weekData.DayDataList)
-                {
-                    var row = dataTable.NewRow();
-                    row["Tuần"] = weekData.WeekNumber;
-                    row["Thứ"] = dayData.DayOfWeek;
-                    row["Buổi"] = dayData.Session;
-                    row["Điểm danh vắng"] = dayData.Attendance;
-                    row["Công việc được giao"] = dayData.AssignedTasks;
-                    row["Nội dung – kết quả đạt được"] = dayData.AchievedResults;
-                    row["Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp"] = dayData.Comments;
-                    row["Ghi chú"] = dayData.Notes;
-                    dataTable.Rows.Add(row);
-                }
-            }
-
-            return dataTable;
-        }
-
-        private List<WeekData> ConvertToWeekDataList(DataTable dataTable)
-        {
-            var weekDataList = new List<WeekData>();
-
-            foreach (DataRow row in dataTable.Rows)
-            {
-                int weekNumber = Convert.ToInt32(row["Tuần"]);
-                DateTime startDate = DateTime.Now; // Giả sử bạn có phương thức để lấy giá trị này
-                DateTime endDate = startDate.AddDays(6); // Giả sử bạn có phương thức để lấy giá trị này
-
-                var weekData = weekDataList.Find(w => w.WeekNumber == weekNumber);
-                if (weekData == null)
-                {
-                    weekData = new WeekData
-                    {
-                        WeekNumber = weekNumber,
-                        StartDate = startDate,
-                        EndDate = endDate,
-                        DayDataList = new List<DayData>()
-                    };
-                    weekDataList.Add(weekData);
-                }
-
-                weekData.DayDataList.Add(new DayData
-                {
-                    DayOfWeek = row["Thứ"].ToString(),
-                    Session = row["Buổi"].ToString(),
-                    Attendance = row["Điểm danh vắng"].ToString(),
-                    AssignedTasks = row["Công việc được giao"].ToString(),
-                    AchievedResults = row["Nội dung – kết quả đạt được"].ToString(),
-                    Comments = row["Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp"].ToString(),
-                    Notes = row["Ghi chú"].ToString()
-                });
-            }
-
-            return weekDataList;
-        }
-
-
     }
 }
 
