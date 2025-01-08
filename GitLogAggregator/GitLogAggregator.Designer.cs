@@ -79,7 +79,7 @@
             this.btnSelectGitFolder.TabIndex = 1;
             this.btnSelectGitFolder.Text = "Chọn dự án";
             this.btnSelectGitFolder.UseVisualStyleBackColor = true;
-            this.btnSelectGitFolder.Click += new System.EventHandler(this.selectGitFolderButton_Click);
+            this.btnSelectGitFolder.Click += new System.EventHandler(this.SelectGitFolderButton_Click);
             // 
             // txtInternshipDate
             // 
@@ -111,7 +111,7 @@
             this.btnAggregator.TabIndex = 5;
             this.btnAggregator.Text = "Tổng hợp commit";
             this.btnAggregator.UseVisualStyleBackColor = true;
-            this.btnAggregator.Click += new System.EventHandler(this.aggregateButton_Click);
+            this.btnAggregator.Click += new System.EventHandler(this.AggregateButton_Click);
             // 
             // label1
             // 
@@ -189,7 +189,7 @@
             this.weekListView.TabIndex = 12;
             this.weekListView.UseCompatibleStateImageBehavior = false;
             this.weekListView.View = System.Windows.Forms.View.Details;
-            this.weekListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.weekListView_MouseClick);
+            this.weekListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.WeekListView_MouseClick);
             // 
             // columnHeader1
             // 
@@ -236,7 +236,7 @@
             this.btnDelete.TabIndex = 14;
             this.btnDelete.Text = "Xóa dữ liệu";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.deleteFolderButton_Click);
+            this.btnDelete.Click += new System.EventHandler(this.DeleteFolderButton_Click);
             // 
             // helpButton
             // 
@@ -252,7 +252,7 @@
             this.helpButton.TabIndex = 15;
             this.helpButton.Text = "i";
             this.helpButton.UseVisualStyleBackColor = false;
-            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+            this.helpButton.Click += new System.EventHandler(this.HelpButton_Click);
             // 
             // pictureBox1
             // 
@@ -279,8 +279,8 @@
             this.fileListView.TabIndex = 12;
             this.fileListView.UseCompatibleStateImageBehavior = false;
             this.fileListView.View = System.Windows.Forms.View.Details;
-            this.fileListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.fileListView_MouseClick);
-            this.fileListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.fileListView_MouseDoubleClick);
+            this.fileListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FileListView_MouseClick);
+            this.fileListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.FileListView_MouseDoubleClick);
             // 
             // columnHeader2
             // 
@@ -297,7 +297,7 @@
             this.btnExport.TabIndex = 17;
             this.btnExport.Text = "Xuất excel";
             this.btnExport.UseVisualStyleBackColor = false;
-            this.btnExport.Click += new System.EventHandler(this.btnExportExcel_Click);
+            this.btnExport.Click += new System.EventHandler(this.BtnExportExcel_Click);
             // 
             // dataGridView1
             // 

@@ -62,7 +62,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void selectGitFolderButton_Click(object sender, EventArgs e)
+        private void SelectGitFolderButton_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -212,7 +212,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void aggregateButton_Click(object sender, EventArgs e)
+        private void AggregateButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(projectDirectory))
             {
@@ -312,7 +312,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void deleteFolderButton_Click(object sender, EventArgs e)
+        private void DeleteFolderButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(projectDirectory))
             {
@@ -490,7 +490,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void helpButton_Click(object sender, EventArgs e)
+        private void HelpButton_Click(object sender, EventArgs e)
         {
             string helpText = "Hướng Dẫn Sử Dụng Công Cụ Quản Lý Commit Git:\n\n" +
                               "1. Chọn Thư Mục Dự Án Git:\n" +
@@ -536,7 +536,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void fileListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void FileListView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (fileListView.SelectedItems.Count > 0)
             {
@@ -558,7 +558,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void weekListView_MouseClick(object sender, MouseEventArgs e)
+        private void WeekListView_MouseClick(object sender, MouseEventArgs e)
         {
             if (weekListView.SelectedItems.Count > 0)
             {
@@ -578,7 +578,7 @@ namespace GitLogAggregator
             }
         }
 
-        private void fileListView_MouseClick(object sender, MouseEventArgs e)
+        private void FileListView_MouseClick(object sender, MouseEventArgs e)
         {
             if (fileListView.SelectedItems.Count > 0)
             {
@@ -593,7 +593,7 @@ namespace GitLogAggregator
             }
         }
 
-        private void btnExportExcel_Click(object sender, EventArgs e)
+        private void BtnExportExcel_Click(object sender, EventArgs e)
         {
             if (dataGridView1.DataSource == null)
             {
