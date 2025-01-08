@@ -44,6 +44,8 @@ namespace DAL
 
             return commits;
         }
+
+
         public void CreateExcelFile(string filePath, List<WeekData> weekDataList)
         {
             using (var workbook = new XLWorkbook())
@@ -54,9 +56,10 @@ namespace DAL
 
                 foreach (var weekData in weekDataList)
                 {
-                    var worksheet = workbook.Worksheets.Add($"Tuần {weekData.WeekNumber} ({weekData.StartDate:dd/MM/yyyy} - {weekData.EndDate:dd/MM/yyyy})");
+                    string weekStartDate = weekData.StartDate.ToString("ddMM");
+                    string weekEndDate = weekData.EndDate.ToString("ddMM");
+                    var worksheet = workbook.Worksheets.Add($"Tuan {weekData.WeekNumber} ({weekStartDate}-{weekEndDate})");
 
-                    // Thiết lập tiêu đề bảng
                     worksheet.Cell(1, 1).Value = "Tuần";
                     worksheet.Cell(1, 2).Value = "Thứ";
                     worksheet.Cell(1, 3).Value = "Buổi";
@@ -70,13 +73,18 @@ namespace DAL
                     int dailyCommits = weeklyCommits / 6;
                     int weeklySpareCommits = weeklyCommits % 6;
 
-                    int commitIndex = weekData.WeekNumber * weeklyCommits;
+                    int commitIndex = (weekData.WeekNumber - 1) * weeklyCommits;
 
                     for (int day = 0; day < 7; day++)
                     {
+                        if (day >= weekData.DayDataList.Count)
+                        {
+                            continue; // Bỏ qua ngày không có dữ liệu
+                        }
+
                         var dayData = weekData.DayDataList[day];
                         DateTime currentDate = weekData.StartDate.AddDays(day);
-                        worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber} ({weekData.StartDate:dd/MM/yyyy} - {weekData.EndDate:dd/MM/yyyy})";
+                        worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber}";
                         worksheet.Cell(currentRow, 2).Value = dayData.DayOfWeek;
                         worksheet.Cell(currentRow, 3).Value = dayData.Session;
                         worksheet.Cell(currentRow, 4).Value = dayData.Attendance;
@@ -101,7 +109,6 @@ namespace DAL
                         currentRow++;
                     }
 
-                    // Thêm số commits dư của kỳ thực tập vào tuần cuối cùng
                     if (weekData.WeekNumber == 8 && internSpareCommits > 0)
                     {
                         worksheet.Cell(currentRow, 1).Value = "Thêm commits dư của kỳ thực tập:";
@@ -112,9 +119,11 @@ namespace DAL
                     worksheet.Columns().AdjustToContents();
                 }
 
+                // Đảm bảo giải phóng tài nguyên trước khi lưu file
                 workbook.SaveAs(filePath);
             }
         }
+
 
         public List<WeekData> ConvertToWeekDataList(DataTable dataTable)
         {

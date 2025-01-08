@@ -136,7 +136,9 @@ namespace GitLogAggregator.DataAccess
             {
                 writer.WriteLine($"Author: {aggregateInfo.Author}");
                 writer.WriteLine($"StartDate: {aggregateInfo.StartDate:yyyy-MM-dd}");
-                writer.WriteLine($"FirstCommitDate: {aggregateInfo.FirstCommitDate:yyyy-MM-dd}"); // Lưu ngày commit đầu tiên
+                writer.WriteLine($"EndDate: {aggregateInfo.EndDate:yyyy-MM-dd}"); // Lưu ngày kết thúc thực tập
+                writer.WriteLine($"Weeks: {aggregateInfo.Weeks}"); // Lưu số tuần thực tập
+                writer.WriteLine($"FirstCommitDate: {aggregateInfo.FirstCommitDate:yyyy-MM-dd}");
                 writer.WriteLine($"ProjectDirectory: {aggregateInfo.ProjectDirectory}");
                 writer.WriteLine("Folders:");
                 foreach (var folder in aggregateInfo.Folders)
@@ -145,6 +147,7 @@ namespace GitLogAggregator.DataAccess
                 }
             }
         }
+
 
         /// <summary>
         /// Truy cập file config bằng streamreader
@@ -158,7 +161,9 @@ namespace GitLogAggregator.DataAccess
             {
                 aggregateInfo.Author = reader.ReadLine().Split(':')[1].Trim();
                 aggregateInfo.StartDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
-                aggregateInfo.FirstCommitDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim()); // Đọc ngày commit đầu tiên
+                aggregateInfo.EndDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim()); // Đọc ngày kết thúc thực tập
+                aggregateInfo.Weeks = int.Parse(reader.ReadLine().Split(':')[1].Trim()); // Đọc số tuần thực tập
+                aggregateInfo.FirstCommitDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
                 aggregateInfo.ProjectDirectory = reader.ReadLine().Split(':')[1].Trim();
                 aggregateInfo.Folders = new List<string>();
                 reader.ReadLine(); // Bỏ qua dòng "Folders:"
@@ -171,6 +176,7 @@ namespace GitLogAggregator.DataAccess
         }
 
 
+
         /// <summary>
         /// Lệnh Git tìm ngày commit đầu tiên
         /// </summary>
@@ -179,7 +185,7 @@ namespace GitLogAggregator.DataAccess
         public DateTime GetProjectStartDate(string projectDirectory)
         {
             // Sử dụng lệnh Git chính xác
-            string command = "log --reverse --pretty=format:\"%ad\" --date=short -n 1";
+            string command = "log --reverse --pretty=format:\"%ad\" --date=short";
             string output = RunGitCommand(command, projectDirectory);
 
             // Kiểm tra kết quả lệnh Git
@@ -188,8 +194,15 @@ namespace GitLogAggregator.DataAccess
                 throw new Exception("Không thể tìm thấy thông tin ngày bắt đầu dự án.");
             }
 
+            // Lấy ra chuỗi đầu tiên là ngày commit đầu tiên
+            string[] dates = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            if (dates.Length == 0)
+            {
+                throw new Exception("Không tìm thấy commit nào trong dự án.");
+            }
+
             // Đọc nội dung và kiểm tra định dạng ngày
-            string dateStr = output.Trim();
+            string dateStr = dates[0].Trim();
             if (DateTime.TryParseExact(dateStr, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime projectStartDate))
             {
                 return projectStartDate;
@@ -199,6 +212,7 @@ namespace GitLogAggregator.DataAccess
                 throw new Exception($"Ngày không hợp lệ: {dateStr}");
             }
         }
+
 
 
         public List<string> AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
@@ -270,7 +284,6 @@ namespace GitLogAggregator.DataAccess
             try
             {
                 authors = GetGitAuthors(projectDirectory);
-                //cboAuthorCommit.DataSource = authors;
             }
             catch (Exception ex)
             {
@@ -278,13 +291,24 @@ namespace GitLogAggregator.DataAccess
             }
             return authors;
         }
-        public List<string> GetAllCommits(string projectDirectory)
+        public List<string> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
         {
-            string gitCommand = "log --pretty=format:\"%h - %an, %ar : %s\"";
-            string output = RunGitCommand(gitCommand, projectDirectory);
+            List<string> commits = new List<string>();
 
-            return output.Split(new[] { "\n" }, StringSplitOptions.None).ToList();
+            for (DateTime date = internshipStartDate; date <= internshipEndDate; date = date.AddDays(1))
+            {
+                string gitLogCommand = $"log --author=\"{author}\" --since=\"{date:yyyy-MM-dd} 00:00\" --until=\"{date:yyyy-MM-dd} 23:59\" --pretty=format:\"%s\"";
+                string output = RunGitCommand(gitLogCommand, projectDirectory);
+
+                if (!string.IsNullOrEmpty(output))
+                {
+                    commits.AddRange(output.Split('\n').Where(commit => !string.IsNullOrWhiteSpace(commit)).ToList());
+                }
+            }
+
+            return commits;
         }
+
         public DataTable ConvertCommitsToDataTable(List<string> commits)
         {
             DataTable dataTable = new DataTable();
@@ -299,5 +323,11 @@ namespace GitLogAggregator.DataAccess
 
             return dataTable;
         }
+
+        public DateTime CalculateEndDate(DateTime startDate, int weeks)
+        {
+            return startDate.AddDays(weeks * 7 - 1); // -1 để bao gồm ngày bắt đầu
+        }
+
     }
 }

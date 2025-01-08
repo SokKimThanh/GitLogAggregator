@@ -25,6 +25,14 @@ namespace ET
         /// </summary>
         public DateTime StartDate { get; set; }
         /// <summary>
+        /// Ngày kết thúc thực tập.
+        /// </summary>
+        public DateTime EndDate { get; set; }
+        /// <summary>
+        /// Lưu thêm số tuần thực tập
+        /// </summary>
+        public int Weeks { get; set; }  
+        /// <summary>
         /// Danh sách thư mục 8 tuần
         /// </summary>
         public List<string> Folders { get; set; }

@@ -46,6 +46,6 @@ namespace BUS
         public List<WeekData> LoadCommitsFromFolders(List<string> folderPaths)
         {
             return data.LoadCommitsFromFolders(folderPaths);
-        }
+        } 
     }
 }
