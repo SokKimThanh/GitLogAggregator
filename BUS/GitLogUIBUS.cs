@@ -76,14 +76,9 @@ namespace GitLogAggregator.BusinessLogic
             return data.LoadAuthorsCombobox(projectDirectory);
         }
 
-        public List<string> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
+        public List<DayData> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
         {
             return data.GetCommits(projectDirectory, author, internshipStartDate, internshipEndDate);
-        }
-
-        public DataTable ConvertCommitsToDataTable(List<string> commits)
-        {
-            return data.ConvertCommitsToDataTable(commits);
         }
 
         public DateTime CalculateEndDate(DateTime startDate, int weeks)

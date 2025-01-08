@@ -18,35 +18,7 @@ namespace DAL
             LogMessages = new List<string>();
         }
 
-        public List<string> GetCommits(string projectDirectory, string author, DateTime startDate, int weeks)
-        {
-            List<string> commits = new List<string>();
-
-            for (int week = 0; week < weeks; week++)
-            {
-                DateTime weekStart = startDate.AddDays(week * 7);
-                DateTime weekEnd = weekStart.AddDays(6);
-
-                string[] daysOfWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-
-                for (int day = 0; day < 7; day++)
-                {
-                    DateTime currentDate = weekStart.AddDays(day);
-                    string gitLogCommand = $"log --author=\"{author}\" --since=\"{currentDate:yyyy-MM-dd} 00:00\" --until=\"{currentDate:yyyy-MM-dd} 23:59\" --pretty=format:\"%s\""; // Chỉ lấy nội dung tin nhắn commit
-                    string output = RunGitCommand(gitLogCommand, projectDirectory);
-
-                    if (!string.IsNullOrEmpty(output))
-                    {
-                        commits.AddRange(output.Split('\n').Where(commit => !string.IsNullOrWhiteSpace(commit)).ToList());
-                    }
-                }
-            }
-
-            return commits;
-        }
-
-
-        public void CreateExcelFile(string filePath, List<WeekData> weekDataList)
+        public void CreateExcelFile(string filePath, List<WeekData> weekDataList, DateTime internshipEndDate)
         {
             using (var workbook = new XLWorkbook())
             {
@@ -84,6 +56,12 @@ namespace DAL
 
                         var dayData = weekData.DayDataList[day];
                         DateTime currentDate = weekData.StartDate.AddDays(day);
+
+                        if (currentDate > internshipEndDate)
+                        {
+                            break; // Ngừng ghi khi vượt quá ngày kết thúc thực tập
+                        }
+
                         worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber}";
                         worksheet.Cell(currentRow, 2).Value = dayData.DayOfWeek;
                         worksheet.Cell(currentRow, 3).Value = dayData.Session;
@@ -211,40 +189,5 @@ namespace DAL
             }
             return dataTable;
         }
-
-        public List<WeekData> LoadCommitsFromFolders(List<string> folderPaths)
-        {
-            var weekDataList = new List<WeekData>();
-
-            foreach (var folderPath in folderPaths)
-            {
-                var weekData = new WeekData();
-                string weekNumberStr = Path.GetFileName(folderPath).Replace("Week_", "");
-                if (int.TryParse(weekNumberStr, out int weekNumber))
-                {
-                    weekData.WeekNumber = weekNumber;
-                }
-
-                var dayDataList = new List<DayData>();
-                string[] dayFiles = Directory.GetFiles(folderPath, "*_commits.txt");
-
-                foreach (var dayFile in dayFiles)
-                {
-                    var dayData = new DayData();
-                    string dayOfWeek = Path.GetFileName(dayFile).Replace("_commits.txt", "");
-                    dayData.DayOfWeek = dayOfWeek;
-
-                    string[] commitMessages = File.ReadAllLines(dayFile);
-                    dayData.AssignedTasks = string.Join("\n", commitMessages);
-                    dayDataList.Add(dayData);
-                }
-
-                weekData.DayDataList = dayDataList;
-                weekDataList.Add(weekData);
-            }
-
-            return weekDataList;
-        }
-
     }
 }

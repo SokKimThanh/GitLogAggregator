@@ -291,9 +291,9 @@ namespace GitLogAggregator.DataAccess
             }
             return authors;
         }
-        public List<string> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
+        public List<DayData> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
         {
-            List<string> commits = new List<string>();
+            List<DayData> dayDataList = new List<DayData>();
 
             for (DateTime date = internshipStartDate; date <= internshipEndDate; date = date.AddDays(1))
             {
@@ -302,27 +302,26 @@ namespace GitLogAggregator.DataAccess
 
                 if (!string.IsNullOrEmpty(output))
                 {
-                    commits.AddRange(output.Split('\n').Where(commit => !string.IsNullOrWhiteSpace(commit)).ToList());
+                    var tasks = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                                      .Select(task => task.Trim())
+                                      .ToArray();
+
+                    dayDataList.Add(new DayData
+                    {
+                        DayOfWeek = date.DayOfWeek.ToString(),
+                        Session = "Sáng", // hoặc "Chiều", "Tối" tùy theo thông tin bạn có
+                        Attendance = "Có mặt",
+                        AssignedTasks = string.Join("\n", tasks),
+                        AchievedResults = "N/A",
+                        Comments = "N/A",
+                        Notes = "N/A"
+                    });
                 }
             }
 
-            return commits;
+            return dayDataList;
         }
 
-        public DataTable ConvertCommitsToDataTable(List<string> commits)
-        {
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("Commit");
-
-            foreach (var commit in commits)
-            {
-                var row = dataTable.NewRow();
-                row["Commit"] = commit;
-                dataTable.Rows.Add(row);
-            }
-
-            return dataTable;
-        }
 
         public DateTime CalculateEndDate(DateTime startDate, int weeks)
         {

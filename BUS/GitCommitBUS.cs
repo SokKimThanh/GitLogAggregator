@@ -19,14 +19,9 @@ namespace BUS
         {
             data = new GitCommitDAL();
         }
-
-        public List<string> GetCommits(string projectDirectory, string author, DateTime startDate, int weeks)
+        public void CreateExcelFile(string filePath, List<WeekData> commits, DateTime internshipEndDate)
         {
-            return data.GetCommits(projectDirectory, author, startDate, weeks);
-        }
-        public void CreateExcelFile(string filePath, List<WeekData> commits)
-        {
-            data.CreateExcelFile(filePath, commits);
+            data.CreateExcelFile(filePath, commits, internshipEndDate);
         }
         public List<WeekData> ConvertToWeekDataList(DataTable dataTable)
         {
@@ -42,10 +37,5 @@ namespace BUS
         {
             return data.ConvertToDataTable(weekDataList);
         }
-
-        public List<WeekData> LoadCommitsFromFolders(List<string> folderPaths)
-        {
-            return data.LoadCommitsFromFolders(folderPaths);
-        } 
     }
 }

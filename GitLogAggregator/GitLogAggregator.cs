@@ -48,9 +48,8 @@ namespace GitLogAggregator
             txtEndDateInternship.Enabled = false;
             txtFirstCommitDate.Enabled = false;
             btnAggregator.Enabled = false;
-
-            // Ẩn nút xóa khi form mới tải
-            btnDelete.Enabled = false;
+            btnExport.Enabled = false;// tắt nút xuất excel vì chưa biết là dự án nào.
+            btnDelete.Enabled = false;// Ẩn nút xóa khi form mới tải
 
             if (!string.IsNullOrEmpty(projectDirectory))
             {
@@ -119,14 +118,14 @@ namespace GitLogAggregator
             int weeks = (int)numericWeeks.Value;
             DateTime internshipEndDate = gitLogBUS.CalculateEndDate(internshipStartDate, weeks);
 
-
             // Hiển thị tất cả commit lên DataGridView
             var allCommits = gitLogBUS.GetCommits(projectDirectory, cboAuthorCommit.SelectedItem.ToString(), internshipStartDate, internshipEndDate);
-            dataGridView1.DataSource = gitLogBUS.ConvertCommitsToDataTable(allCommits);
+            dataGridView1.DataSource = allCommits;
 
             // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
+
 
         private bool IsValidGitRepository(string directory)
         {
@@ -169,8 +168,7 @@ namespace GitLogAggregator
                     AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {aggregateInfo.Author}\nNgày bắt đầu: {aggregateInfo.StartDate:dd/MM/yyyy}\n");
 
                     // Load và hiển thị các commits từ các thư mục
-                    var weekDataList = gitCommitBUS.LoadCommitsFromFolders(aggregateInfo.Folders);
-                    dataGridView1.DataSource = gitCommitBUS.ConvertToDataTable(weekDataList);
+                    LoadCommitDatagridview();
 
                     btnAggregator.Enabled = false;
                     btnDelete.Enabled = true;
@@ -275,8 +273,11 @@ namespace GitLogAggregator
                 {
                     Author = author,
                     StartDate = internshipStartDate,
+                    EndDate = txtEndDateInternship.Value,
                     Folders = folders,
-                    ProjectDirectory = projectDirectory
+                    ProjectDirectory = projectDirectory,
+                    FirstCommitDate = txtFirstCommitDate.Value,
+                    Weeks = (int)numericWeeks.Value
                 };
 
                 // Lưu thông tin vào file text
@@ -307,7 +308,8 @@ namespace GitLogAggregator
                 else
                 {
                     EnableControls();
-                    btnAggregator.Enabled = false;
+                    btnAggregator.Enabled = false;// tắt nút tổng hợp
+                    btnExport.Enabled = true;// mở nút xuất excel
                 }
             }
         }
@@ -386,9 +388,11 @@ namespace GitLogAggregator
                 // Lấy tên thư mục từ đường dẫn
                 string folderName = Path.GetFileName(folder);
 
-                ListViewItem folderItem = new ListViewItem(folderName);
-                folderItem.ImageKey = "folder";
-                folderItem.Tag = folder; // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
+                var folderItem = new ListViewItem(folderName)
+                {
+                    ImageKey = "folder",
+                    Tag = folder // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
+                };
                 weekListView.Items.Add(folderItem);
 
                 // Lấy và thêm các file trong thư mục vào fileListView
@@ -396,12 +400,15 @@ namespace GitLogAggregator
                 foreach (var file in files)
                 {
                     string fileName = Path.GetFileName(file);
-                    ListViewItem fileItem = new ListViewItem(fileName);
-                    fileItem.Tag = file; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    var fileItem = new ListViewItem(fileName)
+                    {
+                        Tag = file // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    };
                     fileListView.Items.Add(fileItem);
                 }
             }
         }
+
 
         /// <summary>
         /// Hiển thị danh sách thư mục thực tập
@@ -425,7 +432,6 @@ namespace GitLogAggregator
             }
 
             // Khởi tạo ImageList
-            ImageList imageList = new ImageList();
             imageList.ImageSize = new Size(32, 32);
             imageList.Images.Add("folder", Properties.Resources.Git_commit_aggregation_tool);
             weekListView.SmallImageList = imageList;
@@ -437,9 +443,12 @@ namespace GitLogAggregator
             weekListView.Items.Clear();  // Xóa tất cả các mục hiện có
             foreach (string directory in directories)
             {
-                ListViewItem item = new ListViewItem(Path.GetFileName(directory));
-                item.ImageKey = "folder";  // Sử dụng icon thư mục
-                item.Tag = directory; // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
+                ListViewItem item = new ListViewItem(Path.GetFileName(directory))
+                {
+
+                    ImageKey = "folder",  // Sử dụng icon thư mục
+                    Tag = directory // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
+                };
                 weekListView.Items.Add(item);
             }
 
@@ -462,8 +471,10 @@ namespace GitLogAggregator
 
                 foreach (var file in files)
                 {
-                    ListViewItem item = new ListViewItem(Path.GetFileName(file));
-                    item.Tag = file; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    ListViewItem item = new ListViewItem(Path.GetFileName(file))
+                    {
+                        Tag = file // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    };
                     fileListView.Items.Add(item);
                 }
             }
@@ -611,12 +622,12 @@ namespace GitLogAggregator
             var dataTable = (DataTable)dataGridView1.DataSource;
             List<WeekData> weekDataList = gitCommitBUS.ConvertToWeekDataList(dataTable);
 
-            gitCommitBUS.CreateExcelFile(filePath, weekDataList);
+            gitCommitBUS.CreateExcelFile(filePath, weekDataList, txtInternshipDate.Value);
 
             AppendTextWithScroll("Xuất Excel thành công! File đã được lưu trên Desktop của bạn.\n");
         }
 
-        private void numericWeeks_ValueChanged(object sender, EventArgs e)
+        private void NumericWeeks_ValueChanged(object sender, EventArgs e)
         {
             DateTime startDate = txtInternshipDate.Value;
             int weeks = (int)numericWeeks.Value;

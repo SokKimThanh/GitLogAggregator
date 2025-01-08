@@ -94,7 +94,7 @@
             this.txtInternshipDate.Name = "txtInternshipDate";
             this.txtInternshipDate.Size = new System.Drawing.Size(199, 25);
             this.txtInternshipDate.TabIndex = 3;
-            this.txtInternshipDate.ValueChanged += new System.EventHandler(this.numericWeeks_ValueChanged);
+            this.txtInternshipDate.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
             // 
             // txtResult
             // 
@@ -382,7 +382,7 @@
             0,
             0,
             0});
-            this.numericWeeks.ValueChanged += new System.EventHandler(this.numericWeeks_ValueChanged);
+            this.numericWeeks.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
             // 
             // GitLogAggregator
             // 
