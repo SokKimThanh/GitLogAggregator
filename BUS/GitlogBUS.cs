@@ -27,11 +27,6 @@ namespace GitLogAggregator.BusinessLogic
             return dataAccess.RunGitCommand(command, projectDirectory);
         }
 
-        public void RunGitCommand(string command, string outputFile, string projectDirectory)
-        {
-            dataAccess.RunGitCommand(command, outputFile, projectDirectory);
-        }
-
         public List<string> GetGitAuthors(string projectDirectory)
         {
             return dataAccess.GetGitAuthors(projectDirectory);
@@ -65,10 +60,10 @@ namespace GitLogAggregator.BusinessLogic
             return dataAccess.GetProjectStartDate(projectDirectory);
         }
 
-        public void CreateBatchFile(string filePath, string command, string projectDirectory)
+        
+        public List<string> AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
         {
-            dataAccess.CreateBatchFile(filePath, command, projectDirectory);
+            return dataAccess.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
         }
-
     }
 }

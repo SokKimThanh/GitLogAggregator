@@ -16,7 +16,7 @@ namespace GitLogAggregator
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new GitLogAggregator());
-        }
+            Application.Run(new GitLogAggregator()); 
+        } 
     }
 }

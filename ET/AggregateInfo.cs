@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace ET
 {
     /// <summary>
-    /// Thông tin commit tổng hợp
+    /// Lưu trữ thông tin tổng hợp về dự án, bao gồm thông tin tác giả, ngày bắt đầu và danh sách thư mục 8 tuần. 
+    /// Phù hợp cho việc quản lý thông tin dự án thực tập.
     /// </summary>
     public class AggregateInfo
     {
-
         /// <summary>
-        /// Đường dẫn gốc
+        /// Đường dẫn đến thư mục dự án
         /// </summary>
         public string ProjectDirectory { get; set; }
         /// <summary>
@@ -21,7 +21,7 @@ namespace ET
         /// </summary>
         public string Author { get; set; }
         /// <summary>
-        /// internshipStartDate
+        /// Ngày bắt đầu thực tập.
         /// </summary>
         public DateTime StartDate { get; set; }
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using ET;
 
@@ -10,6 +11,11 @@ namespace GitLogAggregator.DataAccess
 {
     public class GitlogDAL
     {
+        public List<string> LogMessages { get; private set; }
+        public GitlogDAL()
+        {
+            LogMessages = new List<string>();
+        }
         /// <summary>
         /// Tính số tuần từ ngày bắt đầu thực tập đến ngày bắt đầu dự án
         /// </summary>
@@ -32,126 +38,53 @@ namespace GitLogAggregator.DataAccess
 
             return weekNumber;
         }
+
         public string RunGitCommand(string command, string projectDirectory)
         {
-            string batchFilePath = Path.Combine(projectDirectory, "runGitCommand.bat");
-            string outputFilePath = Path.Combine(projectDirectory, "output.txt");
-
-            // Tạo file batch
-            CreateBatchFile(batchFilePath, $"git {command} > \"{outputFilePath}\"", projectDirectory);
-
-            // Chạy lệnh từ file batch
-            RunBatchFile(batchFilePath);
-
-            // Đọc kết quả từ file output
-            string output = File.Exists(outputFilePath) ? File.ReadAllText(outputFilePath) : string.Empty;
-
-            // Xóa file batch và file output sau khi hoàn thành nhiệm vụ
-            File.Delete(batchFilePath);
-            File.Delete(outputFilePath);
-
-            return output;
-        }
-
-
-        public void RunGitCommand(string command, string outputFile, string projectDirectory)
-        {
-            string batchFilePath = Path.Combine(projectDirectory, "runGitCommand.bat");
-
-            // Tạo file batch
-            CreateBatchFile(batchFilePath, $"git {command} > \"{outputFile}\"", projectDirectory);
-
-            // Chạy lệnh từ file batch
-            RunBatchFile(batchFilePath);
-
-            // Kiểm tra sự tồn tại của file output
-            if (!File.Exists(outputFile))
+            var processStartInfo = new ProcessStartInfo("git", command)
             {
-                Console.WriteLine($"File {outputFile} not created.");
-            }
-
-            // Xóa file batch sau khi hoàn thành nhiệm vụ
-            File.Delete(batchFilePath);
-        }
-        /// <summary>
-        /// Tạo batch file động để chạy lệnh Git và xử lý kết quả.
-        /// Sử dụng cmd hoặc PowerShell để chạy lệnh và đọc output.
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="command"></param>
-        public void CreateBatchFile(string filePath, string command, string projectDirectory)
-        {
-            string batchContent = $@"
-@echo off
-cd /d ""{projectDirectory}""
-echo Running Git command...
-{command}
-echo Git command completed.
-";
-            File.WriteAllText(filePath, batchContent);
-        }
-
-        public void RunBatchFile(string filePath)
-        {
-            ProcessStartInfo startInfo = new ProcessStartInfo
-            {
-                FileName = "cmd.exe",
-                Arguments = $"/c \"{filePath}\"",
+                WorkingDirectory = projectDirectory,
                 RedirectStandardOutput = true,
+                RedirectStandardError = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8
             };
 
-            using (Process process = new Process { StartInfo = startInfo })
+            using (var process = Process.Start(processStartInfo))
             {
-                if (!process.Start())
+                using (var reader = process.StandardOutput)
                 {
-                    throw new InvalidOperationException("Process failed to start.");
+                    return reader.ReadToEnd();
                 }
-
-                using (StreamReader reader = process.StandardOutput)
-                {
-                    try
-                    {
-                        string output = reader.ReadToEnd();
-                        Console.WriteLine(output);// Hiển thị kết quả của lệnh Git hoặc thông báo lỗi
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"An error occurred: {ex.Message}");
-                    }
-                }
-
-                process.WaitForExit();
             }
         }
+
+
         public List<string> GetGitAuthors(string projectDirectory)
         {
             // Kiểm tra thư mục dự án
             if (string.IsNullOrEmpty(projectDirectory) || !Directory.Exists(projectDirectory))
             {
-                Console.WriteLine("Project directory is invalid or does not exist.");
+                LogMessages.Add("Project directory is invalid or does not exist.");
                 return new List<string>();
             }
 
-            // Đường dẫn file output
-            string outputFilePath = Path.Combine(projectDirectory, "authors_output.txt");
+            // Chạy lệnh Git để lấy danh sách tác giả
+            string gitCommand = "shortlog -sne";
+            string output = RunGitCommand(gitCommand, projectDirectory);
 
-            // Chạy lệnh Git để tạo file mới
-            string gitCommand = $"shortlog -sne";
-            RunGitCommand(gitCommand, outputFilePath, projectDirectory);
-
-            // Tạo file bằng lệnh Git nếu chưa tồn tại
-            if (!File.Exists(outputFilePath))
+            // Kiểm tra nếu output rỗng
+            if (string.IsNullOrEmpty(output))
             {
-                Console.WriteLine("Failed to generate authors_output.txt.");
+                LogMessages.Add("Failed to retrieve authors.");
                 return new List<string>();
             }
 
             HashSet<string> authors = new HashSet<string>();
             try
             {
-                foreach (var line in File.ReadLines(outputFilePath, Encoding.UTF8))
+                foreach (var line in output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     if (!string.IsNullOrWhiteSpace(line))
                     {
@@ -167,22 +100,21 @@ echo Git command completed.
                         }
                         else
                         {
-                            Console.WriteLine($"Unexpected line format: {line}");
+                            LogMessages.Add($"Unexpected line format: {line}");
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error processing authors: {ex.Message}");
+                LogMessages.Add($"Error processing authors: {ex.Message}");
                 return new List<string>();
             }
 
-            // Xóa file sau khi xử lý thành công
-            File.Delete(outputFilePath);
-
             return new List<string>(authors);
         }
+
+
 
 
         public void SaveAggregateInfo(AggregateInfo aggregateInfo)
@@ -254,10 +186,8 @@ echo Git command completed.
 
             // Sử dụng lệnh Git chính xác
             string command = @"git log --reverse --pretty=format:""%%ad"" --date=short -n 1 > project_start_date.txt";
-            CreateBatchFile(batchFilePath, command, projectDirectory);
 
-            // Chạy batch file
-            RunBatchFile(batchFilePath);
+            RunGitCommand(command, projectDirectory);
 
             // Kiểm tra file đầu ra
             if (!File.Exists(outputFilePath))
@@ -279,6 +209,67 @@ echo Git command completed.
             {
                 throw new Exception($"Ngày không hợp lệ: {dateStr}");
             }
+        }
+
+        public List<string> AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
+        {
+            DateTime projectStartDate = GetProjectStartDate(projectDirectory);
+            int startingWeek = CalculateWeekNumber(internshipStartDate, projectStartDate);
+
+            List<string> folders = new List<string>();
+
+            for (int weekOffset = 0; weekOffset < 8; weekOffset++)
+            {
+                DateTime currentWeekStart = internshipStartDate.AddDays(weekOffset * 7);
+                int currentWeek = startingWeek + weekOffset;
+                string weekFolder = Path.Combine(internshipWeekFolder, "Week_" + currentWeek);
+                string combinedFile = Path.Combine(weekFolder, "combined_commits.txt");
+
+                Directory.CreateDirectory(weekFolder);
+
+                if (File.Exists(combinedFile))
+                {
+                    File.Delete(combinedFile);
+                }
+
+                string[] days = { "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" };
+                foreach (string day in days)
+                {
+                    string dailyFile = Path.Combine(weekFolder, $"{day}_commits.txt");
+
+                    string since = $"{currentWeekStart:yyyy-MM-dd} 00:00";
+                    string until = $"{currentWeekStart:yyyy-MM-dd} 23:59";
+                    string gitLogCommand = $"log --author=\"{author}\" --since=\"{since}\" --until=\"{until}\"";
+
+                    // Chạy lệnh Git và lưu kết quả vào biến
+                    string logOutput = RunGitCommand(gitLogCommand, projectDirectory);
+
+                    if (!string.IsNullOrEmpty(logOutput))
+                    {
+                        // Nếu có commit, ghi kết quả vào file
+                        File.WriteAllText(dailyFile, logOutput);
+                        using (StreamWriter writer = new StreamWriter(combinedFile, true))
+                        {
+                            writer.Write(logOutput);
+                            writer.WriteLine();
+                        }
+                    }
+                    else
+                    {
+                        // Xóa dailyFile nếu không có commit
+                        if (File.Exists(dailyFile))
+                        {
+                            File.Delete(dailyFile);
+                        }
+                    }
+
+                    currentWeekStart = currentWeekStart.AddDays(1);
+                }
+
+                folders.Add(weekFolder);
+                Console.Write($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}\n");
+            }
+            return folders;
         }
     }
 }
