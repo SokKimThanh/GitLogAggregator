@@ -618,24 +618,32 @@ namespace GitLogAggregator
 
         private void BtnExportExcel_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.DataSource == null)
+            try
             {
-                AppendTextWithScroll("Không có dữ liệu để xuất.\n");
-                return;
+
+                if (dataGridView1.DataSource == null)
+                {
+                    AppendTextWithScroll("Không có dữ liệu để xuất.\n");
+                    return;
+                }
+
+                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string filePath = Path.Combine(desktopPath, "commits.xlsx");
+
+                DataTable dataTable = (DataTable)dataGridView1.DataSource;
+                List<DayData> dayDataList = gitCommitBUS.ConvertDataTableToDayDataList(dataTable);
+
+                // Chuyển đổi `List<DayData>` thành `List<WeekData>`
+                List<WeekData> weekDataList = gitCommitBUS.ConvertDayDataListToWeekDataList(dayDataList, txtInternshipStartDate.Value, txtInternshipEndDate.Value);
+
+                gitCommitBUS.CreateExcelFile(filePath, weekDataList, txtInternshipEndDate.Value);
+
+                AppendTextWithScroll("Xuất Excel thành công! File đã được lưu trên Desktop của bạn.\n");
             }
-
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string filePath = Path.Combine(desktopPath, "commits.xlsx");
-
-            DataTable dataTable = (DataTable)dataGridView1.DataSource;
-            List<DayData> dayDataList = gitLogBUS.ConvertDataTableToDayDataList(dataTable);
-
-            // Chuyển đổi `List<DayData>` thành `List<WeekData>`
-            List<WeekData> weekDataList = gitCommitBUS.ConvertDayDataListToWeekDataList(dayDataList, txtInternshipStartDate.Value, txtInternshipEndDate.Value);
-
-            gitCommitBUS.CreateExcelFile(filePath, weekDataList, txtInternshipEndDate.Value);
-
-            AppendTextWithScroll("Xuất Excel thành công! File đã được lưu trên Desktop của bạn.\n");
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi: {ex.Message}");
+            }
         }
 
 

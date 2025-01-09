@@ -89,9 +89,6 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.ConvertDayDataListToDataTable(dayDataList);
         }
-        public List<DayData> ConvertDataTableToDayDataList(DataTable dataTable)
-        {
-            return data.ConvertDataTableToDayDataList(dataTable);
-        }
+     
     }
 }

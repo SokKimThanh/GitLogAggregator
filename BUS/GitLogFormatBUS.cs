@@ -33,10 +33,25 @@ namespace BUS
         {
             return data.RunGitCommand(command, projectDirectory);
         }
+
+        /// <summary>
+        /// Hiển thị danh sách tuần thực tập trên dgv
+        /// </summary>
+        /// <param name="weekDataList"></param>
+        /// <returns></returns>
         public DataTable ConvertToDataTable(List<WeekData> weekDataList)
         {
             return data.ConvertToDataTable(weekDataList);
         }
 
+        /// <summary>
+        /// Chuyển về danh sách ngày thực tập
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
+        public List<DayData> ConvertDataTableToDayDataList(DataTable dataTable)
+        {
+            return data.ConvertDataTableToDayDataList(dataTable);
+        }
     }
 }

@@ -236,7 +236,7 @@ namespace GitLogAggregator.DataAccess
                     File.Delete(combinedFile);
                 }
 
-                string[] days = { "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" };
+                string[] days = { "Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy" };
                 foreach (string day in days)
                 {
                     string dailyFile = Path.Combine(weekFolder, $"{day}_commits.txt");
@@ -346,25 +346,6 @@ namespace GitLogAggregator.DataAccess
 
             return dataTable;
         }
-        public List<DayData> ConvertDataTableToDayDataList(DataTable dataTable)
-        {
-            List<DayData> dayDataList = new List<DayData>();
-
-            foreach (DataRow row in dataTable.Rows)
-            {
-                dayDataList.Add(new DayData
-                {
-                    DayOfWeek = row["DayOfWeek"].ToString(),
-                    Session = row["Session"].ToString(),
-                    Attendance = row["Attendance"].ToString(),
-                    AssignedTasks = row["AssignedTasks"].ToString(),
-                    AchievedResults = row["AchievedResults"].ToString(),
-                    Comments = row["Comments"].ToString(),
-                    Notes = row["Notes"].ToString()
-                });
-            }
-
-            return dayDataList;
-        }
+       
     }
 }
