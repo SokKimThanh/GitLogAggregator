@@ -41,6 +41,52 @@ namespace GitLogAggregator.DataAccess
 
             return weekNumber;
         }
+        public List<string> GetGitAuthors(string projectDirectory)
+        {
+            // Kiểm tra thư mục dự án
+            if (string.IsNullOrEmpty(projectDirectory) || !Directory.Exists(projectDirectory))
+            {
+                throw new Exception("Thư mục dự án không tồn tại hoặc không hợp lệ.");
+            }
+
+            // Chạy lệnh Git để lấy danh sách tác giả
+            string gitCommand = "shortlog -sne";
+            string output = RunGitCommand(gitCommand, projectDirectory);
+
+            // Kiểm tra nếu output rỗng
+            if (string.IsNullOrEmpty(output))
+            {
+                throw new Exception("Lỗi: Không tìm thấy danh sách tác giả commit.");
+            }
+
+            HashSet<string> authors = new HashSet<string>();
+            try
+            {
+                // Chia nhỏ output thành các dòng
+                foreach (var line in output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    // Kiểm tra dòng không trống
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        // Tìm vị trí của dấu ngoặc nhọn '<'
+                        int emailStart = line.IndexOf('<');
+                        if (emailStart != -1)
+                        {
+                            // Trích xuất tên tác giả, bỏ số commit và email
+                            string authorName = line.Substring(line.IndexOf('\t') + 1, emailStart - line.IndexOf('\t') - 1).Trim();
+                            // Thêm tên tác giả vào danh sách
+                            authors.Add(authorName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error processing authors: {ex.Message}");
+            }
+
+            return authors.ToList(); // Chuyển đổi HashSet thành List để trả về
+        }
 
         public string RunGitCommand(string command, string projectDirectory)
         {
@@ -62,69 +108,6 @@ namespace GitLogAggregator.DataAccess
                 }
             }
         }
-
-        public List<string> GetGitAuthors(string projectDirectory)
-        {
-            // Kiểm tra thư mục dự án
-            if (string.IsNullOrEmpty(projectDirectory) || !Directory.Exists(projectDirectory))
-            {
-                throw new Exception("Thư mục dự án không tồn tại hoặc không hợp lệ.");
-
-            }
-
-            // Chạy lệnh Git để lấy danh sách tác giả
-            string gitCommand = "shortlog -sne";
-            string output = RunGitCommand(gitCommand, projectDirectory);
-
-            // Kiểm tra nếu output rỗng
-            if (string.IsNullOrEmpty(output))
-            {
-                throw new Exception("Tìm thấy danh sách tác giả commit thất bại.");
-
-            }
-
-            HashSet<string> authors = new HashSet<string>();
-            try
-            {
-                //Chia nhỏ output thành các dòng
-                foreach (var line in output.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    //Kiểm tra dòng không trống
-                    if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        //Chia nhỏ dòng thành các phần
-                        string[] parts = line.Split('\t');
-                        //Kiểm tra số phần
-                        if (parts.Length >= 2)
-                        {
-                            //Lấy tên tác giả
-                            string authorWithEmail = parts[1];
-                            //Xác định vị trí email
-                            int emailStart = authorWithEmail.IndexOf('<');
-                            //Trích xuất tên tác giả:
-                            string authorName = emailStart != -1
-                                ? authorWithEmail.Substring(0, emailStart).Trim()
-                                : authorWithEmail.Trim();
-                            //Thêm tên tác giả vào danh sách
-                            authors.Add(authorName);
-                        }
-                        else
-                        //Xử lý lỗi định dạng Nếu số phần ít hơn 2
-                        {
-                            // Ghi nhật ký lỗi và tiếp tục vòng lặp
-                            Console.WriteLine($"Unexpected line format: {line}");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error processing authors: {ex.Message}");
-            }
-
-            return new List<string>(authors);
-        }
-
         /// <summary>
         /// Truy cập file bằng streamwriter
         /// </summary>
@@ -346,6 +329,6 @@ namespace GitLogAggregator.DataAccess
 
             return dataTable;
         }
-       
+
     }
 }

@@ -45,24 +45,6 @@ namespace GitLogAggregator
         {
             DisableControls();
             btnOpenGitFolder.Enabled = true;
-
-            //cboAuthorCommit.Enabled = false;
-            //txtInternshipEndDate.Enabled = false;
-            //txtFirstCommitDate.Enabled = false;
-            //btnAggregator.Enabled = false;
-            //btnExport.Enabled = false;// tắt nút xuất excel vì chưa biết là dự án nào.
-            //btnDelete.Enabled = false;// Ẩn nút xóa khi form mới tải
-
-            if (!string.IsNullOrEmpty(projectDirectory))
-            {
-                // hiển thị tác giả khi chọn dự án git
-                cboAuthorCommit.DataSource = gitLogBUS.LoadAuthorsCombobox(projectDirectory);
-
-                //Đảm bảo rằng fileListView đã được cấu hình để hiển thị cột "STT" và tên file.
-                InitializeFileListView();
-
-                EnableControls();
-            }
         }
         /// <summary>
         /// Người dùng chọn thư mục qua hộp thoại.
@@ -108,9 +90,11 @@ namespace GitLogAggregator
                 }
                 else
                 {
-                    // Mở các nút tạo, tác giả, ngày
-                    EnableControls();
-                    btnDelete.Enabled = false;
+                    DisableControls();
+                    cboAuthorCommit.Enabled = true;
+                    txtInternshipStartDate.Enabled = true;
+                    btnOpenGitFolder.Enabled = true;
+                    btnAggregator.Enabled = true;
                 }
             }
         }
@@ -118,11 +102,13 @@ namespace GitLogAggregator
         {
             fileListView.Columns.Clear();
             fileListView.View = View.Details;
+            fileListView.FullRowSelect = true; // Đảm bảo chọn toàn bộ hàng
+            fileListView.MultiSelect = false; // Đảm bảo chỉ chọn một hàng tại một thời điểm
 
             // Thêm cột STT và tên file
-            fileListView.Columns.Add("STT", 50, HorizontalAlignment.Left);
-            fileListView.Columns.Add("Tên file", 250, HorizontalAlignment.Left);
-        }
+            fileListView.Columns.Add("STT", 40, HorizontalAlignment.Right);
+            fileListView.Columns.Add("Tên file", 300, HorizontalAlignment.Left);
+        } 
 
         private void LoadCommitDatagridview()
         {
@@ -185,23 +171,19 @@ namespace GitLogAggregator
                     AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {aggregateInfo.Author}\nNgày bắt đầu: {aggregateInfo.StartDate:dd/MM/yyyy}\n");
 
                     // Load và hiển thị các commits từ các thư mục
-                    LoadCommitDatagridview();
+                    LoadCommitDatagridview(); 
 
-                    btnAggregator.Enabled = false;
+                    //Đảm bảo rằng fileListView đã được cấu hình để hiển thị cột "STT" và tên file.
+                    InitializeFileListView();
+
+                    EnableControls();
                     btnDelete.Enabled = true;
-                    btnOpenGitFolder.Enabled = false;
-                    cboAuthorCommit.Enabled = false;
-                    txtInternshipStartDate.Enabled = false;
                     btnExport.Enabled = true;
                 }
                 else
                 {
-                    cboAuthorCommit.Enabled = true;
-                    txtInternshipStartDate.Enabled = true;
-                    btnAggregator.Enabled = true;
+                    DisableControls();
                     btnDelete.Enabled = false;
-                    btnOpenGitFolder.Enabled = true;
-                    btnExport.Enabled = false;
                 }
             }
             catch
@@ -284,10 +266,7 @@ namespace GitLogAggregator
                 {
                     AppendTextWithScroll("Lỗi: Ngày thực tập phải diễn ra trước ngày commit đầu tiên.\n");
                     isProcessing = false;
-                    isError = true;// đang có lỗi
-                    // Tạm khóa dữ liệu cho phép chọn dự án khác hoặc mới.
-                    EnableControls();
-                    btnDelete.Enabled = false;
+                    isError = true;// đang có lỗi 
                     return;
                 }
 
@@ -327,7 +306,12 @@ namespace GitLogAggregator
                 // Tạm khóa dữ liệu cho phép chọn dự án khác hoặc mới.
                 if (isError == true)
                 {
-                    isError = false;// reset flag
+                    isError = false;// reset flag 
+                    DisableControls();
+                    cboAuthorCommit.Enabled = true;
+                    txtInternshipStartDate.Enabled = true;
+                    btnOpenGitFolder.Enabled = true;
+                    btnAggregator.Enabled = true;
                 }
                 else
                 {
