@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GitLogAggregator));
             this.cboAuthorCommit = new System.Windows.Forms.ComboBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.btnSelectGitFolder = new System.Windows.Forms.Button();
+            this.btnOpenGitFolder = new System.Windows.Forms.Button();
             this.txtInternshipStartDate = new System.Windows.Forms.DateTimePicker();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnAggregator = new System.Windows.Forms.Button();
@@ -52,7 +52,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.fileListView = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.btnExport = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.label8 = new System.Windows.Forms.Label();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
@@ -60,10 +59,12 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.txtInternshipEndDate = new System.Windows.Forms.DateTimePicker();
-            this.numericWeeks = new System.Windows.Forms.NumericUpDown();
+            this.txtNumericsWeek = new System.Windows.Forms.NumericUpDown();
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            this.btnExport = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericWeeks)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.SuspendLayout();
             // 
             // cboAuthorCommit
@@ -75,16 +76,17 @@
             this.cboAuthorCommit.Size = new System.Drawing.Size(200, 25);
             this.cboAuthorCommit.TabIndex = 0;
             // 
-            // btnSelectGitFolder
+            // btnOpenGitFolder
             // 
-            this.btnSelectGitFolder.Location = new System.Drawing.Point(12, 415);
-            this.btnSelectGitFolder.Margin = new System.Windows.Forms.Padding(4);
-            this.btnSelectGitFolder.Name = "btnSelectGitFolder";
-            this.btnSelectGitFolder.Size = new System.Drawing.Size(85, 30);
-            this.btnSelectGitFolder.TabIndex = 1;
-            this.btnSelectGitFolder.Text = "Chọn dự án";
-            this.btnSelectGitFolder.UseVisualStyleBackColor = true;
-            this.btnSelectGitFolder.Click += new System.EventHandler(this.SelectGitFolderButton_Click);
+            this.btnOpenGitFolder.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnOpenGitFolder.Location = new System.Drawing.Point(12, 415);
+            this.btnOpenGitFolder.Margin = new System.Windows.Forms.Padding(4);
+            this.btnOpenGitFolder.Name = "btnOpenGitFolder";
+            this.btnOpenGitFolder.Size = new System.Drawing.Size(85, 30);
+            this.btnOpenGitFolder.TabIndex = 1;
+            this.btnOpenGitFolder.Text = "Chọn dự án";
+            this.btnOpenGitFolder.UseVisualStyleBackColor = true;
+            this.btnOpenGitFolder.Click += new System.EventHandler(this.SelectGitFolderButton_Click);
             // 
             // txtInternshipStartDate
             // 
@@ -111,6 +113,7 @@
             // 
             // btnAggregator
             // 
+            this.btnAggregator.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAggregator.Location = new System.Drawing.Point(206, 416);
             this.btnAggregator.Margin = new System.Windows.Forms.Padding(4);
             this.btnAggregator.Name = "btnAggregator";
@@ -211,7 +214,7 @@
             this.txtFolderInternshipPath.Margin = new System.Windows.Forms.Padding(4);
             this.txtFolderInternshipPath.Name = "txtFolderInternshipPath";
             this.txtFolderInternshipPath.ReadOnly = true;
-            this.txtFolderInternshipPath.Size = new System.Drawing.Size(231, 25);
+            this.txtFolderInternshipPath.Size = new System.Drawing.Size(131, 25);
             this.txtFolderInternshipPath.TabIndex = 13;
             // 
             // label6
@@ -236,6 +239,7 @@
             // 
             // btnDelete
             // 
+            this.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDelete.Location = new System.Drawing.Point(105, 415);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4);
             this.btnDelete.Name = "btnDelete";
@@ -248,6 +252,7 @@
             // helpButton
             // 
             this.helpButton.BackColor = System.Drawing.Color.DeepSkyBlue;
+            this.helpButton.Cursor = System.Windows.Forms.Cursors.Help;
             this.helpButton.Dock = System.Windows.Forms.DockStyle.Left;
             this.helpButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.helpButton.Font = new System.Drawing.Font("Microsoft YaHei", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -294,27 +299,15 @@
             this.columnHeader2.Text = "Tên File";
             this.columnHeader2.Width = 373;
             // 
-            // btnExport
-            // 
-            this.btnExport.BackColor = System.Drawing.Color.White;
-            this.btnExport.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnExport.Location = new System.Drawing.Point(290, 450);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(93, 28);
-            this.btnExport.TabIndex = 17;
-            this.btnExport.Text = "Xuất excel";
-            this.btnExport.UseVisualStyleBackColor = false;
-            this.btnExport.Click += new System.EventHandler(this.BtnExportExcel_Click);
-            // 
             // dataGridView1
             // 
             this.dataGridView1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(390, 108);
+            this.dataGridView1.Location = new System.Drawing.Point(390, 415);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridView1.Size = new System.Drawing.Size(281, 506);
+            this.dataGridView1.Size = new System.Drawing.Size(281, 211);
             this.dataGridView1.TabIndex = 18;
             // 
             // label8
@@ -371,18 +364,38 @@
             this.txtInternshipEndDate.Size = new System.Drawing.Size(199, 25);
             this.txtInternshipEndDate.TabIndex = 3;
             // 
-            // numericWeeks
+            // txtNumericsWeek
             // 
-            this.numericWeeks.Location = new System.Drawing.Point(184, 179);
-            this.numericWeeks.Name = "numericWeeks";
-            this.numericWeeks.Size = new System.Drawing.Size(43, 25);
-            this.numericWeeks.TabIndex = 20;
-            this.numericWeeks.Value = new decimal(new int[] {
+            this.txtNumericsWeek.Location = new System.Drawing.Point(184, 179);
+            this.txtNumericsWeek.Name = "txtNumericsWeek";
+            this.txtNumericsWeek.Size = new System.Drawing.Size(43, 25);
+            this.txtNumericsWeek.TabIndex = 20;
+            this.txtNumericsWeek.Value = new decimal(new int[] {
             8,
             0,
             0,
             0});
-            this.numericWeeks.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
+            this.txtNumericsWeek.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
+            // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Location = new System.Drawing.Point(390, 108);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(281, 284);
+            this.checkedListBox1.TabIndex = 23;
+            // 
+            // btnExport
+            // 
+            this.btnExport.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnExport.Location = new System.Drawing.Point(291, 450);
+            this.btnExport.Margin = new System.Windows.Forms.Padding(4);
+            this.btnExport.Name = "btnExport";
+            this.btnExport.Size = new System.Drawing.Size(92, 63);
+            this.btnExport.TabIndex = 5;
+            this.btnExport.Text = "Xuất excel Commit";
+            this.btnExport.UseVisualStyleBackColor = true;
+            this.btnExport.Click += new System.EventHandler(this.BtnExportExcel_Click);
             // 
             // GitLogAggregator
             // 
@@ -390,9 +403,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(681, 626);
-            this.Controls.Add(this.numericWeeks);
+            this.Controls.Add(this.checkedListBox1);
+            this.Controls.Add(this.txtNumericsWeek);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.btnExport);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.btnDelete);
@@ -410,12 +423,13 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnAggregator);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.txtFirstCommitDate);
             this.Controls.Add(this.txtInternshipEndDate);
             this.Controls.Add(this.txtInternshipStartDate);
-            this.Controls.Add(this.btnSelectGitFolder);
+            this.Controls.Add(this.btnOpenGitFolder);
             this.Controls.Add(this.cboAuthorCommit);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -429,7 +443,7 @@
             this.Load += new System.EventHandler(this.GitLogAggregator_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericWeeks)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -439,7 +453,7 @@
 
         private System.Windows.Forms.ComboBox cboAuthorCommit;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-        private System.Windows.Forms.Button btnSelectGitFolder;
+        private System.Windows.Forms.Button btnOpenGitFolder;
         private System.Windows.Forms.DateTimePicker txtInternshipStartDate;
         private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.Button btnAggregator;
@@ -459,7 +473,6 @@
         private System.Windows.Forms.ListView fileListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ImageList imageList;
@@ -467,6 +480,8 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.DateTimePicker txtInternshipEndDate;
-        private System.Windows.Forms.NumericUpDown numericWeeks;
+        private System.Windows.Forms.NumericUpDown txtNumericsWeek;
+        private System.Windows.Forms.CheckedListBox checkedListBox1;
+        private System.Windows.Forms.Button btnExport;
     }
 }
