@@ -108,7 +108,7 @@ namespace GitLogAggregator
             // Thêm cột STT và tên file
             fileListView.Columns.Add("STT", 40, HorizontalAlignment.Right);
             fileListView.Columns.Add("Tên file", 300, HorizontalAlignment.Left);
-        } 
+        }
 
         private void LoadCommitDatagridview()
         {
@@ -171,14 +171,17 @@ namespace GitLogAggregator
                     AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {aggregateInfo.Author}\nNgày bắt đầu: {aggregateInfo.StartDate:dd/MM/yyyy}\n");
 
                     // Load và hiển thị các commits từ các thư mục
-                    LoadCommitDatagridview(); 
+                    LoadCommitDatagridview();
 
                     //Đảm bảo rằng fileListView đã được cấu hình để hiển thị cột "STT" và tên file.
                     InitializeFileListView();
 
                     EnableControls();
-                    btnDelete.Enabled = true;
-                    btnExport.Enabled = true;
+                    btnDelete.Enabled = true;// open
+                    btnExport.Enabled = true;  // open
+                    txtInternshipEndDate.Enabled = false;
+                    txtFirstCommitDate.Enabled = false;
+                    txtNumericsWeek.Enabled = false;
                 }
                 else
                 {
@@ -316,8 +319,9 @@ namespace GitLogAggregator
                 else
                 {
                     EnableControls();
-                    btnAggregator.Enabled = false;// tắt nút tổng hợp
-                    btnExport.Enabled = true;// mở nút xuất excel
+                    txtInternshipEndDate.Enabled = false;
+                    txtFirstCommitDate.Enabled = false;
+                    txtNumericsWeek.Enabled = false;
                 }
             }
         }
