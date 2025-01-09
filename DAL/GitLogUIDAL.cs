@@ -327,6 +327,44 @@ namespace GitLogAggregator.DataAccess
         {
             return startDate.AddDays(weeks * 7 - 1); // -1 để bao gồm ngày bắt đầu
         }
+        public DataTable ConvertDayDataListToDataTable(List<DayData> dayDataList)
+        {
+            DataTable dataTable = new DataTable();
 
+            dataTable.Columns.Add("DayOfWeek", typeof(string));
+            dataTable.Columns.Add("Session", typeof(string));
+            dataTable.Columns.Add("Attendance", typeof(string));
+            dataTable.Columns.Add("AssignedTasks", typeof(string));
+            dataTable.Columns.Add("AchievedResults", typeof(string));
+            dataTable.Columns.Add("Comments", typeof(string));
+            dataTable.Columns.Add("Notes", typeof(string));
+
+            foreach (var dayData in dayDataList)
+            {
+                dataTable.Rows.Add(dayData.DayOfWeek, dayData.Session, dayData.Attendance, dayData.AssignedTasks, dayData.AchievedResults, dayData.Comments, dayData.Notes);
+            }
+
+            return dataTable;
+        }
+        public List<DayData> ConvertDataTableToDayDataList(DataTable dataTable)
+        {
+            List<DayData> dayDataList = new List<DayData>();
+
+            foreach (DataRow row in dataTable.Rows)
+            {
+                dayDataList.Add(new DayData
+                {
+                    DayOfWeek = row["DayOfWeek"].ToString(),
+                    Session = row["Session"].ToString(),
+                    Attendance = row["Attendance"].ToString(),
+                    AssignedTasks = row["AssignedTasks"].ToString(),
+                    AchievedResults = row["AchievedResults"].ToString(),
+                    Comments = row["Comments"].ToString(),
+                    Notes = row["Notes"].ToString()
+                });
+            }
+
+            return dayDataList;
+        }
     }
 }

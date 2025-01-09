@@ -29,7 +29,7 @@ namespace GitLogAggregator
         private readonly GitlogBUS gitLogBUS = new GitlogBUS();
 
         // Git commit BUS
-        private readonly GitCommitBUS gitCommitBUS = new GitCommitBUS();
+        private readonly GitLogFormatBUS gitCommitBUS = new GitLogFormatBUS();
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -44,8 +44,8 @@ namespace GitLogAggregator
         private void GitLogAggregator_Load(object sender, EventArgs e)
         {
             cboAuthorCommit.Enabled = false;
-            txtInternshipDate.Enabled = true;
-            txtEndDateInternship.Enabled = false;
+            txtInternshipStartDate.Enabled = true;
+            txtInternshipEndDate.Enabled = false;
             txtFirstCommitDate.Enabled = false;
             btnAggregator.Enabled = false;
             btnExport.Enabled = false;// tắt nút xuất excel vì chưa biết là dự án nào.
@@ -114,17 +114,23 @@ namespace GitLogAggregator
             dataGridView1.DataSource = null;
 
             // thông tin giao diện thời gian thực tập
-            DateTime internshipStartDate = txtInternshipDate.Value;
+            DateTime internshipStartDate = txtInternshipStartDate.Value;
             int weeks = (int)numericWeeks.Value;
             DateTime internshipEndDate = gitLogBUS.CalculateEndDate(internshipStartDate, weeks);
 
-            // Hiển thị tất cả commit lên DataGridView
+            // Lấy tất cả commit
             var allCommits = gitLogBUS.GetCommits(projectDirectory, cboAuthorCommit.SelectedItem.ToString(), internshipStartDate, internshipEndDate);
-            dataGridView1.DataSource = allCommits;
+
+            // Chuyển đổi danh sách `DayData` thành `DataTable`
+            DataTable dataTable = gitLogBUS.ConvertDayDataListToDataTable(allCommits);
+
+            // Hiển thị dữ liệu lên DataGridView
+            dataGridView1.DataSource = dataTable;
 
             // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
+
 
 
         private bool IsValidGitRepository(string directory)
@@ -157,8 +163,8 @@ namespace GitLogAggregator
                     AggregateInfo aggregateInfo = gitLogBUS.LoadAggregateInfo(configFile);
 
                     cboAuthorCommit.SelectedItem = aggregateInfo.Author;
-                    txtInternshipDate.Value = aggregateInfo.StartDate;
-                    txtEndDateInternship.Value = aggregateInfo.EndDate;
+                    txtInternshipStartDate.Value = aggregateInfo.StartDate;
+                    txtInternshipEndDate.Value = aggregateInfo.EndDate;
                     numericWeeks.Value = aggregateInfo.Weeks;
                     txtDirectoryProjectPath.Text = aggregateInfo.ProjectDirectory;
                     txtFolderInternshipPath.Text = internshipWeekFolder;
@@ -174,15 +180,17 @@ namespace GitLogAggregator
                     btnDelete.Enabled = true;
                     btnSelectGitFolder.Enabled = false;
                     cboAuthorCommit.Enabled = false;
-                    txtInternshipDate.Enabled = false;
+                    txtInternshipStartDate.Enabled = false;
+                    btnExport.Enabled = true;
                 }
                 else
                 {
                     cboAuthorCommit.Enabled = true;
-                    txtInternshipDate.Enabled = true;
+                    txtInternshipStartDate.Enabled = true;
                     btnAggregator.Enabled = true;
                     btnDelete.Enabled = false;
                     btnSelectGitFolder.Enabled = true;
+                    btnExport.Enabled = false;
                 }
             }
             catch
@@ -194,7 +202,7 @@ namespace GitLogAggregator
         private void EnableControls()
         {
             cboAuthorCommit.Enabled = true;
-            txtInternshipDate.Enabled = true;
+            txtInternshipStartDate.Enabled = true;
             btnAggregator.Enabled = true;
             btnDelete.Enabled = true;
             btnSelectGitFolder.Enabled = true;
@@ -204,7 +212,7 @@ namespace GitLogAggregator
         private void DisableControls()
         {
             cboAuthorCommit.Enabled = false;
-            txtInternshipDate.Enabled = false;
+            txtInternshipStartDate.Enabled = false;
             btnAggregator.Enabled = false;
             btnDelete.Enabled = false;
             btnSelectGitFolder.Enabled = false;
@@ -252,7 +260,7 @@ namespace GitLogAggregator
                 }
 
                 string author = cboAuthorCommit.SelectedItem.ToString();
-                DateTime internshipStartDate = txtInternshipDate.Value;
+                DateTime internshipStartDate = txtInternshipStartDate.Value;
 
                 DateTime firstCommitDate = gitLogBUS.GetProjectStartDate(projectDirectory);
 
@@ -273,7 +281,7 @@ namespace GitLogAggregator
                 {
                     Author = author,
                     StartDate = internshipStartDate,
-                    EndDate = txtEndDateInternship.Value,
+                    EndDate = txtInternshipEndDate.Value,
                     Folders = folders,
                     ProjectDirectory = projectDirectory,
                     FirstCommitDate = txtFirstCommitDate.Value,
@@ -619,22 +627,27 @@ namespace GitLogAggregator
             string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string filePath = Path.Combine(desktopPath, "commits.xlsx");
 
-            var dataTable = (DataTable)dataGridView1.DataSource;
-            List<WeekData> weekDataList = gitCommitBUS.ConvertToWeekDataList(dataTable);
+            DataTable dataTable = (DataTable)dataGridView1.DataSource;
+            List<DayData> dayDataList = gitLogBUS.ConvertDataTableToDayDataList(dataTable);
 
-            gitCommitBUS.CreateExcelFile(filePath, weekDataList, txtInternshipDate.Value);
+            // Chuyển đổi `List<DayData>` thành `List<WeekData>`
+            List<WeekData> weekDataList = gitCommitBUS.ConvertDayDataListToWeekDataList(dayDataList, txtInternshipStartDate.Value, txtInternshipEndDate.Value);
+
+            gitCommitBUS.CreateExcelFile(filePath, weekDataList, txtInternshipEndDate.Value);
 
             AppendTextWithScroll("Xuất Excel thành công! File đã được lưu trên Desktop của bạn.\n");
         }
 
+
+
         private void NumericWeeks_ValueChanged(object sender, EventArgs e)
         {
-            DateTime startDate = txtInternshipDate.Value;
+            DateTime startDate = txtInternshipStartDate.Value;
             int weeks = (int)numericWeeks.Value;
             DateTime endDate = gitLogBUS.CalculateEndDate(startDate, weeks);
 
             // Hiển thị ngày kết thúc
-            txtEndDateInternship.Value = endDate;
+            txtInternshipEndDate.Value = endDate;
         }
 
     }

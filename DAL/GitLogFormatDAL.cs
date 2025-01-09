@@ -9,11 +9,11 @@ using ET;
 
 namespace DAL
 {
-    public class GitCommitDAL
+    public class GitLogFormatDAL
     {
         public List<string> LogMessages { get; private set; }
 
-        public GitCommitDAL()
+        public GitLogFormatDAL()
         {
             LogMessages = new List<string>();
         }
@@ -22,14 +22,10 @@ namespace DAL
         {
             using (var workbook = new XLWorkbook())
             {
-                int totalCommits = weekDataList.Sum(w => w.DayDataList.Sum(d => d.AssignedTasks.Split('\n').Length));
-                int weeklyCommits = totalCommits / 8;
-                int internSpareCommits = totalCommits % 8;
-
                 foreach (var weekData in weekDataList)
                 {
                     string weekStartDate = weekData.StartDate.ToString("ddMM");
-                    string weekEndDate = weekData.EndDate.ToString("ddMM");
+                    string weekEndDate = weekData.EndDate <= internshipEndDate ? weekData.EndDate.ToString("ddMM") : internshipEndDate.ToString("ddMM");
                     var worksheet = workbook.Worksheets.Add($"Tuan {weekData.WeekNumber} ({weekStartDate}-{weekEndDate})");
 
                     worksheet.Cell(1, 1).Value = "Tuần";
@@ -42,16 +38,19 @@ namespace DAL
                     worksheet.Cell(1, 8).Value = "Ghi chú";
 
                     int currentRow = 2;
-                    int dailyCommits = weeklyCommits / 6;
-                    int weeklySpareCommits = weeklyCommits % 6;
+                    var allCommits = weekDataList.SelectMany(w => w.DayDataList)
+                        .SelectMany(d => d.AssignedTasks.Split('\n'))
+                        .ToList();
 
-                    int commitIndex = (weekData.WeekNumber - 1) * weeklyCommits;
+                    int totalCommits = allCommits.Count;
+                    int dailyCommits = totalCommits / (weekDataList.Count * 7);
+                    int remainingCommits = totalCommits % (weekDataList.Count * 7);
 
                     for (int day = 0; day < 7; day++)
                     {
                         if (day >= weekData.DayDataList.Count)
                         {
-                            continue; // Bỏ qua ngày không có dữ liệu
+                            weekData.DayDataList.Add(new DayData()); // Thêm ngày trống nếu thiếu
                         }
 
                         var dayData = weekData.DayDataList[day];
@@ -62,24 +61,20 @@ namespace DAL
                             break; // Ngừng ghi khi vượt quá ngày kết thúc thực tập
                         }
 
+                        int dayCommitsCount = dailyCommits;
+                        if (remainingCommits > 0)
+                        {
+                            dayCommitsCount++;
+                            remainingCommits--;
+                        }
+
+                        var dayCommits = allCommits.Skip((weekData.WeekNumber - 1) * 7 * dailyCommits + day * dailyCommits).Take(dayCommitsCount).ToList();
+
                         worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber}";
                         worksheet.Cell(currentRow, 2).Value = dayData.DayOfWeek;
                         worksheet.Cell(currentRow, 3).Value = dayData.Session;
                         worksheet.Cell(currentRow, 4).Value = dayData.Attendance;
-
-                        if (day < 6)
-                        {
-                            var dayCommits = weekDataList.SelectMany(w => w.DayDataList).Skip(commitIndex).Take(dailyCommits).SelectMany(d => d.AssignedTasks.Split('\n')).ToList();
-                            worksheet.Cell(currentRow, 5).Value = string.Join("\n", dayCommits); // Công việc được giao
-                            commitIndex += dayCommits.Count;
-                        }
-                        else
-                        {
-                            var dayCommits = weekDataList.SelectMany(w => w.DayDataList).Skip(commitIndex).Take(dailyCommits + weeklySpareCommits).SelectMany(d => d.AssignedTasks.Split('\n')).ToList();
-                            worksheet.Cell(currentRow, 5).Value = string.Join("\n", dayCommits); // Công việc được giao
-                            commitIndex += dayCommits.Count;
-                        }
-
+                        worksheet.Cell(currentRow, 5).Value = string.Join("\n", dayCommits); // Công việc được giao
                         worksheet.Cell(currentRow, 6).Value = dayData.AchievedResults; // Nội dung – kết quả đạt được
                         worksheet.Cell(currentRow, 7).Value = dayData.Comments; // Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp
                         worksheet.Cell(currentRow, 8).Value = dayData.Notes; // Ghi chú
@@ -87,59 +82,44 @@ namespace DAL
                         currentRow++;
                     }
 
-                    if (weekData.WeekNumber == 8 && internSpareCommits > 0)
-                    {
-                        worksheet.Cell(currentRow, 1).Value = "Thêm commits dư của kỳ thực tập:";
-                        var spareCommits = weekDataList.SelectMany(w => w.DayDataList).Skip(commitIndex).Take(internSpareCommits).SelectMany(d => d.AssignedTasks.Split('\n')).ToList();
-                        worksheet.Cell(currentRow, 5).Value = string.Join("\n", spareCommits); // Công việc được giao
-                    }
-
                     worksheet.Columns().AdjustToContents();
                 }
 
-                // Đảm bảo giải phóng tài nguyên trước khi lưu file
                 workbook.SaveAs(filePath);
             }
         }
 
 
-        public List<WeekData> ConvertToWeekDataList(DataTable dataTable)
+
+
+        public List<WeekData> ConvertDayDataListToWeekDataList(List<DayData> dayDataList, DateTime internshipStartDate, DateTime internshipEndDate)
         {
-            var weekDataList = new List<WeekData>();
+            List<WeekData> weekDataList = new List<WeekData>();
 
-            foreach (DataRow row in dataTable.Rows)
+            for (int i = 0; i < dayDataList.Count; i += 7)
             {
-                int weekNumber = Convert.ToInt32(row["Tuần"]);
-                DateTime startDate = DateTime.Now; // Giả sử bạn có phương thức để lấy giá trị này
-                DateTime endDate = startDate.AddDays(6); // Giả sử bạn có phương thức để lấy giá trị này
+                DateTime weekStartDate = internshipStartDate.AddDays(i);
+                DateTime weekEndDate = weekStartDate.AddDays(6) <= internshipEndDate ? weekStartDate.AddDays(6) : internshipEndDate;
 
-                var weekData = weekDataList.Find(w => w.WeekNumber == weekNumber);
-                if (weekData == null)
+                WeekData weekData = new WeekData
                 {
-                    weekData = new WeekData
-                    {
-                        WeekNumber = weekNumber,
-                        StartDate = startDate,
-                        EndDate = endDate,
-                        DayDataList = new List<DayData>()
-                    };
-                    weekDataList.Add(weekData);
+                    WeekNumber = (i / 7) + 1,
+                    StartDate = weekStartDate,
+                    EndDate = weekEndDate,
+                    DayDataList = new List<DayData>()
+                };
+
+                for (int j = 0; j < 7 && (i + j) < dayDataList.Count; j++)
+                {
+                    weekData.DayDataList.Add(dayDataList[i + j]);
                 }
 
-                weekData.DayDataList.Add(new DayData
-                {
-                    DayOfWeek = row["Thứ"].ToString(),
-                    Session = row["Buổi"].ToString(),
-                    Attendance = row["Điểm danh vắng"].ToString(),
-                    AssignedTasks = row["Công việc được giao"].ToString(),
-                    AchievedResults = row["Nội dung – kết quả đạt được"].ToString(),
-                    Comments = row["Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp"].ToString(),
-                    Notes = row["Ghi chú"].ToString()
-                });
+                weekDataList.Add(weekData);
             }
 
             return weekDataList;
         }
+
 
 
         public string RunGitCommand(string command, string projectDirectory)
@@ -189,5 +169,7 @@ namespace DAL
             }
             return dataTable;
         }
+     
+
     }
 }

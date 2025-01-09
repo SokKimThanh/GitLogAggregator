@@ -85,5 +85,13 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.CalculateEndDate(startDate, weeks);
         }
+        public DataTable ConvertDayDataListToDataTable(List<DayData> dayDataList)
+        {
+            return data.ConvertDayDataListToDataTable(dayDataList);
+        }
+        public List<DayData> ConvertDataTableToDayDataList(DataTable dataTable)
+        {
+            return data.ConvertDataTableToDayDataList(dataTable);
+        }
     }
 }

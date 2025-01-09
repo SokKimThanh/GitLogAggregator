@@ -9,23 +9,23 @@ using System.Linq;
 
 namespace BUS
 {
-    public class GitCommitBUS
+    public class GitLogFormatBUS
     {
-        private readonly GitCommitDAL data;
+        private readonly GitLogFormatDAL data;
 
         public List<string> LogMessages => data.LogMessages;
 
-        public GitCommitBUS()
+        public GitLogFormatBUS()
         {
-            data = new GitCommitDAL();
+            data = new GitLogFormatDAL();
         }
         public void CreateExcelFile(string filePath, List<WeekData> commits, DateTime internshipEndDate)
         {
             data.CreateExcelFile(filePath, commits, internshipEndDate);
         }
-        public List<WeekData> ConvertToWeekDataList(DataTable dataTable)
+        public List<WeekData> ConvertDayDataListToWeekDataList(List<DayData> dayDataList, DateTime internshipStartDate, DateTime internshipEndDate)
         {
-            return data.ConvertToWeekDataList(dataTable);
+            return data.ConvertDayDataListToWeekDataList(dayDataList, internshipStartDate, internshipEndDate);
         }
 
 
@@ -37,5 +37,6 @@ namespace BUS
         {
             return data.ConvertToDataTable(weekDataList);
         }
+
     }
 }

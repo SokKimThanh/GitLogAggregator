@@ -33,7 +33,7 @@
             this.cboAuthorCommit = new System.Windows.Forms.ComboBox();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.btnSelectGitFolder = new System.Windows.Forms.Button();
-            this.txtInternshipDate = new System.Windows.Forms.DateTimePicker();
+            this.txtInternshipStartDate = new System.Windows.Forms.DateTimePicker();
             this.txtResult = new System.Windows.Forms.RichTextBox();
             this.btnAggregator = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -59,7 +59,7 @@
             this.txtFirstCommitDate = new System.Windows.Forms.DateTimePicker();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.txtEndDateInternship = new System.Windows.Forms.DateTimePicker();
+            this.txtInternshipEndDate = new System.Windows.Forms.DateTimePicker();
             this.numericWeeks = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -86,15 +86,15 @@
             this.btnSelectGitFolder.UseVisualStyleBackColor = true;
             this.btnSelectGitFolder.Click += new System.EventHandler(this.SelectGitFolderButton_Click);
             // 
-            // txtInternshipDate
+            // txtInternshipStartDate
             // 
-            this.txtInternshipDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipDate.Location = new System.Drawing.Point(184, 108);
-            this.txtInternshipDate.Margin = new System.Windows.Forms.Padding(4);
-            this.txtInternshipDate.Name = "txtInternshipDate";
-            this.txtInternshipDate.Size = new System.Drawing.Size(199, 25);
-            this.txtInternshipDate.TabIndex = 3;
-            this.txtInternshipDate.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
+            this.txtInternshipStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.txtInternshipStartDate.Location = new System.Drawing.Point(184, 108);
+            this.txtInternshipStartDate.Margin = new System.Windows.Forms.Padding(4);
+            this.txtInternshipStartDate.Name = "txtInternshipStartDate";
+            this.txtInternshipStartDate.Size = new System.Drawing.Size(199, 25);
+            this.txtInternshipStartDate.TabIndex = 3;
+            this.txtInternshipStartDate.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
             // 
             // txtResult
             // 
@@ -362,14 +362,14 @@
             this.label10.TabIndex = 8;
             this.label10.Text = "Chọn ngày kết thúc TT";
             // 
-            // txtEndDateInternship
+            // txtInternshipEndDate
             // 
-            this.txtEndDateInternship.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtEndDateInternship.Location = new System.Drawing.Point(184, 140);
-            this.txtEndDateInternship.Margin = new System.Windows.Forms.Padding(4);
-            this.txtEndDateInternship.Name = "txtEndDateInternship";
-            this.txtEndDateInternship.Size = new System.Drawing.Size(199, 25);
-            this.txtEndDateInternship.TabIndex = 3;
+            this.txtInternshipEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.txtInternshipEndDate.Location = new System.Drawing.Point(184, 140);
+            this.txtInternshipEndDate.Margin = new System.Windows.Forms.Padding(4);
+            this.txtInternshipEndDate.Name = "txtInternshipEndDate";
+            this.txtInternshipEndDate.Size = new System.Drawing.Size(199, 25);
+            this.txtInternshipEndDate.TabIndex = 3;
             // 
             // numericWeeks
             // 
@@ -413,8 +413,8 @@
             this.Controls.Add(this.btnAggregator);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.txtFirstCommitDate);
-            this.Controls.Add(this.txtEndDateInternship);
-            this.Controls.Add(this.txtInternshipDate);
+            this.Controls.Add(this.txtInternshipEndDate);
+            this.Controls.Add(this.txtInternshipStartDate);
             this.Controls.Add(this.btnSelectGitFolder);
             this.Controls.Add(this.cboAuthorCommit);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -440,7 +440,7 @@
         private System.Windows.Forms.ComboBox cboAuthorCommit;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Button btnSelectGitFolder;
-        private System.Windows.Forms.DateTimePicker txtInternshipDate;
+        private System.Windows.Forms.DateTimePicker txtInternshipStartDate;
         private System.Windows.Forms.RichTextBox txtResult;
         private System.Windows.Forms.Button btnAggregator;
         private System.Windows.Forms.Label label1;
@@ -466,7 +466,7 @@
         private System.Windows.Forms.DateTimePicker txtFirstCommitDate;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.DateTimePicker txtEndDateInternship;
+        private System.Windows.Forms.DateTimePicker txtInternshipEndDate;
         private System.Windows.Forms.NumericUpDown numericWeeks;
     }
 }
