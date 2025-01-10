@@ -329,6 +329,27 @@ namespace GitLogAggregator.DataAccess
 
             return dataTable;
         }
+        public List<string> ReadCommitsFromFile(string filePath)
+        {
+            List<string> commits = new List<string>();
+
+            if (!File.Exists(filePath))
+            {
+                Console.WriteLine($"Lỗi: File {filePath} không tồn tại.");
+                return commits; // Trả về danh sách trống nếu file không tồn tại
+            }
+
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    commits.Add(line);
+                }
+            }
+
+            return commits;
+        }
 
     }
 }

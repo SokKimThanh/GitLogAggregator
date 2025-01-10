@@ -9,6 +9,7 @@ using GitLogAggregator.BusinessLogic;
 using ET;
 using BUS;
 using System.Data;
+using ClosedXML.Excel;
 
 
 namespace GitLogAggregator
@@ -26,10 +27,17 @@ namespace GitLogAggregator
         private bool isError = false;
 
         // Git log BUS
-        private readonly GitlogBUS gitLogBUS = new GitlogBUS();
+        private readonly GitlogBUS gitlogui_bus = new GitlogBUS();
 
         // Git commit BUS
-        private readonly GitLogFormatBUS gitCommitBUS = new GitLogFormatBUS();
+        private readonly GitLogFormatBUS gitlogformat_bus = new GitLogFormatBUS();
+
+        // git check commit
+        private readonly GitLogCheckCommitBUS gitlogcheckcommit_bus = new GitLogCheckCommitBUS();
+
+        // Biến toàn cục để theo dõi trạng thái kiểm duyệt
+        private bool userHasReviewed = false;
+
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -77,10 +85,10 @@ namespace GitLogAggregator
 
                 // Mở tên folder và tác giả
                 txtDirectoryProjectPath.Text = projectDirectory;
-                cboAuthorCommit.DataSource = gitLogBUS.LoadAuthorsCombobox(projectDirectory);
+                cboAuthorCommit.DataSource = gitlogui_bus.LoadAuthorsCombobox(projectDirectory);
 
                 // Lấy ngày commit đầu tiên và hiển thị lên giao diện
-                DateTime firstCommitDate = gitLogBUS.GetProjectStartDate(projectDirectory);
+                DateTime firstCommitDate = gitlogui_bus.GetProjectStartDate(projectDirectory);
                 txtFirstCommitDate.Value = firstCommitDate;
 
                 // Kiểm tra nếu thư mục internship_week tồn tại thì mở thêm thư mục (file config.txt nằm trong thư mục này)
@@ -113,24 +121,24 @@ namespace GitLogAggregator
         private void LoadCommitDatagridview()
         {
             // Xóa dữ liệu cũ trên DataGridView trước khi thêm dữ liệu mới
-            dataGridView1.DataSource = null;
+            dataGridViewCommits.DataSource = null;
 
             // thông tin giao diện thời gian thực tập
             DateTime internshipStartDate = txtInternshipStartDate.Value;
             int weeks = (int)txtNumericsWeek.Value;
-            DateTime internshipEndDate = gitLogBUS.CalculateEndDate(internshipStartDate, weeks);
+            DateTime internshipEndDate = gitlogui_bus.CalculateEndDate(internshipStartDate, weeks);
 
             // Lấy tất cả commit
-            var allCommits = gitLogBUS.GetCommits(projectDirectory, cboAuthorCommit.SelectedItem.ToString(), internshipStartDate, internshipEndDate);
+            var allCommits = gitlogui_bus.GetCommits(projectDirectory, cboAuthorCommit.SelectedItem.ToString(), internshipStartDate, internshipEndDate);
 
             // Chuyển đổi danh sách `DayData` thành `DataTable`
-            DataTable dataTable = gitLogBUS.ConvertDayDataListToDataTable(allCommits);
+            DataTable dataTable = gitlogui_bus.ConvertDayDataListToDataTable(allCommits);
 
             // Hiển thị dữ liệu lên DataGridView
-            dataGridView1.DataSource = dataTable;
+            dataGridViewCommits.DataSource = dataTable;
 
             // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewCommits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
         private bool IsValidGitRepository(string directory)
         {
@@ -141,7 +149,7 @@ namespace GitLogAggregator
         {
             // Chạy lệnh Git để lấy các commit
             string gitCommand = "log --oneline";
-            string logOutput = gitLogBUS.RunGitCommand(gitCommand, directory);
+            string logOutput = gitlogui_bus.RunGitCommand(gitCommand, directory);
 
             // Kiểm tra nếu output rỗng
             return !string.IsNullOrEmpty(logOutput);
@@ -157,7 +165,7 @@ namespace GitLogAggregator
             {
                 if (File.Exists(configFile))
                 {
-                    AggregateInfo aggregateInfo = gitLogBUS.LoadAggregateInfo(configFile);
+                    AggregateInfo aggregateInfo = gitlogui_bus.LoadAggregateInfo(configFile);
 
                     cboAuthorCommit.SelectedItem = aggregateInfo.Author;
                     txtInternshipStartDate.Value = aggregateInfo.StartDate;
@@ -263,7 +271,7 @@ namespace GitLogAggregator
                 string author = cboAuthorCommit.SelectedItem.ToString();
                 DateTime internshipStartDate = txtInternshipStartDate.Value;
 
-                DateTime firstCommitDate = gitLogBUS.GetProjectStartDate(projectDirectory);
+                DateTime firstCommitDate = gitlogui_bus.GetProjectStartDate(projectDirectory);
 
                 if (internshipStartDate > firstCommitDate)
                 {
@@ -273,8 +281,8 @@ namespace GitLogAggregator
                     return;
                 }
 
-                //Dữ liệu được tổng hợp theo chức năng cũ gitLogBUS.
-                List<string> folders = gitLogBUS.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
+                //Dữ liệu được tổng hợp theo chức năng cũ gitlogui_bus.
+                List<string> folders = gitlogui_bus.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
                 AggregateInfo aggregateInfo = new AggregateInfo
                 {
                     Author = author,
@@ -287,7 +295,7 @@ namespace GitLogAggregator
                 };
 
                 // Lưu thông tin vào file text
-                gitLogBUS.SaveAggregateInfo(aggregateInfo);
+                gitlogui_bus.SaveAggregateInfo(aggregateInfo);
 
                 // Hiển thị lên list view
                 DisplayDirectoriesInListView();
@@ -364,10 +372,10 @@ namespace GitLogAggregator
                         fileListView.Items.Clear();  // Xóa tất cả mục trong ListView
                         AppendTextWithScroll("Danh sách file đã được làm trống.\n");
 
-                        checkedListBox1.Items.Clear();  // Xóa tất cả mục trong checkedListBox1
+                        checkedListBoxCommits.Items.Clear();  // Xóa tất cả mục trong checkedListBox1
                         AppendTextWithScroll("Danh sách commit đã được làm trống.\n");
 
-                        dataGridView1.DataSource = null;
+                        dataGridViewCommits.DataSource = null;
                         AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
                     }
                     catch (Exception ex)
@@ -489,8 +497,10 @@ namespace GitLogAggregator
                 int index = 1;
                 foreach (var file in files)
                 {
-                    ListViewItem item = new ListViewItem(index.ToString());
-                    item.Tag = file; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    ListViewItem item = new ListViewItem(index.ToString())
+                    {
+                        Tag = file // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    };
                     item.SubItems.Add(Path.GetFileName(file));
                     fileListView.Items.Add(item);
                     index++;
@@ -513,7 +523,7 @@ namespace GitLogAggregator
         }
         private void AppendLogMessages()
         {
-            foreach (var message in gitCommitBUS.LogMessages)
+            foreach (var message in gitlogformat_bus.LogMessages)
             {
                 AppendTextWithScroll(message + "\n");
             }
@@ -622,32 +632,15 @@ namespace GitLogAggregator
                 string filePath = selectedItem.Tag.ToString();
 
                 // Đọc danh sách commit từ file
-                List<string> commits = ReadCommitsFromFile(filePath);
+                List<string> commits = gitlogui_bus.ReadCommitsFromFile(filePath);
 
                 // Hiển thị danh sách commit trong checkedListBox1
-                checkedListBox1.Items.Clear();
+                checkedListBoxCommits.Items.Clear();
                 foreach (var commit in commits)
                 {
-                    checkedListBox1.Items.Add(commit);
+                    checkedListBoxCommits.Items.Add(commit);
                 }
             }
-        }
-
-
-        private List<string> ReadCommitsFromFile(string filePath)
-        {
-            List<string> commits = new List<string>();
-
-            using (StreamReader reader = new StreamReader(filePath))
-            {
-                string line;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    commits.Add(line);
-                }
-            }
-
-            return commits;
         }
 
         private void BtnExportExcel_Click(object sender, EventArgs e)
@@ -655,7 +648,7 @@ namespace GitLogAggregator
             try
             {
 
-                if (dataGridView1.DataSource == null)
+                if (dataGridViewCommits.DataSource == null)
                 {
                     AppendTextWithScroll("Không có dữ liệu để xuất.\n");
                     return;
@@ -664,13 +657,13 @@ namespace GitLogAggregator
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 string filePath = Path.Combine(desktopPath, "commits.xlsx");
 
-                DataTable dataTable = (DataTable)dataGridView1.DataSource;
-                List<DayData> dayDataList = gitCommitBUS.ConvertDataTableToDayDataList(dataTable);
+                DataTable dataTable = (DataTable)dataGridViewCommits.DataSource;
+                List<DayData> dayDataList = gitlogformat_bus.ConvertDataTableToDayDataList(dataTable);
 
                 // Chuyển đổi `List<DayData>` thành `List<WeekData>`
-                List<WeekData> weekDataList = gitCommitBUS.ConvertDayDataListToWeekDataList(dayDataList, txtInternshipStartDate.Value, txtInternshipEndDate.Value);
+                List<WeekData> weekDataList = gitlogformat_bus.ConvertDayDataListToWeekDataList(dayDataList, txtInternshipStartDate.Value, txtInternshipEndDate.Value);
 
-                gitCommitBUS.CreateExcelFile(filePath, weekDataList, txtInternshipEndDate.Value);
+                gitlogformat_bus.CreateExcelFile(filePath, weekDataList, txtInternshipEndDate.Value);
 
                 AppendTextWithScroll("Xuất Excel thành công! File đã được lưu trên Desktop của bạn.\n");
             }
@@ -683,12 +676,73 @@ namespace GitLogAggregator
         {
             DateTime startDate = txtInternshipStartDate.Value;
             int weeks = (int)txtNumericsWeek.Value;
-            DateTime endDate = gitLogBUS.CalculateEndDate(startDate, weeks);
+            DateTime endDate = gitlogui_bus.CalculateEndDate(startDate, weeks);
 
             // Hiển thị ngày kết thúc
             txtInternshipEndDate.Value = endDate;
         }
+        private void BtnReviewCommits_Click(object sender, EventArgs e)
+        {
+            btnReviewCommits.Enabled = false;
+            // Lấy đường dẫn thư mục internship_week
+            string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
+            if (!Directory.Exists(internshipWeekFolder))
+            {
+                AppendTextWithScroll("Thư mục internship_week không tồn tại.\n");
+                btnReviewCommits.Enabled = true;
+                return;
+            }
+
+            // Duyệt qua mỗi tuần (giả sử có 8 tuần)
+            for (int week = 1; week <= txtNumericsWeek.Value; week++)
+            {
+                string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{week}");
+                if (!Directory.Exists(weekFolder))
+                {
+                    AppendTextWithScroll($"Thư mục {weekFolder} không tồn tại.\n");
+                }
+
+                // Giả sử tên file là combine.txt
+                string combinedFilePath = Path.Combine(weekFolder, "combined_commits.txt");
+
+                if (!File.Exists(combinedFilePath))
+                {
+                    AppendTextWithScroll($"File {combinedFilePath} không có commit nào.\n");
+                }
+                List<string> commits = gitlogui_bus.ReadCommitsFromFile(combinedFilePath);
+
+                if (commits.Count > 0)
+                {
+                    gitlogcheckcommit_bus.DisplayCommitsInCheckedListBox(commits, checkedListBoxCommits);
+
+                    // Chờ người dùng đánh dấu commit lỗi
+                    WaitUserReview();
+
+                    // Xử lý các commit bị lỗi
+                    gitlogcheckcommit_bus.ProcessErrorCommits(commits, checkedListBoxCommits.CheckedItems);
+
+                    // Cập nhật kết quả cuối cùng
+                    gitlogcheckcommit_bus.UpdateDataGridView(commits, dataGridViewCommits);
+                }
+
+            }
+            btnReviewCommits.Enabled = true;
+        }
+        public void BtnCompleteReview_Click(object sender, EventArgs e)
+        {
+            userHasReviewed = true;
+        }
+
+        public void WaitUserReview()
+        {
+            // Tạm dừng cho đến khi người dùng hoàn thành việc kiểm tra các commit
+            while (!userHasReviewed)
+            {
+                Application.DoEvents();
+            }
+            userHasReviewed = false; // Đặt lại để sẵn sàng cho lần kiểm duyệt tiếp theo
+        }
     }
 }
 

@@ -89,6 +89,9 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.ConvertDayDataListToDataTable(dayDataList);
         }
-     
+        public List<string> ReadCommitsFromFile(string filePath)
+        {
+            return data.ReadCommitsFromFile(filePath);
+        }
     }
 }
