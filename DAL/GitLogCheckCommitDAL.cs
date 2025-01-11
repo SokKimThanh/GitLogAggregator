@@ -87,46 +87,13 @@ namespace DAL
                 Week = GetWeekFromCommitDate(isValidDate ? commitDate : DateTime.Now),
                 Day = GetDayOfWeekFromCommitDate(isValidDate ? commitDate : DateTime.Now),
                 Session = GetSessionFromCommitDate(isValidDate ? commitDate : DateTime.Now),
-                Attendance = parts.Length > 2 ? "Có mặt" : "N/A", // Thay thế bằng giá trị thực tế nếu cần
-                FileName = parts.Length > 0 ? parts[0] : "FileName N/A",
+                Attendance = parts.Length > 2 ? "Có mặt" : "N/A",
                 CommitContent = parts.Length > 3 ? parts[3] : "N/A",
-                CommitDate = isValidDate ? commitDate : DateTime.Now,
-                Status = "Không lỗi",
-                Comments = parts.Length > 4 ? parts[4] : "Nhận xét N/A", // Thay thế bằng giá trị thực tế nếu cần
-                Notes = parts.Length > 5 ? parts[5] : "N/A" // Thay thế bằng giá trị thực tế nếu cần
+                Comments = parts.Length > 4 ? parts[4] : "Nhận xét N/A",
+                Notes = parts.Length > 5 ? parts[5] : "Ghi chú N/A"
             };
         }
 
-        public void CreateExcelReport(string filePath, List<CommitItem> commitItems)
-        {
-            using (var workbook = new XLWorkbook())
-            {
-                var worksheet = workbook.Worksheets.Add("Report");
-
-                worksheet.Cell(1, 1).Value = "Tuần";
-                worksheet.Cell(1, 2).Value = "Thứ";
-                worksheet.Cell(1, 3).Value = "Buổi";
-                worksheet.Cell(1, 4).Value = "Công việc được giao";
-                worksheet.Cell(1, 5).Value = "Nội dung – kết quả đạt được";
-                worksheet.Cell(1, 6).Value = "Nhận xét – đề nghị";
-                worksheet.Cell(1, 7).Value = "Ghi chú";
-
-                int currentRow = 2;
-                foreach (var commitItem in commitItems)
-                {
-                    worksheet.Cell(currentRow, 1).Value = GetWeekFromCommitDate(commitItem.CommitDate);
-                    worksheet.Cell(currentRow, 2).Value = GetDayOfWeekFromCommitDate(commitItem.CommitDate);
-                    worksheet.Cell(currentRow, 3).Value = GetSessionFromCommitDate(commitItem.CommitDate);
-                    worksheet.Cell(currentRow, 4).Value = commitItem.CommitContent;
-                    worksheet.Cell(currentRow, 5).Value = commitItem.CommitContent;
-                    worksheet.Cell(currentRow, 6).Value = string.Empty;
-                    worksheet.Cell(currentRow, 7).Value = string.Empty;
-                    currentRow++;
-                }
-
-                workbook.SaveAs(filePath);
-            }
-        }
         public string GetWeekFromCommitDate(DateTime date)
         {
             // Tính tuần từ ngày
@@ -158,17 +125,7 @@ namespace DAL
             }
         }
 
-        public void UpdateDataGridView(List<string> commits, DataGridView dataGridViewCommits)
-        {
-            dataGridViewCommits.DataSource = null;
-            int stt = 1;
 
-            foreach (var commit in commits)
-            {
-                var commitDetails = ParseCommit(commit);
-                dataGridViewCommits.Rows.Add(stt++, commitDetails.FileName, commitDetails.CommitContent, commitDetails.CommitDate, "Không lỗi");
-            }
-        }
         public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits)
         {
             foreach (var commit in commitsToDelete)
@@ -207,35 +164,20 @@ namespace DAL
             File.WriteAllLines(filePath, commits);
         }
         /// <summary>
-        /// Tạo DataTable với các cột đúng định dạng mẫu và hiển thị dữ liệu commit từ groupedCommits.
+        /// Hiển thị commit lên datagridview
         /// </summary>
-        /// <param name="groupedCommits"></param>
+        /// <param name="commitItems"></param>
         /// <param name="dataGridViewCommits"></param>
-        /// <param name="checkedListBoxCommits"></param>
         public void DisplayCommits(List<CommitItem> commitItems, DataGridView dataGridViewCommits)
         {
-            // Kiểm tra nếu có dữ liệu cũ
-            var dataTable = dataGridViewCommits.DataSource as DataTable;
-            if (dataTable != null)
-            {
-                // Thêm dữ liệu vào DataTable
-                foreach (var commitItem in commitItems)
-                {
-                    dataTable.Rows.Add(
-                        commitItem.Week,
-                        commitItem.Day,
-                        commitItem.Session,
-                        commitItem.Attendance,
-                        commitItem.FileName,
-                        commitItem.CommitContent,
-                        commitItem.CommitDate,
-                        commitItem.Comments,
-                        commitItem.Status,
-                        commitItem.Notes
-                    );
-                }
-            }
+            // Chuyển đổi danh sách CommitItem thành DataTable
+            DataTable dataTable = ConvertToDataTable(commitItems);
+
+            // Hiển thị dữ liệu lên DataGridView
+            dataGridViewCommits.DataSource = dataTable;
         }
+
+
 
         public void InitializeDataGridView(DataGridView dataGridViewCommits)
         {
@@ -289,6 +231,35 @@ namespace DAL
             {
                 checkedListBoxCommits.EndUpdate();
             }
+        }
+        public DataTable ConvertToDataTable(List<CommitItem> commitItems)
+        {
+            DataTable dataTable = new DataTable();
+
+            // Thêm các cột vào DataTable
+            dataTable.Columns.Add("Tuần", typeof(string));
+            dataTable.Columns.Add("Thứ", typeof(string));
+            dataTable.Columns.Add("Buổi", typeof(string));
+            dataTable.Columns.Add("Điểm danh vắng", typeof(string));
+            dataTable.Columns.Add("Nội dung commit", typeof(string));
+            dataTable.Columns.Add("Nhận xét", typeof(string));
+            dataTable.Columns.Add("Ghi chú", typeof(string));
+
+            // Thêm dữ liệu vào DataTable
+            foreach (var commitItem in commitItems)
+            {
+                dataTable.Rows.Add(
+                    commitItem.Week,
+                    commitItem.Day,
+                    commitItem.Session,
+                    commitItem.Attendance,
+                    commitItem.CommitContent,
+                    commitItem.Comments,
+                    commitItem.Notes
+                );
+            }
+
+            return dataTable;
         }
 
 

@@ -291,7 +291,7 @@ namespace GitLogAggregator.DataAccess
 
                     dayDataList.Add(new DayData
                     {
-                        DayOfWeek = date.DayOfWeek.ToString(),
+                        Day = date.DayOfWeek.ToString(),
                         Session = "Sáng", // hoặc "Chiều", "Tối" tùy theo thông tin bạn có
                         Attendance = "Có mặt",
                         AssignedTasks = string.Join("\n", tasks),
@@ -314,7 +314,7 @@ namespace GitLogAggregator.DataAccess
         {
             DataTable dataTable = new DataTable();
 
-            dataTable.Columns.Add("DayOfWeek", typeof(string));
+            dataTable.Columns.Add("Day", typeof(string));
             dataTable.Columns.Add("Session", typeof(string));
             dataTable.Columns.Add("Attendance", typeof(string));
             dataTable.Columns.Add("AssignedTasks", typeof(string));
@@ -324,7 +324,7 @@ namespace GitLogAggregator.DataAccess
 
             foreach (var dayData in dayDataList)
             {
-                dataTable.Rows.Add(dayData.DayOfWeek, dayData.Session, dayData.Attendance, dayData.AssignedTasks, dayData.AchievedResults, dayData.Comments, dayData.Notes);
+                dataTable.Rows.Add(dayData.Day, dayData.Session, dayData.Attendance, dayData.AssignedTasks, dayData.AchievedResults, dayData.Comments, dayData.Notes);
             }
 
             return dataTable;

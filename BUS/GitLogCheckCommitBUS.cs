@@ -36,10 +36,7 @@ namespace BUS
         {
             return data.ParseCommit(commit);
         }
-        public void CreateExcelReport(string filePath, List<CommitItem> commitItems)
-        {
-            data.CreateExcelReport(filePath, commitItems);
-        }
+
         public string GetWeekFromCommitDate(DateTime date)
         {
             return data.GetWeekFromCommitDate(date);
@@ -58,11 +55,6 @@ namespace BUS
         public void ProcessErrorCommits(List<string> commits, CheckedListBox.CheckedItemCollection checkedItems)
         {
             data.ProcessErrorCommits(commits, checkedItems);
-        }
-
-        public void UpdateDataGridView(List<string> commits, DataGridView dataGridViewCommits)
-        {
-            data.UpdateDataGridView(commits, dataGridViewCommits);
         }
 
         public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits)

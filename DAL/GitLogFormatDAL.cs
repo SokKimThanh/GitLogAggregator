@@ -98,7 +98,7 @@ namespace DAL
                             {
                                 weekData.DayDataList.Add(new DayData
                                 {
-                                    DayOfWeek = daysOfWeek[day].ToString(),
+                                    Day = daysOfWeek[day].ToString(),
                                     Session = session,
                                     Attendance = "Có mặt",
                                     AssignedTasks = "N/A",
@@ -127,7 +127,7 @@ namespace DAL
                             commitIndex += dayCommitsCount;
 
                             worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber}";
-                            worksheet.Cell(currentRow, 2).Value = dayData.DayOfWeek;
+                            worksheet.Cell(currentRow, 2).Value = dayData.Day;
                             worksheet.Cell(currentRow, 3).Value = dayData.Session;
                             worksheet.Cell(currentRow, 4).Value = dayData.Attendance;
                             worksheet.Cell(currentRow, 5).Value = string.Join("\n", dayCommits); // Công việc được giao
@@ -222,7 +222,7 @@ namespace DAL
                 {
                     var row = dataTable.NewRow();
                     row["Tuần"] = weekData.WeekNumber;
-                    row["Thứ"] = dayData.DayOfWeek;
+                    row["Thứ"] = dayData.Day;
                     row["Buổi"] = dayData.Session;
                     row["Điểm danh vắng"] = dayData.Attendance;
                     row["Công việc được giao"] = dayData.AssignedTasks;
@@ -242,17 +242,18 @@ namespace DAL
             {
                 dayDataList.Add(new DayData
                 {
-                    DayOfWeek = row["DayOfWeek"].ToString(),
-                    Session = row["Session"].ToString(),
-                    Attendance = row["Attendance"].ToString(),
-                    AssignedTasks = row["AssignedTasks"].ToString(),
-                    AchievedResults = row["AchievedResults"].ToString(),
-                    Comments = row["Comments"].ToString(),
-                    Notes = row["Notes"].ToString()
+                    Day = row["Thứ"].ToString(), // Sử dụng tên cột "Thứ"
+                    Session = row["Buổi"].ToString(), // Sử dụng tên cột "Buổi"
+                    Attendance = row["Điểm danh vắng"].ToString(), // Sử dụng tên cột "Điểm danh vắng"
+                    AssignedTasks = row["Nội dung commit"].ToString(), // Sử dụng tên cột "Nội dung commit"
+                    AchievedResults = row["Nội dung commit"].ToString(), // Sử dụng tên cột "Nội dung commit" (giả định rằng kết quả đạt được trùng với nội dung commit)
+                    Comments = row["Nhận xét"].ToString(), // Sử dụng tên cột "Nhận xét"
+                    Notes = row["Ghi chú"].ToString() // Sử dụng tên cột "Ghi chú"
                 });
             }
 
             return dayDataList;
         }
+
     }
 }

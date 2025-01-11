@@ -841,11 +841,9 @@ namespace GitLogAggregator
             dataTable.Columns.Add("Thứ", typeof(string));
             dataTable.Columns.Add("Buổi", typeof(string));
             dataTable.Columns.Add("Điểm danh vắng", typeof(string));
-            dataTable.Columns.Add("Tên tệp", typeof(string));
             dataTable.Columns.Add("Nội dung commit", typeof(string));
             dataTable.Columns.Add("Ngày commit", typeof(DateTime));
             dataTable.Columns.Add("Nhận xét", typeof(string));
-            dataTable.Columns.Add("Trạng thái", typeof(string));
             dataTable.Columns.Add("Ghi chú", typeof(string));
 
             // Gán DataTable cho DataGridView
