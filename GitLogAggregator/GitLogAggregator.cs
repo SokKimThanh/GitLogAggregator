@@ -37,9 +37,7 @@ namespace GitLogAggregator
 
         // Biến toàn cục để theo dõi trạng thái kiểm duyệt
         private bool userHasReviewed = false;
-
-
-
+         
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -93,6 +91,9 @@ namespace GitLogAggregator
                 DateTime firstCommitDate = gitlogui_bus.GetProjectStartDate(projectDirectory);
                 txtFirstCommitDate.Value = firstCommitDate;
 
+                // Thiết lập giới hạn ngày cho DateTimePicker
+                SetMaxDateForDateTimePicker(txtInternshipStartDate, firstCommitDate);
+
                 // Kiểm tra nếu thư mục internship_week tồn tại thì mở thêm thư mục (file config.txt nằm trong thư mục này)
                 if (Directory.Exists(internshipWeekFolder))
                 {
@@ -105,9 +106,16 @@ namespace GitLogAggregator
                     txtInternshipStartDate.Enabled = true;
                     btnOpenGitFolder.Enabled = true;
                     btnAggregator.Enabled = true;
+                    AppendTextWithScroll("Ngày thực tập của bạn bắt đầu khi nào?\n");
                 }
             }
         }
+
+        private void SetMaxDateForDateTimePicker(DateTimePicker dateTimePicker, DateTime maxDate)
+        {
+            dateTimePicker.MaxDate = maxDate;
+        }
+
         private void InitializeFileListView()
         {
             fileListView.Columns.Clear();
@@ -309,7 +317,7 @@ namespace GitLogAggregator
                 DisplayDirectoriesInListView();
 
                 // load commit
-                LoadCommitDatagridview();
+                //LoadCommitDatagridview();
 
                 // thông báo
                 AppendTextWithScroll("Đã tổng hợp tất cả commit.\n");
@@ -347,7 +355,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DeleteFolderButton_Click(object sender, EventArgs e)
+        private void BtnDeleteFolderInternship_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(projectDirectory))
             {
@@ -385,6 +393,7 @@ namespace GitLogAggregator
 
                         dataGridViewCommits.DataSource = null;
                         AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
+                         
                     }
                     catch (Exception ex)
                     {
@@ -395,6 +404,9 @@ namespace GitLogAggregator
                         EnableControls();
                         btnDelete.Enabled = false;
                         btnExport.Enabled = false;
+                        txtInternshipEndDate.Enabled = false;
+                        txtFirstCommitDate.Enabled = false;
+                        txtNumericsWeek.Enabled = false;
                     }
                 }
             }
@@ -427,19 +439,7 @@ namespace GitLogAggregator
                     ImageKey = "folder",
                     Tag = folder // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
                 };
-                weekListView.Items.Add(folderItem);
-
-                //// Lấy và thêm các file trong thư mục vào fileListView
-                //var files = Directory.GetFiles(folder);
-                //foreach (var file in files)
-                //{
-                //    string fileName = Path.GetFileName(file);
-                //    var fileItem = new ListViewItem(fileName)
-                //    {
-                //        Tag = file // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
-                //    };
-                //    fileListView.Items.Add(fileItem);
-                //}
+                weekListView.Items.Add(folderItem); 
             }
         }
         /// <summary>
@@ -473,15 +473,27 @@ namespace GitLogAggregator
 
             // Thêm các thư mục vào ListView
             weekListView.Items.Clear();  // Xóa tất cả các mục hiện có
-            foreach (string directory in directories)
+            foreach (string folder in directories)
             {
-                ListViewItem item = new ListViewItem(Path.GetFileName(directory))
+                ListViewItem item = new ListViewItem(Path.GetFileName(folder))
                 {
 
                     ImageKey = "folder",  // Sử dụng icon thư mục
-                    Tag = directory // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
+                    Tag = folder // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
                 };
                 weekListView.Items.Add(item);
+
+                // Lấy và thêm các file trong thư mục vào fileListView
+                var files = Directory.GetFiles(folder);
+                foreach (var file in files)
+                {
+                    string fileName = Path.GetFileName(file);
+                    var fileItem = new ListViewItem(fileName)
+                    {
+                        Tag = file // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                    };
+                    fileListView.Items.Add(fileItem);
+                }
             }
 
             // Hiển thị thông báo nếu không có thư mục nào trong internship_week
@@ -619,8 +631,11 @@ namespace GitLogAggregator
                 if (selectedItem.Tag != null)
                 {
                     string directoryPath = selectedItem.Tag.ToString();
+                    string folderName = Path.GetFileName(directoryPath); // Lấy tên thư mục
                     DisplayFilesInDirectory(directoryPath);
-                    AppendTextWithScroll($"{directoryPath}\n");
+
+                    // Hiển thị thông báo "chọn thư mục tuần thứ"
+                    AppendTextWithScroll($"Bạn đã chọn thư mục tuần: {folderName}\n");
                 }
                 else
                 {
@@ -628,6 +643,7 @@ namespace GitLogAggregator
                 }
             }
         }
+
 
         private void FileListView_MouseClick(object sender, MouseEventArgs e)
         {
@@ -689,6 +705,11 @@ namespace GitLogAggregator
             // Hiển thị ngày kết thúc
             txtInternshipEndDate.Value = endDate;
         }
+        /// <summary>
+        /// Kiểm tra các commit lỗi, đồng thời xóa nó đi và cho phép preview trên datagridview trước khi xuất excel. 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnReviewCommits_Click(object sender, EventArgs e)
         {
             btnReviewCommits.Enabled = false;
@@ -726,7 +747,8 @@ namespace GitLogAggregator
                 if (commits.Count > 0)
                 {
                     var groupedCommits = gitlogcheckcommit_bus.GroupCommits(commits);
-                    gitlogcheckcommit_bus.DisplayCommits(groupedCommits, dataGridViewCommits, checkedListBoxCommits);
+                    gitlogcheckcommit_bus.DisplayCommits(groupedCommits, dataGridViewCommits);
+                    gitlogcheckcommit_bus.UpdateCheckedListBox(groupedCommits, checkedListBoxCommits);
 
                     var commitsToDelete = checkedListBoxCommits.CheckedItems.Cast<string>().ToList();
                     if (commitsToDelete.Count > 0)
@@ -747,8 +769,23 @@ namespace GitLogAggregator
 
             btnReviewCommits.Enabled = true;
         }
-
-
+        /// <summary>
+        /// Cài đặt mẫu dữ liệu để hiển thị
+        /// </summary>
+        private void InitializeDataGridView()
+        {
+            dataGridViewCommits.Columns.Clear();
+            dataGridViewCommits.Columns.Add("week", "Tuần");
+            dataGridViewCommits.Columns.Add("day", "Thứ");
+            dataGridViewCommits.Columns.Add("session", "Buổi");
+            dataGridViewCommits.Columns.Add("attendance", "Điểm danh vắng");
+            dataGridViewCommits.Columns.Add("assignedTasks", "Công việc được giao");
+            dataGridViewCommits.Columns.Add("contentAchieved", "Nội dung – kết quả đạt được");
+            dataGridViewCommits.Columns.Add("comments", "Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp");
+            dataGridViewCommits.Columns.Add("notes", "Ghi chú");
+            // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
+            dataGridViewCommits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
 
         private void WaitUserReview()
         {
@@ -772,27 +809,11 @@ namespace GitLogAggregator
 
                 gitlogcheckcommit_bus.UpdateLogFile(combinedFilePath, commits);
 
-                MessageBox.Show("Đã xóa commit lỗi thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                 AppendTextWithScroll($"Đã xóa các commit lỗi trong file {combinedFilePath}.\n");
 
                 var groupedCommits = gitlogcheckcommit_bus.GroupCommits(commits);
-                gitlogcheckcommit_bus.DisplayCommits(groupedCommits, dataGridViewCommits, checkedListBoxCommits);
+                gitlogcheckcommit_bus.DisplayCommits(groupedCommits, dataGridViewCommits);
             }
-        }
-
-
-        private void InitializeDataGridView()
-        {
-            dataGridViewCommits.Columns.Clear();
-            dataGridViewCommits.Columns.Add("week", "Tuần");
-            dataGridViewCommits.Columns.Add("day", "Thứ");
-            dataGridViewCommits.Columns.Add("session", "Buổi");
-            dataGridViewCommits.Columns.Add("attendance", "Điểm danh vắng");
-            dataGridViewCommits.Columns.Add("assignedTasks", "Công việc được giao");
-            dataGridViewCommits.Columns.Add("contentAchieved", "Nội dung – kết quả đạt được");
-            dataGridViewCommits.Columns.Add("comments", "Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp");
-            dataGridViewCommits.Columns.Add("notes", "Ghi chú");
         }
 
 

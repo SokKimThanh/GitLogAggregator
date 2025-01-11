@@ -249,7 +249,7 @@
             this.btnDelete.TabIndex = 14;
             this.btnDelete.Text = "Xóa dữ liệu";
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.DeleteFolderButton_Click);
+            this.btnDelete.Click += new System.EventHandler(this.BtnDeleteFolderInternship_Click);
             // 
             // helpButton
             // 

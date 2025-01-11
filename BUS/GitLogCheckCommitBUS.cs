@@ -2,6 +2,7 @@
 using ET;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -64,9 +65,9 @@ namespace BUS
             data.UpdateDataGridView(commits, dataGridViewCommits);
         }
 
-        public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits, DataGridView dataGridViewCommits, CheckedListBox checkedListBoxCommits)
+        public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits, DataGridView dataGridViewCommits)
         {
-            data.ConfirmDeleteCommits(commitsToDelete, filePath, allCommits, dataGridViewCommits, checkedListBoxCommits);
+            data.ConfirmDeleteCommits(commitsToDelete, filePath, allCommits, dataGridViewCommits);
         }
 
         public Dictionary<string, List<string>> GroupCommits(List<string> commits)
@@ -78,10 +79,23 @@ namespace BUS
         {
             File.WriteAllLines(filePath, commits);
         }
-         
-        public void DisplayCommits(Dictionary<string, List<string>> groupedCommits, DataGridView dataGridViewCommits, CheckedListBox checkedListBoxCommits)
+        /// <summary>
+        /// Chịu trách nhiệm tạo DataTable và hiển thị dữ liệu lên DataGridView.
+        /// </summary>
+        /// <param name="groupedCommits"></param>
+        /// <param name="dataGridViewCommits"></param>
+        public void DisplayCommits(Dictionary<string, List<string>> groupedCommits, DataGridView dataGridViewCommits)
         {
-            data.DisplayCommits(groupedCommits, dataGridViewCommits, checkedListBoxCommits);
+            data.DisplayCommits(groupedCommits, dataGridViewCommits);
+        }
+        /// <summary>
+        /// Chịu trách nhiệm cập nhật CheckedListBox với danh sách commit.
+        /// </summary>
+        /// <param name="groupedCommits"></param>
+        /// <param name="checkedListBoxCommits"></param>
+        public void UpdateCheckedListBox(Dictionary<string, List<string>> groupedCommits, CheckedListBox checkedListBoxCommits)
+        {
+            data.UpdateCheckedListBox(groupedCommits, checkedListBoxCommits);
         }
 
     }

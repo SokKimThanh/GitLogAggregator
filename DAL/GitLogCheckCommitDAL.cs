@@ -2,6 +2,7 @@
 using ET;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -50,7 +51,11 @@ namespace DAL
                 }
             }
         }
-
+        /// <summary>
+        /// Đảm bảo rằng các giá trị mặc định hoặc "N/A" được sử dụng nếu không có dữ liệu thực tế.
+        /// </summary>
+        /// <param name="commit"></param>
+        /// <returns></returns>
         public CommitItem ParseCommit(string commit)
         {
             var parts = commit.Split(new[] { " - ", ", ", " : " }, StringSplitOptions.None);
@@ -61,18 +66,18 @@ namespace DAL
 
             return new CommitItem
             {
-                Week = "TuầnPlaceholder", // Thay thế bằng giá trị thực tế nếu cần
-                Day = "ThứPlaceholder", // Thay thế bằng giá trị thực tế nếu cần
-                Session = "BuổiPlaceholder", // Thay thế bằng giá trị thực tế nếu cần
-                Attendance = "Vắng", // Thay thế bằng giá trị thực tế nếu cần
-                FileName = "FileNamePlaceholder", // Thay thế bằng giá trị thực tế nếu cần
-                CommitContent = parts.Length > 3 ? parts[3] : "No content",
+                Week = "Tuần N/A", // Thay thế bằng giá trị thực tế nếu cần
+                Day = "Thứ N/A", // Thay thế bằng giá trị thực tế nếu cần
+                Session = "Buổi N/A", // Thay thế bằng giá trị thực tế nếu cần
+                Attendance = "Vắng N/A", // Thay thế bằng giá trị thực tế nếu cần
+                FileName = parts.Length > 0 ? parts[0] : "FileName N/A",
+                CommitContent = parts.Length > 3 ? parts[3] : "N/A",
                 CommitDate = isValidDate ? commitDate : DateTime.Now,
                 Status = "Không lỗi",
-                Notes = string.Empty // Thay thế bằng giá trị thực tế nếu cần
+                Comments = "Nhận xét N/A", // Thay thế bằng giá trị thực tế nếu cần
+                Notes = "Ghi chú N/A" // Thay thế bằng giá trị thực tế nếu cần
             };
         }
-
 
 
         public void CreateExcelReport(string filePath, List<CommitItem> commitItems)
@@ -147,7 +152,7 @@ namespace DAL
                 dataGridViewCommits.Rows.Add(stt++, commitDetails.FileName, commitDetails.CommitContent, commitDetails.CommitDate, "Không lỗi");
             }
         }
-        public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits, DataGridView dataGridViewCommits, CheckedListBox checkedListBoxCommits)
+        public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits, DataGridView dataGridViewCommits)
         {
             var result = MessageBox.Show("Bạn có chắc chắn muốn xóa các commit được chọn?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result == DialogResult.Yes)
@@ -161,7 +166,7 @@ namespace DAL
                 MessageBox.Show("Đã xóa commit lỗi thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 var groupedCommits = GroupCommits(allCommits);
-                DisplayCommits(groupedCommits, dataGridViewCommits, checkedListBoxCommits);
+                DisplayCommits(groupedCommits, dataGridViewCommits);
             }
         }
 
@@ -184,43 +189,90 @@ namespace DAL
         {
             File.WriteAllLines(filePath, commits);
         }
-        
-        public void DisplayCommits(Dictionary<string, List<string>> groupedCommits, DataGridView dataGridViewCommits, CheckedListBox checkedListBoxCommits)
+        /// <summary>
+        /// Tạo DataTable với các cột đúng định dạng mẫu và hiển thị dữ liệu commit từ groupedCommits.
+        /// </summary>
+        /// <param name="groupedCommits"></param>
+        /// <param name="dataGridViewCommits"></param>
+        /// <param name="checkedListBoxCommits"></param>
+        public void DisplayCommits(Dictionary<string, List<string>> groupedCommits, DataGridView dataGridViewCommits)
         {
-            dataGridViewCommits.Rows.Clear();
+            // Kiểm tra nếu có dữ liệu cũ
+            var dataTable = dataGridViewCommits.DataSource as DataTable;
 
+            if (dataTable == null || dataTable.Columns.Count == 0)
+            {
+                // Tạo DataTable nếu chưa có
+                dataTable = new DataTable();
+
+                // Thêm các cột vào DataTable
+                dataTable.Columns.Add("Tuần", typeof(string));
+                dataTable.Columns.Add("Thứ", typeof(string));
+                dataTable.Columns.Add("Buổi", typeof(string));
+                dataTable.Columns.Add("Điểm danh vắng", typeof(string));
+                dataTable.Columns.Add("Công việc được giao", typeof(string));
+                dataTable.Columns.Add("Nội dung – kết quả đạt được", typeof(string));
+                dataTable.Columns.Add("Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp", typeof(string));
+                dataTable.Columns.Add("Ghi chú", typeof(string));
+            }
+            else
+            {
+                // Xóa dữ liệu cũ nếu tồn tại
+                dataTable.Rows.Clear();
+            }
+
+            // Biến đếm số thứ tự
+            int stt = 1;
+
+            // Thêm dữ liệu vào DataTable
+            foreach (var group in groupedCommits)
+            {
+                foreach (var commit in group.Value)
+                {
+                    var commitDetails = ParseCommit(commit);
+                    dataTable.Rows.Add($"Tuần {stt}", commitDetails.Day ?? "N/A", commitDetails.Session ?? "N/A", commitDetails.Attendance ?? "N/A", commitDetails.FileName ?? "N/A", commitDetails.CommitContent ?? "N/A", commitDetails.Comments ?? "N/A", commitDetails.Notes ?? "N/A");
+                    stt++;
+                }
+            }
+
+            // Hiển thị dữ liệu lên DataGridView
+            dataGridViewCommits.DataSource = dataTable;
+
+            // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
+            dataGridViewCommits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            // Định dạng các cột
+            foreach (DataGridViewColumn column in dataGridViewCommits.Columns)
+            {
+                column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            }
+            dataGridViewCommits.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+        }
+
+
+        public void UpdateCheckedListBox(Dictionary<string, List<string>> groupedCommits, CheckedListBox checkedListBoxCommits)
+        {
             // Tạm dừng cập nhật giao diện của CheckedListBox để tránh lỗi
             checkedListBoxCommits.BeginUpdate();
             try
             {
                 checkedListBoxCommits.Items.Clear();
-            }
-            finally
-            {
-                // Tiếp tục cập nhật giao diện của CheckedListBox
-                checkedListBoxCommits.EndUpdate();
-            }
 
-            int stt = 1;
-
-            foreach (var group in groupedCommits)
-            {
-                if (group.Key == "merge")
+                // Thêm dữ liệu vào CheckedListBox
+                foreach (var group in groupedCommits)
                 {
                     foreach (var commit in group.Value)
                     {
                         checkedListBoxCommits.Items.Add(commit);
                     }
                 }
-                else
-                {
-                    var commitDetails = ParseCommit(group.Value.FirstOrDefault());
-                    dataGridViewCommits.Rows.Add(stt++, commitDetails.Week, commitDetails.Day, commitDetails.Session, commitDetails.Attendance, commitDetails.FileName, commitDetails.CommitContent, commitDetails.CommitDate, commitDetails.Status, commitDetails.Notes);
-                }
+            }
+            finally
+            {
+                // Tiếp tục cập nhật giao diện của CheckedListBox
+                checkedListBoxCommits.EndUpdate();
             }
         }
-
-
 
     }
 }

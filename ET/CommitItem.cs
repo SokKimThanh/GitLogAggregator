@@ -15,6 +15,8 @@ namespace ET
         public string FileName { get; set; }
         public string CommitContent { get; set; }
         public DateTime CommitDate { get; set; }
+
+        public string Comments { get; set; }
         public string Status { get; set; }
         public string Notes { get; set; }
     }
