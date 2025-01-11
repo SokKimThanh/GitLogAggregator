@@ -88,7 +88,7 @@
             this.btnOpenGitFolder.TabIndex = 1;
             this.btnOpenGitFolder.Text = "Chọn dự án";
             this.btnOpenGitFolder.UseVisualStyleBackColor = true;
-            this.btnOpenGitFolder.Click += new System.EventHandler(this.SelectGitFolderButton_Click);
+            this.btnOpenGitFolder.Click += new System.EventHandler(this.BtnSelectGitFolder_Click);
             // 
             // txtInternshipStartDate
             // 
@@ -103,7 +103,6 @@
             // txtResult
             // 
             this.txtResult.BackColor = System.Drawing.Color.Gainsboro;
-            this.txtResult.Enabled = false;
             this.txtResult.ForeColor = System.Drawing.Color.IndianRed;
             this.txtResult.Location = new System.Drawing.Point(12, 538);
             this.txtResult.Margin = new System.Windows.Forms.Padding(4);
@@ -123,7 +122,7 @@
             this.btnAggregator.TabIndex = 5;
             this.btnAggregator.Text = "Tổng hợp commit";
             this.btnAggregator.UseVisualStyleBackColor = true;
-            this.btnAggregator.Click += new System.EventHandler(this.AggregateButton_Click);
+            this.btnAggregator.Click += new System.EventHandler(this.BtnAggregate_Click);
             // 
             // label1
             // 

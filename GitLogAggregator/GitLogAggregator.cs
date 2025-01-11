@@ -37,7 +37,7 @@ namespace GitLogAggregator
 
         // Biến toàn cục để theo dõi trạng thái kiểm duyệt
         private bool userHasReviewed = false;
-         
+
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -60,7 +60,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SelectGitFolderButton_Click(object sender, EventArgs e)
+        private void BtnSelectGitFolder_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -252,7 +252,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AggregateButton_Click(object sender, EventArgs e)
+        private void BtnAggregate_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(projectDirectory))
             {
@@ -393,7 +393,7 @@ namespace GitLogAggregator
 
                         dataGridViewCommits.DataSource = null;
                         AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
-                         
+
                     }
                     catch (Exception ex)
                     {
@@ -439,11 +439,11 @@ namespace GitLogAggregator
                     ImageKey = "folder",
                     Tag = folder // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
                 };
-                weekListView.Items.Add(folderItem); 
+                weekListView.Items.Add(folderItem);
             }
         }
         /// <summary>
-        /// Hiển thị danh sách thư mục thực tập
+        /// Hiển thị danh sách thư mục thực tập kho tổng hợp commit
         /// </summary>
         private void DisplayDirectoriesInListView()
         {
@@ -473,11 +473,16 @@ namespace GitLogAggregator
 
             // Thêm các thư mục vào ListView
             weekListView.Items.Clear();  // Xóa tất cả các mục hiện có
+            fileListView.Items.Clear();  // Xóa tất cả các file hiện có
+            int totalFiles = 0;
+            int stt = 1;
+            int emptyDirectories = 0;
+            int directoriesWithCommits = 0;
+
             foreach (string folder in directories)
             {
                 ListViewItem item = new ListViewItem(Path.GetFileName(folder))
                 {
-
                     ImageKey = "folder",  // Sử dụng icon thư mục
                     Tag = folder // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
                 };
@@ -488,11 +493,24 @@ namespace GitLogAggregator
                 foreach (var file in files)
                 {
                     string fileName = Path.GetFileName(file);
-                    var fileItem = new ListViewItem(fileName)
-                    {
-                        Tag = file // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
-                    };
+                    var fileItem = new ListViewItem(stt++.ToString());
+                    fileItem.SubItems.Add(fileName);
+                    fileItem.Tag = file; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
                     fileListView.Items.Add(fileItem);
+                    totalFiles++;
+                }
+
+                // Đếm số lượng commit trong thư mục
+                int commitsCount = CountCommitsInFolder(folder);
+                if (commitsCount > 0)
+                {
+                    directoriesWithCommits++;
+                    AppendTextWithScroll($"Thư mục: {folder} - Số lượng file: {files.Length} - Số lượng commit: {commitsCount}\n");
+                }
+                else
+                {
+                    emptyDirectories++;
+                    AppendTextWithScroll($"Thư mục: {folder} - Không có commit.\n");
                 }
             }
 
@@ -501,7 +519,30 @@ namespace GitLogAggregator
             {
                 AppendTextWithScroll("Không có thư mục nào trong internship_week.\n");
             }
+            else
+            {
+                AppendTextWithScroll($"Tổng số thư mục: {directories.Length}\n");
+                AppendTextWithScroll($"Số thư mục trống: {emptyDirectories}\n");
+                AppendTextWithScroll($"Số thư mục có commit: {directoriesWithCommits}\n");
+                AppendTextWithScroll($"Tổng số file: {totalFiles}\n");
+            }
         }
+
+        private int CountCommitsInFolder(string folderPath)
+        {
+            // Giả sử mỗi file commit chứa các dòng ghi log commit
+            // Thay thế bằng logic thực tế để đếm số lượng commit
+            int commitCount = 0;
+            var commitFiles = Directory.GetFiles(folderPath, "*.txt");
+            foreach (var file in commitFiles)
+            {
+                var lines = File.ReadAllLines(file);
+                commitCount += lines.Length; // Giả định mỗi dòng là một commit
+            }
+            return commitCount;
+        }
+
+
         /// <summary>
         /// Hiển thị file khi chọn một thư mục
         /// </summary>
@@ -806,7 +847,7 @@ namespace GitLogAggregator
                 {
                     commits.Remove(commit);
                 }
-
+                // xóa và cập nhật file
                 gitlogcheckcommit_bus.UpdateLogFile(combinedFilePath, commits);
 
                 AppendTextWithScroll($"Đã xóa các commit lỗi trong file {combinedFilePath}.\n");
