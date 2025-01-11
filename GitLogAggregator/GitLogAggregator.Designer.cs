@@ -305,10 +305,10 @@
             this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dataGridViewCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridViewCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewCommits.Location = new System.Drawing.Point(395, 401);
+            this.dataGridViewCommits.Location = new System.Drawing.Point(395, 163);
             this.dataGridViewCommits.Name = "dataGridViewCommits";
             this.dataGridViewCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridViewCommits.Size = new System.Drawing.Size(281, 213);
+            this.dataGridViewCommits.Size = new System.Drawing.Size(281, 451);
             this.dataGridViewCommits.TabIndex = 18;
             // 
             // label8
@@ -383,13 +383,13 @@
             this.checkedListBoxCommits.FormattingEnabled = true;
             this.checkedListBoxCommits.Location = new System.Drawing.Point(395, 113);
             this.checkedListBoxCommits.Name = "checkedListBoxCommits";
-            this.checkedListBoxCommits.Size = new System.Drawing.Size(281, 244);
+            this.checkedListBoxCommits.Size = new System.Drawing.Size(281, 44);
             this.checkedListBoxCommits.TabIndex = 23;
             // 
             // btnExport
             // 
             this.btnExport.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnExport.Location = new System.Drawing.Point(580, 364);
+            this.btnExport.Location = new System.Drawing.Point(287, 177);
             this.btnExport.Margin = new System.Windows.Forms.Padding(4);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(96, 28);

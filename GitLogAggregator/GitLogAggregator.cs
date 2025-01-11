@@ -712,13 +712,13 @@ namespace GitLogAggregator
         {
             try
             {
+                LoadCommitDatagridview();
 
                 if (dataGridViewCommits.DataSource == null)
                 {
                     AppendTextWithScroll("Không có dữ liệu để xuất.\n");
                     return;
                 }
-
                 string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 string filePath = Path.Combine(desktopPath, "commits.xlsx");
 
@@ -747,7 +747,7 @@ namespace GitLogAggregator
             txtInternshipEndDate.Value = endDate;
         }
         /// <summary>
-        /// Kiểm tra các commit lỗi, đồng thời xóa nó đi và cho phép preview trên datagridview trước khi xuất excel. 
+        /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -755,7 +755,6 @@ namespace GitLogAggregator
         {
             btnReviewCommits.Enabled = false;
             txtResult.Clear(); // Xóa nội dung cũ trong RichTextBox
-            InitializeDataGridView(dataGridViewCommits); // Thêm cột trước khi thêm hàng
 
             string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
@@ -766,8 +765,11 @@ namespace GitLogAggregator
                 return;
             }
 
-            // Danh sách để lưu trữ tất cả các commit hợp lệ
-            List<string> validCommits = new List<string>();
+            // Danh sách để lưu trữ tất cả các WeekData hợp lệ
+            List<WeekData> validWeekDataList = new List<WeekData>();
+
+            DateTime internshipStartDate = txtInternshipStartDate.Value;
+            DateTime internshipEndDate = txtInternshipEndDate.Value;
 
             for (int week = 1; week <= txtNumericsWeek.Value; week++)
             {
@@ -802,62 +804,24 @@ namespace GitLogAggregator
                         checkedListBoxCommits.Items.Clear();
                     }
 
-                    // Thêm các commit hợp lệ vào danh sách validCommits
-                    validCommits.AddRange(commits.Except(commitsToDelete));
+                    // Chuyển đổi các CommitItem hợp lệ thành DayData
+                    List<DayData> validCommitItems = commits.Except(commitsToDelete)
+                                                            .Select(commit => gitlogcheckcommit_bus.ParseCommit(commit))
+                                                            .ToList();
+
+                    // Tạo đối tượng WeekData và thêm vào danh sách validWeekDataList
+                    WeekData weekData = new WeekData
+                    {
+                        WeekNumber = week,
+                        StartDate = internshipStartDate.AddDays((week - 1) * 7),
+                        EndDate = internshipStartDate.AddDays(week * 7 - 1) <= internshipEndDate ? internshipStartDate.AddDays(week * 7 - 1) : internshipEndDate,
+                        DayDataList = validCommitItems
+                    };
+                    validWeekDataList.Add(weekData);
                 }
             }
-
-            // Chuyển đổi danh sách validCommits thành danh sách CommitItem
-            List<CommitItem> commitItems = new List<CommitItem>();
-            foreach (var commit in validCommits)
-            {
-                var commitItem = gitlogcheckcommit_bus.ParseCommit(commit);
-                commitItems.Add(commitItem);
-            }
-
-            // Hiển thị các commit hợp lệ lên DataGridView sau khi hoàn thành tất cả các tuần
-            gitlogcheckcommit_bus.DisplayCommits(commitItems, dataGridViewCommits);
-
             AppendTextWithScroll("Hoàn thành tất cả các tuần!\n");
-            MessageBox.Show("Đã hoàn thành kiểm duyệt và xóa commit cho tất cả các tuần.", "Hoàn thành", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             btnReviewCommits.Enabled = true;
-        }
-
-
-
-
-
-
-        /// <summary>
-        /// Cài đặt mẫu dữ liệu để hiển thị
-        /// </summary>
-        public void InitializeDataGridView(DataGridView dataGridViewCommits)
-        {
-            DataTable dataTable = new DataTable();
-
-            // Thêm các cột vào DataTable
-            dataTable.Columns.Add("Tuần", typeof(string));
-            dataTable.Columns.Add("Thứ", typeof(string));
-            dataTable.Columns.Add("Buổi", typeof(string));
-            dataTable.Columns.Add("Điểm danh vắng", typeof(string));
-            dataTable.Columns.Add("Nội dung commit", typeof(string));
-            dataTable.Columns.Add("Ngày commit", typeof(DateTime));
-            dataTable.Columns.Add("Nhận xét", typeof(string));
-            dataTable.Columns.Add("Ghi chú", typeof(string));
-
-            // Gán DataTable cho DataGridView
-            dataGridViewCommits.DataSource = dataTable;
-
-            // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
-            dataGridViewCommits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            // Định dạng các cột
-            foreach (DataGridViewColumn column in dataGridViewCommits.Columns)
-            {
-                column.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            }
-            dataGridViewCommits.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
         }
 
 

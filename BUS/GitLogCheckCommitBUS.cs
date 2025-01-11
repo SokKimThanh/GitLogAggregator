@@ -32,7 +32,7 @@ namespace BUS
             return data.RunGitCommand(command, projectDirectory);
         }
 
-        public CommitItem ParseCommit(string commit)
+        public DayData ParseCommit(string commit)
         {
             return data.ParseCommit(commit);
         }
@@ -76,7 +76,7 @@ namespace BUS
         /// </summary>
         /// <param name="groupedCommits"></param>
         /// <param name="dataGridViewCommits"></param>
-        public void DisplayCommits(List<CommitItem> commitItems, DataGridView dataGridViewCommits)
+        public void DisplayCommits(List<DayData> commitItems, DataGridView dataGridViewCommits)
         {
             data.DisplayCommits(commitItems, dataGridViewCommits);
         }
@@ -89,6 +89,14 @@ namespace BUS
         {
             data.UpdateCheckedListBox(groupedCommits, checkedListBoxCommits);
         }
-
+        /// <summary>
+        /// Chuyển danh sách WeekData thành DataTable.
+        /// </summary>
+        /// <param name="weekDataList">Danh sách dữ liệu theo tuần.</param>
+        /// <returns>DataTable chứa thông tin tuần, ngày, và nội dung liên quan.</returns>
+        public DataTable ConvertWeekDataListToDataTable(List<WeekData> weekDataList)
+        {
+            return data.ConvertWeekDataListToDataTable(weekDataList);
+        }
     }
 }

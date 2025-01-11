@@ -74,7 +74,7 @@ namespace DAL
         /// </summary>
         /// <param name="commit"></param>
         /// <returns></returns>
-        public CommitItem ParseCommit(string commit)
+        public DayData ParseCommit(string commit)
         {
             var parts = commit.Split(new[] { " - ", ", ", " : " }, StringSplitOptions.None);
 
@@ -82,17 +82,23 @@ namespace DAL
             DateTime commitDate;
             bool isValidDate = DateTime.TryParse(commitDateStr, out commitDate);
 
-            return new CommitItem
+            // Chia commit thành các nhiệm vụ riêng lẻ bằng cách sử dụng ký tự newline (\n)
+            var tasks = commit.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                              .Select(task => task.Trim())
+                              .ToArray();
+
+            return new DayData
             {
-                Week = GetWeekFromCommitDate(isValidDate ? commitDate : DateTime.Now),
-                Day = GetDayOfWeekFromCommitDate(isValidDate ? commitDate : DateTime.Now),
+                DayOfWeek = GetDayOfWeekFromCommitDate(isValidDate ? commitDate : DateTime.Now),
                 Session = GetSessionFromCommitDate(isValidDate ? commitDate : DateTime.Now),
-                Attendance = parts.Length > 2 ? "Có mặt" : "N/A",
-                CommitContent = parts.Length > 3 ? parts[3] : "N/A",
-                Comments = parts.Length > 4 ? parts[4] : "Nhận xét N/A",
-                Notes = parts.Length > 5 ? parts[5] : "Ghi chú N/A"
+                Attendance = "Có mặt", // Điểm danh
+                AssignedTasks = string.Join("\n", tasks),// nhiệm vụ được giao
+                AchievedResults = "",  // kết quả đạt được
+                Comments = "",  // nhận xét
+                Notes = "" // Ghi chú mặc định
             };
         }
+
 
         public string GetWeekFromCommitDate(DateTime date)
         {
@@ -168,7 +174,7 @@ namespace DAL
         /// </summary>
         /// <param name="commitItems"></param>
         /// <param name="dataGridViewCommits"></param>
-        public void DisplayCommits(List<CommitItem> commitItems, DataGridView dataGridViewCommits)
+        public void DisplayCommits(List<DayData> commitItems, DataGridView dataGridViewCommits)
         {
             // Chuyển đổi danh sách CommitItem thành DataTable
             DataTable dataTable = ConvertToDataTable(commitItems);
@@ -232,7 +238,7 @@ namespace DAL
                 checkedListBoxCommits.EndUpdate();
             }
         }
-        public DataTable ConvertToDataTable(List<CommitItem> commitItems)
+        public DataTable ConvertToDataTable(List<DayData> commitItems)
         {
             DataTable dataTable = new DataTable();
 
@@ -249,11 +255,10 @@ namespace DAL
             foreach (var commitItem in commitItems)
             {
                 dataTable.Rows.Add(
-                    commitItem.Week,
-                    commitItem.Day,
+                    commitItem.DayOfWeek,
                     commitItem.Session,
                     commitItem.Attendance,
-                    commitItem.CommitContent,
+                    commitItem.AssignedTasks,
                     commitItem.Comments,
                     commitItem.Notes
                 );
@@ -262,6 +267,59 @@ namespace DAL
             return dataTable;
         }
 
+        /// <summary>
+        /// Chuyển danh sách WeekData thành DataTable.
+        /// </summary>
+        /// <param name="weekDataList">Danh sách dữ liệu theo tuần.</param>
+        /// <returns>DataTable chứa thông tin tuần, ngày, và nội dung liên quan.</returns>
+        public DataTable ConvertWeekDataListToDataTable(List<WeekData> weekDataList)
+        {
+            DataTable dataTable = new DataTable();
+
+            // Thêm các cột vào DataTable
+            dataTable.Columns.Add("Tuần", typeof(string)); // Số tuần 
+            dataTable.Columns.Add("Thứ", typeof(string));
+            dataTable.Columns.Add("Buổi", typeof(string));
+            dataTable.Columns.Add("Điểm danh vắng", typeof(string));
+            dataTable.Columns.Add("Công việc được giao", typeof(string));
+            dataTable.Columns.Add("Nội dung – kết quả đạt được", typeof(string));
+            dataTable.Columns.Add("Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp", typeof(string));
+            dataTable.Columns.Add("Ghi chú", typeof(string));
+
+            // Nhóm dữ liệu và thêm vào DataTable
+            foreach (var weekData in weekDataList)
+            {
+                var groupedData = weekData.DayDataList
+                                          .GroupBy(d => new { d.DayOfWeek, d.Session, d.Attendance })
+                                          .Select(g => new
+                                          {
+                                              Tuần = $"Tuần {weekData.WeekNumber}",
+                                              g.Key.DayOfWeek,
+                                              g.Key.Session,
+                                              g.Key.Attendance,
+                                              CôngViệcĐượcGiao = string.Join("\n", g.Select(d => d.AssignedTasks)),
+                                              NộiDungKếtQuả = string.Join("\n", g.Select(d => d.AchievedResults)),
+                                              NhậnXét = string.Join("\n", g.Select(d => d.Comments)),
+                                              GhiChú = string.Join("\n", g.Select(d => d.Notes))
+                                          });
+
+                foreach (var item in groupedData)
+                {
+                    dataTable.Rows.Add(
+                        item.Tuần,
+                        item.DayOfWeek,
+                        item.Session,
+                        item.Attendance,
+                        item.CôngViệcĐượcGiao,
+                        item.NộiDungKếtQuả,
+                        item.NhậnXét,
+                        item.GhiChú
+                    );
+                }
+            }
+
+            return dataTable;
+        }
 
     }
 }

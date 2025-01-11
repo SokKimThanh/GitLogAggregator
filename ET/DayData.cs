@@ -11,7 +11,7 @@ namespace ET
     /// </summary>
     public class DayData
     {
-        public string Day { get; set; }
+        public string DayOfWeek { get; set; }
         public string Session { get; set; }
         public string Attendance { get; set; }
         public string AssignedTasks { get; set; }

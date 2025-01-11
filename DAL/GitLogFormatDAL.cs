@@ -98,7 +98,7 @@ namespace DAL
                             {
                                 weekData.DayDataList.Add(new DayData
                                 {
-                                    Day = daysOfWeek[day].ToString(),
+                                    DayOfWeek = daysOfWeek[day].ToString(),
                                     Session = session,
                                     Attendance = "Có mặt",
                                     AssignedTasks = "N/A",
@@ -127,7 +127,7 @@ namespace DAL
                             commitIndex += dayCommitsCount;
 
                             worksheet.Cell(currentRow, 1).Value = $"Tuần {weekData.WeekNumber}";
-                            worksheet.Cell(currentRow, 2).Value = dayData.Day;
+                            worksheet.Cell(currentRow, 2).Value = dayData.DayOfWeek;
                             worksheet.Cell(currentRow, 3).Value = dayData.Session;
                             worksheet.Cell(currentRow, 4).Value = dayData.Attendance;
                             worksheet.Cell(currentRow, 5).Value = string.Join("\n", dayCommits); // Công việc được giao
@@ -222,7 +222,7 @@ namespace DAL
                 {
                     var row = dataTable.NewRow();
                     row["Tuần"] = weekData.WeekNumber;
-                    row["Thứ"] = dayData.Day;
+                    row["Thứ"] = dayData.DayOfWeek;
                     row["Buổi"] = dayData.Session;
                     row["Điểm danh vắng"] = dayData.Attendance;
                     row["Công việc được giao"] = dayData.AssignedTasks;
@@ -242,13 +242,13 @@ namespace DAL
             {
                 dayDataList.Add(new DayData
                 {
-                    Day = row["Thứ"].ToString(), // Sử dụng tên cột "Thứ"
-                    Session = row["Buổi"].ToString(), // Sử dụng tên cột "Buổi"
-                    Attendance = row["Điểm danh vắng"].ToString(), // Sử dụng tên cột "Điểm danh vắng"
-                    AssignedTasks = row["Nội dung commit"].ToString(), // Sử dụng tên cột "Nội dung commit"
-                    AchievedResults = row["Nội dung commit"].ToString(), // Sử dụng tên cột "Nội dung commit" (giả định rằng kết quả đạt được trùng với nội dung commit)
-                    Comments = row["Nhận xét"].ToString(), // Sử dụng tên cột "Nhận xét"
-                    Notes = row["Ghi chú"].ToString() // Sử dụng tên cột "Ghi chú"
+                    DayOfWeek = row["Thứ"].ToString(),
+                    Session = row["Buổi"].ToString(),
+                    Attendance = row["Điểm danh vắng"].ToString(),
+                    AssignedTasks = row["Công việc được giao"].ToString(),
+                    AchievedResults = row["Nội dung – kết quả đạt được"].ToString(),
+                    Comments = row["Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp"].ToString(),
+                    Notes = row["Ghi chú"].ToString()
                 });
             }
 
