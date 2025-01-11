@@ -38,6 +38,8 @@ namespace GitLogAggregator
         // Biến toàn cục để theo dõi trạng thái kiểm duyệt
         private bool userHasReviewed = false;
 
+
+
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -179,7 +181,7 @@ namespace GitLogAggregator
                     AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {aggregateInfo.Author}\nNgày bắt đầu: {aggregateInfo.StartDate:dd/MM/yyyy}\n");
 
                     // Load và hiển thị các commits từ các thư mục
-                    LoadCommitDatagridview();
+                    //LoadCommitDatagridview();
 
                     //Đảm bảo rằng fileListView đã được cấu hình để hiển thị cột "STT" và tên file.
                     InitializeFileListView();
@@ -190,6 +192,7 @@ namespace GitLogAggregator
                     txtInternshipEndDate.Enabled = false;
                     txtFirstCommitDate.Enabled = false;
                     txtNumericsWeek.Enabled = false;
+                    btnCompleteReview.Enabled = false;
                 }
                 else
                 {
@@ -213,6 +216,8 @@ namespace GitLogAggregator
             btnDelete.Enabled = true;
             btnOpenGitFolder.Enabled = true;
             btnExport.Enabled = true;
+            btnReviewCommits.Enabled = true;
+            btnCompleteReview.Enabled = true;
             // Thêm các điều khiển khác nếu cần
         }
         private void DisableControls()
@@ -226,6 +231,9 @@ namespace GitLogAggregator
             btnDelete.Enabled = false;
             btnOpenGitFolder.Enabled = false;
             btnExport.Enabled = false;
+            btnReviewCommits.Enabled = false;
+            btnCompleteReview.Enabled = false;
+
             // Thêm các điều khiển khác nếu cần
         }
         /// <summary>
@@ -684,7 +692,9 @@ namespace GitLogAggregator
         private void BtnReviewCommits_Click(object sender, EventArgs e)
         {
             btnReviewCommits.Enabled = false;
-            // Lấy đường dẫn thư mục internship_week
+            txtResult.Clear(); // Xóa nội dung cũ trong RichTextBox
+            InitializeDataGridView(); // Thêm cột trước khi thêm hàng
+
             string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
             if (!Directory.Exists(internshipWeekFolder))
@@ -694,47 +704,53 @@ namespace GitLogAggregator
                 return;
             }
 
-            // Duyệt qua mỗi tuần (giả sử có 8 tuần)
             for (int week = 1; week <= txtNumericsWeek.Value; week++)
             {
+                AppendTextWithScroll($"Đang xử lý tuần {week}...\n"); // Hiển thị tuần hiện tại
                 string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{week}");
                 if (!Directory.Exists(weekFolder))
                 {
                     AppendTextWithScroll($"Thư mục {weekFolder} không tồn tại.\n");
+                    continue;
                 }
 
-                // Giả sử tên file là combine.txt
                 string combinedFilePath = Path.Combine(weekFolder, "combined_commits.txt");
-
                 if (!File.Exists(combinedFilePath))
                 {
-                    AppendTextWithScroll($"File {combinedFilePath} không có commit nào.\n");
+                    AppendTextWithScroll($"Tuần {week} không có commit nào.\n");
+                    continue;
                 }
-                List<string> commits = gitlogui_bus.ReadCommitsFromFile(combinedFilePath);
+
+                List<string> commits = gitlogcheckcommit_bus.ReadCommitsFromFile(combinedFilePath);
 
                 if (commits.Count > 0)
                 {
-                    gitlogcheckcommit_bus.DisplayCommitsInCheckedListBox(commits, checkedListBoxCommits);
+                    var groupedCommits = gitlogcheckcommit_bus.GroupCommits(commits);
+                    gitlogcheckcommit_bus.DisplayCommits(groupedCommits, dataGridViewCommits, checkedListBoxCommits);
 
-                    // Chờ người dùng đánh dấu commit lỗi
-                    WaitUserReview();
+                    var commitsToDelete = checkedListBoxCommits.CheckedItems.Cast<string>().ToList();
+                    if (commitsToDelete.Count > 0)
+                    {
+                        btnCompleteReview.Enabled = true;
+                        WaitUserReview(); // Đợi người dùng xác nhận đánh dấu commit
+                        btnCompleteReview.Enabled = false;
 
-                    // Xử lý các commit bị lỗi
-                    gitlogcheckcommit_bus.ProcessErrorCommits(commits, checkedListBoxCommits.CheckedItems);
+                        ConfirmDeleteCommits(commitsToDelete, combinedFilePath, commits);
+                    }
 
-                    // Cập nhật kết quả cuối cùng
                     gitlogcheckcommit_bus.UpdateDataGridView(commits, dataGridViewCommits);
                 }
-
             }
+
+            AppendTextWithScroll("Hoàn thành tất cả các tuần!\n");
+            MessageBox.Show("Đã hoàn thành kiểm duyệt và xóa commit cho tất cả các tuần.", "Hoàn thành", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             btnReviewCommits.Enabled = true;
         }
-        public void BtnCompleteReview_Click(object sender, EventArgs e)
-        {
-            userHasReviewed = true;
-        }
 
-        public void WaitUserReview()
+
+
+        private void WaitUserReview()
         {
             // Tạm dừng cho đến khi người dùng hoàn thành việc kiểm tra các commit
             while (!userHasReviewed)
@@ -742,6 +758,53 @@ namespace GitLogAggregator
                 Application.DoEvents();
             }
             userHasReviewed = false; // Đặt lại để sẵn sàng cho lần kiểm duyệt tiếp theo
+        }
+
+        private void ConfirmDeleteCommits(List<string> commitsToDelete, string combinedFilePath, List<string> commits)
+        {
+            var result = MessageBox.Show("Bạn có chắc chắn muốn xóa các commit được chọn?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                foreach (var commit in commitsToDelete)
+                {
+                    commits.Remove(commit);
+                }
+
+                gitlogcheckcommit_bus.UpdateLogFile(combinedFilePath, commits);
+
+                MessageBox.Show("Đã xóa commit lỗi thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                AppendTextWithScroll($"Đã xóa các commit lỗi trong file {combinedFilePath}.\n");
+
+                var groupedCommits = gitlogcheckcommit_bus.GroupCommits(commits);
+                gitlogcheckcommit_bus.DisplayCommits(groupedCommits, dataGridViewCommits, checkedListBoxCommits);
+            }
+        }
+
+
+        private void InitializeDataGridView()
+        {
+            dataGridViewCommits.Columns.Clear();
+            dataGridViewCommits.Columns.Add("week", "Tuần");
+            dataGridViewCommits.Columns.Add("day", "Thứ");
+            dataGridViewCommits.Columns.Add("session", "Buổi");
+            dataGridViewCommits.Columns.Add("attendance", "Điểm danh vắng");
+            dataGridViewCommits.Columns.Add("assignedTasks", "Công việc được giao");
+            dataGridViewCommits.Columns.Add("contentAchieved", "Nội dung – kết quả đạt được");
+            dataGridViewCommits.Columns.Add("comments", "Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp");
+            dataGridViewCommits.Columns.Add("notes", "Ghi chú");
+        }
+
+
+        public void BtnCompleteReview_Click(object sender, EventArgs e)
+        {
+            // Kiểm tra tất cả các commit trong CheckedListBox
+            for (int i = 0; i < checkedListBoxCommits.Items.Count; i++)
+            {
+                checkedListBoxCommits.SetItemChecked(i, true);
+            }
+
+            userHasReviewed = true;
         }
     }
 }

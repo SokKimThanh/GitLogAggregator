@@ -405,9 +405,9 @@
             this.btnReviewCommits.Location = new System.Drawing.Point(395, 73);
             this.btnReviewCommits.Margin = new System.Windows.Forms.Padding(4);
             this.btnReviewCommits.Name = "btnReviewCommits";
-            this.btnReviewCommits.Size = new System.Drawing.Size(134, 25);
+            this.btnReviewCommits.Size = new System.Drawing.Size(131, 33);
             this.btnReviewCommits.TabIndex = 5;
-            this.btnReviewCommits.Text = "Review Commit";
+            this.btnReviewCommits.Text = "Kiểm tra";
             this.btnReviewCommits.UseVisualStyleBackColor = true;
             this.btnReviewCommits.Click += new System.EventHandler(this.BtnReviewCommits_Click);
             // 
@@ -417,9 +417,9 @@
             this.btnCompleteReview.Location = new System.Drawing.Point(537, 73);
             this.btnCompleteReview.Margin = new System.Windows.Forms.Padding(4);
             this.btnCompleteReview.Name = "btnCompleteReview";
-            this.btnCompleteReview.Size = new System.Drawing.Size(139, 25);
+            this.btnCompleteReview.Size = new System.Drawing.Size(139, 33);
             this.btnCompleteReview.TabIndex = 5;
-            this.btnCompleteReview.Text = "Complete Commit";
+            this.btnCompleteReview.Text = "Tiếp theo";
             this.btnCompleteReview.UseVisualStyleBackColor = true;
             this.btnCompleteReview.Click += new System.EventHandler(this.BtnCompleteReview_Click);
             // 
