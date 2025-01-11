@@ -65,14 +65,14 @@ namespace BUS
             data.UpdateDataGridView(commits, dataGridViewCommits);
         }
 
-        public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits, DataGridView dataGridViewCommits)
+        public void ConfirmDeleteCommits(List<string> commitsToDelete, string filePath, List<string> allCommits)
         {
-            data.ConfirmDeleteCommits(commitsToDelete, filePath, allCommits, dataGridViewCommits);
+            data.ConfirmDeleteCommits(commitsToDelete, filePath, allCommits);
         }
 
-        public Dictionary<string, List<string>> GroupCommits(List<string> commits)
+        public Dictionary<string, List<string>> GroupErrorCommits(List<string> commits)
         {
-            return data.GroupCommits(commits);
+            return data.GroupErrorCommits(commits);
         }
 
         public void UpdateLogFile(string filePath, List<string> commits)
@@ -84,9 +84,9 @@ namespace BUS
         /// </summary>
         /// <param name="groupedCommits"></param>
         /// <param name="dataGridViewCommits"></param>
-        public void DisplayCommits(Dictionary<string, List<string>> groupedCommits, DataGridView dataGridViewCommits)
+        public void DisplayCommits(List<CommitItem> commitItems, DataGridView dataGridViewCommits)
         {
-            data.DisplayCommits(groupedCommits, dataGridViewCommits);
+            data.DisplayCommits(commitItems, dataGridViewCommits);
         }
         /// <summary>
         /// Chịu trách nhiệm cập nhật CheckedListBox với danh sách commit.
