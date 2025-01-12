@@ -117,41 +117,6 @@ namespace GitLogAggregator
                 configListView.Items.Add(folderItem);
             }
         }
-
-
-
-        /// <summary>
-        /// Tải file config.txt và hiển thị thông tin lên ListView
-        /// </summary>
-        /// <param name="txtInternshipFolderPath">Đường dẫn thư mục thực tập</param>
-        private void LoadConfigFileListView(string txtInternshipFolderPath = "")
-        {
-            string configPath = Path.Combine(txtInternshipFolderPath, "config.txt");
-            if (File.Exists(configPath))
-            {
-                ConfigFile configFile = gitlogui_bus.LoadConfigFile(configPath);
-                DisplayConfigInListView(configFile); // Gọi hàm hiển thị đã cập nhật
-                AppendTextWithScroll("Đã tải dữ liệu từ file config.txt.\n");
-            }
-            else
-            {
-                AppendTextWithScroll("File config.txt không tồn tại.\n");
-            }
-        }
-
-
-
-        /// <summary>
-        /// Thêm một dòng vào ListView
-        /// </summary>
-        /// <param name="key">Tên thông tin</param>
-        /// <param name="value">Giá trị thông tin</param>
-        public void AddListViewItem(string key, string value)
-        {
-            ListViewItem item = new ListViewItem(key);
-            item.SubItems.Add(value);
-            configListView.Items.Add(item);
-        }
         /// <summary>
         /// Người dùng chọn thư mục qua hộp thoại.
         /// Load danh sách tác giả commit từ Git bằng lệnh
@@ -528,7 +493,7 @@ namespace GitLogAggregator
                         configListView.Items.Clear(); // xóa danh sách hiển thị đường dẫn
                         AppendTextWithScroll("Danh sách config đã được làm trống.\n");
 
-                        checkedListBoxCommits.Items.Clear();  // Xóa tất cả mục trong checkedListBox1
+                        checkedListBoxCommits.Items.Clear();  // Xóa tất cả mục trong checkedListBoxCommits
                         AppendTextWithScroll("Danh sách commit đã được làm trống.\n");
 
                         dataGridViewCommits.DataSource = null;
@@ -1121,19 +1086,7 @@ namespace GitLogAggregator
             dataGridViewCommits.DataSource = dataTable;
 
             // Clear the data source of the CheckedListBox
-            if (checkedListBoxCommits.DataSource != null)
-            {
-                // Assuming the DataSource is a List<string>
-                var dataSource = checkedListBoxCommits.DataSource as List<string>;
-                if (dataSource != null)
-                {
-                    dataSource.Clear(); // Clear the underlying data source
-                }
-                checkedListBoxCommits.DataSource = null; // Unbind the DataSource
-            }
-
-            // Optionally, rebind the CheckedListBox to an empty list
-            checkedListBoxCommits.DataSource = new List<string>();
+            checkedListBoxCommits.Items.Clear();
 
             // Inform the user that the process is complete
             AppendTextWithScroll("Invalid commits have been deleted.\n");
