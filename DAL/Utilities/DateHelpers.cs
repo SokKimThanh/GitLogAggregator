@@ -27,6 +27,28 @@ namespace GitLogAggregator.Utilities
             }
             return startDate.AddDays(dayOffset);
         }
-
+        // Helper method to get Vietnamese day names
+        public static string GetVietnameseDayOfWeek(DayOfWeek day)
+        {
+            switch (day)
+            {
+                case DayOfWeek.Monday:
+                    return "Thứ hai";
+                case DayOfWeek.Tuesday:
+                    return "Thứ ba";
+                case DayOfWeek.Wednesday:
+                    return "Thứ tư";
+                case DayOfWeek.Thursday:
+                    return "Thứ năm";
+                case DayOfWeek.Friday:
+                    return "Thứ sáu";
+                case DayOfWeek.Saturday:
+                    return "Thứ bảy";
+                case DayOfWeek.Sunday:
+                    return "Chủ nhật";
+                default:
+                    return "";
+            }
+        }
     }
 }

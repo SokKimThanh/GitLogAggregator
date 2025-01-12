@@ -12,8 +12,9 @@ namespace ET
     public class DayData
     {
         public string DayOfWeek { get; set; }
-        public string Session { get; set; }
-        public string Attendance { get; set; }
+        public List<SessionData> SessionDataList { get; set; }
+        public string Session { get; set; } // 'S', 'C', 'T'
+        public string Attendance { get; set; } // 'Có mặt', 'Vắng mặt'
         public string AssignedTasks { get; set; }
         public string AchievedResults { get; set; }
         public string Comments { get; set; }

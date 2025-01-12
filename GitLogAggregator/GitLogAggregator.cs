@@ -756,16 +756,10 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnReviewCommits_Click(object sender, EventArgs e)
         {
-            // Tạm thời vô hiệu hóa nút bấm để tránh việc người dùng nhấn nhiều lần liên tiếp.
             btnReviewCommits.Enabled = false;
-
-            // Xóa nội dung trong RichTextBox để chuẩn bị hiển thị kết quả mới.
             txtResult.Clear();
-
-            // Xác định đường dẫn tới thư mục "internship_week"
             string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
-            // Kiểm tra sự tồn tại của thư mục "internship_week"
             if (!Directory.Exists(internshipWeekFolder))
             {
                 AppendTextWithScroll("Thư mục internship_week không tồn tại.\n");
@@ -773,48 +767,35 @@ namespace GitLogAggregator
                 return;
             }
 
-            // Lấy ngày bắt đầu và ngày kết thúc thực tập từ giao diện
             DateTime internshipStartDate = txtInternshipStartDate.Value;
             DateTime internshipEndDate = txtInternshipEndDate.Value;
-
-            // Lấy tổng số tuần cần xử lý từ giao diện
             int totalWeeks = (int)txtNumericsWeek.Value;
 
             List<WeekData> weekDatas = new List<WeekData>();
+            List<string> invalidCommits = new List<string>();
 
-            // Duyệt qua từng tuần và xử lý dữ liệu
             for (int week = 1; week <= totalWeeks; week++)
             {
-                // Hiển thị thông báo tuần hiện tại đang được xử lý
                 AppendTextWithScroll($"Đang xử lý tuần {week}...\n");
-
-                // Xác định đường dẫn tới thư mục tuần và file combined_commits.txt
                 string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{week}");
                 string combinedFilePath = Path.Combine(weekFolder, "combined_commits.txt");
 
-                // Kiểm tra thư mục và file tuần, bỏ qua tuần nếu không hợp lệ
                 if (!CheckDirectoriesAndFiles(weekFolder, combinedFilePath, week))
                     continue;
 
-                // Xử lý dữ liệu trong file combined_commits.txt
                 gitlogcheckcommit_bus.ProcessCommitsInWeek(combinedFilePath, week, internshipStartDate, internshipEndDate, weekDatas, invalidCommits);
             }
 
-            // Hiển thị kết quả commit hợp lệ và không hợp lệ lên giao diện
-            // Gán danh sách commit không hợp lệ vào ListBox để người dùng xem
             checkedListBoxCommits.Items.Clear();
             foreach (var commit in invalidCommits)
             {
                 checkedListBoxCommits.Items.Add(commit);
             }
-            // Refresh the DataGridView
+
             DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
             dataGridViewCommits.DataSource = dataTable;
 
-            // Hiển thị thông báo hoàn thành
             AppendTextWithScroll("Hoàn thành tất cả các tuần!\n");
-
-            // Kích hoạt lại nút bấm sau khi xử lý xong
             btnReviewCommits.Enabled = true;
             btnCompleteReview.Enabled = true;
         }

@@ -19,9 +19,8 @@ namespace DAL
         // Method to convert List<WeekData> to DataTable
         public DataTable ConvertToDataTable(List<WeekData> weekDataList)
         {
-            // Create a new DataTable with specified columns
             var dataTable = new DataTable();
-            dataTable.Columns.Add("Tuần", typeof(int));
+            dataTable.Columns.Add("Tuần", typeof(string));
             dataTable.Columns.Add("Thứ", typeof(string));
             dataTable.Columns.Add("Buổi", typeof(string));
             dataTable.Columns.Add("Điểm danh vắng", typeof(string));
@@ -30,70 +29,36 @@ namespace DAL
             dataTable.Columns.Add("Nhận xét - đề nghị của người hướng dẫn tại doanh nghiệp", typeof(string));
             dataTable.Columns.Add("Ghi chú", typeof(string));
 
-            // Iterate through each WeekData and DayData to add rows to the DataTable
             foreach (var weekData in weekDataList)
             {
+                string weekRange = $"Tuần {weekData.WeekNumber} Từ {weekData.StartDate.ToString("dd/MM/yyyy")} đến {weekData.EndDate.ToString("dd/MM/yyyy")}";
                 foreach (var dayData in weekData.DayDataList)
                 {
-                    dataTable.Rows.Add(
-                        weekData.WeekNumber,
-                        dayData.DayOfWeek,
-                        dayData.Session,
-                        dayData.Attendance,
-                        dayData.AssignedTasks,
-                        dayData.AchievedResults,
-                        dayData.Comments,
-                        dayData.Notes
-                    );
+                    foreach (var sessionData in dayData.SessionDataList)
+                    {
+                        dataTable.Rows.Add(
+                            weekRange,
+                            dayData.DayOfWeek,
+                            sessionData.Session,
+                            sessionData.Attendance,
+                            sessionData.AssignedTasks,
+                            sessionData.AchievedResults,
+                            sessionData.Comments,
+                            sessionData.Notes
+                        );
+                    }
                 }
             }
 
             return dataTable;
         }
 
-        /// <summary>
-        /// Xử lý dữ liệu trong file combined_commits.txt của một tuần
-        /// </summary>
-        public void ProcessCommitsInWeek(string filePath, int week, DateTime startDate, DateTime endDate, List<WeekData> weekDatas, List<string> invalidCommits)
-        {
-            // Đọc toàn bộ nội dung file combined_commits.txt
-            var lines = File.ReadAllLines(filePath);
-
-            // Tạo đối tượng WeekData để lưu trữ thông tin của tuần hiện tại
-            var weekData = new WeekData
-            {
-                WeekNumber = week,
-                DayDataList = new List<DayData>()
-            };
-
-            // Danh sách commit không hợp lệ trong tuần này
-            var invalidCommitsThisWeek = new List<string>();
-
-            // Phân tích từng dòng trong file combined_commits.txt
-            ParseCommitLines(lines, startDate, endDate, weekData, invalidCommitsThisWeek);
-
-            // Nếu có commit hợp lệ, tính toán ngày bắt đầu và kết thúc của tuần
-            if (weekData.DayDataList.Any())
-            {
-                var dates = weekData.DayDataList.Select(dd => DateHelpers.ParseDayOfWeek(dd.DayOfWeek).GetDateFromDayOfWeek(startDate));
-                weekData.StartDate = dates.Min();
-                weekData.EndDate = dates.Max();
-            }
-
-            // Thêm dữ liệu tuần vào danh sách weekDatas
-            weekDatas.Add(weekData);
-
-            // Thêm commit không hợp lệ vào danh sách chung
-            invalidCommits.AddRange(invalidCommitsThisWeek);
-        }
-
-        /// <summary>
-        /// Phân tích nội dung từng dòng trong file combined_commits.txt
-        /// </summary>
+        // Modified ParseCommitLines method
         public void ParseCommitLines(string[] lines, DateTime startDate, DateTime endDate, WeekData weekData, List<string> invalidCommits)
         {
             List<string> currentCommit = new List<string>();
             bool isCommitValid = true;
+            List<string[]> validCommitLines = new List<string[]>();
 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -103,119 +68,223 @@ namespace DAL
                 {
                     if (currentCommit.Count > 0)
                     {
-                        // Process the previous commit
-                        ProcessCommit(currentCommit, startDate, endDate, weekData, invalidCommits);
+                        if (isCommitValid)
+                        {
+                            validCommitLines.Add(currentCommit.ToArray());
+                        }
+                        else
+                        {
+                            invalidCommits.AddRange(currentCommit);
+                        }
                         currentCommit.Clear();
                     }
-                    // Start a new commit
                     currentCommit.Add(line);
+                    isCommitValid = true;
                 }
                 else
                 {
                     currentCommit.Add(line);
                 }
 
-                // Process the last commit after the loop
-                if (i == lines.Length - 1 && currentCommit.Count > 0)
-                {
-                    ProcessCommit(currentCommit, startDate, endDate, weekData, invalidCommits);
-                    currentCommit.Clear();
-                }
-            }
-        }
-
-        private void ProcessCommit(List<string> commitLines, DateTime startDate, DateTime endDate, WeekData weekData, List<string> invalidCommits)
-        {
-            bool isMergeCommit = false;
-            DateTime commitTime;
-            string commitMessage = "";
-            string dateLine = "";
-            bool dateFound = false;
-
-            foreach (string line in commitLines)
-            {
                 if (line.StartsWith("Merge:"))
                 {
-                    isMergeCommit = true;
-                    break;
+                    isCommitValid = false;
                 }
                 else if (line.StartsWith("Date:"))
                 {
-                    dateLine = line;
-                    dateFound = true;
-                }
-            }
-
-            if (!dateFound)
-            {
-                invalidCommits.AddRange(commitLines);
-                return;
-            }
-
-            if (!dateLine.StartsWith("Date:") || dateLine.Length <= "Date:".Length)
-            {
-                invalidCommits.AddRange(commitLines);
-                return;
-            }
-
-            string dateString = dateLine.Substring("Date:".Length).Trim();
-
-            if (!DateTime.TryParseExact(dateString, "ddd MMM d HH:mm:ss yyyy K", CultureInfo.InvariantCulture, DateTimeStyles.None, out commitTime))
-            {
-                invalidCommits.AddRange(commitLines);
-                return;
-            }
-
-            if (commitTime < startDate || commitTime > endDate)
-            {
-                invalidCommits.AddRange(commitLines);
-                return;
-            }
-
-            // Collect commit message lines
-            bool isMessageSection = false;
-            foreach (string line in commitLines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    isMessageSection = true;
-                    continue;
-                }
-                if (isMessageSection)
-                {
-                    if (line.StartsWith("    "))
+                    string dateString = line.Substring("Date:".Length).Trim();
+                    if (!DateTime.TryParseExact(dateString, "ddd MMM d HH:mm:ss yyyy K", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime commitTime))
                     {
-                        commitMessage += line.Substring(4).Trim() + " ";
+                        isCommitValid = false;
+                    }
+                    else if (commitTime < startDate || commitTime > endDate)
+                    {
+                        isCommitValid = false;
+                    }
+                }
+            }
+
+            if (currentCommit.Count > 0)
+            {
+                if (isCommitValid)
+                {
+                    validCommitLines.Add(currentCommit.ToArray());
+                }
+                else
+                {
+                    invalidCommits.AddRange(currentCommit);
+                }
+            }
+
+            AssignCommitsToSessions(validCommitLines, weekData);
+        }
+
+        // New AssignCommitsToSessions method
+        private void AssignCommitsToSessions(List<string[]> validCommitLines, WeekData weekData)
+        {
+            var commits = new List<Tuple<DateTime, string>>();
+            var commitDates = new List<DateTime>();
+
+            foreach (var commitLines in validCommitLines)
+            {
+                string dateLine = commitLines.FirstOrDefault(l => l.StartsWith("Date:"));
+                if (dateLine != null)
+                {
+                    string dateString = dateLine.Substring("Date:".Length).Trim();
+                    if (DateTime.TryParseExact(dateString, "ddd MMM d HH:mm:ss yyyy K", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime commitTime))
+                    {
+                        string commitMessage = "";
+                        bool isMessageSection = false;
+                        foreach (var line in commitLines)
+                        {
+                            if (string.IsNullOrWhiteSpace(line))
+                            {
+                                isMessageSection = true;
+                                continue;
+                            }
+                            if (isMessageSection)
+                            {
+                                if (line.StartsWith("    "))
+                                {
+                                    commitMessage += line.Substring(4).Trim() + " ";
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                        }
+                        commits.Add(Tuple.Create(commitTime, commitMessage));
+                        commitDates.Add(commitTime);
+                    }
+                }
+            }
+
+            var nonExcessCommits = commits.Where(c => !(c.Item1.DayOfWeek == DayOfWeek.Saturday && c.Item1.Hour >= 12) && !(c.Item1.DayOfWeek == DayOfWeek.Sunday)).ToList();
+            var excessCommits = commits.Where(c => (c.Item1.DayOfWeek == DayOfWeek.Saturday && c.Item1.Hour >= 12) || c.Item1.DayOfWeek == DayOfWeek.Sunday).ToList();
+
+            var sessions = new Dictionary<string, List<Tuple<DateTime, string>>>
+            {
+                {"S", new List<Tuple<DateTime, string>>()},
+                {"C", new List<Tuple<DateTime, string>>()},
+                {"T", new List<Tuple<DateTime, string>>()}
+            };
+
+            foreach (var commit in nonExcessCommits)
+            {
+                string session;
+                if (commit.Item1.Hour < 12)
+                {
+                    session = "S";
+                }
+                else if (commit.Item1.Hour < 19)
+                {
+                    session = "C";
+                }
+                else
+                {
+                    session = "T";
+                }
+                sessions[session].Add(commit);
+            }
+
+            foreach (var session in sessions)
+            {
+                while (session.Value.Count < 4 && nonExcessCommits.Any())
+                {
+                    var commitToAdd = nonExcessCommits.FirstOrDefault();
+                    if (commitToAdd != null)
+                    {
+                        session.Value.Add(commitToAdd);
+                        nonExcessCommits.Remove(commitToAdd);
+                    }
+                }
+            }
+
+            while (nonExcessCommits.Any())
+            {
+                foreach (var session in sessions)
+                {
+                    if (nonExcessCommits.Any())
+                    {
+                        var commitToAdd = nonExcessCommits.FirstOrDefault();
+                        if (commitToAdd != null)
+                        {
+                            session.Value.Add(commitToAdd);
+                            nonExcessCommits.Remove(commitToAdd);
+                        }
                     }
                     else
                     {
-                        invalidCommits.AddRange(commitLines);
-                        return;
+                        break;
                     }
                 }
             }
 
-            // Check for "Merge branch" in commit message
-            if (commitMessage.Contains("Merge branch") || isMergeCommit)
+            foreach (var commit in excessCommits)
             {
-                invalidCommits.AddRange(commitLines);
-                return;
+                sessions["S"].Add(commit);
             }
 
-            // Create DayData for valid commits
-            var dayData = new DayData
+            foreach (var session in sessions)
             {
-                DayOfWeek = commitTime.DayOfWeek.ToString(),
-                Session = commitTime.Hour < 12 ? "Sáng" : "Chiều",
-                Attendance = "Có mặt",
-                AssignedTasks = commitMessage.Trim(),
-                AchievedResults = commitMessage.Trim(),
-                Comments = "",
-                Notes = ""
-            };
-            weekData.DayDataList.Add(dayData);
+                string sessionCode = session.Key;
+                var sessionCommits = session.Value;
+
+                foreach (var commit in sessionCommits)
+                {
+                    string dayOfWeek = DateHelpers.GetVietnameseDayOfWeek(commit.Item1.DayOfWeek);
+
+                    var existingDayData = weekData.DayDataList.FirstOrDefault(dd => dd.DayOfWeek == dayOfWeek);
+                    if (existingDayData == null)
+                    {
+                        existingDayData = new DayData { DayOfWeek = dayOfWeek, SessionDataList = new List<SessionData>() };
+                        weekData.DayDataList.Add(existingDayData);
+                    }
+
+                    var existingSessionData = existingDayData.SessionDataList.FirstOrDefault(sd => sd.Session == sessionCode);
+                    if (existingSessionData == null)
+                    {
+                        existingSessionData = new SessionData
+                        {
+                            Session = sessionCode,
+                            Attendance = "Có mặt",
+                            AssignedTasks = "",
+                            AchievedResults = "",
+                            Comments = "",
+                            Notes = ""
+                        };
+                        existingDayData.SessionDataList.Add(existingSessionData);
+                    }
+
+                    existingSessionData.AssignedTasks += commit.Item2.Trim() + " ";
+                    existingSessionData.AchievedResults += commit.Item2.Trim() + " ";
+                }
+            }
+
+            if (commitDates.Any())
+            {
+                weekData.StartDate = commitDates.Min();
+                weekData.EndDate = commitDates.Max();
+            }
         }
 
+        // Adjusted ProcessCommitsInWeek method
+        public void ProcessCommitsInWeek(string filePath, int week, DateTime startDate, DateTime endDate, List<WeekData> weekDatas, List<string> invalidCommits)
+        {
+            var lines = File.ReadAllLines(filePath);
+            var weekData = new WeekData
+            {
+                WeekNumber = week,
+                DayDataList = new List<DayData>()
+            };
+
+            var invalidCommitsThisWeek = new List<string>();
+            ParseCommitLines(lines, startDate, endDate, weekData, invalidCommitsThisWeek);
+
+            weekDatas.Add(weekData);
+            invalidCommits.AddRange(invalidCommitsThisWeek);
+        }
 
         public void InitializeDataGridView(DataGridView dataGridViewCommits)
         {

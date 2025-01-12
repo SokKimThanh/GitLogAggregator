@@ -45,6 +45,7 @@
     <Compile Include="CommitItem.cs" />
     <Compile Include="DayData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SessionData.cs" />
     <Compile Include="WeekData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
