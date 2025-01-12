@@ -414,12 +414,13 @@ namespace GitLogAggregator
                 // Lưu thông tin vào file text
                 gitlogui_bus.SaveConfigFile(configFile);
                 AppendTextWithScroll("Đã lưu dữ liệu vào file config.txt.\n");
-                // Kiểm tra Hiển thị dữ liệu config file sau khi lưu 
-                DisplayConfigInListView(configFile);
 
 
                 // Hiển thị lên list view
                 DisplayDirectoriesInListView();
+
+                // Kiểm tra Hiển thị dữ liệu config file sau khi lưu 
+                DisplayConfigInListView(configFile);
 
                 // load commit
                 //LoadCommitDatagridview();
@@ -628,7 +629,7 @@ namespace GitLogAggregator
             }
 
             // Xác định đường dẫn thư mục internship_week
-            string internshipWeekFolder = Path.Combine(txtDirectoryProjectPath, "internship_week");
+            string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
             // Kiểm tra xem thư mục internship_week có tồn tại không
             if (!Directory.Exists(internshipWeekFolder))
