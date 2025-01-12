@@ -51,7 +51,6 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.fileListView = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.dataGridViewCommits = new System.Windows.Forms.DataGridView();
             this.label8 = new System.Windows.Forms.Label();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
@@ -64,6 +63,9 @@
             this.btnExport = new System.Windows.Forms.Button();
             this.btnReviewCommits = new System.Windows.Forms.Button();
             this.btnCompleteReview = new System.Windows.Forms.Button();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
@@ -196,7 +198,7 @@
             this.weekListView.Location = new System.Drawing.Point(13, 214);
             this.weekListView.Margin = new System.Windows.Forms.Padding(4);
             this.weekListView.Name = "weekListView";
-            this.weekListView.Size = new System.Drawing.Size(162, 191);
+            this.weekListView.Size = new System.Drawing.Size(122, 191);
             this.weekListView.TabIndex = 12;
             this.weekListView.UseCompatibleStateImageBehavior = false;
             this.weekListView.View = System.Windows.Forms.View.Details;
@@ -283,22 +285,19 @@
             // 
             this.fileListView.BackColor = System.Drawing.Color.WhiteSmoke;
             this.fileListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2});
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5});
             this.fileListView.HideSelection = false;
-            this.fileListView.Location = new System.Drawing.Point(183, 214);
+            this.fileListView.Location = new System.Drawing.Point(143, 214);
             this.fileListView.Margin = new System.Windows.Forms.Padding(4);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(200, 191);
+            this.fileListView.Size = new System.Drawing.Size(240, 191);
             this.fileListView.TabIndex = 12;
             this.fileListView.UseCompatibleStateImageBehavior = false;
             this.fileListView.View = System.Windows.Forms.View.Details;
             this.fileListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FileListView_MouseClick);
             this.fileListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.FileListView_MouseDoubleClick);
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Tên File";
-            this.columnHeader2.Width = 373;
             // 
             // dataGridViewCommits
             // 
@@ -422,6 +421,21 @@
             this.btnCompleteReview.UseVisualStyleBackColor = true;
             this.btnCompleteReview.Click += new System.EventHandler(this.BtnCompleteReview_Click);
             // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "STT";
+            this.columnHeader3.Width = 40;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Tên File";
+            this.columnHeader4.Width = 120;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Ngày Tạo";
+            this.columnHeader5.Width = 100;
+            // 
             // GitLogAggregator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -499,7 +513,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ListView fileListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.DataGridView dataGridViewCommits;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ImageList imageList;
@@ -512,5 +525,8 @@
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Button btnReviewCommits;
         private System.Windows.Forms.Button btnCompleteReview;
+        private System.Windows.Forms.ColumnHeader columnHeader3;
+        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader columnHeader5;
     }
 }

@@ -126,9 +126,15 @@ namespace GitLogAggregator
             fileListView.FullRowSelect = true; // Đảm bảo chọn toàn bộ hàng
             fileListView.MultiSelect = false; // Đảm bảo chỉ chọn một hàng tại một thời điểm
 
-            // Thêm cột STT và tên file
-            fileListView.Columns.Add("STT", 40, HorizontalAlignment.Right);
-            fileListView.Columns.Add("Tên file", 300, HorizontalAlignment.Left);
+            // Thiết lập các cột cho fileListView (nếu chưa thêm trước đó)
+            if (fileListView.Columns.Count == 0)
+            {
+                fileListView.Columns.Add("STT", 50, HorizontalAlignment.Right); // Cột số thứ tự
+                fileListView.Columns.Add("Tên file", 200, HorizontalAlignment.Left); // Cột tên file
+                fileListView.Columns.Add("Ngày tạo", 150, HorizontalAlignment.Right); // Cột ngày tạo file
+            }
+            // Tự động điều chỉnh kích thước cột
+            fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
         private void LoadCommitDatagridview()
@@ -289,6 +295,7 @@ namespace GitLogAggregator
 
                 string author = cboAuthorCommit.SelectedItem.ToString();
                 DateTime internshipStartDate = txtInternshipStartDate.Value;
+                DateTime internshipEndDate = txtInternshipEndDate.Value;
 
                 DateTime firstCommitDate = gitlogui_bus.GetProjectStartDate(projectDirectory);
 
@@ -306,7 +313,7 @@ namespace GitLogAggregator
                 {
                     Author = author,
                     StartDate = internshipStartDate,
-                    EndDate = txtInternshipEndDate.Value,
+                    EndDate = internshipEndDate,
                     Folders = folders,
                     ProjectDirectory = projectDirectory,
                     FirstCommitDate = txtFirstCommitDate.Value,
@@ -448,6 +455,9 @@ namespace GitLogAggregator
         /// <summary>
         /// Hiển thị danh sách thư mục thực tập kho tổng hợp commit
         /// </summary>
+        /// <summary>
+        /// Hiển thị danh sách thư mục thực tập kho tổng hợp commit
+        /// </summary>
         private void DisplayDirectoriesInListView()
         {
             if (string.IsNullOrEmpty(projectDirectory))
@@ -474,30 +484,66 @@ namespace GitLogAggregator
             // Lấy danh sách thư mục trong thư mục internship_week
             string[] directories = Directory.GetDirectories(internshipWeekFolder);
 
-            // Thêm các thư mục vào ListView
-            weekListView.Items.Clear();  // Xóa tất cả các mục hiện có
-            fileListView.Items.Clear();  // Xóa tất cả các file hiện có
+            // Xóa các mục hiện có trong ListView
+            weekListView.Items.Clear();
+            fileListView.Items.Clear();
+
             int totalFiles = 0;
-            int stt = 1;
             int emptyDirectories = 0;
             int directoriesWithCommits = 0;
 
             foreach (string folder in directories)
             {
+                // Lấy danh sách file trong thư mục
+                var files = Directory.GetFiles(folder);
+
+                // Kiểm tra thư mục có file commit nào không
+                var combinedFile = files.FirstOrDefault(f => Path.GetFileName(f).Equals("combined_commits.txt", StringComparison.OrdinalIgnoreCase));
+                var otherFiles = files.Where(f => !Path.GetFileName(f).Equals("combined_commits.txt", StringComparison.OrdinalIgnoreCase))
+                                      .OrderBy(f => File.GetCreationTime(f)) // Sắp xếp theo ngày tạo
+                                      .ToList();
+
+                if (combinedFile == null && otherFiles.Count == 0)
+                {
+                    // Nếu thư mục không có file nào, bỏ qua thư mục này
+                    emptyDirectories++;
+                    AppendTextWithScroll($"Thư mục: {Path.GetFileName(folder)} - Không có commit.\n");
+                    continue;
+                }
+
+                // Thêm thư mục có file commit vào weekListView
                 ListViewItem item = new ListViewItem(Path.GetFileName(folder))
                 {
-                    ImageKey = "folder",  // Sử dụng icon thư mục
-                    Tag = folder // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
+                    ImageKey = "folder", // Sử dụng icon thư mục
+                    Tag = folder         // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
                 };
                 weekListView.Items.Add(item);
 
-                // Lấy và thêm các file trong thư mục vào fileListView
-                var files = Directory.GetFiles(folder);
-                foreach (var file in files)
+                // Xóa danh sách file cũ và bắt đầu thêm file mới
+                fileListView.Items.Clear();
+                int fileOrder = 1;
+
+                // Thêm file combined_commits.txt trước (nếu có)
+                if (combinedFile != null)
+                {
+                    var combinedFileName = Path.GetFileName(combinedFile);
+                    var combinedFileCreationTime = File.GetCreationTime(combinedFile).ToString("dd/MM/yyyy HH:mm:ss");
+                    var combinedFileItem = new ListViewItem(fileOrder++.ToString());
+                    combinedFileItem.SubItems.Add(combinedFileName);
+                    combinedFileItem.SubItems.Add(combinedFileCreationTime); // Thêm ngày tạo
+                    combinedFileItem.Tag = combinedFile;
+                    fileListView.Items.Add(combinedFileItem);
+                    totalFiles++;
+                }
+
+                // Thêm các file khác sau
+                foreach (var file in otherFiles)
                 {
                     string fileName = Path.GetFileName(file);
-                    var fileItem = new ListViewItem(stt++.ToString());
+                    string fileCreationTime = File.GetCreationTime(file).ToString("dd/MM/yyyy HH:mm:ss");
+                    var fileItem = new ListViewItem(fileOrder++.ToString());
                     fileItem.SubItems.Add(fileName);
+                    fileItem.SubItems.Add(fileCreationTime); // Thêm ngày tạo
                     fileItem.Tag = file; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
                     fileListView.Items.Add(fileItem);
                     totalFiles++;
@@ -505,16 +551,8 @@ namespace GitLogAggregator
 
                 // Đếm số lượng commit trong thư mục
                 int commitsCount = CountCommitsInFolder(folder);
-                if (commitsCount > 0)
-                {
-                    directoriesWithCommits++;
-                    AppendTextWithScroll($"Thư mục: {folder} - Số lượng file: {files.Length} - Số lượng commit: {commitsCount}\n");
-                }
-                else
-                {
-                    emptyDirectories++;
-                    AppendTextWithScroll($"Thư mục: {folder} - Không có commit.\n");
-                }
+                directoriesWithCommits++;
+                AppendTextWithScroll($"Thư mục: {Path.GetFileName(folder)} - Số lượng file: {files.Length} - Số lượng commit: {commitsCount}\n");
             }
 
             // Hiển thị thông báo nếu không có thư mục nào trong internship_week
@@ -530,6 +568,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll($"Tổng số file: {totalFiles}\n");
             }
         }
+
 
         private int CountCommitsInFolder(string folderPath)
         {
@@ -561,10 +600,8 @@ namespace GitLogAggregator
                 int index = 1;
                 foreach (var file in files)
                 {
-                    ListViewItem item = new ListViewItem(index.ToString())
-                    {
-                        Tag = file // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
-                    };
+                    ListViewItem item = new ListViewItem(index.ToString());
+                    item.Tag = file;// Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
                     item.SubItems.Add(Path.GetFileName(file));
                     fileListView.Items.Add(item);
                     index++;
