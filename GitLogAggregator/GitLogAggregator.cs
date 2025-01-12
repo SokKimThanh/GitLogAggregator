@@ -37,9 +37,6 @@ namespace GitLogAggregator
         // git check commit
         private readonly GitLogCheckCommitBUS gitlogcheckcommit_bus = new GitLogCheckCommitBUS();
 
-        // Biến toàn cục để theo dõi trạng thái kiểm duyệt
-        private bool userHasReviewed = false;
-
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -755,177 +752,94 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnReviewCommits_Click(object sender, EventArgs e)
         {
-            // Disable the button to prevent multiple clicks
+            // Tạm thời vô hiệu hóa nút bấm để tránh việc người dùng nhấn nhiều lần liên tiếp.
             btnReviewCommits.Enabled = false;
 
-            // Clear the RichTextBox to show new output
+            // Xóa nội dung trong RichTextBox để chuẩn bị hiển thị kết quả mới.
             txtResult.Clear();
 
-            // Define the path to the "internship_week" folder
+            // Xác định đường dẫn tới thư mục "internship_week"
             string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
-            // Check if the "internship_week" folder exists
+            // Kiểm tra sự tồn tại của thư mục "internship_week"
             if (!Directory.Exists(internshipWeekFolder))
             {
                 AppendTextWithScroll("Thư mục internship_week không tồn tại.\n");
                 btnReviewCommits.Enabled = true;
                 return;
             }
-            ///
-            /// công đoạn duyệt qua từng thư mục week trong thư mục internship_week lấy ra file combined_commits.txt
-            ///
-            // 1 Danh sách dữ liệu weekDatas trống lưu các commit hợp lệ
-            // 2 Dữ liệu datatable trống được convert từ weekDatas (dữ liệu commits)
-            // 3 Danh sách dữ liệu commit không hợp lệ
 
-            // Retrieve the internship start and end dates from text boxes
+            // Lấy ngày bắt đầu và ngày kết thúc thực tập từ giao diện
             DateTime internshipStartDate = txtInternshipStartDate.Value;
             DateTime internshipEndDate = txtInternshipEndDate.Value;
 
-            // Initialize lists to hold valid week data and invalid commits
-            List<WeekData> weekDatas = new List<WeekData>();
-            List<string> commits_delete = new List<string>();
+            // Lấy tổng số tuần cần xử lý từ giao diện
+            int totalWeeks = (int)txtNumericsWeek.Value;
 
-            // Iterate through each week from 1 to the value in txtNumericsWeek
-            for (int week = 1; week <= txtNumericsWeek.Value; week++)
+            // Khởi tạo danh sách để lưu trữ dữ liệu tuần và commit không hợp lệ
+            List<WeekData> weekDatas = new List<WeekData>();
+            List<string> invalidCommits = new List<string>();
+
+            // Duyệt qua từng tuần và xử lý dữ liệu
+            for (int week = 1; week <= totalWeeks; week++)
             {
-                // Display the current week being processed
+                // Hiển thị thông báo tuần hiện tại đang được xử lý
                 AppendTextWithScroll($"Đang xử lý tuần {week}...\n");
 
-                // Construct the path to the week's folder and check if it exists
+                // Xác định đường dẫn tới thư mục tuần và file combined_commits.txt
                 string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{week}");
-                if (!Directory.Exists(weekFolder))
-                {
-                    AppendTextWithScroll($"Thư mục {weekFolder} không tồn tại.\n");
-                    continue;
-                }
-
-                // Construct the path to "combined_commits.txt" and check if the file exists
                 string combinedFilePath = Path.Combine(weekFolder, "combined_commits.txt");
-                if (!File.Exists(combinedFilePath))
-                {
-                    AppendTextWithScroll($"Tuần {week} không có commit nào.\n");
+
+                // Kiểm tra thư mục và file tuần, bỏ qua tuần nếu không hợp lệ
+                if (!CheckDirectoriesAndFiles(weekFolder, combinedFilePath, week))
                     continue;
-                }
-                ///
-                /// công đoạn xử lý khối dữ liệu trong file combined_commits.txt
-                ///
-                // 1 Lọc các commit là date và messages vào danh sách List<WeekData>
 
-                // Read all lines from "combined_commits.txt"
-                var lines = File.ReadAllLines(combinedFilePath);
-                var weekData = new WeekData
-                {
-                    WeekNumber = week,
-                    DayDataList = new List<DayData>()
-                };
-                var invalidCommitsThisWeek = new List<string>();
-
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    var line = lines[i];
-                    // Skip lines that start with "commit" and contain "merge", add to invalid commits
-                    if (line.StartsWith("commit") && line.Contains("merge"))
-                    {
-                        invalidCommitsThisWeek.Add(line);
-                        while (i < lines.Length && !lines[i].StartsWith("commit"))
-                        {
-                            i++;
-                        }
-                        continue;
-                    }
-
-                    // Skip lines that start with "Author:", add to invalid commits
-                    if (line.StartsWith("Author:"))
-                    {
-                        invalidCommitsThisWeek.Add(line);
-                        continue;
-                    }
-
-                    // Parse lines that start with "Date:" to extract the commit date
-                    if (line.StartsWith("Date:"))
-                    {
-                        var dateStr = line.Substring("Date:".Length).Trim();
-                        var commitTime = DateTime.ParseExact(dateStr, "ddd MMM d HH:mm:ss yyyy K", CultureInfo.InvariantCulture);
-
-                        // Check if the commit date falls within the internship period
-                        if (commitTime < internshipStartDate || commitTime > internshipEndDate)
-                        {
-                            invalidCommitsThisWeek.Add(line);
-                            continue;
-                        }
-
-                        // Handle commit messages and create DayData objects
-                        if (i + 1 < lines.Length && lines[i + 1].StartsWith("    "))
-                        {
-                            var message = lines[i + 1].Trim();
-                            var dayData = new DayData
-                            {
-                                DayOfWeek = commitTime.DayOfWeek.ToString(),
-                                Session = commitTime.Hour < 12 ? "Morning" : "Afternoon",
-                                Attendance = "Present",
-                                AssignedTasks = message,
-                                AchievedResults = message,
-                                Comments = "",
-                                Notes = ""
-                            };
-                            weekData.DayDataList.Add(dayData);
-                            i++;
-                        }
-                        else
-                        {
-                            invalidCommitsThisWeek.Add(line);
-                        }
-                    }
-                }
-
-                // Set week start and end dates based on commit dates
-                if (weekData.DayDataList.Any())
-                {
-                    var dates = weekData.DayDataList.Select(dd => DateHelpers.ParseDayOfWeek(dd.DayOfWeek).GetDateFromDayOfWeek(internshipStartDate));
-                    weekData.StartDate = dates.Min();
-                    weekData.EndDate = dates.Max();
-                }
-
-                // Add the current WeekData to weekDatas
-                weekDatas.Add(weekData);
-
-                ///
-                /// công đoạn xử lý khối dữ liệu trong file combined_commits.txt
-                ///
-                // 2 Tìm các phần tử là merge, commit id, author trong file và lưu vào danh sách commits_delete
-
-
-                // Add invalid commits to commits_delete
-                commits_delete.AddRange(invalidCommitsThisWeek);
+                // Xử lý dữ liệu trong file combined_commits.txt
+                gitlogcheckcommit_bus.ProcessCommitsInWeek(combinedFilePath, week, internshipStartDate, internshipEndDate, weekDatas, invalidCommits);
             }
-            ///
-            /// công đoạn hiển thị datagridview
-            ///
-            // 1 Đảo ngược giá trị từ List<WeekData> sang datatable
-            // 2 Hiển thị lên datagridview
 
-            // Convert weekDatas to a DataTable and bind to DataGridView
-            DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
-            dataGridViewCommits.DataSource = dataTable;
-            // Bind invalid commits to ListBox
-            checkedListBoxCommits.DataSource = commits_delete;
+            // Hiển thị kết quả commit hợp lệ và không hợp lệ lên giao diện
+            DisplayCommitResults(weekDatas, invalidCommits);
 
-            // Append a completion message and re-enable the button
+            // Hiển thị thông báo hoàn thành
             AppendTextWithScroll("Hoàn thành tất cả các tuần!\n");
+
+            // Kích hoạt lại nút bấm sau khi xử lý xong
             btnReviewCommits.Enabled = true;
         }
 
-        private void WaitUserReview()
+        /// <summary>
+        /// Kiểm tra sự tồn tại của thư mục tuần và file combined_commits.txt
+        /// </summary>
+        private bool CheckDirectoriesAndFiles(string weekFolder, string combinedFilePath, int week)
         {
-            // Tạm dừng cho đến khi người dùng hoàn thành việc kiểm tra các commit
-            while (!userHasReviewed)
+            if (!Directory.Exists(weekFolder))
             {
-                Application.DoEvents();
+                AppendTextWithScroll($"Thư mục {weekFolder} không tồn tại.\n");
+                return false;
             }
-            userHasReviewed = false; // Đặt lại để sẵn sàng cho lần kiểm duyệt tiếp theo
+
+            if (!File.Exists(combinedFilePath))
+            {
+                AppendTextWithScroll($"Tuần {week} không có commit nào.\n");
+                return false;
+            }
+
+            return true;
         }
 
+        /// <summary>
+        /// Hiển thị kết quả lên DataGridView và ListBox
+        /// </summary>
+        private void DisplayCommitResults(List<WeekData> weekDatas, List<string> invalidCommits)
+        {
+            // Chuyển đổi danh sách WeekData thành DataTable để hiển thị trên DataGridView
+            DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
+            dataGridViewCommits.DataSource = dataTable;
+
+            // Gán danh sách commit không hợp lệ vào ListBox để người dùng xem
+            checkedListBoxCommits.DataSource = invalidCommits;
+        }
 
         public void BtnCompleteReview_Click(object sender, EventArgs e)
         {
