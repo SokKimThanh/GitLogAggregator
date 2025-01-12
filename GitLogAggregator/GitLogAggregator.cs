@@ -276,56 +276,77 @@ namespace GitLogAggregator
             try
             {
                 string configFile = Path.Combine(internshipWeekFolder, "config.txt");
-                if (File.Exists(configFile))
+
+                if (!File.Exists(configFile))
                 {
-                    //
-                    // Hiển thị dữ liệu config list view
-                    //
-                    ConfigFile configInfo = gitlogui_bus.LoadConfigFile(configFile);
-
-                    cboAuthorCommit.SelectedItem = configInfo.Author;
-                    txtInternshipStartDate.Value = configInfo.StartDate;
-                    txtInternshipEndDate.Value = configInfo.EndDate;
-                    txtNumericsWeek.Value = configInfo.Weeks;
-                    txtDirectoryProjectPath = configInfo.ProjectDirectory;
-                    txtFolderInternshipPath = configInfo.InternshipWeekFolder;
-
-                    // 1 Hiển thị folder week listview
-                    DisplayFoldersInListView(configInfo.Folders);
-
-                    // 2 hiển thị config listview
-                    DisplayConfigInListView(configInfo);
-
-                    // Thông báo hiển thị hoàn thành tổng hợp commit
-                    AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {configInfo.Author}\nNgày bắt đầu: {configInfo.StartDate:dd/MM/yyyy}\n");
-
-                    // Load và hiển thị các commits từ các thư mục
-                    //LoadCommitDatagridview();
-
-                    //Đảm bảo rằng fileListView đã được cấu hình để hiển thị cột "STT" và tên file.
-                    InitializeFileListView();
-
-                    EnableControls();
-                    btnDelete.Enabled = true;// open
-                    btnExport.Enabled = true;  // open
-                    txtInternshipEndDate.Enabled = false;
-                    txtFirstCommitDate.Enabled = false;
-                    txtNumericsWeek.Enabled = false;
-                    btnCompleteReview.Enabled = false;
+                    HandleMissingConfigFile(configFile);
+                    return;
                 }
-                else
-                {
-                    DisableControls();
-                    btnDelete.Enabled = true;// open
-                    btnOpenGitFolder.Enabled = true;//open
-                    AppendTextWithScroll($"Lỗi: Không tìm thấy file {configFile}");
-                }
+
+                // Đọc file config
+                ConfigFile configInfo = gitlogui_bus.LoadConfigFile(configFile);
+
+                // Hiển thị dữ liệu lên giao diện
+                UpdateConfigUI(configInfo);
+
+                // Ghi nhật ký (log)
+                AppendTextWithScroll($"Tải dữ liệu tổng hợp:\nTác giả: {configInfo.Author}\nNgày bắt đầu: {configInfo.StartDate:dd/MM/yyyy}\n");
+
+                // Cấu hình giao diện sau khi load dữ liệu
+                UpdateControlState(isEnabled: true);
             }
-            catch
+            catch (FileNotFoundException ex)
             {
-                AppendTextWithScroll($"Lỗi: Không tìm thấy file {configFile}");
+                AppendTextWithScroll($"Lỗi: File không tồn tại. Chi tiết: {ex.Message}\n");
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi không mong đợi: {ex.Message}\n");
             }
         }
+
+        /// <summary>
+        /// Cập nhật giao diện với thông tin cấu hình
+        /// </summary>
+        private void UpdateConfigUI(ConfigFile configInfo)
+        {
+            cboAuthorCommit.SelectedItem = configInfo.Author;
+            txtInternshipStartDate.Value = configInfo.StartDate;
+            txtInternshipEndDate.Value = configInfo.EndDate;
+            txtNumericsWeek.Value = configInfo.Weeks;
+            txtDirectoryProjectPath = configInfo.ProjectDirectory;
+            txtFolderInternshipPath = configInfo.InternshipWeekFolder;
+
+            DisplayFoldersInListView(configInfo.Folders);
+            DisplayConfigInListView(configInfo);
+
+            InitializeFileListView();
+        }
+
+        /// <summary>
+        /// Cập nhật trạng thái giao diện (các nút và control)
+        /// </summary>
+        private void UpdateControlState(bool isEnabled)
+        {
+            btnDelete.Enabled = isEnabled;
+            btnExport.Enabled = isEnabled;
+            txtInternshipEndDate.Enabled = !isEnabled;
+            txtFirstCommitDate.Enabled = !isEnabled;
+            txtNumericsWeek.Enabled = !isEnabled;
+            btnCompleteReview.Enabled = !isEnabled;
+        }
+
+        /// <summary>
+        /// Xử lý trường hợp file config bị thiếu
+        /// </summary>
+        private void HandleMissingConfigFile(string configFile)
+        {
+            AppendTextWithScroll($"Lỗi: Không tìm thấy file {configFile}");
+            DisableControls();
+            btnDelete.Enabled = true;
+            btnOpenGitFolder.Enabled = true;
+        }
+
         private void EnableControls()
         {
             cboAuthorCommit.Enabled = true;
@@ -495,8 +516,6 @@ namespace GitLogAggregator
                         Directory.Delete(internshipWeekFolder, true);  // true để xóa tất cả các file và thư mục con
                         AppendTextWithScroll($"Đã xóa thư mục: {internshipWeekFolder}\n");
 
-                        LoadConfigFileListView(internshipWeekFolder);
-
                         btnDelete.Enabled = false;  // Vô hiệu hóa nút xóa
                         AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
 
@@ -505,6 +524,9 @@ namespace GitLogAggregator
 
                         fileListView.Items.Clear();  // Xóa tất cả mục trong ListView
                         AppendTextWithScroll("Danh sách file đã được làm trống.\n");
+
+                        configListView.Items.Clear(); // xóa danh sách hiển thị đường dẫn
+                        AppendTextWithScroll("Danh sách config đã được làm trống.\n");
 
                         checkedListBoxCommits.Items.Clear();  // Xóa tất cả mục trong checkedListBox1
                         AppendTextWithScroll("Danh sách commit đã được làm trống.\n");

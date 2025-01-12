@@ -421,7 +421,7 @@
             // cPath
             // 
             this.cPath.Text = "Đường dẫn";
-            this.cPath.Width = 230;
+            this.cPath.Width = 180;
             // 
             // button1
             // 
@@ -452,7 +452,7 @@
             // cDescription
             // 
             this.cDescription.Text = "Mô tả";
-            this.cDescription.Width = 100;
+            this.cDescription.Width = 150;
             // 
             // cLevelPath
             // 
