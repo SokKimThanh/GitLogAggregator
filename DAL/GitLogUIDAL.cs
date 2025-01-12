@@ -143,13 +143,13 @@ namespace GitLogAggregator.DataAccess
             ConfigFile configFile = new ConfigFile();
             using (StreamReader reader = new StreamReader(configPath))
             {
-                configFile.Author = reader.ReadLine().Split(':')[1].Trim();
-                configFile.StartDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
-                configFile.EndDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
-                configFile.Weeks = int.Parse(reader.ReadLine().Split(':')[1].Trim());
-                configFile.FirstCommitDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
-                configFile.ProjectDirectory = reader.ReadLine().Split(':')[1].Trim();
-                configFile.InternshipWeekFolder = reader.ReadLine().Split(':')[1].Trim();
+                configFile.Author = GetValueFromLine(reader.ReadLine());
+                configFile.StartDate = DateTime.Parse(GetValueFromLine(reader.ReadLine()));
+                configFile.EndDate = DateTime.Parse(GetValueFromLine(reader.ReadLine()));
+                configFile.Weeks = int.Parse(GetValueFromLine(reader.ReadLine()));
+                configFile.FirstCommitDate = DateTime.Parse(GetValueFromLine(reader.ReadLine()));
+                configFile.ProjectDirectory = GetValueFromLine(reader.ReadLine());
+                configFile.InternshipWeekFolder = GetValueFromLine(reader.ReadLine());
                 configFile.Folders = new List<string>();
                 reader.ReadLine(); // Bỏ qua dòng "Folders:"
                 while (!reader.EndOfStream)
@@ -159,6 +159,18 @@ namespace GitLogAggregator.DataAccess
             }
             return configFile;
         }
+
+        /// <summary>
+        /// Lấy giá trị từ một dòng cấu hình (sau ký tự ':')
+        /// </summary>
+        /// <param name="line">Dòng cấu hình</param>
+        /// <returns>Giá trị sau ký tự ':'</returns>
+        private string GetValueFromLine(string line)
+        {
+            int index = line.IndexOf(':');
+            return (index >= 0) ? line.Substring(index + 1).Trim() : string.Empty;
+        }
+
         /// <summary>
         /// Lệnh Git tìm ngày commit đầu tiên
         /// </summary>

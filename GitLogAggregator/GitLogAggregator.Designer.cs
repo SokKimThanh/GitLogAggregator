@@ -47,6 +47,9 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.fileListView = new System.Windows.Forms.ListView();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.dataGridViewCommits = new System.Windows.Forms.DataGridView();
             this.label8 = new System.Windows.Forms.Label();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
@@ -59,15 +62,13 @@
             this.btnExport = new System.Windows.Forms.Button();
             this.btnReviewCommits = new System.Windows.Forms.Button();
             this.btnCompleteReview = new System.Windows.Forms.Button();
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.configListView = new System.Windows.Forms.ListView();
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cSTT = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.cDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.cLevelPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
@@ -259,12 +260,27 @@
             this.fileListView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.FileListView_MouseClick);
             this.fileListView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.FileListView_MouseDoubleClick);
             // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "STT";
+            this.columnHeader3.Width = 40;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Tên File";
+            this.columnHeader4.Width = 120;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Ngày Tạo";
+            this.columnHeader5.Width = 100;
+            // 
             // dataGridViewCommits
             // 
             this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dataGridViewCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridViewCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewCommits.Location = new System.Drawing.Point(395, 214);
+            this.dataGridViewCommits.Location = new System.Drawing.Point(390, 214);
             this.dataGridViewCommits.Name = "dataGridViewCommits";
             this.dataGridViewCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.dataGridViewCommits.Size = new System.Drawing.Size(274, 400);
@@ -289,7 +305,7 @@
             // txtFirstCommitDate
             // 
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtFirstCommitDate.Location = new System.Drawing.Point(395, 40);
+            this.txtFirstCommitDate.Location = new System.Drawing.Point(390, 40);
             this.txtFirstCommitDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
             this.txtFirstCommitDate.Size = new System.Drawing.Size(273, 25);
@@ -298,7 +314,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(392, 16);
+            this.label9.Location = new System.Drawing.Point(387, 16);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(137, 17);
@@ -340,7 +356,7 @@
             // checkedListBoxCommits
             // 
             this.checkedListBoxCommits.FormattingEnabled = true;
-            this.checkedListBoxCommits.Location = new System.Drawing.Point(395, 113);
+            this.checkedListBoxCommits.Location = new System.Drawing.Point(390, 113);
             this.checkedListBoxCommits.Name = "checkedListBoxCommits";
             this.checkedListBoxCommits.Size = new System.Drawing.Size(274, 84);
             this.checkedListBoxCommits.TabIndex = 23;
@@ -360,7 +376,7 @@
             // btnReviewCommits
             // 
             this.btnReviewCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnReviewCommits.Location = new System.Drawing.Point(395, 73);
+            this.btnReviewCommits.Location = new System.Drawing.Point(390, 73);
             this.btnReviewCommits.Margin = new System.Windows.Forms.Padding(4);
             this.btnReviewCommits.Name = "btnReviewCommits";
             this.btnReviewCommits.Size = new System.Drawing.Size(120, 33);
@@ -381,28 +397,14 @@
             this.btnCompleteReview.UseVisualStyleBackColor = true;
             this.btnCompleteReview.Click += new System.EventHandler(this.BtnCompleteReview_Click);
             // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "STT";
-            this.columnHeader3.Width = 40;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Tên File";
-            this.columnHeader4.Width = 120;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Ngày Tạo";
-            this.columnHeader5.Width = 100;
-            // 
             // configListView
             // 
             this.configListView.BackColor = System.Drawing.Color.WhiteSmoke;
             this.configListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader2,
-            this.columnHeader6,
-            this.columnHeader7});
+            this.cSTT,
+            this.cPath,
+            this.cDescription,
+            this.cLevelPath});
             this.configListView.HideSelection = false;
             this.configListView.Location = new System.Drawing.Point(14, 452);
             this.configListView.Name = "configListView";
@@ -411,20 +413,15 @@
             this.configListView.UseCompatibleStateImageBehavior = false;
             this.configListView.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader2
+            // cSTT
             // 
-            this.columnHeader2.Text = "STT";
-            this.columnHeader2.Width = 40;
+            this.cSTT.Text = "STT";
+            this.cSTT.Width = 40;
             // 
-            // columnHeader6
+            // cPath
             // 
-            this.columnHeader6.Text = "Đường dẫn";
-            this.columnHeader6.Width = 150;
-            // 
-            // columnHeader7
-            // 
-            this.columnHeader7.Text = "Phân Cấp";
-            this.columnHeader7.Width = 150;
+            this.cPath.Text = "Đường dẫn";
+            this.cPath.Width = 230;
             // 
             // button1
             // 
@@ -451,6 +448,16 @@
             this.button2.Size = new System.Drawing.Size(10, 84);
             this.button2.TabIndex = 25;
             this.button2.UseVisualStyleBackColor = false;
+            // 
+            // cDescription
+            // 
+            this.cDescription.Text = "Mô tả";
+            this.cDescription.Width = 100;
+            // 
+            // cLevelPath
+            // 
+            this.cLevelPath.Text = "Phân cấp";
+            this.cLevelPath.Width = 100;
             // 
             // GitLogAggregator
             // 
@@ -540,10 +547,11 @@
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.ListView configListView;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.ColumnHeader cSTT;
+        private System.Windows.Forms.ColumnHeader cPath;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ColumnHeader cDescription;
+        private System.Windows.Forms.ColumnHeader cLevelPath;
     }
 }

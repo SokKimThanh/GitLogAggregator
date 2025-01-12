@@ -67,36 +67,70 @@ namespace GitLogAggregator
             btnOpenGitFolder.Enabled = true;
         }
         /// <summary>
-        /// Hiển thị thông tin file config lên ListView
+        /// Hiển thị thông tin file config lên ListView với các cột: STT, Đường dẫn, Phân cấp và Mô tả.
+        /// </summary>
+        /// <param name="configFile">Đối tượng ConfigFile chứa thông tin cấu hình</param>
+        /// <summary>
+        /// Hiển thị thông tin file config lên ListView với các cột: STT, Đường dẫn, Phân cấp và Mô tả.
         /// </summary>
         /// <param name="configFile">Đối tượng ConfigFile chứa thông tin cấu hình</param>
         public void DisplayConfigInListView(ConfigFile configFile)
         {
             configListView.Items.Clear(); // Xóa dữ liệu cũ trong ListView
 
-            // Thêm thông tin cơ bản
-            AddListViewItem("Author", configFile.Author);
-            AddListViewItem("StartDate", configFile.StartDate.ToString("yyyy-MM-dd"));
-            AddListViewItem("EndDate", configFile.EndDate.ToString("yyyy-MM-dd"));
-            AddListViewItem("Weeks", configFile.Weeks.ToString());
-            AddListViewItem("FirstCommitDate", configFile.FirstCommitDate.ToString("yyyy-MM-dd"));
-            AddListViewItem("ProjectDirectory", configFile.ProjectDirectory);
-            AddListViewItem("InternshipWeekFolder", configFile.InternshipWeekFolder);
+            int stt = 1;
 
-            // Thêm danh sách thư mục tuần
-            AddListViewItem("Folders", "Danh sách thư mục tuần:");
-            for (int i = 0; i < configFile.Folders.Count; i++)
+            // Hiển thị thông tin đường dẫn dự án
+            ListViewItem projectItem = new ListViewItem(stt.ToString()); // STT
+            projectItem.SubItems.Add(configFile.ProjectDirectory);       // Đường dẫn dự án
+            projectItem.SubItems.Add("Đường dẫn dự án");                 // Mô tả
+            projectItem.SubItems.Add("1");                               // Phân cấp
+            configListView.Items.Add(projectItem);
+            stt++;
+
+            // Hiển thị thông tin thư mục thực tập
+            ListViewItem internshipItem = new ListViewItem(stt.ToString()); // STT
+            internshipItem.SubItems.Add(configFile.InternshipWeekFolder);   // Thư mục thực tập
+            internshipItem.SubItems.Add("Thư mục thực tập");                // Mô tả
+            internshipItem.SubItems.Add("1");                               // Phân cấp
+            configListView.Items.Add(internshipItem);
+            stt++;
+
+            // Hiển thị danh sách thư mục tuần, sắp xếp theo Phân cấp giảm dần
+            var folderInfo = configFile.Folders
+                .Select((path, index) => new
+                {
+                    STT = stt + index,                                    // Số thứ tự
+                    Path = path,                                          // Đường dẫn
+                    Level = path.Count(c => c == '\\' || c == '/'),       // Phân cấp
+                    Description = $"Thư mục cấp {path.Count(c => c == '\\' || c == '/')}" // Mô tả
+                })
+                .OrderByDescending(info => info.Level)                   // Sắp xếp giảm dần theo Level
+                .ToList();
+
+            foreach (var info in folderInfo)
             {
-                AddListViewItem($"Week {i + 1}", configFile.Folders[i]);
+                ListViewItem folderItem = new ListViewItem(info.STT.ToString()); // STT
+                folderItem.SubItems.Add(info.Path);                              // Đường dẫn
+                folderItem.SubItems.Add(info.Description);                       // Mô tả
+                folderItem.SubItems.Add(info.Level.ToString());                  // Phân cấp (Level Path Folder)
+                configListView.Items.Add(folderItem);
             }
         }
+
+
+
+        /// <summary>
+        /// Tải file config.txt và hiển thị thông tin lên ListView
+        /// </summary>
+        /// <param name="txtInternshipFolderPath">Đường dẫn thư mục thực tập</param>
         private void LoadConfigFileListView(string txtInternshipFolderPath = "")
         {
             string configPath = Path.Combine(txtInternshipFolderPath, "config.txt");
             if (File.Exists(configPath))
             {
                 ConfigFile configFile = gitlogui_bus.LoadConfigFile(configPath);
-                DisplayConfigInListView(configFile);
+                DisplayConfigInListView(configFile); // Gọi hàm hiển thị đã cập nhật
                 AppendTextWithScroll("Đã tải dữ liệu từ file configFile.txt.\n");
             }
             else
@@ -104,6 +138,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("File configFile.txt không tồn tại.\n");
             }
         }
+
 
 
         /// <summary>
