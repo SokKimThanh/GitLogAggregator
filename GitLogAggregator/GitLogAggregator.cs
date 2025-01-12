@@ -439,6 +439,13 @@ namespace GitLogAggregator
 
             weekListView.SmallImageList = imageList;
 
+            int totalFiles = 0;
+            int emptyDirectories = 0;
+            int directoriesWithCommits = 0;
+
+            // Danh sách file để tổng hợp từ tất cả các thư mục
+            List<(string FilePath, DateTime CreationTime)> allFiles = new List<(string, DateTime)>();
+
             foreach (string folder in directories)
             {
                 // Lấy danh sách file trong thư mục
@@ -452,7 +459,8 @@ namespace GitLogAggregator
 
                 if (combinedFile == null && otherFiles.Count == 0)
                 {
-                    // Nếu thư mục không có file nào, bỏ qua thư mục này 
+                    // Nếu thư mục không có file nào, bỏ qua thư mục này
+                    emptyDirectories++;
                     AppendTextWithScroll($"Thư mục: {Path.GetFileName(folder)} - Không có commit.\n");
                     continue;
                 }
@@ -465,43 +473,52 @@ namespace GitLogAggregator
                 };
                 weekListView.Items.Add(item);
 
-                // Xóa danh sách file cũ và bắt đầu thêm file mới
-                fileListView.Items.Clear();
-                int fileOrder = 1;
-
-                // Thêm file combined_commits.txt trước (nếu có)
+                // Thêm file combined_commits.txt (nếu có) vào danh sách tổng hợp
                 if (combinedFile != null)
                 {
-                    var combinedFileName = Path.GetFileName(combinedFile);
-                    var combinedFileCreationTime = File.GetCreationTime(combinedFile).ToString("dd/MM/yyyy HH:mm:ss");
-                    var combinedFileItem = new ListViewItem(fileOrder++.ToString());
-                    combinedFileItem.SubItems.Add(combinedFileName);
-                    combinedFileItem.SubItems.Add(combinedFileCreationTime); // Thêm ngày tạo
-                    combinedFileItem.Tag = combinedFile;
-                    fileListView.Items.Add(combinedFileItem);
+                    allFiles.Add((combinedFile, File.GetCreationTime(combinedFile)));
+                    totalFiles++;
                 }
 
-                // Thêm các file khác sau
+                // Thêm các file khác vào danh sách tổng hợp
                 foreach (var file in otherFiles)
                 {
-                    string fileName = Path.GetFileName(file);
-                    string fileCreationTime = File.GetCreationTime(file).ToString("dd/MM/yyyy HH:mm:ss");
-                    var fileItem = new ListViewItem(fileOrder++.ToString());
-                    fileItem.SubItems.Add(fileName);
-                    fileItem.SubItems.Add(fileCreationTime); // Thêm ngày tạo
-                    fileItem.Tag = file; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
-                    fileListView.Items.Add(fileItem);
-
+                    allFiles.Add((file, File.GetCreationTime(file)));
+                    totalFiles++;
                 }
-                AppendTextWithScroll($"Thư mục: {Path.GetFileName(folder)} - Số lượng file: {files.Length}\n");
+
+                // Đếm số lượng commit trong thư mục
+                int commitsCount = CountCommitsInFolder(folder);
+                directoriesWithCommits++;
+                AppendTextWithScroll($"Thư mục: {Path.GetFileName(folder)} - Số lượng file: {files.Length} - Số lượng commit: {commitsCount}\n");
+            }
+
+            // Hiển thị thông báo nếu không có thư mục nào trong internship_week
+            if (directories.Count == 0)
+            {
+                AppendTextWithScroll("Không có thư mục nào trong internship_week.\n");
+            }
+            else
+            {
+                AppendTextWithScroll($"Tổng số thư mục: {directories.Count}\n");
+                AppendTextWithScroll($"Số thư mục trống: {emptyDirectories}\n");
+                AppendTextWithScroll($"Số thư mục có commit: {directoriesWithCommits}\n");
+                AppendTextWithScroll($"Tổng số file: {totalFiles}\n");
+            }
+
+            // Hiển thị tất cả các file từ danh sách tổng hợp lên fileListView, sắp xếp theo ngày tạo
+            var sortedFiles = allFiles.OrderBy(f => f.CreationTime).ToList();
+            int fileOrder = 1;
+            foreach (var (filePath, creationTime) in sortedFiles)
+            {
+                string fileName = Path.GetFileName(filePath);
+                var fileItem = new ListViewItem(fileOrder++.ToString());
+                fileItem.SubItems.Add(fileName);
+                fileItem.SubItems.Add(creationTime.ToString("dd/MM/yyyy HH:mm:ss")); // Thêm ngày tạo
+                fileItem.Tag = filePath; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
+                fileListView.Items.Add(fileItem);
             }
         }
-        /// <summary>
-        /// Hiển thị danh sách thư mục thực tập kho tổng hợp commit
-        /// </summary>
-        /// <summary>
-        /// Hiển thị danh sách thư mục thực tập kho tổng hợp commit
-        /// </summary>
         /// <summary>
         /// Hiển thị danh sách file từ tất cả các thư mục tuần trong fileListView
         /// </summary>
