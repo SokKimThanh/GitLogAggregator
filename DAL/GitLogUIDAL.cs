@@ -114,7 +114,7 @@ namespace GitLogAggregator.DataAccess
         /// <param name="configFile">Đối tượng ConfigFile chứa thông tin cấu hình</param>
         public void SaveConfigFile(ConfigFile configInfo)
         {
-            string configPath = Path.Combine(configInfo.ProjectDirectory, "internship_week", "configFile.txt");
+            string configPath = Path.Combine(configInfo.ProjectDirectory, "internship_week", "config.txt");
             using (StreamWriter writer = new StreamWriter(configPath))
             {
                 writer.WriteLine($"Author: {configInfo.Author}");
@@ -134,9 +134,9 @@ namespace GitLogAggregator.DataAccess
 
 
         /// <summary>
-        /// Đọc thông tin từ file configFile.txt và trả về đối tượng ConfigFile
+        /// Đọc thông tin từ file config.txt và trả về đối tượng ConfigFile
         /// </summary>
-        /// <param name="configPath">Đường dẫn tới file configFile.txt</param>
+        /// <param name="configPath">Đường dẫn tới file config.txt</param>
         /// <returns>Đối tượng ConfigFile chứa thông tin cấu hình</returns>
         public ConfigFile LoadConfigFile(string configPath)
         {

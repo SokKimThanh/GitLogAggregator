@@ -131,11 +131,11 @@ namespace GitLogAggregator
             {
                 ConfigFile configFile = gitlogui_bus.LoadConfigFile(configPath);
                 DisplayConfigInListView(configFile); // Gọi hàm hiển thị đã cập nhật
-                AppendTextWithScroll("Đã tải dữ liệu từ file configFile.txt.\n");
+                AppendTextWithScroll("Đã tải dữ liệu từ file config.txt.\n");
             }
             else
             {
-                AppendTextWithScroll("File configFile.txt không tồn tại.\n");
+                AppendTextWithScroll("File config.txt không tồn tại.\n");
             }
         }
 
@@ -203,7 +203,7 @@ namespace GitLogAggregator
                     txtInternshipStartDate.Enabled = true;
                     btnOpenGitFolder.Enabled = true;
                     btnAggregator.Enabled = true;
-                    AppendTextWithScroll("Ngày thực tập của bạn bắt đầu khi nào?\n");
+                    AppendTextWithScroll("Vui lòng tổng hợp commit mới.\n");
                 }
             }
         }
@@ -273,16 +273,16 @@ namespace GitLogAggregator
         /// <param name="internshipWeekFolder"></param>
         private void LoadAndDisplayConfigInfo(string internshipWeekFolder)
         {
-            string configFile = Path.Combine(internshipWeekFolder, "config.txt");
             try
             {
+                string configFile = Path.Combine(internshipWeekFolder, "config.txt");
                 if (File.Exists(configFile))
                 {
                     //
                     // Hiển thị dữ liệu config list view
                     //
                     ConfigFile configInfo = gitlogui_bus.LoadConfigFile(configFile);
-                    DisplayConfigInListView(configInfo);
+
                     cboAuthorCommit.SelectedItem = configInfo.Author;
                     txtInternshipStartDate.Value = configInfo.StartDate;
                     txtInternshipEndDate.Value = configInfo.EndDate;
@@ -290,8 +290,13 @@ namespace GitLogAggregator
                     txtDirectoryProjectPath = configInfo.ProjectDirectory;
                     txtFolderInternshipPath = configInfo.InternshipWeekFolder;
 
-
+                    // 1 Hiển thị folder week listview
                     DisplayFoldersInListView(configInfo.Folders);
+
+                    // 2 hiển thị config listview
+                    DisplayConfigInListView(configInfo);
+
+                    // Thông báo hiển thị hoàn thành tổng hợp commit
                     AppendTextWithScroll($"Tải dữ liệu tổng hợp trước đó:\nTác giả: {configInfo.Author}\nNgày bắt đầu: {configInfo.StartDate:dd/MM/yyyy}\n");
 
                     // Load và hiển thị các commits từ các thư mục
@@ -311,7 +316,9 @@ namespace GitLogAggregator
                 else
                 {
                     DisableControls();
-                    btnDelete.Enabled = false;
+                    btnDelete.Enabled = true;// open
+                    btnOpenGitFolder.Enabled = true;//open
+                    AppendTextWithScroll($"Lỗi: Không tìm thấy file {configFile}");
                 }
             }
             catch
@@ -406,7 +413,7 @@ namespace GitLogAggregator
 
                 //Dữ liệu được tổng hợp theo chức năng cũ gitlogui_bus.
                 List<string> folders = gitlogui_bus.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
-                ConfigFile aggregateInfo = new ConfigFile
+                ConfigFile configFile = new ConfigFile
                 {
                     Author = author,
                     StartDate = internshipStartDate,
@@ -419,8 +426,11 @@ namespace GitLogAggregator
                 };
 
                 // Lưu thông tin vào file text
-                gitlogui_bus.SaveConfigFile(aggregateInfo);
+                gitlogui_bus.SaveConfigFile(configFile);
                 AppendTextWithScroll("Đã lưu dữ liệu vào file config.txt.\n");
+                // Kiểm tra Hiển thị dữ liệu config file sau khi lưu 
+                DisplayConfigInListView(configFile);
+
 
                 // Hiển thị lên list view
                 DisplayDirectoriesInListView();

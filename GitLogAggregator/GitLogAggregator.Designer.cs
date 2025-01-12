@@ -109,7 +109,7 @@
             // 
             this.txtResult.BackColor = System.Drawing.Color.Gainsboro;
             this.txtResult.ForeColor = System.Drawing.Color.IndianRed;
-            this.txtResult.Location = new System.Drawing.Point(12, 538);
+            this.txtResult.Location = new System.Drawing.Point(14, 572);
             this.txtResult.Margin = new System.Windows.Forms.Padding(4);
             this.txtResult.Name = "txtResult";
             this.txtResult.ReadOnly = true;
@@ -184,7 +184,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(14, 517);
+            this.label6.Location = new System.Drawing.Point(15, 551);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(120, 17);
@@ -224,7 +224,7 @@
             this.helpButton.Location = new System.Drawing.Point(0, 0);
             this.helpButton.Margin = new System.Windows.Forms.Padding(4);
             this.helpButton.Name = "helpButton";
-            this.helpButton.Size = new System.Drawing.Size(11, 626);
+            this.helpButton.Size = new System.Drawing.Size(11, 661);
             this.helpButton.TabIndex = 15;
             this.helpButton.Text = "i";
             this.helpButton.UseVisualStyleBackColor = false;
@@ -283,7 +283,7 @@
             this.dataGridViewCommits.Location = new System.Drawing.Point(390, 214);
             this.dataGridViewCommits.Name = "dataGridViewCommits";
             this.dataGridViewCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridViewCommits.Size = new System.Drawing.Size(274, 400);
+            this.dataGridViewCommits.Size = new System.Drawing.Size(274, 434);
             this.dataGridViewCommits.TabIndex = 18;
             // 
             // label8
@@ -408,7 +408,7 @@
             this.configListView.HideSelection = false;
             this.configListView.Location = new System.Drawing.Point(14, 452);
             this.configListView.Name = "configListView";
-            this.configListView.Size = new System.Drawing.Size(369, 62);
+            this.configListView.Size = new System.Drawing.Size(369, 96);
             this.configListView.TabIndex = 24;
             this.configListView.UseCompatibleStateImageBehavior = false;
             this.configListView.View = System.Windows.Forms.View.Details;
@@ -432,7 +432,7 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Location = new System.Drawing.Point(659, 214);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(10, 400);
+            this.button1.Size = new System.Drawing.Size(10, 434);
             this.button1.TabIndex = 25;
             this.button1.UseVisualStyleBackColor = false;
             // 
@@ -464,7 +464,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(681, 626);
+            this.ClientSize = new System.Drawing.Size(681, 661);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.configListView);
