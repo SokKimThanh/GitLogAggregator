@@ -37,9 +37,15 @@ namespace GitLogAggregator
         // git check commit
         private readonly GitLogCheckCommitBUS gitlogcheckcommit_bus = new GitLogCheckCommitBUS();
 
-        // Khởi tạo danh sách để lưu trữ dữ liệu tuần và commit không hợp lệ
-        List<string> invalidCommits = new List<string>();
+        // danh sách tổng hợp commit hợp lệ và không hợp lệ
+        /// <summary>
+        /// DS commit hợp lệ
+        /// </summary>
         List<WeekData> weekDatas = new List<WeekData>();
+        /// <summary>
+        /// DS commit không hợp lệ
+        /// </summary>
+        List<string> invalidCommits = new List<string>();
 
         public GitLogAggregator()
         {
@@ -129,9 +135,9 @@ namespace GitLogAggregator
             // Thiết lập các cột cho fileListView (nếu chưa thêm trước đó)
             if (fileListView.Columns.Count == 0)
             {
-                fileListView.Columns.Add("STT", 50, HorizontalAlignment.Right); // Cột số thứ tự
-                fileListView.Columns.Add("Tên file", 120, HorizontalAlignment.Left); // Cột tên file
-                fileListView.Columns.Add("Ngày tạo", 100, HorizontalAlignment.Right); // Cột ngày tạo file
+                fileListView.Columns.Add("STT", 50); // Cột số thứ tự
+                fileListView.Columns.Add("Tên file", 120); // Cột tên file
+                fileListView.Columns.Add("Ngày tạo", 100); // Cột ngày tạo file
             }
             // Tự động điều chỉnh kích thước cột
             fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -650,33 +656,7 @@ namespace GitLogAggregator
         }
 
 
-        /// <summary>
-        /// Hiển thị file khi chọn một thư mục
-        /// </summary>
-        /// <param name="directoryPath"></param>
-        private void DisplayFilesInDirectory(string directoryPath)
-        {
-            if (Directory.Exists(directoryPath))
-            {
-                fileListView.Items.Clear(); // Xóa tất cả các mục hiện tại trong ListView
-                string[] files = Directory.GetFiles(directoryPath);
 
-                // biến đếm để tạo số thứ tự
-                int index = 1;
-                foreach (var file in files)
-                {
-                    ListViewItem item = new ListViewItem(index.ToString());
-                    item.Tag = file;// Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
-                    item.SubItems.Add(Path.GetFileName(file));
-                    fileListView.Items.Add(item);
-                    index++;
-                }
-            }
-            else
-            {
-                AppendTextWithScroll("Thư mục không tồn tại.\n");
-            }
-        }
 
         /// <summary>
         /// Phương thức bổ sung văn bản và cuộn đến cuối
@@ -763,7 +743,7 @@ namespace GitLogAggregator
             }
         }
         /// <summary>
-        /// xem danh sách commit trong thư mục
+        /// Xử lý sự kiện click vào thư mục trong weekListView và hiển thị danh sách file trong thư mục được chọn
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -778,10 +758,10 @@ namespace GitLogAggregator
                 {
                     string directoryPath = selectedItem.Tag.ToString();
                     string folderName = Path.GetFileName(directoryPath); // Lấy tên thư mục
-                    DisplayFilesInDirectory(directoryPath);
-
-                    // Hiển thị thông báo "chọn thư mục tuần thứ"
                     AppendTextWithScroll($"Bạn đã chọn thư mục tuần: {folderName}\n");
+
+                    // Hiển thị và sắp xếp các file từ thư mục tuần được chọn
+                    DisplayAndSortFilesFromSelectedWeek(directoryPath);
                 }
                 else
                 {
@@ -790,26 +770,90 @@ namespace GitLogAggregator
             }
         }
 
+        /// <summary>
+        /// Hiển thị và sắp xếp danh sách file từ thư mục tuần được chọn
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        private void DisplayAndSortFilesFromSelectedWeek(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                AppendTextWithScroll("Thư mục không tồn tại.\n");
+                return;
+            }
+
+            // Xóa danh sách file hiện tại trong fileListView
+            fileListView.Items.Clear();
+
+            // Lấy danh sách file trong thư mục được chọn
+            var files = Directory.GetFiles(directoryPath);
+
+            if (files.Length == 0)
+            {
+                AppendTextWithScroll("Thư mục không có file nào.\n");
+                return;
+            }
+
+            // Tách file "combined_commits.txt" ra trước
+            var combinedFile = files.FirstOrDefault(f => Path.GetFileName(f).Equals("combined_commits.txt", StringComparison.OrdinalIgnoreCase));
+            var otherFiles = files.Where(f => !Path.GetFileName(f).Equals("combined_commits.txt", StringComparison.OrdinalIgnoreCase))
+                                  .OrderBy(f => File.GetCreationTime(f)) // Sắp xếp theo ngày tạo
+                                  .ToList();
+
+            int index = 1; // Đếm số thứ tự file
+
+            // Thêm file "combined_commits.txt" trước (nếu có)
+            if (combinedFile != null)
+            {
+                var combinedFileName = Path.GetFileName(combinedFile);
+                var combinedFileCreationTime = File.GetCreationTime(combinedFile).ToString("dd/MM/yyyy HH:mm:ss");
+
+                ListViewItem combinedFileItem = new ListViewItem(index++.ToString());
+                combinedFileItem.SubItems.Add(combinedFileName); // Tên file
+                combinedFileItem.SubItems.Add(combinedFileCreationTime); // Ngày tạo
+                combinedFileItem.Tag = combinedFile; // Lưu đường dẫn file
+                fileListView.Items.Add(combinedFileItem);
+            }
+
+            // Thêm các file còn lại
+            foreach (var file in otherFiles)
+            {
+                string fileName = Path.GetFileName(file);
+                string fileCreationTime = File.GetCreationTime(file).ToString("dd/MM/yyyy HH:mm:ss");
+
+                ListViewItem fileItem = new ListViewItem(index++.ToString());
+                fileItem.SubItems.Add(fileName); // Tên file
+                fileItem.SubItems.Add(fileCreationTime); // Ngày tạo
+                fileItem.Tag = file; // Lưu đường dẫn file
+                fileListView.Items.Add(fileItem);
+            }
+
+            AppendTextWithScroll($"Tổng số file trong tuần: {files.Length}\n");
+        }
+
+
 
         private void FileListView_MouseClick(object sender, MouseEventArgs e)
         {
+
             if (fileListView.SelectedItems.Count > 0)
             {
-                // Lấy mục được chọn
-                ListViewItem selectedItem = fileListView.SelectedItems[0];
+                return;
+            }
+            // Lấy mục được chọn
+            ListViewItem selectedItem = fileListView.SelectedItems[0];
 
-                // Lấy đường dẫn đầy đủ của file từ thuộc tính Tag của ListViewItem
-                string filePath = selectedItem.Tag.ToString();
+            // Lấy đường dẫn đầy đủ của file từ thuộc tính Tag của ListViewItem
+            string filePath = selectedItem.Tag.ToString();
 
-                // Đọc danh sách commit từ file
-                List<string> commits = gitlogui_bus.ReadCommitsFromFile(filePath);
+            // Đọc danh sách commit từ file
+            List<string> commits = gitlogui_bus.ReadCommitsFromFile(filePath);
 
-                // Hiển thị danh sách commit trong checkedListBox1
-                checkedListBoxCommits.Items.Clear();
-                foreach (var commit in invalidCommits)
-                {
-                    checkedListBoxCommits.Items.Add(commit);
-                }
+            // Hiển thị danh sách commit trong checkedListBox1
+            checkedListBoxCommits.Items.Clear();
+            foreach (var commit in commits)
+            {
+                checkedListBoxCommits.Items.Add(commit);
             }
         }
 
@@ -873,8 +917,8 @@ namespace GitLogAggregator
             DateTime internshipEndDate = txtInternshipEndDate.Value;
             int totalWeeks = (int)txtNumericsWeek.Value;
 
-            List<WeekData> weekDatas = new List<WeekData>();
-            List<string> invalidCommits = new List<string>();
+            weekDatas = new List<WeekData>();
+            invalidCommits = new List<string>();
 
             for (int week = 1; week <= totalWeeks; week++)
             {
@@ -903,6 +947,12 @@ namespace GitLogAggregator
         }
         private void BtnCompleteReview_Click(object sender, EventArgs e)
         {
+            if (invalidCommits.Count == 0)
+            {
+                AppendTextWithScroll("Vui lòng tổng hợp và kiểm tra commit lỗi trước khi xóa");
+                return;
+            }
+
             // Step 1: Confirm deletion with the user
             DialogResult result = MessageBox.Show("Are you sure you want to delete the invalid commits?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result != DialogResult.Yes)
@@ -910,6 +960,7 @@ namespace GitLogAggregator
 
             // Step 2: Remove invalid commits from files
             int totalWeeks = (int)txtNumericsWeek.Value;
+
             List<string> invalidLines = invalidCommits;
             string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
