@@ -27,5 +27,6 @@ namespace GitLogAggregator.Utilities
             }
             return startDate.AddDays(dayOffset);
         }
+
     }
 }

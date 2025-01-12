@@ -37,6 +37,10 @@ namespace GitLogAggregator
         // git check commit
         private readonly GitLogCheckCommitBUS gitlogcheckcommit_bus = new GitLogCheckCommitBUS();
 
+        // Khởi tạo danh sách để lưu trữ dữ liệu tuần và commit không hợp lệ
+        List<string> invalidCommits = new List<string>();
+        List<WeekData> weekDatas = new List<WeekData>();
+
         public GitLogAggregator()
         {
             InitializeComponent();
@@ -700,7 +704,7 @@ namespace GitLogAggregator
 
                 // Hiển thị danh sách commit trong checkedListBox1
                 checkedListBoxCommits.Items.Clear();
-                foreach (var commit in commits)
+                foreach (var commit in invalidCommits)
                 {
                     checkedListBoxCommits.Items.Add(commit);
                 }
@@ -776,9 +780,7 @@ namespace GitLogAggregator
             // Lấy tổng số tuần cần xử lý từ giao diện
             int totalWeeks = (int)txtNumericsWeek.Value;
 
-            // Khởi tạo danh sách để lưu trữ dữ liệu tuần và commit không hợp lệ
             List<WeekData> weekDatas = new List<WeekData>();
-            List<string> invalidCommits = new List<string>();
 
             // Duyệt qua từng tuần và xử lý dữ liệu
             for (int week = 1; week <= totalWeeks; week++)
@@ -799,15 +801,80 @@ namespace GitLogAggregator
             }
 
             // Hiển thị kết quả commit hợp lệ và không hợp lệ lên giao diện
-            DisplayCommitResults(weekDatas, invalidCommits);
+            // Gán danh sách commit không hợp lệ vào ListBox để người dùng xem
+            checkedListBoxCommits.Items.Clear();
+            foreach (var commit in invalidCommits)
+            {
+                checkedListBoxCommits.Items.Add(commit);
+            }
+            // Refresh the DataGridView
+            DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
+            dataGridViewCommits.DataSource = dataTable;
 
             // Hiển thị thông báo hoàn thành
             AppendTextWithScroll("Hoàn thành tất cả các tuần!\n");
 
             // Kích hoạt lại nút bấm sau khi xử lý xong
             btnReviewCommits.Enabled = true;
+            btnCompleteReview.Enabled = true;
         }
+        private void BtnCompleteReview_Click(object sender, EventArgs e)
+        {
+            // Step 1: Confirm deletion with the user
+            DialogResult result = MessageBox.Show("Are you sure you want to delete the invalid commits?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result != DialogResult.Yes)
+                return;
 
+            // Step 2: Remove invalid commits from files
+            int totalWeeks = (int)txtNumericsWeek.Value;
+            List<string> invalidLines = invalidCommits;
+            string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
+
+            for (int week = 1; week <= totalWeeks; week++)
+            {
+                AppendTextWithScroll($"Đang xử lý tuần {week}...\n");
+                string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{week}");
+                string combinedFilePath = Path.Combine(weekFolder, "combined_commits.txt");
+
+                if (!CheckDirectoriesAndFiles(weekFolder, combinedFilePath, week))
+                    continue;
+
+                try
+                {
+                    List<string> lines = File.ReadAllLines(combinedFilePath).ToList();
+                    lines = lines.Where(line => !invalidLines.Contains(line)).ToList();
+                    File.WriteAllLines(combinedFilePath, lines);
+                    AppendTextWithScroll($"Deleted invalid commits from {combinedFilePath}\n");
+                }
+                catch (Exception ex)
+                {
+                    AppendTextWithScroll($"Error deleting invalid commits from {combinedFilePath}: {ex.Message}\n");
+                }
+            }
+
+            // Step 4: Update the UI
+            // Refresh the DataGridView
+            DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
+            dataGridViewCommits.DataSource = dataTable;
+
+            // Clear the data source of the CheckedListBox
+            if (checkedListBoxCommits.DataSource != null)
+            {
+                // Assuming the DataSource is a List<string>
+                var dataSource = checkedListBoxCommits.DataSource as List<string>;
+                if (dataSource != null)
+                {
+                    dataSource.Clear(); // Clear the underlying data source
+                }
+                checkedListBoxCommits.DataSource = null; // Unbind the DataSource
+            }
+
+            // Optionally, rebind the CheckedListBox to an empty list
+            checkedListBoxCommits.DataSource = new List<string>();
+
+            // Inform the user that the process is complete
+            AppendTextWithScroll("Invalid commits have been deleted.\n");
+        }
         /// <summary>
         /// Kiểm tra sự tồn tại của thư mục tuần và file combined_commits.txt
         /// </summary>
@@ -826,24 +893,6 @@ namespace GitLogAggregator
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Hiển thị kết quả lên DataGridView và ListBox
-        /// </summary>
-        private void DisplayCommitResults(List<WeekData> weekDatas, List<string> invalidCommits)
-        {
-            // Chuyển đổi danh sách WeekData thành DataTable để hiển thị trên DataGridView
-            DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
-            dataGridViewCommits.DataSource = dataTable;
-
-            // Gán danh sách commit không hợp lệ vào ListBox để người dùng xem
-            checkedListBoxCommits.DataSource = invalidCommits;
-        }
-
-        public void BtnCompleteReview_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

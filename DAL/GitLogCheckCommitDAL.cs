@@ -92,79 +92,129 @@ namespace DAL
         /// </summary>
         public void ParseCommitLines(string[] lines, DateTime startDate, DateTime endDate, WeekData weekData, List<string> invalidCommits)
         {
-            string commitMessage = "";
+            List<string> currentCommit = new List<string>();
+            bool isCommitValid = true;
 
             for (int i = 0; i < lines.Length; i++)
             {
-                var line = lines[i];
+                string line = lines[i];
 
-                // Skip merge commits
-                if (line.StartsWith("commit") && line.Contains("merge"))
+                if (line.StartsWith("commit "))
                 {
-                    invalidCommits.Add(line);
-                    // Skip to the next commit
-                    while (i < lines.Length && !lines[i].StartsWith("commit"))
-                        i++;
-                    continue;
+                    if (currentCommit.Count > 0)
+                    {
+                        // Process the previous commit
+                        ProcessCommit(currentCommit, startDate, endDate, weekData, invalidCommits);
+                        currentCommit.Clear();
+                    }
+                    // Start a new commit
+                    currentCommit.Add(line);
+                }
+                else
+                {
+                    currentCommit.Add(line);
                 }
 
-                // Skip author lines
-                if (line.StartsWith("Author:"))
+                // Process the last commit after the loop
+                if (i == lines.Length - 1 && currentCommit.Count > 0)
                 {
-                    invalidCommits.Add(line);
-                    continue;
-                }
-
-                // Process date lines to get commit time
-                if (line.StartsWith("Date:"))
-                {
-                    var dateStr = line.Substring("Date:".Length).Trim();
-                    if (!DateTime.TryParseExact(dateStr, "ddd MMM d HH:mm:ss yyyy K", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime commitTime))
-                    {
-                        invalidCommits.Add(line);
-                        continue;
-                    }
-
-                    if (commitTime < startDate || commitTime > endDate)
-                    {
-                        invalidCommits.Add(line);
-                        continue;
-                    }
-
-                    // Skip the empty line after "Date:"
-                    if (i + 1 < lines.Length && string.IsNullOrWhiteSpace(lines[i + 1]))
-                    {
-                        i++;
-                        // Collect all lines starting with four spaces as part of the commit message
-                        while (i + 1 < lines.Length && lines[i + 1].StartsWith("    "))
-                        {
-                            commitMessage += lines[i + 1].Trim() + " ";
-                            i++;
-                        }
-                        // Create DayData with the full commit message
-                        var dayData = new DayData
-                        {
-                            DayOfWeek = commitTime.DayOfWeek.ToString(),
-                            Session = commitTime.Hour < 12 ? "Morning" : "Afternoon",
-                            Attendance = "Present",
-                            AssignedTasks = commitMessage.Trim(),
-                            AchievedResults = commitMessage.Trim(),
-                            Comments = "",
-                            Notes = ""
-                        };
-                        weekData.DayDataList.Add(dayData);
-                        // Reset commitMessage for next commit
-                        commitMessage = "";
-                    }
-                    else
-                    {
-                        // If there's no empty line after "Date:", mark as invalid
-                        invalidCommits.Add(line);
-                    }
+                    ProcessCommit(currentCommit, startDate, endDate, weekData, invalidCommits);
+                    currentCommit.Clear();
                 }
             }
         }
 
+        private void ProcessCommit(List<string> commitLines, DateTime startDate, DateTime endDate, WeekData weekData, List<string> invalidCommits)
+        {
+            bool isMergeCommit = false;
+            DateTime commitTime;
+            string commitMessage = "";
+            string dateLine = "";
+            bool dateFound = false;
+
+            foreach (string line in commitLines)
+            {
+                if (line.StartsWith("Merge:"))
+                {
+                    isMergeCommit = true;
+                    break;
+                }
+                else if (line.StartsWith("Date:"))
+                {
+                    dateLine = line;
+                    dateFound = true;
+                }
+            }
+
+            if (!dateFound)
+            {
+                invalidCommits.AddRange(commitLines);
+                return;
+            }
+
+            if (!dateLine.StartsWith("Date:") || dateLine.Length <= "Date:".Length)
+            {
+                invalidCommits.AddRange(commitLines);
+                return;
+            }
+
+            string dateString = dateLine.Substring("Date:".Length).Trim();
+
+            if (!DateTime.TryParseExact(dateString, "ddd MMM d HH:mm:ss yyyy K", CultureInfo.InvariantCulture, DateTimeStyles.None, out commitTime))
+            {
+                invalidCommits.AddRange(commitLines);
+                return;
+            }
+
+            if (commitTime < startDate || commitTime > endDate)
+            {
+                invalidCommits.AddRange(commitLines);
+                return;
+            }
+
+            // Collect commit message lines
+            bool isMessageSection = false;
+            foreach (string line in commitLines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    isMessageSection = true;
+                    continue;
+                }
+                if (isMessageSection)
+                {
+                    if (line.StartsWith("    "))
+                    {
+                        commitMessage += line.Substring(4).Trim() + " ";
+                    }
+                    else
+                    {
+                        invalidCommits.AddRange(commitLines);
+                        return;
+                    }
+                }
+            }
+
+            // Check for "Merge branch" in commit message
+            if (commitMessage.Contains("Merge branch") || isMergeCommit)
+            {
+                invalidCommits.AddRange(commitLines);
+                return;
+            }
+
+            // Create DayData for valid commits
+            var dayData = new DayData
+            {
+                DayOfWeek = commitTime.DayOfWeek.ToString(),
+                Session = commitTime.Hour < 12 ? "Sáng" : "Chiều",
+                Attendance = "Có mặt",
+                AssignedTasks = commitMessage.Trim(),
+                AchievedResults = commitMessage.Trim(),
+                Comments = "",
+                Notes = ""
+            };
+            weekData.DayDataList.Add(dayData);
+        }
 
 
         public void InitializeDataGridView(DataGridView dataGridViewCommits)
