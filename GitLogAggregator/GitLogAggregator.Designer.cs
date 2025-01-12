@@ -198,7 +198,7 @@
             this.weekListView.Location = new System.Drawing.Point(13, 214);
             this.weekListView.Margin = new System.Windows.Forms.Padding(4);
             this.weekListView.Name = "weekListView";
-            this.weekListView.Size = new System.Drawing.Size(122, 191);
+            this.weekListView.Size = new System.Drawing.Size(94, 191);
             this.weekListView.TabIndex = 12;
             this.weekListView.UseCompatibleStateImageBehavior = false;
             this.weekListView.View = System.Windows.Forms.View.Details;
@@ -289,10 +289,10 @@
             this.columnHeader4,
             this.columnHeader5});
             this.fileListView.HideSelection = false;
-            this.fileListView.Location = new System.Drawing.Point(143, 214);
+            this.fileListView.Location = new System.Drawing.Point(115, 214);
             this.fileListView.Margin = new System.Windows.Forms.Padding(4);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(240, 191);
+            this.fileListView.Size = new System.Drawing.Size(268, 191);
             this.fileListView.TabIndex = 12;
             this.fileListView.UseCompatibleStateImageBehavior = false;
             this.fileListView.View = System.Windows.Forms.View.Details;
