@@ -109,22 +109,23 @@ namespace GitLogAggregator.DataAccess
             }
         }
         /// <summary>
-        /// Truy cập file bằng streamwriter
+        /// Hiển thị thông tin file config lên ListView
         /// </summary>
-        /// <param name="aggregateInfo"></param>
-        public void SaveAggregateInfo(AggregateInfo aggregateInfo)
+        /// <param name="configFile">Đối tượng ConfigFile chứa thông tin cấu hình</param>
+        public void SaveConfigFile(ConfigFile configInfo)
         {
-            string configFile = Path.Combine(aggregateInfo.ProjectDirectory, "internship_week", "config.txt");
-            using (StreamWriter writer = new StreamWriter(configFile))
+            string configPath = Path.Combine(configInfo.ProjectDirectory, "internship_week", "configFile.txt");
+            using (StreamWriter writer = new StreamWriter(configPath))
             {
-                writer.WriteLine($"Author: {aggregateInfo.Author}");
-                writer.WriteLine($"StartDate: {aggregateInfo.StartDate:yyyy-MM-dd}");
-                writer.WriteLine($"EndDate: {aggregateInfo.EndDate:yyyy-MM-dd}"); // Lưu ngày kết thúc thực tập
-                writer.WriteLine($"Weeks: {aggregateInfo.Weeks}"); // Lưu số tuần thực tập
-                writer.WriteLine($"FirstCommitDate: {aggregateInfo.FirstCommitDate:yyyy-MM-dd}");
-                writer.WriteLine($"ProjectDirectory: {aggregateInfo.ProjectDirectory}");
+                writer.WriteLine($"Author: {configInfo.Author}");
+                writer.WriteLine($"StartDate: {configInfo.StartDate:yyyy-MM-dd}");
+                writer.WriteLine($"EndDate: {configInfo.EndDate:yyyy-MM-dd}"); // Lưu ngày kết thúc thực tập
+                writer.WriteLine($"Weeks: {configInfo.Weeks}"); // Lưu số tuần thực tập
+                writer.WriteLine($"FirstCommitDate: {configInfo.FirstCommitDate:yyyy-MM-dd}");
+                writer.WriteLine($"ProjectDirectory: {configInfo.ProjectDirectory}");
+                writer.WriteLine($"InternshipWeekFolder: {configInfo.InternshipWeekFolder}");
                 writer.WriteLine("Folders:");
-                foreach (var folder in aggregateInfo.Folders)
+                foreach (var folder in configInfo.Folders)
                 {
                     writer.WriteLine(folder);
                 }
@@ -133,33 +134,31 @@ namespace GitLogAggregator.DataAccess
 
 
         /// <summary>
-        /// Truy cập file config bằng streamreader
+        /// Đọc thông tin từ file configFile.txt và trả về đối tượng ConfigFile
         /// </summary>
-        /// <param name="configFile"></param>
-        /// <returns></returns>
-        public AggregateInfo LoadAggregateInfo(string configFile)
+        /// <param name="configPath">Đường dẫn tới file configFile.txt</param>
+        /// <returns>Đối tượng ConfigFile chứa thông tin cấu hình</returns>
+        public ConfigFile LoadConfigFile(string configPath)
         {
-            AggregateInfo aggregateInfo = new AggregateInfo();
-            using (StreamReader reader = new StreamReader(configFile))
+            ConfigFile configFile = new ConfigFile();
+            using (StreamReader reader = new StreamReader(configPath))
             {
-                aggregateInfo.Author = reader.ReadLine().Split(':')[1].Trim();
-                aggregateInfo.StartDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
-                aggregateInfo.EndDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim()); // Đọc ngày kết thúc thực tập
-                aggregateInfo.Weeks = int.Parse(reader.ReadLine().Split(':')[1].Trim()); // Đọc số tuần thực tập
-                aggregateInfo.FirstCommitDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
-                aggregateInfo.ProjectDirectory = reader.ReadLine().Split(':')[1].Trim();
-                aggregateInfo.Folders = new List<string>();
+                configFile.Author = reader.ReadLine().Split(':')[1].Trim();
+                configFile.StartDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
+                configFile.EndDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
+                configFile.Weeks = int.Parse(reader.ReadLine().Split(':')[1].Trim());
+                configFile.FirstCommitDate = DateTime.Parse(reader.ReadLine().Split(':')[1].Trim());
+                configFile.ProjectDirectory = reader.ReadLine().Split(':')[1].Trim();
+                configFile.InternshipWeekFolder = reader.ReadLine().Split(':')[1].Trim();
+                configFile.Folders = new List<string>();
                 reader.ReadLine(); // Bỏ qua dòng "Folders:"
                 while (!reader.EndOfStream)
                 {
-                    aggregateInfo.Folders.Add(reader.ReadLine().Trim());
+                    configFile.Folders.Add(reader.ReadLine().Trim());
                 }
             }
-            return aggregateInfo;
+            return configFile;
         }
-
-
-
         /// <summary>
         /// Lệnh Git tìm ngày commit đầu tiên
         /// </summary>

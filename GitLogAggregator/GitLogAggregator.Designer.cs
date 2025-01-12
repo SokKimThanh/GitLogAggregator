@@ -39,12 +39,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtDirectoryProjectPath = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.weekListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.txtFolderInternshipPath = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.btnDelete = new System.Windows.Forms.Button();
@@ -66,6 +62,12 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.configListView = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
@@ -158,37 +160,6 @@
             this.label3.TabIndex = 8;
             this.label3.Text = "Chọn ngày bắt đầu TT";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(149, 461);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(134, 17);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Hiển thị URL báo cáo:";
-            // 
-            // txtDirectoryProjectPath
-            // 
-            this.txtDirectoryProjectPath.BackColor = System.Drawing.Color.Gainsboro;
-            this.txtDirectoryProjectPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtDirectoryProjectPath.Location = new System.Drawing.Point(12, 488);
-            this.txtDirectoryProjectPath.Margin = new System.Windows.Forms.Padding(4);
-            this.txtDirectoryProjectPath.Name = "txtDirectoryProjectPath";
-            this.txtDirectoryProjectPath.ReadOnly = true;
-            this.txtDirectoryProjectPath.Size = new System.Drawing.Size(122, 25);
-            this.txtDirectoryProjectPath.TabIndex = 10;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 461);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(121, 17);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Hiển thị URL Dự án:";
-            // 
             // weekListView
             // 
             this.weekListView.BackColor = System.Drawing.Color.WhiteSmoke;
@@ -208,17 +179,6 @@
             // 
             this.columnHeader1.Text = "Tên thư mục";
             this.columnHeader1.Width = 259;
-            // 
-            // txtFolderInternshipPath
-            // 
-            this.txtFolderInternshipPath.BackColor = System.Drawing.Color.Gainsboro;
-            this.txtFolderInternshipPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtFolderInternshipPath.Location = new System.Drawing.Point(152, 488);
-            this.txtFolderInternshipPath.Margin = new System.Windows.Forms.Padding(4);
-            this.txtFolderInternshipPath.Name = "txtFolderInternshipPath";
-            this.txtFolderInternshipPath.ReadOnly = true;
-            this.txtFolderInternshipPath.Size = new System.Drawing.Size(231, 25);
-            this.txtFolderInternshipPath.TabIndex = 13;
             // 
             // label6
             // 
@@ -304,10 +264,10 @@
             this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dataGridViewCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridViewCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewCommits.Location = new System.Drawing.Point(395, 163);
+            this.dataGridViewCommits.Location = new System.Drawing.Point(395, 214);
             this.dataGridViewCommits.Name = "dataGridViewCommits";
             this.dataGridViewCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridViewCommits.Size = new System.Drawing.Size(281, 451);
+            this.dataGridViewCommits.Size = new System.Drawing.Size(274, 400);
             this.dataGridViewCommits.TabIndex = 18;
             // 
             // label8
@@ -329,16 +289,16 @@
             // txtFirstCommitDate
             // 
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtFirstCommitDate.Location = new System.Drawing.Point(537, 30);
+            this.txtFirstCommitDate.Location = new System.Drawing.Point(395, 40);
             this.txtFirstCommitDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
-            this.txtFirstCommitDate.Size = new System.Drawing.Size(139, 25);
+            this.txtFirstCommitDate.Size = new System.Drawing.Size(273, 25);
             this.txtFirstCommitDate.TabIndex = 3;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(392, 36);
+            this.label9.Location = new System.Drawing.Point(392, 16);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(137, 17);
@@ -382,7 +342,7 @@
             this.checkedListBoxCommits.FormattingEnabled = true;
             this.checkedListBoxCommits.Location = new System.Drawing.Point(395, 113);
             this.checkedListBoxCommits.Name = "checkedListBoxCommits";
-            this.checkedListBoxCommits.Size = new System.Drawing.Size(281, 44);
+            this.checkedListBoxCommits.Size = new System.Drawing.Size(274, 84);
             this.checkedListBoxCommits.TabIndex = 23;
             // 
             // btnExport
@@ -403,7 +363,7 @@
             this.btnReviewCommits.Location = new System.Drawing.Point(395, 73);
             this.btnReviewCommits.Margin = new System.Windows.Forms.Padding(4);
             this.btnReviewCommits.Name = "btnReviewCommits";
-            this.btnReviewCommits.Size = new System.Drawing.Size(131, 33);
+            this.btnReviewCommits.Size = new System.Drawing.Size(120, 33);
             this.btnReviewCommits.TabIndex = 5;
             this.btnReviewCommits.Text = "Kiểm tra";
             this.btnReviewCommits.UseVisualStyleBackColor = true;
@@ -412,10 +372,10 @@
             // btnCompleteReview
             // 
             this.btnCompleteReview.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCompleteReview.Location = new System.Drawing.Point(537, 73);
+            this.btnCompleteReview.Location = new System.Drawing.Point(523, 73);
             this.btnCompleteReview.Margin = new System.Windows.Forms.Padding(4);
             this.btnCompleteReview.Name = "btnCompleteReview";
-            this.btnCompleteReview.Size = new System.Drawing.Size(139, 33);
+            this.btnCompleteReview.Size = new System.Drawing.Size(146, 33);
             this.btnCompleteReview.TabIndex = 5;
             this.btnCompleteReview.Text = "Tiếp theo";
             this.btnCompleteReview.UseVisualStyleBackColor = true;
@@ -436,27 +396,82 @@
             this.columnHeader5.Text = "Ngày Tạo";
             this.columnHeader5.Width = 100;
             // 
+            // configListView
+            // 
+            this.configListView.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.configListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2,
+            this.columnHeader6,
+            this.columnHeader7});
+            this.configListView.HideSelection = false;
+            this.configListView.Location = new System.Drawing.Point(14, 452);
+            this.configListView.Name = "configListView";
+            this.configListView.Size = new System.Drawing.Size(369, 62);
+            this.configListView.TabIndex = 24;
+            this.configListView.UseCompatibleStateImageBehavior = false;
+            this.configListView.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "STT";
+            this.columnHeader2.Width = 40;
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Đường dẫn";
+            this.columnHeader6.Width = 150;
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Phân Cấp";
+            this.columnHeader7.Width = 150;
+            // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.button1.Cursor = System.Windows.Forms.Cursors.SizeWE;
+            this.button1.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Location = new System.Drawing.Point(659, 214);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(10, 400);
+            this.button1.TabIndex = 25;
+            this.button1.UseVisualStyleBackColor = false;
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.button2.Cursor = System.Windows.Forms.Cursors.SizeWE;
+            this.button2.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.button2.FlatAppearance.BorderSize = 0;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Location = new System.Drawing.Point(659, 113);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(10, 84);
+            this.button2.TabIndex = 25;
+            this.button2.UseVisualStyleBackColor = false;
+            // 
             // GitLogAggregator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(681, 626);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.configListView);
             this.Controls.Add(this.checkedListBoxCommits);
             this.Controls.Add(this.txtNumericsWeek);
             this.Controls.Add(this.dataGridViewCommits);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.btnDelete);
-            this.Controls.Add(this.txtFolderInternshipPath);
             this.Controls.Add(this.fileListView);
             this.Controls.Add(this.weekListView);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.txtDirectoryProjectPath);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label3);
@@ -501,11 +516,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txtDirectoryProjectPath;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ListView weekListView;
-        private System.Windows.Forms.TextBox txtFolderInternshipPath;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnDelete;
@@ -528,5 +539,11 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
+        private System.Windows.Forms.ListView configListView;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }

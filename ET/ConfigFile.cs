@@ -10,12 +10,16 @@ namespace ET
     /// Lưu trữ thông tin tổng hợp về dự án, bao gồm thông tin tác giả, ngày bắt đầu và danh sách thư mục 8 tuần. 
     /// Phù hợp cho việc quản lý thông tin dự án thực tập.
     /// </summary>
-    public class AggregateInfo
+    public class ConfigFile
     {
         /// <summary>
         /// Đường dẫn đến thư mục dự án
         /// </summary>
         public string ProjectDirectory { get; set; }
+        /// <summary>
+        /// Đường dẫn đến thư mục thực tập
+        /// </summary>
+        public string InternshipWeekFolder { get; set; }
         /// <summary>
         /// Tác giả thực hiện commit
         /// </summary>
@@ -31,7 +35,7 @@ namespace ET
         /// <summary>
         /// Lưu thêm số tuần thực tập
         /// </summary>
-        public int Weeks { get; set; }  
+        public int Weeks { get; set; }
         /// <summary>
         /// Danh sách thư mục 8 tuần
         /// </summary>
@@ -39,6 +43,6 @@ namespace ET
         /// <summary>
         /// Ngày commit đầu tiên
         /// </summary>
-        public DateTime FirstCommitDate { get; set; }
+        public DateTime FirstCommitDate { get; set; }  
     }
 }

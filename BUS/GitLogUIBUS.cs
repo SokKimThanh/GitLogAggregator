@@ -37,19 +37,19 @@ namespace GitLogAggregator.BusinessLogic
         /// <summary>
         /// Lưu thông tin tổng hợp
         /// </summary>
-        /// <param name="aggregateInfo"></param>
-        public void SaveAggregateInfo(AggregateInfo aggregateInfo)
+        /// <param name="configInfo"></param>
+        public void SaveConfigFile(ConfigFile configInfo)
         {
-            data.SaveAggregateInfo(aggregateInfo);
+            data.SaveConfigFile(configInfo);
         }
         /// <summary>
         /// Tải thông tin tổng hợp
         /// </summary>
-        /// <param name="aggregateInfoPath">thông tin cấu hình commit tổng hợp</param>
+        /// <param name="configPath">thông tin cấu hình commit tổng hợp</param>
         /// <returns></returns>
-        public AggregateInfo LoadAggregateInfo(string aggregateInfoPath)
+        public ConfigFile LoadConfigFile(string configPath)
         {
-            return data.LoadAggregateInfo(aggregateInfoPath);
+            return data.LoadConfigFile(configPath);
         }
 
         /// <summary>
