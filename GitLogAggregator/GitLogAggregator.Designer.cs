@@ -59,7 +59,7 @@
             this.txtInternshipEndDate = new System.Windows.Forms.DateTimePicker();
             this.txtNumericsWeek = new System.Windows.Forms.NumericUpDown();
             this.checkedListBoxCommits = new System.Windows.Forms.CheckedListBox();
-            this.btnExport = new System.Windows.Forms.Button();
+            this.btnExcelCommits = new System.Windows.Forms.Button();
             this.btnReviewCommits = new System.Windows.Forms.Button();
             this.configListView = new System.Windows.Forms.ListView();
             this.cSTT = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -68,7 +68,8 @@
             this.cLevelPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnExpanDataGridview = new System.Windows.Forms.Button();
             this.btnDeleteCommits = new System.Windows.Forms.Button();
-            this.lblMouseHover = new System.Windows.Forms.Label();
+            this.txtResultMouseEvents = new System.Windows.Forms.RichTextBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
@@ -113,7 +114,7 @@
             this.txtResult.Margin = new System.Windows.Forms.Padding(4);
             this.txtResult.Name = "txtResult";
             this.txtResult.ReadOnly = true;
-            this.txtResult.Size = new System.Drawing.Size(371, 76);
+            this.txtResult.Size = new System.Drawing.Size(370, 76);
             this.txtResult.TabIndex = 4;
             this.txtResult.Text = "";
             // 
@@ -280,10 +281,10 @@
             this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dataGridViewCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridViewCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewCommits.Location = new System.Drawing.Point(390, 227);
+            this.dataGridViewCommits.Location = new System.Drawing.Point(392, 217);
             this.dataGridViewCommits.Name = "dataGridViewCommits";
             this.dataGridViewCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridViewCommits.Size = new System.Drawing.Size(279, 421);
+            this.dataGridViewCommits.Size = new System.Drawing.Size(279, 331);
             this.dataGridViewCommits.TabIndex = 18;
             // 
             // label8
@@ -305,7 +306,7 @@
             // txtFirstCommitDate
             // 
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtFirstCommitDate.Location = new System.Drawing.Point(390, 40);
+            this.txtFirstCommitDate.Location = new System.Drawing.Point(394, 40);
             this.txtFirstCommitDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
             this.txtFirstCommitDate.Size = new System.Drawing.Size(278, 25);
@@ -314,7 +315,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(387, 16);
+            this.label9.Location = new System.Drawing.Point(391, 16);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(137, 17);
@@ -358,34 +359,36 @@
             this.checkedListBoxCommits.FormattingEnabled = true;
             this.checkedListBoxCommits.Items.AddRange(new object[] {
             "Danh sách commit phát hiện lỗi"});
-            this.checkedListBoxCommits.Location = new System.Drawing.Point(390, 113);
+            this.checkedListBoxCommits.Location = new System.Drawing.Point(392, 107);
             this.checkedListBoxCommits.Name = "checkedListBoxCommits";
-            this.checkedListBoxCommits.Size = new System.Drawing.Size(279, 84);
+            this.checkedListBoxCommits.Size = new System.Drawing.Size(279, 104);
             this.checkedListBoxCommits.TabIndex = 23;
             // 
-            // btnExport
+            // btnExcelCommits
             // 
-            this.btnExport.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnExport.Location = new System.Drawing.Point(287, 177);
-            this.btnExport.Margin = new System.Windows.Forms.Padding(4);
-            this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(96, 28);
-            this.btnExport.TabIndex = 5;
-            this.btnExport.Text = "Xuất excel Commit";
-            this.btnExport.UseVisualStyleBackColor = true;
-            this.btnExport.Click += new System.EventHandler(this.BtnExportExcel_Click);
+            this.btnExcelCommits.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnExcelCommits.Location = new System.Drawing.Point(536, 74);
+            this.btnExcelCommits.Margin = new System.Windows.Forms.Padding(4);
+            this.btnExcelCommits.Name = "btnExcelCommits";
+            this.btnExcelCommits.Size = new System.Drawing.Size(136, 28);
+            this.btnExcelCommits.TabIndex = 5;
+            this.btnExcelCommits.Text = "Xuất excel";
+            this.btnExcelCommits.UseVisualStyleBackColor = true;
+            this.btnExcelCommits.Click += new System.EventHandler(this.BtnExportExcel_Click);
+            this.btnExcelCommits.MouseEnter += new System.EventHandler(this.btnExcelCommits_MouseEnter);
             // 
             // btnReviewCommits
             // 
             this.btnReviewCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnReviewCommits.Location = new System.Drawing.Point(390, 73);
+            this.btnReviewCommits.Location = new System.Drawing.Point(393, 73);
             this.btnReviewCommits.Margin = new System.Windows.Forms.Padding(4);
             this.btnReviewCommits.Name = "btnReviewCommits";
-            this.btnReviewCommits.Size = new System.Drawing.Size(279, 33);
+            this.btnReviewCommits.Size = new System.Drawing.Size(135, 28);
             this.btnReviewCommits.TabIndex = 5;
             this.btnReviewCommits.Text = "Kiểm tra";
             this.btnReviewCommits.UseVisualStyleBackColor = true;
             this.btnReviewCommits.Click += new System.EventHandler(this.BtnReviewCommits_Click);
+            this.btnReviewCommits.MouseEnter += new System.EventHandler(this.btnReviewCommits_MouseEnter);
             // 
             // configListView
             // 
@@ -427,12 +430,11 @@
             // 
             this.btnExpanDataGridview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.btnExpanDataGridview.Cursor = System.Windows.Forms.Cursors.SizeWE;
-            this.btnExpanDataGridview.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.btnExpanDataGridview.FlatAppearance.BorderSize = 0;
             this.btnExpanDataGridview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExpanDataGridview.Location = new System.Drawing.Point(659, 227);
+            this.btnExpanDataGridview.Location = new System.Drawing.Point(661, 217);
             this.btnExpanDataGridview.Name = "btnExpanDataGridview";
-            this.btnExpanDataGridview.Size = new System.Drawing.Size(10, 420);
+            this.btnExpanDataGridview.Size = new System.Drawing.Size(10, 331);
             this.btnExpanDataGridview.TabIndex = 25;
             this.btnExpanDataGridview.UseVisualStyleBackColor = false;
             this.btnExpanDataGridview.MouseEnter += new System.EventHandler(this.btnExpanDataGridview_MouseEnter);
@@ -442,14 +444,13 @@
             // 
             this.btnDeleteCommits.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.btnDeleteCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnDeleteCommits.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.btnDeleteCommits.FlatAppearance.BorderSize = 0;
             this.btnDeleteCommits.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDeleteCommits.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnDeleteCommits.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnDeleteCommits.Location = new System.Drawing.Point(659, 113);
+            this.btnDeleteCommits.Location = new System.Drawing.Point(661, 109);
             this.btnDeleteCommits.Name = "btnDeleteCommits";
-            this.btnDeleteCommits.Size = new System.Drawing.Size(10, 84);
+            this.btnDeleteCommits.Size = new System.Drawing.Size(10, 100);
             this.btnDeleteCommits.TabIndex = 25;
             this.btnDeleteCommits.Text = "Xóa";
             this.btnDeleteCommits.UseVisualStyleBackColor = false;
@@ -457,15 +458,27 @@
             this.btnDeleteCommits.MouseEnter += new System.EventHandler(this.OnMouseEnter);
             this.btnDeleteCommits.MouseLeave += new System.EventHandler(this.OnMouseLeave);
             // 
-            // lblMouseHover
+            // txtResultMouseEvents
             // 
-            this.lblMouseHover.AutoSize = true;
-            this.lblMouseHover.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMouseHover.Location = new System.Drawing.Point(390, 204);
-            this.lblMouseHover.Name = "lblMouseHover";
-            this.lblMouseHover.Size = new System.Drawing.Size(119, 15);
-            this.lblMouseHover.TabIndex = 26;
-            this.lblMouseHover.Text = "Diễn giải khi rê chuột";
+            this.txtResultMouseEvents.BackColor = System.Drawing.Color.Gainsboro;
+            this.txtResultMouseEvents.ForeColor = System.Drawing.Color.IndianRed;
+            this.txtResultMouseEvents.Location = new System.Drawing.Point(392, 572);
+            this.txtResultMouseEvents.Margin = new System.Windows.Forms.Padding(4);
+            this.txtResultMouseEvents.Name = "txtResultMouseEvents";
+            this.txtResultMouseEvents.ReadOnly = true;
+            this.txtResultMouseEvents.Size = new System.Drawing.Size(279, 76);
+            this.txtResultMouseEvents.TabIndex = 4;
+            this.txtResultMouseEvents.Text = "";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(391, 551);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(89, 17);
+            this.label4.TabIndex = 11;
+            this.label4.Text = "Sự kiện chuột:";
             // 
             // GitLogAggregator
             // 
@@ -473,7 +486,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(681, 661);
-            this.Controls.Add(this.lblMouseHover);
             this.Controls.Add(this.btnDeleteCommits);
             this.Controls.Add(this.btnExpanDataGridview);
             this.Controls.Add(this.configListView);
@@ -485,6 +497,7 @@
             this.Controls.Add(this.btnClearDataListView);
             this.Controls.Add(this.fileListView);
             this.Controls.Add(this.weekListView);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
@@ -493,9 +506,10 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnExport);
+            this.Controls.Add(this.btnExcelCommits);
             this.Controls.Add(this.btnReviewCommits);
             this.Controls.Add(this.btnAggregator);
+            this.Controls.Add(this.txtResultMouseEvents);
             this.Controls.Add(this.txtResult);
             this.Controls.Add(this.txtFirstCommitDate);
             this.Controls.Add(this.txtInternshipEndDate);
@@ -548,7 +562,7 @@
         private System.Windows.Forms.DateTimePicker txtInternshipEndDate;
         private System.Windows.Forms.NumericUpDown txtNumericsWeek;
         private System.Windows.Forms.CheckedListBox checkedListBoxCommits;
-        private System.Windows.Forms.Button btnExport;
+        private System.Windows.Forms.Button btnExcelCommits;
         private System.Windows.Forms.Button btnReviewCommits;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
@@ -560,6 +574,7 @@
         private System.Windows.Forms.Button btnDeleteCommits;
         private System.Windows.Forms.ColumnHeader cDescription;
         private System.Windows.Forms.ColumnHeader cLevelPath;
-        private System.Windows.Forms.Label lblMouseHover;
+        private System.Windows.Forms.RichTextBox txtResultMouseEvents;
+        private System.Windows.Forms.Label label4;
     }
 }

@@ -294,7 +294,7 @@ namespace GitLogAggregator
         private void UpdateControlState(bool isEnabled)
         {
             btnClearDataListView.Enabled = isEnabled;
-            btnExport.Enabled = isEnabled;
+            btnExcelCommits.Enabled = isEnabled;
             btnReviewCommits.Enabled = isEnabled;
             btnDeleteCommits.Enabled = !isEnabled;
             btnExpanDataGridview.Enabled = !isEnabled;
@@ -324,7 +324,7 @@ namespace GitLogAggregator
             btnAggregator.Enabled = true;
             btnClearDataListView.Enabled = true;
             btnOpenGitFolder.Enabled = true;
-            btnExport.Enabled = true;
+            btnExcelCommits.Enabled = true;
             btnReviewCommits.Enabled = true;
             btnDeleteCommits.Enabled = true;
             btnExpanDataGridview.Enabled = true;
@@ -340,7 +340,7 @@ namespace GitLogAggregator
             btnAggregator.Enabled = false;
             btnClearDataListView.Enabled = false;
             btnOpenGitFolder.Enabled = false;
-            btnExport.Enabled = false;
+            btnExcelCommits.Enabled = false;
             btnReviewCommits.Enabled = false;
             btnDeleteCommits.Enabled = false;
             btnExpanDataGridview.Enabled = false;
@@ -513,7 +513,7 @@ namespace GitLogAggregator
                         btnDeleteCommits.Enabled = false;
                         btnReviewCommits.Enabled = false;
                         AppendTextWithScroll("Nút Kiểm tra đã bị vô hiệu hóa sau khi xóa thư mục.\n");
-                        btnExport.Enabled = false;
+                        btnExcelCommits.Enabled = false;
                         txtInternshipEndDate.Enabled = false;
                         txtFirstCommitDate.Enabled = false;
                         txtNumericsWeek.Enabled = false;
@@ -766,6 +766,12 @@ namespace GitLogAggregator
             txtResult.AppendText(text);
             txtResult.ScrollToCaret();
         }
+        private void AppendEventsWithScroll(string text)
+        {
+            txtResultMouseEvents.AppendText(text);
+            txtResultMouseEvents.ScrollToCaret();
+        }
+
         private void AppendLogMessages()
         {
             foreach (var message in gitlogformat_bus.LogMessages)
@@ -960,7 +966,7 @@ namespace GitLogAggregator
         {
             try
             {
-                LoadCommitDatagridview();
+                //LoadCommitDatagridview();
 
                 if (dataGridViewCommits.DataSource == null)
                 {
@@ -1049,9 +1055,9 @@ namespace GitLogAggregator
             {
                 AppendTextWithScroll($"Kiểm tra thành công. Commit không hợp lệ: {invalidCommitCount}\n");
             }
-            btnReviewCommits.Enabled = true;
+            btnReviewCommits.Enabled = false;
+            btnDeleteCommits.Enabled = false;
             btnExpanDataGridview.Enabled = true;
-            btnDeleteCommits.Enabled = true;
         }
 
         private void BtnDeleteCommits_Click(object sender, EventArgs e)
@@ -1106,6 +1112,8 @@ namespace GitLogAggregator
             // Inform the user that the process is complete
             btnDeleteCommits.Enabled = false;
             AppendTextWithScroll("Xóa thành công danh sách commits lỗi.\n");
+            btnReviewCommits.Enabled = false; // khóa nút kiểm tra sau khi xóa commit
+            AppendTextWithScroll("Khóa nút kiểm tra commits lỗi sau khi xóa thành công danh sách commit lỗi.\n");
         }
         /// <summary>
         /// Kiểm tra sự tồn tại của thư mục tuần và file combined_commits.txt
@@ -1129,25 +1137,35 @@ namespace GitLogAggregator
         private void OnMouseEnter(object sender, EventArgs e)
         {
             btnDeleteCommits.BackColor = Color.FromArgb(255, 128, 128);
-            lblMouseHover.Text = "Xóa commits lỗi";
+            AppendEventsWithScroll("Xóa commits lỗi.\n");
         }
         private void OnMouseLeave(object sender, EventArgs e)
         {
             btnDeleteCommits.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
-            lblMouseHover.Text = "Diễn giải khi rê chuột vào nút màu đỏ";
         }
 
         private void btnExpanDataGridview_MouseEnter(object sender, EventArgs e)
         {
             btnDeleteCommits.BackColor = Color.FromArgb(255, 128, 128);
-            lblMouseHover.Text = "Mở rộng datagridview ở Form khác";
+            AppendEventsWithScroll("Mở rộng datagridview ở Form khác.\n");
         }
 
         private void btnExpanDataGridview_MouseLeave(object sender, EventArgs e)
         {
             btnDeleteCommits.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
-            lblMouseHover.Text = "Diễn giải khi rê chuột vào nút màu xanh";
         }
+
+        private void btnReviewCommits_MouseEnter(object sender, EventArgs e)
+        {
+            AppendEventsWithScroll("Kiểm tra commits lỗi.\n");
+        }
+
+
+        private void btnExcelCommits_MouseEnter(object sender, EventArgs e)
+        {
+            AppendEventsWithScroll("Xuất Excel Commit trong datagridview.\n");
+        }
+
     }
 }
 
