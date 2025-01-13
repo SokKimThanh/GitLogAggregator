@@ -10,7 +10,7 @@ namespace ET
     /// Lưu trữ thông tin tổng hợp về dự án, bao gồm thông tin tác giả, ngày bắt đầu và danh sách thư mục 8 tuần. 
     /// Phù hợp cho việc quản lý thông tin dự án thực tập.
     /// </summary>
-    public class ConfigFile
+    public class ConfigFileET
     {
         /// <summary>
         /// Đường dẫn đến thư mục dự án

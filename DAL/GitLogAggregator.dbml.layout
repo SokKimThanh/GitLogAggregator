@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="GitLogAggregator">
+  <DataContextMoniker Name="/GitLogAggregatorDataContext" />
+  <nestedChildShapes>
+    <classShape Id="bd1b9ee8-5e6d-4069-89ef-67d1074037df" absoluteBounds="3.5, 2, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/GitLogAggregatorDataContext/ConfigFile" />
+      <nestedChildShapes>
+        <elementListCompartment Id="20865c37-9a4b-4935-a35b-26a6e942833b" absoluteBounds="3.515, 2.46, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

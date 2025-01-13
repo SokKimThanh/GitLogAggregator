@@ -11,6 +11,7 @@ namespace DAL
 {
     public class GitLogFormatDAL
     {
+        
         public List<string> LogMessages { get; private set; }
 
         public GitLogFormatDAL()

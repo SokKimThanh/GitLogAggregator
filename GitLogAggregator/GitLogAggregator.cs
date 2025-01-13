@@ -29,6 +29,7 @@ namespace GitLogAggregator
         // Biến cờ để kiểm tra trạng thái chạy
         private bool isProcessing = false;
         private bool isError = false;
+        private List<string> gitRepositories = new List<string>();
 
         // Git log BUS
         private readonly GitlogBUS gitlogui_bus = new GitlogBUS();
@@ -74,9 +75,9 @@ namespace GitLogAggregator
         /// Hiển thị thông tin file config lên ListView với các cột: STT, Đường dẫn, Phân cấp và Mô tả.
         /// </summary>
         /// <param name="configFile">Đối tượng ConfigFile chứa thông tin cấu hình</param>
-        public void DisplayConfigInListView(ConfigFile configFile)
+        public void DisplayConfigInListView(ConfigFileET configFile)
         {
-            configListView.Items.Clear(); // Xóa dữ liệu cũ trong ListView
+            lvProjects.Items.Clear(); // Xóa dữ liệu cũ trong ListView
 
             int stt = 1;
 
@@ -85,7 +86,7 @@ namespace GitLogAggregator
             projectItem.SubItems.Add(configFile.ProjectDirectory);       // Đường dẫn dự án
             projectItem.SubItems.Add("Đường dẫn dự án");                 // Mô tả
             projectItem.SubItems.Add("1");                               // Phân cấp
-            configListView.Items.Add(projectItem);
+            lvProjects.Items.Add(projectItem);
             stt++;
 
             // Hiển thị thông tin thư mục thực tập
@@ -93,7 +94,7 @@ namespace GitLogAggregator
             internshipItem.SubItems.Add(configFile.InternshipWeekFolder);   // Thư mục thực tập
             internshipItem.SubItems.Add("Thư mục thực tập");                // Mô tả
             internshipItem.SubItems.Add("1");                               // Phân cấp
-            configListView.Items.Add(internshipItem);
+            lvProjects.Items.Add(internshipItem);
             stt++;
 
             // Hiển thị danh sách thư mục tuần, sắp xếp theo Phân cấp giảm dần
@@ -114,7 +115,7 @@ namespace GitLogAggregator
                 folderItem.SubItems.Add(info.Path);                              // Đường dẫn
                 folderItem.SubItems.Add(info.Description);                       // Mô tả
                 folderItem.SubItems.Add(info.Level.ToString());                  // Phân cấp (Level Path Folder)
-                configListView.Items.Add(folderItem);
+                lvProjects.Items.Add(folderItem);
             }
         }
         /// <summary>
@@ -145,12 +146,14 @@ namespace GitLogAggregator
 
                 string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
 
+                gitRepositories.Add(projectDirectory); // thêm một thư mục dự án
+
                 // Mở tên folder và tác giả
                 txtDirectoryProjectPath = projectDirectory;
                 cboAuthorCommit.DataSource = gitlogui_bus.LoadAuthorsCombobox(projectDirectory);
 
                 // Lấy ngày commit đầu tiên và hiển thị lên giao diện
-                DateTime firstCommitDate = gitlogui_bus.GetProjectStartDate(projectDirectory);
+                DateTime firstCommitDate = gitlogui_bus.GetFirstCommitDate(projectDirectory);
                 txtFirstCommitDate.Value = firstCommitDate;
 
                 // Thiết lập giới hạn ngày cho DateTimePicker
@@ -249,7 +252,7 @@ namespace GitLogAggregator
                 }
 
                 // Đọc file config
-                ConfigFile configInfo = gitlogui_bus.LoadConfigFile(configFile);
+                ConfigFileET configInfo = gitlogui_bus.LoadConfigFile(configFile);
 
                 // Hiển thị dữ liệu lên giao diện
                 UpdateConfigUI(configInfo);
@@ -273,7 +276,7 @@ namespace GitLogAggregator
         /// <summary>
         /// Cập nhật giao diện với thông tin cấu hình
         /// </summary>
-        private void UpdateConfigUI(ConfigFile configInfo)
+        private void UpdateConfigUI(ConfigFileET configInfo)
         {
             cboAuthorCommit.SelectedItem = configInfo.Author;
             txtInternshipStartDate.Value = configInfo.StartDate;
@@ -356,9 +359,9 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnAggregate_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(projectDirectory))
+            if (lvProjects.Items.Count == 0)
             {
-                AppendTextWithScroll("Vui lòng chọn thư mục dự án trước khi tổng hợp commit.\n");
+                AppendTextWithScroll("Vui lòng thêm ít nhất một dự án vào danh sách trước khi tổng hợp commit.\n");
                 return;
             }
 
@@ -368,68 +371,88 @@ namespace GitLogAggregator
                 return;
             }
 
+            isProcessing = true;
+            DisableControls();
+
             try
             {
-                isProcessing = true;
-                DisableControls();
+                // Tìm tất cả các Git repository từ ListView
+                gitRepositories = gitlogui_bus.FindGitRepositories(lvProjects);
 
-                string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
-                if (Directory.Exists(internshipWeekFolder))
+                if (gitRepositories.Count == 0)
                 {
-                    var result = MessageBox.Show("Thư mục 'internship_week' đã tồn tại. Bạn có muốn ghi đè dữ liệu không?", "Xác nhận ghi đè", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (result == DialogResult.No)
-                    {
-                        AppendTextWithScroll("Quá trình tổng hợp đã bị hủy.\n");
-                        isProcessing = false;
-                        EnableControls();
-                        return;
-                    }
-                }
-
-                string author = cboAuthorCommit.SelectedItem.ToString();
-                DateTime internshipStartDate = txtInternshipStartDate.Value;
-                DateTime internshipEndDate = txtInternshipEndDate.Value;
-
-                DateTime firstCommitDate = gitlogui_bus.GetProjectStartDate(projectDirectory);
-
-                if (internshipStartDate > firstCommitDate)
-                {
-                    AppendTextWithScroll("Lỗi: Ngày thực tập phải diễn ra trước ngày commit đầu tiên.\n");
+                    AppendTextWithScroll("Không tìm thấy Git repository hợp lệ trong danh sách dự án.\n");
                     isProcessing = false;
-                    isError = true;// đang có lỗi 
+                    EnableControls();
                     return;
                 }
 
-                //Dữ liệu được tổng hợp theo chức năng cũ gitlogui_bus.
-                List<string> folders = gitlogui_bus.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
-                ConfigFile configFile = new ConfigFile
+                // Lấy thông tin từ UI
+                string author = cboAuthorCommit.SelectedItem?.ToString();
+                DateTime internshipStartDate = txtInternshipStartDate.Value;
+                DateTime internshipEndDate = txtInternshipEndDate.Value;
+
+                List<string> allFolders = new List<string>();
+
+                foreach (string projectDirectory in gitRepositories)
+                {
+                    // Tạo thư mục tổng hợp riêng cho từng dự án
+                    string commonInternshipWeekFolder = Path.Combine(
+                        projectDirectory,
+                        "internship_week"
+                    );
+
+                    // Kiểm tra và xác nhận ghi đè thư mục 'internship_week'
+                    if (Directory.Exists(commonInternshipWeekFolder))
+                    {
+                        var result = MessageBox.Show(
+                            $"Thư mục 'internship_week' đã tồn tại trong dự án {projectDirectory}. Bạn có muốn ghi đè dữ liệu không?",
+                            "Xác nhận ghi đè",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question
+                        );
+
+                        if (result == DialogResult.No)
+                        {
+                            AppendTextWithScroll($"Quá trình tổng hợp đã bị hủy cho dự án {projectDirectory}.\n");
+                            continue;
+                        }
+                    }
+
+                    AppendTextWithScroll($"Đang xử lý dự án: {projectDirectory}...\n");
+
+                    List<string> folders = gitlogui_bus.AggregateCommits(
+                        new List<string> { projectDirectory },
+                        author,
+                        internshipStartDate,
+                        commonInternshipWeekFolder
+                    );
+
+                    allFolders.AddRange(folders);
+
+                    AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
+                }
+
+                // Lưu thông tin cấu hình
+                ConfigFileET configFile = new ConfigFileET
                 {
                     Author = author,
                     StartDate = internshipStartDate,
                     EndDate = internshipEndDate,
-                    Folders = folders,
-                    ProjectDirectory = projectDirectory,
-                    InternshipWeekFolder = internshipWeekFolder,
-                    FirstCommitDate = txtFirstCommitDate.Value,
+                    Folders = allFolders,
+                    ProjectDirectory = gitRepositories[0], // Lấy thư mục đầu tiên làm thư mục gốc
+                    InternshipWeekFolder = allFolders[0], // Lấy thư mục đầu tiên của danh sách tổng hợp
+                    FirstCommitDate = gitlogui_bus.GetFirstCommitDate(gitRepositories[0]),
                     Weeks = (int)txtNumericsWeek.Value
                 };
 
-                // Lưu thông tin vào file text
                 gitlogui_bus.SaveConfigFile(configFile);
+
                 AppendTextWithScroll("Đã lưu dữ liệu vào file config.txt.\n");
 
-
-                // Hiển thị lên list view
+                // Cập nhật UI
                 DisplayDirectoriesInListView();
-
-                // Kiểm tra Hiển thị dữ liệu config file sau khi lưu 
-                DisplayConfigInListView(configFile);
-
-                // load commit
-                //LoadCommitDatagridview();
-
-                // thông báo
-                AppendTextWithScroll("Đã tổng hợp tất cả commit.\n");
+                AppendTextWithScroll("Đã tổng hợp tất cả commit từ tất cả các dự án.\n");
             }
             catch (Exception ex)
             {
@@ -439,25 +462,12 @@ namespace GitLogAggregator
             {
                 AppendLogMessages(); // Hiển thị các thông báo
                 isProcessing = false;
-                // Tạm khóa dữ liệu cho phép chọn dự án khác hoặc mới.
-                if (isError == true)
-                {
-                    isError = false;// reset flag 
-                    DisableControls();
-                    cboAuthorCommit.Enabled = true;
-                    txtInternshipStartDate.Enabled = true;
-                    btnOpenGitFolder.Enabled = true;
-                    btnAggregator.Enabled = true;
-                }
-                else
-                {
-                    EnableControls();
-                    txtInternshipEndDate.Enabled = false;
-                    txtFirstCommitDate.Enabled = false;
-                    txtNumericsWeek.Enabled = false;
-                }
+
+                EnableControls();
             }
         }
+
+
         /// <summary>
         /// Xóa thư mục: Nút xóa sẽ chỉ xóa những thư mục hoặc file không cần thiết
         /// mà không cần phải tạo lại những thư mục con như internship_week hoặc các thư mục tuần.
@@ -491,7 +501,7 @@ namespace GitLogAggregator
                         fileListView.Items.Clear();  // Xóa tất cả mục trong ListView
                         AppendTextWithScroll("Danh sách file đã được làm trống.\n");
 
-                        configListView.Items.Clear(); // xóa danh sách hiển thị đường dẫn
+                        lvProjects.Items.Clear(); // xóa danh sách hiển thị đường dẫn
                         AppendTextWithScroll("Danh sách config đã được làm trống.\n");
 
                         checkedListBoxCommits.Items.Clear();  // Xóa tất cả mục trong checkedListBoxCommits

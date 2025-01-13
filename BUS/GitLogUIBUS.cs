@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using ET;
 using GitLogAggregator.DataAccess;
 
@@ -28,7 +30,10 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.RunGitCommand(command, projectDirectory);
         }
-
+        public string GetFirstCommitAuthor(string folderPath)
+        {
+            return data.GetFirstCommitAuthor(folderPath);
+        }
         public List<string> GetGitAuthors(string projectDirectory)
         {
             return data.GetGitAuthors(projectDirectory);
@@ -38,16 +43,16 @@ namespace GitLogAggregator.BusinessLogic
         /// Lưu thông tin tổng hợp
         /// </summary>
         /// <param name="configInfo"></param>
-        public void SaveConfigFile(ConfigFile configInfo)
+        public void SaveConfigFile(ConfigFileET configInfo)
         {
-            data.SaveConfigFile(configInfo);
+            data.SaveConfigFileToDatabase(configInfo);
         }
         /// <summary>
         /// Tải thông tin tổng hợp
         /// </summary>
         /// <param name="configPath">thông tin cấu hình commit tổng hợp</param>
         /// <returns></returns>
-        public ConfigFile LoadConfigFile(string configPath)
+        public ConfigFileET LoadConfigFile(string configPath)
         {
             return data.LoadConfigFile(configPath);
         }
@@ -57,17 +62,31 @@ namespace GitLogAggregator.BusinessLogic
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public DateTime GetProjectStartDate(string projectDirectory)
+        public DateTime GetFirstCommitDate(string folderPath)
         {
-            return data.GetProjectStartDate(projectDirectory);
+            return data.GetFirstCommitDate(folderPath);
         }
 
 
-        public List<string> AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
+        public List<string> AggregateCommits(List<string> projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
         {
             return data.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
         }
 
+        /// <summary>
+        /// Tìm git từ các thư mục đường dẫn có trong listview
+        /// </summary>
+        /// <param name="listView"></param>
+        /// <returns></returns>
+        public List<string> FindGitRepositories(ListView listView)
+        {
+            return data.FindGitRepositories(listView);
+        }
+
+        public bool IsValidGitRepository(string directory)
+        {
+            return data.IsValidGitRepository(directory);
+        }
         /// <summary>
         /// Hiển thị danh sách tác giả trên combobox
         /// </summary>

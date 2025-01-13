@@ -61,7 +61,7 @@
             this.checkedListBoxCommits = new System.Windows.Forms.CheckedListBox();
             this.btnExcelCommits = new System.Windows.Forms.Button();
             this.btnReviewCommits = new System.Windows.Forms.Button();
-            this.configListView = new System.Windows.Forms.ListView();
+            this.lvProjects = new System.Windows.Forms.ListView();
             this.cSTT = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -390,21 +390,21 @@
             this.btnReviewCommits.Click += new System.EventHandler(this.BtnReviewCommits_Click);
             this.btnReviewCommits.MouseEnter += new System.EventHandler(this.btnReviewCommits_MouseEnter);
             // 
-            // configListView
+            // lvProjects
             // 
-            this.configListView.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.configListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lvProjects.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.lvProjects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.cSTT,
             this.cPath,
             this.cDescription,
             this.cLevelPath});
-            this.configListView.HideSelection = false;
-            this.configListView.Location = new System.Drawing.Point(14, 452);
-            this.configListView.Name = "configListView";
-            this.configListView.Size = new System.Drawing.Size(369, 96);
-            this.configListView.TabIndex = 24;
-            this.configListView.UseCompatibleStateImageBehavior = false;
-            this.configListView.View = System.Windows.Forms.View.Details;
+            this.lvProjects.HideSelection = false;
+            this.lvProjects.Location = new System.Drawing.Point(14, 452);
+            this.lvProjects.Name = "lvProjects";
+            this.lvProjects.Size = new System.Drawing.Size(369, 96);
+            this.lvProjects.TabIndex = 24;
+            this.lvProjects.UseCompatibleStateImageBehavior = false;
+            this.lvProjects.View = System.Windows.Forms.View.Details;
             // 
             // cSTT
             // 
@@ -488,7 +488,7 @@
             this.ClientSize = new System.Drawing.Size(681, 661);
             this.Controls.Add(this.btnDeleteCommits);
             this.Controls.Add(this.btnExpanDataGridview);
-            this.Controls.Add(this.configListView);
+            this.Controls.Add(this.lvProjects);
             this.Controls.Add(this.checkedListBoxCommits);
             this.Controls.Add(this.txtNumericsWeek);
             this.Controls.Add(this.dataGridViewCommits);
@@ -567,7 +567,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.ListView configListView;
+        private System.Windows.Forms.ListView lvProjects;
         private System.Windows.Forms.ColumnHeader cSTT;
         private System.Windows.Forms.ColumnHeader cPath;
         private System.Windows.Forms.Button btnExpanDataGridview;
