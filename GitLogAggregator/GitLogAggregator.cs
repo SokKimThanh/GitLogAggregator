@@ -1050,6 +1050,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll($"Kiểm tra thành công. Commit không hợp lệ: {invalidCommitCount}\n");
             }
             btnReviewCommits.Enabled = true;
+            btnExpanDataGridview.Enabled = true;
             btnDeleteCommits.Enabled = true;
         }
 
@@ -1128,10 +1129,24 @@ namespace GitLogAggregator
         private void OnMouseEnter(object sender, EventArgs e)
         {
             btnDeleteCommits.BackColor = Color.FromArgb(255, 128, 128);
+            lblMouseHover.Text = "Xóa commits lỗi";
         }
         private void OnMouseLeave(object sender, EventArgs e)
         {
             btnDeleteCommits.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
+            lblMouseHover.Text = "Diễn giải khi rê chuột vào nút màu đỏ";
+        }
+
+        private void btnExpanDataGridview_MouseEnter(object sender, EventArgs e)
+        {
+            btnDeleteCommits.BackColor = Color.FromArgb(255, 128, 128);
+            lblMouseHover.Text = "Mở rộng datagridview ở Form khác";
+        }
+
+        private void btnExpanDataGridview_MouseLeave(object sender, EventArgs e)
+        {
+            btnDeleteCommits.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
+            lblMouseHover.Text = "Diễn giải khi rê chuột vào nút màu xanh";
         }
     }
 }

@@ -68,6 +68,7 @@
             this.cLevelPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnExpanDataGridview = new System.Windows.Forms.Button();
             this.btnDeleteCommits = new System.Windows.Forms.Button();
+            this.lblMouseHover = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
@@ -279,10 +280,10 @@
             this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
             this.dataGridViewCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridViewCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewCommits.Location = new System.Drawing.Point(390, 214);
+            this.dataGridViewCommits.Location = new System.Drawing.Point(390, 227);
             this.dataGridViewCommits.Name = "dataGridViewCommits";
             this.dataGridViewCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridViewCommits.Size = new System.Drawing.Size(279, 434);
+            this.dataGridViewCommits.Size = new System.Drawing.Size(279, 421);
             this.dataGridViewCommits.TabIndex = 18;
             // 
             // label8
@@ -429,11 +430,13 @@
             this.btnExpanDataGridview.FlatAppearance.BorderColor = System.Drawing.Color.White;
             this.btnExpanDataGridview.FlatAppearance.BorderSize = 0;
             this.btnExpanDataGridview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExpanDataGridview.Location = new System.Drawing.Point(659, 213);
+            this.btnExpanDataGridview.Location = new System.Drawing.Point(659, 227);
             this.btnExpanDataGridview.Name = "btnExpanDataGridview";
-            this.btnExpanDataGridview.Size = new System.Drawing.Size(10, 434);
+            this.btnExpanDataGridview.Size = new System.Drawing.Size(10, 420);
             this.btnExpanDataGridview.TabIndex = 25;
             this.btnExpanDataGridview.UseVisualStyleBackColor = false;
+            this.btnExpanDataGridview.MouseEnter += new System.EventHandler(this.btnExpanDataGridview_MouseEnter);
+            this.btnExpanDataGridview.MouseLeave += new System.EventHandler(this.btnExpanDataGridview_MouseLeave);
             // 
             // btnDeleteCommits
             // 
@@ -454,12 +457,23 @@
             this.btnDeleteCommits.MouseEnter += new System.EventHandler(this.OnMouseEnter);
             this.btnDeleteCommits.MouseLeave += new System.EventHandler(this.OnMouseLeave);
             // 
+            // lblMouseHover
+            // 
+            this.lblMouseHover.AutoSize = true;
+            this.lblMouseHover.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMouseHover.Location = new System.Drawing.Point(390, 204);
+            this.lblMouseHover.Name = "lblMouseHover";
+            this.lblMouseHover.Size = new System.Drawing.Size(119, 15);
+            this.lblMouseHover.TabIndex = 26;
+            this.lblMouseHover.Text = "Diễn giải khi rê chuột";
+            // 
             // GitLogAggregator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(681, 661);
+            this.Controls.Add(this.lblMouseHover);
             this.Controls.Add(this.btnDeleteCommits);
             this.Controls.Add(this.btnExpanDataGridview);
             this.Controls.Add(this.configListView);
@@ -546,5 +560,6 @@
         private System.Windows.Forms.Button btnDeleteCommits;
         private System.Windows.Forms.ColumnHeader cDescription;
         private System.Windows.Forms.ColumnHeader cLevelPath;
+        private System.Windows.Forms.Label lblMouseHover;
     }
 }
