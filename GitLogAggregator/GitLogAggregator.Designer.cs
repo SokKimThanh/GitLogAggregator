@@ -476,9 +476,9 @@
             this.label4.Location = new System.Drawing.Point(391, 551);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(89, 17);
+            this.label4.Size = new System.Drawing.Size(200, 17);
             this.label4.TabIndex = 11;
-            this.label4.Text = "Sự kiện chuột:";
+            this.label4.Text = "Sự kiện rê chuột khu vực commit:";
             // 
             // GitLogAggregator
             // 

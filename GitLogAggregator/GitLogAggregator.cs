@@ -768,6 +768,7 @@ namespace GitLogAggregator
         }
         private void AppendEventsWithScroll(string text)
         {
+            txtResultMouseEvents.Clear();
             txtResultMouseEvents.AppendText(text);
             txtResultMouseEvents.ScrollToCaret();
         }
