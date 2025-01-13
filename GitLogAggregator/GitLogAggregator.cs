@@ -293,12 +293,14 @@ namespace GitLogAggregator
         /// </summary>
         private void UpdateControlState(bool isEnabled)
         {
-            btnDelete.Enabled = isEnabled;
+            btnClearDataListView.Enabled = isEnabled;
             btnExport.Enabled = isEnabled;
+            btnReviewCommits.Enabled = isEnabled;
+            btnDeleteCommits.Enabled = !isEnabled;
+            btnExpanDataGridview.Enabled = !isEnabled;
             txtInternshipEndDate.Enabled = !isEnabled;
             txtFirstCommitDate.Enabled = !isEnabled;
             txtNumericsWeek.Enabled = !isEnabled;
-            btnCompleteReview.Enabled = !isEnabled;
         }
 
         /// <summary>
@@ -308,7 +310,7 @@ namespace GitLogAggregator
         {
             AppendTextWithScroll($"Lỗi: Không tìm thấy file {configFile}");
             DisableControls();
-            btnDelete.Enabled = true;
+            btnClearDataListView.Enabled = true;
             btnOpenGitFolder.Enabled = true;
         }
 
@@ -320,11 +322,12 @@ namespace GitLogAggregator
             txtInternshipEndDate.Enabled = true;
             txtFirstCommitDate.Enabled = true;
             btnAggregator.Enabled = true;
-            btnDelete.Enabled = true;
+            btnClearDataListView.Enabled = true;
             btnOpenGitFolder.Enabled = true;
             btnExport.Enabled = true;
             btnReviewCommits.Enabled = true;
-            btnCompleteReview.Enabled = true;
+            btnDeleteCommits.Enabled = true;
+            btnExpanDataGridview.Enabled = true;
             // Thêm các điều khiển khác nếu cần
         }
         private void DisableControls()
@@ -335,12 +338,12 @@ namespace GitLogAggregator
             txtInternshipEndDate.Enabled = false;
             txtFirstCommitDate.Enabled = false;
             btnAggregator.Enabled = false;
-            btnDelete.Enabled = false;
+            btnClearDataListView.Enabled = false;
             btnOpenGitFolder.Enabled = false;
             btnExport.Enabled = false;
             btnReviewCommits.Enabled = false;
-            btnCompleteReview.Enabled = false;
-
+            btnDeleteCommits.Enabled = false;
+            btnExpanDataGridview.Enabled = false;
             // Thêm các điều khiển khác nếu cần
         }
         /// <summary>
@@ -461,7 +464,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BtnDeleteFolderInternship_Click(object sender, EventArgs e)
+        private void BtnClearDataListView_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(projectDirectory))
             {
@@ -481,9 +484,6 @@ namespace GitLogAggregator
                         DisableControls();
                         Directory.Delete(internshipWeekFolder, true);  // true để xóa tất cả các file và thư mục con
                         AppendTextWithScroll($"Đã xóa thư mục: {internshipWeekFolder}\n");
-
-                        btnDelete.Enabled = false;  // Vô hiệu hóa nút xóa
-                        AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
 
                         weekListView.Items.Clear();  // Xóa tất cả mục trong ListView
                         AppendTextWithScroll("Danh sách thư mục đã được làm trống.\n");
@@ -508,7 +508,11 @@ namespace GitLogAggregator
                     finally
                     {
                         EnableControls();
-                        btnDelete.Enabled = false;
+                        btnClearDataListView.Enabled = false;  // Vô hiệu hóa nút xóa
+                        AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
+                        btnDeleteCommits.Enabled = false;
+                        btnReviewCommits.Enabled = false;
+                        AppendTextWithScroll("Nút Kiểm tra đã bị vô hiệu hóa sau khi xóa thư mục.\n");
                         btnExport.Enabled = false;
                         txtInternshipEndDate.Enabled = false;
                         txtFirstCommitDate.Enabled = false;
@@ -1036,20 +1040,29 @@ namespace GitLogAggregator
             DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
             dataGridViewCommits.DataSource = dataTable;
 
-            AppendTextWithScroll("Hoàn thành tất cả các tuần!\n");
+            int invalidCommitCount = invalidCommits.Count;
+            if (invalidCommitCount == 0)
+            {
+                AppendTextWithScroll("Không có commit không hợp lệ.\n");
+            }
+            else
+            {
+                AppendTextWithScroll($"Kiểm tra thành công. Commit không hợp lệ: {invalidCommitCount}\n");
+            }
             btnReviewCommits.Enabled = true;
-            btnCompleteReview.Enabled = true;
+            btnDeleteCommits.Enabled = true;
         }
-        private void BtnCompleteReview_Click(object sender, EventArgs e)
+
+        private void BtnDeleteCommits_Click(object sender, EventArgs e)
         {
             if (invalidCommits.Count == 0)
             {
-                AppendTextWithScroll("Vui lòng tổng hợp và kiểm tra commit lỗi trước khi xóa");
+                AppendTextWithScroll("Không thể thực hiện. Danh sách commit lỗi đang trống.\n");
                 return;
             }
 
             // Step 1: Confirm deletion with the user
-            DialogResult result = MessageBox.Show("Are you sure you want to delete the invalid commits?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show("Bạn có chắc là muốn xóa trực tiếp các commit trong các file combined_commits.txt?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result != DialogResult.Yes)
                 return;
 
@@ -1090,7 +1103,8 @@ namespace GitLogAggregator
             checkedListBoxCommits.Items.Clear();
 
             // Inform the user that the process is complete
-            AppendTextWithScroll("Invalid commits have been deleted.\n");
+            btnDeleteCommits.Enabled = false;
+            AppendTextWithScroll("Xóa thành công danh sách commits lỗi.\n");
         }
         /// <summary>
         /// Kiểm tra sự tồn tại của thư mục tuần và file combined_commits.txt
@@ -1110,6 +1124,14 @@ namespace GitLogAggregator
             }
 
             return true;
+        }
+        private void OnMouseEnter(object sender, EventArgs e)
+        {
+            btnDeleteCommits.BackColor = Color.FromArgb(255, 128, 128);
+        }
+        private void OnMouseLeave(object sender, EventArgs e)
+        {
+            btnDeleteCommits.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
         }
     }
 }
