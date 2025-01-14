@@ -272,7 +272,7 @@ namespace GitLogAggregator.DataAccess
             // Duyệt qua từng mục trong ListView
             foreach (ListViewItem item in listView.Items)
             {
-                int id = int.Parse(item.ToString());
+                int id = int.Parse(item.Text.ToString());
 
                 // Lấy đường dẫn thư mục dự án 
                 ConfigFileET config = gitconfig_dal.GetConfigFileById(id);
