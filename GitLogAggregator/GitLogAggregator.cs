@@ -487,67 +487,130 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnClearDataListView_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(projectDirectory))
+            var result = MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
             {
-                AppendTextWithScroll("Vui lòng chọn thư mục dự án trước khi xóa.\n");
-                return;
-            }
-
-            string internshipWeekFolder = Path.Combine(projectDirectory, "internship_week");
-
-            if (Directory.Exists(internshipWeekFolder))
-            {
-                var result = MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
+                try
                 {
-                    try
-                    {
-                        DisableControls();
-                        Directory.Delete(internshipWeekFolder, true);  // true để xóa tất cả các file và thư mục con
-                        AppendTextWithScroll($"Đã xóa thư mục: {internshipWeekFolder}\n");
+                    DisableControls();
 
-                        weekListView.Items.Clear();  // Xóa tất cả mục trong ListView
+                    bool hasSpecificSelection = listViewProjects.SelectedItems.Count > 0;
+
+                    if (!hasSpecificSelection)
+                    {
+                        // Xóa tất cả các thư mục nếu không có lựa chọn chỉ định
+                        foreach (ListViewItem item in listViewProjects.Items)
+                        {
+                            if (int.TryParse(item.Text, out int configFileId))
+                            {
+                                ConfigFileET configFile = gitconfig_bus.GetConfigFileById(configFileId);
+
+                                if (configFile != null)
+                                {
+                                    // Xóa thư mục dự án
+                                    string projectFolderPath = configFile.ProjectDirectory;
+                                    if (!string.IsNullOrEmpty(projectFolderPath) && Directory.Exists(projectFolderPath))
+                                    {
+                                        Directory.Delete(projectFolderPath, true);  // true để xóa tất cả các file và thư mục con
+                                        AppendTextWithScroll($"Đã xóa thư mục dự án: {projectFolderPath}\n");
+                                    }
+
+                                    // Xóa thư mục thực tập
+                                    string internshipFolderPath = configFile.InternshipWeekFolder;
+                                    if (!string.IsNullOrEmpty(internshipFolderPath) && Directory.Exists(internshipFolderPath))
+                                    {
+                                        Directory.Delete(internshipFolderPath, true);  // true để xóa tất cả các file và thư mục con
+                                        AppendTextWithScroll($"Đã xóa thư mục thực tập: {internshipFolderPath}\n");
+                                    }
+                                }
+                            }
+                        }
+
+                        // Xóa tất cả các mục trong ListView
+                        weekListView.Items.Clear();
                         AppendTextWithScroll("Danh sách thư mục đã được làm trống.\n");
 
-                        fileListView.Items.Clear();  // Xóa tất cả mục trong ListView
+                        fileListView.Items.Clear();
                         AppendTextWithScroll("Danh sách file đã được làm trống.\n");
 
-                        listViewProjects.Items.Clear(); // xóa danh sách hiển thị đường dẫn
+                        listViewProjects.Items.Clear();
                         AppendTextWithScroll("Danh sách config đã được làm trống.\n");
 
-                        checkedListBoxCommits.Items.Clear();  // Xóa tất cả mục trong checkedListBoxCommits
+                        checkedListBoxCommits.Items.Clear();
                         AppendTextWithScroll("Danh sách commit đã được làm trống.\n");
 
                         dataGridViewCommits.DataSource = null;
                         AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
+                    }
+                    else
+                    {
+                        // Xóa các thư mục được chỉ định trong listViewProjects
+                        foreach (ListViewItem item in listViewProjects.SelectedItems)
+                        {
+                            if (int.TryParse(item.Text, out int configFileId))
+                            {
+                                ConfigFileET configFile = gitconfig_bus.GetConfigFileById(configFileId);
 
+                                if (configFile != null)
+                                {
+                                    // Xóa thư mục dự án
+                                    string projectFolderPath = configFile.ProjectDirectory;
+                                    if (!string.IsNullOrEmpty(projectFolderPath) && Directory.Exists(projectFolderPath))
+                                    {
+                                        Directory.Delete(projectFolderPath, true);  // true để xóa tất cả các file và thư mục con
+                                        AppendTextWithScroll($"Đã xóa thư mục dự án: {projectFolderPath}\n");
+                                    }
+
+                                    // Xóa thư mục thực tập
+                                    string internshipFolderPath = configFile.InternshipWeekFolder;
+                                    if (!string.IsNullOrEmpty(internshipFolderPath) && Directory.Exists(internshipFolderPath))
+                                    {
+                                        Directory.Delete(internshipFolderPath, true);  // true để xóa tất cả các file và thư mục con
+                                        AppendTextWithScroll($"Đã xóa thư mục thực tập: {internshipFolderPath}\n");
+                                    }
+
+                                    // Xóa các mục liên quan trong ListView
+                                    item.Remove();
+                                }
+                            }
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        AppendTextWithScroll($"Lỗi: {ex.Message}\n");
-                    }
-                    finally
-                    {
-                        EnableControls();
-                        btnClearDataListView.Enabled = false;  // Vô hiệu hóa nút xóa
-                        AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
-                        btnDeleteCommits.Enabled = false;
-                        btnReviewCommits.Enabled = false;
-                        AppendTextWithScroll("Nút Kiểm tra đã bị vô hiệu hóa sau khi xóa thư mục.\n");
-                        btnExcelCommits.Enabled = false;
-                        txtInternshipEndDate.Enabled = false;
-                        txtFirstCommitDate.Enabled = false;
-                        txtNumericsWeek.Enabled = false;
-                        txtFolderInternshipPath = string.Empty;
-                        txtDirectoryProjectPath = string.Empty;
-                    }
+
+                    AppendTextWithScroll("Xóa thư mục hoàn tất.\n");
+                }
+                catch (Exception ex)
+                {
+                    AppendTextWithScroll($"Lỗi: {ex.Message}\n");
+                }
+                finally
+                {
+                    EnableControls();
+                    btnClearDataListView.Enabled = false;  // Vô hiệu hóa nút xóa
+                    AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
+                    btnDeleteCommits.Enabled = false;
+                    btnReviewCommits.Enabled = false;
+                    AppendTextWithScroll("Nút Kiểm tra đã bị vô hiệu hóa sau khi xóa thư mục.\n");
+                    btnExcelCommits.Enabled = false;
+                    txtInternshipEndDate.Enabled = false;
+                    txtFirstCommitDate.Enabled = false;
+                    txtNumericsWeek.Enabled = false;
+                    txtFolderInternshipPath = string.Empty;
+                    txtDirectoryProjectPath = string.Empty;
                 }
             }
-            else
-            {
-                AppendTextWithScroll("Thư mục internship_week không tồn tại.\n");
-            }
         }
+
+
+
+
+        // Giả sử hàm này lấy đường dẫn thư mục dự án từ ID
+        private string GetProjectFolderPathById(int id)
+        {
+            // Truy vấn database hoặc nguồn dữ liệu khác để lấy đường dẫn
+            // Ví dụ:
+            return "D:\\DuAn\\" + id;
+        }
+
 
         /// <summary>
         /// Hiển thị thư mục khi load thư mục project

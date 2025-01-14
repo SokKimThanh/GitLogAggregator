@@ -223,11 +223,19 @@ namespace GitLogAggregator.DataAccess
                     }
                 }
 
+                // Tổng hợp các commit của tuần vào tệp combined_commits.txt tại đây
+                if (File.Exists(combinedFile))
+                {
+                    string allCommits = File.ReadAllText(combinedFile);
+                    File.AppendAllText(combinedFile, allCommits);
+                }
+
                 folders.Add(weekFolder);
                 LogMessages.Add($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}");
             }
             return folders;
         }
+
         /// <summary>
         /// Chuyển đổi từ DayOfWeek sang tên tiếng Việt
         /// </summary>
@@ -251,6 +259,7 @@ namespace GitLogAggregator.DataAccess
                     return "Chủ nhật";
             }
         }
+
 
 
         /// <summary>
