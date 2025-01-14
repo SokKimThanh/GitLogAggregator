@@ -17,6 +17,7 @@ namespace GitLogAggregator.DataAccess
     public class GitlogDAL
     {
         public List<string> LogMessages { get; private set; }
+        ConfigFileDAL gitconfig_dal = new ConfigFileDAL();
         public GitlogDAL()
         {
             LogMessages = new List<string>();
@@ -271,13 +272,14 @@ namespace GitLogAggregator.DataAccess
             // Duyệt qua từng mục trong ListView
             foreach (ListViewItem item in listView.Items)
             {
-                // Lấy đường dẫn thư mục dự án từ thuộc tính Tag hoặc cột tương ứng
-                if (item.Tag is ConfigFile project && !string.IsNullOrEmpty(project.ProjectDirectory))
+                int id = int.Parse(item.ToString());
+
+                // Lấy đường dẫn thư mục dự án 
+                ConfigFileET config = gitconfig_dal.GetConfigFileById(id);
+
+                if (IsValidGitRepository(config.ProjectDirectory))
                 {
-                    if (IsValidGitRepository(project.ProjectDirectory))
-                    {
-                        gitRepositories.Add(project.ProjectDirectory);
-                    }
+                    gitRepositories.Add(config.ProjectDirectory);
                 }
             }
 

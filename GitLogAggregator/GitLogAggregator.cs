@@ -28,7 +28,6 @@ namespace GitLogAggregator
         private string txtFolderInternshipPath = string.Empty;
         // Biến cờ để kiểm tra trạng thái chạy
         private bool isProcessing = false;
-        private bool isError = false;
 
         // Git log BUS
         private readonly GitlogBUS gitgui_bus = new GitlogBUS();
@@ -69,8 +68,8 @@ namespace GitLogAggregator
         {
             DisableControls();
             InitializeProjectListView(listViewProjects);
-            LoadConfigFilesIntoListView();
-            btnOpenGitFolder.Enabled = true;
+            LoadProjectListView();
+            txtInternshipStartDate.Enabled = true;// open
         }
 
         /// <summary>
@@ -115,6 +114,15 @@ namespace GitLogAggregator
                 // Lấy thông tin commit
                 DateTime firstCommitDate = gitgui_bus.GetFirstCommitDate(projectDirectory);
 
+                // Kiểm tra xem ngày thực tập có hợp lệ không (ngày thực tập phải < ngày commit đầu tiên)
+                if (txtInternshipStartDate.Value >= firstCommitDate)
+                {
+                    AppendTextWithScroll("Lỗi: Ngày bắt đầu thực tập phải nhỏ hơn ngày commit đầu tiên.\n");
+                    return;
+                }
+
+                SetMaxDateForDateTimePicker(txtInternshipStartDate, firstCommitDate);
+
                 // Tạo đối tượng ConfigFileET và lưu vào cơ sở dữ liệu
                 ConfigFileET configFile = new ConfigFileET
                 {
@@ -123,18 +131,22 @@ namespace GitLogAggregator
                     Author = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
                     StartDate = txtInternshipStartDate.Value,
                     EndDate = txtInternshipEndDate.Value,
-                    Weeks = (int)(txtInternshipEndDate.Value - txtInternshipStartDate.Value).TotalDays / 7,
+                    Weeks = (int)txtNumericsWeek.Value,
                     FirstCommitDate = firstCommitDate,
                 };
+
+                // Cập nhật giao diện khi chọn thư mục dự án
+                UpdateControls(configFile);
 
                 gitconfig_bus.AddConfigFile(configFile);
 
                 AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
 
                 // Load lại dữ liệu lên ListView
-                LoadConfigFilesIntoListView();
+                LoadProjectListView();
             }
         }
+
 
 
         /// <summary>
@@ -144,12 +156,18 @@ namespace GitLogAggregator
         private void UpdateControls(ConfigFileET configInfo)
         {
             txtDirectoryProjectPath = configInfo.ProjectDirectory;
+            txtFolderInternshipPath = configInfo.InternshipWeekFolder;
+
+            // load danh sách tác giả
             cboAuthorCommit.DataSource = gitgui_bus.LoadAuthorsCombobox(configInfo.ProjectDirectory);
+            // hiển thị tác giả commit đầu tiên
             cboAuthorCommit.SelectedItem = configInfo.Author;
+
             txtInternshipStartDate.Value = configInfo.StartDate;
             txtInternshipEndDate.Value = configInfo.EndDate;
             txtNumericsWeek.Value = configInfo.Weeks;
-            txtFolderInternshipPath = configInfo.InternshipWeekFolder;
+
+            txtFirstCommitDate.Value = configInfo.FirstCommitDate;
         }
 
         private void ListViewProjects_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -163,9 +181,9 @@ namespace GitLogAggregator
                 if (Directory.Exists(internshipWeekFolder))
                 {
                     // Cấu hình giao diện sau khi load dữ liệu
-                    DisplayDirectoriesInListView(config.ProjectDirectory);
-
-
+                    LoadWeekAndCommitFileListView(config.ProjectDirectory);
+                    // Hiển thị ngày thực tập tối đa có thể chọn.
+                    SetMaxDateForDateTimePicker(txtInternshipStartDate, config.FirstCommitDate);
                     UpdateControlState(isEnabled: true);
                 }
                 else
@@ -252,7 +270,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="internshipWeekFolder"></param>
 
-        public void LoadConfigFilesIntoListView()
+        public void LoadProjectListView()
         {
             var configFiles = gitconfig_bus.GetAllConfigFiles();
             listViewProjects.Items.Clear(); // Xóa dữ liệu cũ trước khi bắt đầu thêm mới 
@@ -429,7 +447,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Đã lưu dữ liệu vào file config.txt.\n");
 
                 // Cập nhật UI
-                //DisplayDirectoriesInListView();
+                //LoadWeekAndCommitFileListView();
                 AppendTextWithScroll("Đã tổng hợp tất cả commit từ tất cả các dự án.\n");
             }
             catch (Exception ex)
@@ -612,7 +630,7 @@ namespace GitLogAggregator
         /// <summary>
         /// Hiển thị danh sách file từ tất cả các thư mục tuần trong fileListView
         /// </summary>
-        private void DisplayDirectoriesInListView(string projectDirectory)
+        private void LoadWeekAndCommitFileListView(string projectDirectory)
         {
             if (string.IsNullOrEmpty(projectDirectory))
             {
@@ -988,6 +1006,7 @@ namespace GitLogAggregator
 
             // Hiển thị ngày kết thúc
             txtInternshipEndDate.Value = endDate;
+            btnOpenGitFolder.Enabled = true;// chọn tuần thực tập xong mới được thêm dự án
         }
         /// <summary>
         /// Kiểm tra commit lỗi được hiển thị lên listcheckbox, commit hợp lệ hiển thị lên datagridview theo mẫu

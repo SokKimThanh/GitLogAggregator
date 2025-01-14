@@ -274,7 +274,7 @@
             // 
             // dataGridViewCommits
             // 
-            this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.WhiteSmoke;
             this.dataGridViewCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dataGridViewCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewCommits.Location = new System.Drawing.Point(392, 217);
@@ -352,6 +352,7 @@
             // 
             // checkedListBoxCommits
             // 
+            this.checkedListBoxCommits.BackColor = System.Drawing.Color.WhiteSmoke;
             this.checkedListBoxCommits.FormattingEnabled = true;
             this.checkedListBoxCommits.Items.AddRange(new object[] {
             "Danh sách commit phát hiện lỗi"});
