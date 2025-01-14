@@ -495,6 +495,7 @@ namespace GitLogAggregator
                     DisableControls();
 
                     bool hasSpecificSelection = listViewProjects.SelectedItems.Count > 0;
+                    ConfigFileDAL configFileDAL = new ConfigFileDAL();
 
                     if (!hasSpecificSelection)
                     {
@@ -503,7 +504,7 @@ namespace GitLogAggregator
                         {
                             if (int.TryParse(item.Text, out int configFileId))
                             {
-                                ConfigFileET configFile = gitconfig_bus.GetConfigFileById(configFileId);
+                                ConfigFileET configFile = configFileDAL.GetConfigFileById(configFileId);
 
                                 if (configFile != null)
                                 {
@@ -516,7 +517,7 @@ namespace GitLogAggregator
                                     }
 
                                     // Xóa mục khỏi cơ sở dữ liệu
-                                    gitconfig_bus.DeleteConfigFile(configFileId);
+                                    configFileDAL.DeleteConfigFile(configFileId);
                                 }
                             }
                         }
@@ -544,7 +545,7 @@ namespace GitLogAggregator
                         {
                             if (int.TryParse(item.Text, out int configFileId))
                             {
-                                ConfigFileET configFile = gitconfig_bus.GetConfigFileById(configFileId);
+                                ConfigFileET configFile = configFileDAL.GetConfigFileById(configFileId);
 
                                 if (configFile != null)
                                 {
@@ -557,17 +558,27 @@ namespace GitLogAggregator
                                     }
 
                                     // Xóa mục khỏi cơ sở dữ liệu
-                                    gitconfig_bus.DeleteConfigFile(configFileId);
+                                    configFileDAL.DeleteConfigFile(configFileId);
 
                                     // Xóa các mục liên quan trong ListView
                                     item.Remove();
                                 }
                             }
                         }
+
+                        // Kiểm tra và xóa danh sách `weekListView` và `fileListView` nếu không còn thư mục nào trong `listViewProjects`
+                        if (listViewProjects.Items.Count == 0)
+                        {
+                            weekListView.Items.Clear();
+                            AppendTextWithScroll("Danh sách thư mục đã được làm trống.\n");
+
+                            fileListView.Items.Clear();
+                            AppendTextWithScroll("Danh sách file đã được làm trống.\n");
+                        }
                     }
 
                     // Tải lại danh sách listViewProjects
-                    LoadListViewProjects(gitconfig_bus.GetAllConfigFiles());
+                    LoadListViewProjects(configFileDAL.GetAllConfigFiles());
 
                     AppendTextWithScroll("Xóa thư mục internship_week hoàn tất.\n");
                 }
@@ -609,8 +620,8 @@ namespace GitLogAggregator
                 item.SubItems.Add(configFile.FirstCommitDate.ToShortDateString());
                 listViewProjects.Items.Add(item);
             }
-        } 
-
+        }
+ 
 
         // Giả sử hàm này lấy đường dẫn thư mục dự án từ ID
         private string GetProjectFolderPathById(int id)
