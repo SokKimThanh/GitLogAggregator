@@ -156,13 +156,17 @@ namespace GitLogAggregator
         {
             if (e.IsSelected)
             {
-                string selectedProjectDirectory = e.Item.Text;
-                string internshipWeekFolder = Path.Combine(selectedProjectDirectory, "internship_week");
+                ConfigFileET config = gitconfig_bus.GetConfigFileById(int.Parse(e.Item.Text));
+                string internshipWeekFolder = Path.Combine(config.ProjectDirectory, "internship_week");
 
                 // Kiểm tra nếu thư mục internship_week tồn tại thì mở thêm thư mục (file config.txt nằm trong thư mục này)
                 if (Directory.Exists(internshipWeekFolder))
                 {
-                    LoadAndDisplayConfigInfo(internshipWeekFolder);
+                    // Cấu hình giao diện sau khi load dữ liệu
+                    DisplayDirectoriesInListView(config.ProjectDirectory);
+
+
+                    UpdateControlState(isEnabled: true);
                 }
                 else
                 {
@@ -247,35 +251,7 @@ namespace GitLogAggregator
         /// Load thông tin list view trống 
         /// </summary>
         /// <param name="internshipWeekFolder"></param>
-        private void LoadAndDisplayConfigInfo(string internshipWeekFolder)
-        {
-            try
-            {
-                string configFile = Path.Combine(internshipWeekFolder, "config.txt");
 
-                if (!File.Exists(configFile))
-                {
-                    HandleMissingConfigFile(configFile);
-                    return;
-                }
-
-                // Đọc file config
-                List<ConfigFileET> configInfo = gitconfig_bus.GetAllConfigFiles();
-
-                LoadConfigFilesIntoListView();
-
-                // Cấu hình giao diện sau khi load dữ liệu
-                UpdateControlState(isEnabled: true);
-            }
-            catch (FileNotFoundException ex)
-            {
-                AppendTextWithScroll($"Lỗi: File không tồn tại. Chi tiết: {ex.Message}\n");
-            }
-            catch (Exception ex)
-            {
-                AppendTextWithScroll($"Lỗi không mong đợi: {ex.Message}\n");
-            }
-        }
         public void LoadConfigFilesIntoListView()
         {
             var configFiles = gitconfig_bus.GetAllConfigFiles();
@@ -294,30 +270,6 @@ namespace GitLogAggregator
                 listViewProjects.Items.Add(item);
             }
         }
-
-
-        /// <summary>
-        /// Cập nhật giao diện với thông tin cấu hình
-        /// </summary>
-        /// <param name="configId">ID của cấu hình</param>
-        private void UpdateConfigUI(int configId)
-        {
-            ConfigFileET configInfo = gitconfig_bus.GetConfigFileById(configId);
-            if (configInfo != null)
-            {
-                cboAuthorCommit.SelectedItem = configInfo.Author;
-                txtInternshipStartDate.Value = configInfo.StartDate;
-                txtInternshipEndDate.Value = configInfo.EndDate;
-                txtNumericsWeek.Value = configInfo.Weeks;
-                txtDirectoryProjectPath = configInfo.ProjectDirectory;
-                txtFolderInternshipPath = configInfo.InternshipWeekFolder;
-            }
-            else
-            {
-                MessageBox.Show("Không tìm thấy thông tin cấu hình với ID được cung cấp.");
-            }
-        }
-
 
         /// <summary>
         /// Cập nhật trạng thái giao diện (các nút và control)
@@ -477,7 +429,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Đã lưu dữ liệu vào file config.txt.\n");
 
                 // Cập nhật UI
-                DisplayDirectoriesInListView();
+                //DisplayDirectoriesInListView();
                 AppendTextWithScroll("Đã tổng hợp tất cả commit từ tất cả các dự án.\n");
             }
             catch (Exception ex)
@@ -568,7 +520,7 @@ namespace GitLogAggregator
         /// Hiển thị thư mục khi load thư mục project
         /// </summary>
         /// <param name="directories"></param>
-        private void DisplayFoldersInListView(List<string> directories)
+        private void DisplayWeekAndCommitInListView(List<string> directories)
         {
             weekListView.Items.Clear();
             fileListView.Items.Clear();
@@ -660,7 +612,7 @@ namespace GitLogAggregator
         /// <summary>
         /// Hiển thị danh sách file từ tất cả các thư mục tuần trong fileListView
         /// </summary>
-        private void DisplayDirectoriesInListView()
+        private void DisplayDirectoriesInListView(string projectDirectory)
         {
             if (string.IsNullOrEmpty(projectDirectory))
             {
@@ -687,7 +639,7 @@ namespace GitLogAggregator
             weekListView.SmallImageList = imageList;
 
             // Lấy danh sách thư mục trong thư mục internship_week
-            string[] directories = Directory.GetDirectories(internshipWeekFolder);
+            string[] weekFoldersPath = Directory.GetDirectories(internshipWeekFolder);
 
             // Xóa các mục hiện có trong ListView
             weekListView.Items.Clear();
@@ -700,7 +652,7 @@ namespace GitLogAggregator
             // Danh sách file để tổng hợp từ tất cả các thư mục
             List<(string FilePath, DateTime CreationTime)> allFiles = new List<(string, DateTime)>();
 
-            foreach (string folder in directories)
+            foreach (string folder in weekFoldersPath)
             {
                 // Lấy danh sách file trong thư mục
                 var files = Directory.GetFiles(folder);
@@ -748,13 +700,13 @@ namespace GitLogAggregator
             }
 
             // Hiển thị thông báo nếu không có thư mục nào trong internship_week
-            if (directories.Length == 0)
+            if (weekFoldersPath.Length == 0)
             {
                 AppendTextWithScroll("Không có thư mục nào trong internship_week.\n");
             }
             else
             {
-                AppendTextWithScroll($"Tổng số thư mục: {directories.Length}\n");
+                AppendTextWithScroll($"Tổng số thư mục: {weekFoldersPath.Length}\n");
                 AppendTextWithScroll($"Số thư mục trống: {emptyDirectories}\n");
                 AppendTextWithScroll($"Số thư mục có commit: {directoriesWithCommits}\n");
                 AppendTextWithScroll($"Tổng số file: {totalFiles}\n");
