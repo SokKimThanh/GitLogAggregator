@@ -138,12 +138,24 @@ namespace GitLogAggregator
                 // Cập nhật giao diện khi chọn thư mục dự án
                 UpdateControls(configFile);
 
+                // Thêm thông tin cấu hình dự án
                 gitconfig_bus.AddConfigFile(configFile);
-
-                AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
 
                 // Load lại dữ liệu lên ListView
                 LoadProjectListView();
+
+                /// Sau mỗi lần chọn thêm thì tổng hợp thêm thư mục tuần và commit trong dự án
+                List<string> directories = new List<string>();
+
+                foreach (var cf in gitconfig_bus.GetAllConfigFiles())
+                {
+                    directories.Add(configFile.ProjectDirectory);
+                }
+
+                DisplayWeekAndCommitInListView(directories);
+
+
+                AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
             }
         }
 
@@ -175,12 +187,13 @@ namespace GitLogAggregator
             if (e.IsSelected)
             {
                 ConfigFileET config = gitconfig_bus.GetConfigFileById(int.Parse(e.Item.Text));
+                UpdateControls(config);
                 string internshipWeekFolder = Path.Combine(config.ProjectDirectory, "internship_week");
 
                 // Kiểm tra nếu thư mục internship_week tồn tại thì mở thêm thư mục (file config.txt nằm trong thư mục này)
                 if (Directory.Exists(internshipWeekFolder))
                 {
-                    // Cấu hình giao diện sau khi load dữ liệu
+                    // Hiển thị dữ liệu thư mục và commit
                     LoadWeekAndCommitFileListView(config.ProjectDirectory);
                     // Hiển thị ngày thực tập tối đa có thể chọn.
                     SetMaxDateForDateTimePicker(txtInternshipStartDate, config.FirstCommitDate);
@@ -193,6 +206,8 @@ namespace GitLogAggregator
                     txtInternshipStartDate.Enabled = true;
                     btnOpenGitFolder.Enabled = true;
                     btnAggregator.Enabled = true;
+                    fileListView.Items.Clear();
+                    weekListView.Items.Clear();
                     AppendTextWithScroll("Vui lòng tổng hợp commit mới.\n");
                 }
             }
