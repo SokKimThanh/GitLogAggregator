@@ -16,7 +16,6 @@ namespace GitLogAggregator.DataAccess
 {
     public class GitlogDAL
     {
-        GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
         public List<string> LogMessages { get; private set; }
         public GitlogDAL()
         {
@@ -137,69 +136,6 @@ namespace GitLogAggregator.DataAccess
                 }
             }
         }
-        /// <summary>
-        /// Hiển thị thông tin file config lên ListView
-        /// </summary>
-        /// <param name="configFile">Đối tượng ConfigFile chứa thông tin cấu hình</param>
-        public void SaveConfigFileToDatabase(ConfigFileET configInfo)
-        {
-            string configPath = Path.Combine(configInfo.ProjectDirectory, "internship_week", "config.txt");
-            using (StreamWriter writer = new StreamWriter(configPath))
-            {
-                writer.WriteLine($"Author: {configInfo.Author}");
-                writer.WriteLine($"StartDate: {configInfo.StartDate:yyyy-MM-dd}");
-                writer.WriteLine($"EndDate: {configInfo.EndDate:yyyy-MM-dd}"); // Lưu ngày kết thúc thực tập
-                writer.WriteLine($"Weeks: {configInfo.Weeks}"); // Lưu số tuần thực tập
-                writer.WriteLine($"FirstCommitDate: {configInfo.FirstCommitDate:yyyy-MM-dd}");
-                writer.WriteLine($"ProjectDirectory: {configInfo.ProjectDirectory}");
-                writer.WriteLine($"InternshipWeekFolder: {configInfo.InternshipWeekFolder}");
-                writer.WriteLine("Folders:");
-                foreach (var folder in configInfo.Folders)
-                {
-                    writer.WriteLine(folder);
-                }
-            }
-        }
-
-
-        /// <summary>
-        /// Đọc thông tin từ file config.txt và trả về đối tượng ConfigFile
-        /// </summary>
-        /// <param name="configPath">Đường dẫn tới file config.txt</param>
-        /// <returns>Đối tượng ConfigFile chứa thông tin cấu hình</returns>
-        public ConfigFileET LoadConfigFile(string configPath)
-        {
-            ConfigFileET configFile = new ConfigFileET();
-            using (StreamReader reader = new StreamReader(configPath))
-            {
-                configFile.Author = GetValueFromLine(reader.ReadLine());
-                configFile.StartDate = DateTime.Parse(GetValueFromLine(reader.ReadLine()));
-                configFile.EndDate = DateTime.Parse(GetValueFromLine(reader.ReadLine()));
-                configFile.Weeks = int.Parse(GetValueFromLine(reader.ReadLine()));
-                configFile.FirstCommitDate = DateTime.Parse(GetValueFromLine(reader.ReadLine()));
-                configFile.ProjectDirectory = GetValueFromLine(reader.ReadLine());
-                configFile.InternshipWeekFolder = GetValueFromLine(reader.ReadLine());
-                configFile.Folders = new List<string>();
-                reader.ReadLine(); // Bỏ qua dòng "Folders:"
-                while (!reader.EndOfStream)
-                {
-                    configFile.Folders.Add(reader.ReadLine().Trim());
-                }
-            }
-            return configFile;
-        }
-
-        /// <summary>
-        /// Lấy giá trị từ một dòng cấu hình (sau ký tự ':')
-        /// </summary>
-        /// <param name="line">Dòng cấu hình</param>
-        /// <returns>Giá trị sau ký tự ':'</returns>
-        private string GetValueFromLine(string line)
-        {
-            int index = line.IndexOf(':');
-            return (index >= 0) ? line.Substring(index + 1).Trim() : string.Empty;
-        }
-
         /// <summary>
         /// Lệnh Git tìm ngày commit đầu tiên
         /// </summary>
@@ -463,6 +399,5 @@ namespace GitLogAggregator.DataAccess
 
             return commits;
         }
-
     }
 }

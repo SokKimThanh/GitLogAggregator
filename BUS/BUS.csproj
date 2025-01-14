@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigFileBUS.cs" />
     <Compile Include="GitLogCheckCommitBUS.cs" />
     <Compile Include="GitLogFormatBUS.cs" />
     <Compile Include="GitLogUIBUS.cs" />

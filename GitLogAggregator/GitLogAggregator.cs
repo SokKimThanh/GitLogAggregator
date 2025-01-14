@@ -446,7 +446,7 @@ namespace GitLogAggregator
                     Weeks = (int)txtNumericsWeek.Value
                 };
 
-                gitlogui_bus.SaveConfigFile(configFile);
+                gitlogui_bus.SaveConfigFileToDatabase(configFile);
 
                 AppendTextWithScroll("Đã lưu dữ liệu vào file config.txt.\n");
 

@@ -38,25 +38,6 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.GetGitAuthors(projectDirectory);
         }
-
-        /// <summary>
-        /// Lưu thông tin tổng hợp
-        /// </summary>
-        /// <param name="configInfo"></param>
-        public void SaveConfigFile(ConfigFileET configInfo)
-        {
-            data.SaveConfigFileToDatabase(configInfo);
-        }
-        /// <summary>
-        /// Tải thông tin tổng hợp
-        /// </summary>
-        /// <param name="configPath">thông tin cấu hình commit tổng hợp</param>
-        /// <returns></returns>
-        public ConfigFileET LoadConfigFile(string configPath)
-        {
-            return data.LoadConfigFile(configPath);
-        }
-
         /// <summary>
         /// Lệnh Git tìm ngày commit đầu tiên
         /// </summary>
