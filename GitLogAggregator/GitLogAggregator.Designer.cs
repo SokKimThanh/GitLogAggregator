@@ -61,11 +61,7 @@
             this.checkedListBoxCommits = new System.Windows.Forms.CheckedListBox();
             this.btnExcelCommits = new System.Windows.Forms.Button();
             this.btnReviewCommits = new System.Windows.Forms.Button();
-            this.lvProjects = new System.Windows.Forms.ListView();
-            this.cSTT = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.cPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.cDescription = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.cLevelPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.listViewProjects = new System.Windows.Forms.ListView();
             this.btnExpanDataGridview = new System.Windows.Forms.Button();
             this.btnDeleteCommits = new System.Windows.Forms.Button();
             this.txtResultMouseEvents = new System.Windows.Forms.RichTextBox();
@@ -94,7 +90,7 @@
             this.btnOpenGitFolder.TabIndex = 1;
             this.btnOpenGitFolder.Text = "Chọn dự án";
             this.btnOpenGitFolder.UseVisualStyleBackColor = true;
-            this.btnOpenGitFolder.Click += new System.EventHandler(this.BtnSelectGitFolder_Click);
+            this.btnOpenGitFolder.Click += new System.EventHandler(this.BtnAddProject_Click);
             // 
             // txtInternshipStartDate
             // 
@@ -390,41 +386,17 @@
             this.btnReviewCommits.Click += new System.EventHandler(this.BtnReviewCommits_Click);
             this.btnReviewCommits.MouseEnter += new System.EventHandler(this.btnReviewCommits_MouseEnter);
             // 
-            // lvProjects
+            // listViewProjects
             // 
-            this.lvProjects.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.lvProjects.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.cSTT,
-            this.cPath,
-            this.cDescription,
-            this.cLevelPath});
-            this.lvProjects.HideSelection = false;
-            this.lvProjects.Location = new System.Drawing.Point(14, 452);
-            this.lvProjects.Name = "lvProjects";
-            this.lvProjects.Size = new System.Drawing.Size(369, 96);
-            this.lvProjects.TabIndex = 24;
-            this.lvProjects.UseCompatibleStateImageBehavior = false;
-            this.lvProjects.View = System.Windows.Forms.View.Details;
-            // 
-            // cSTT
-            // 
-            this.cSTT.Text = "STT";
-            this.cSTT.Width = 40;
-            // 
-            // cPath
-            // 
-            this.cPath.Text = "Đường dẫn";
-            this.cPath.Width = 180;
-            // 
-            // cDescription
-            // 
-            this.cDescription.Text = "Mô tả";
-            this.cDescription.Width = 150;
-            // 
-            // cLevelPath
-            // 
-            this.cLevelPath.Text = "Phân cấp";
-            this.cLevelPath.Width = 100;
+            this.listViewProjects.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.listViewProjects.HideSelection = false;
+            this.listViewProjects.Location = new System.Drawing.Point(14, 452);
+            this.listViewProjects.Name = "listViewProjects";
+            this.listViewProjects.Size = new System.Drawing.Size(369, 96);
+            this.listViewProjects.TabIndex = 24;
+            this.listViewProjects.UseCompatibleStateImageBehavior = false;
+            this.listViewProjects.View = System.Windows.Forms.View.Details;
+            this.listViewProjects.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.ListViewProjects_ItemSelectionChanged);
             // 
             // btnExpanDataGridview
             // 
@@ -488,7 +460,7 @@
             this.ClientSize = new System.Drawing.Size(681, 661);
             this.Controls.Add(this.btnDeleteCommits);
             this.Controls.Add(this.btnExpanDataGridview);
-            this.Controls.Add(this.lvProjects);
+            this.Controls.Add(this.listViewProjects);
             this.Controls.Add(this.checkedListBoxCommits);
             this.Controls.Add(this.txtNumericsWeek);
             this.Controls.Add(this.dataGridViewCommits);
@@ -567,13 +539,9 @@
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.ListView lvProjects;
-        private System.Windows.Forms.ColumnHeader cSTT;
-        private System.Windows.Forms.ColumnHeader cPath;
+        private System.Windows.Forms.ListView listViewProjects;
         private System.Windows.Forms.Button btnExpanDataGridview;
         private System.Windows.Forms.Button btnDeleteCommits;
-        private System.Windows.Forms.ColumnHeader cDescription;
-        private System.Windows.Forms.ColumnHeader cLevelPath;
         private System.Windows.Forms.RichTextBox txtResultMouseEvents;
         private System.Windows.Forms.Label label4;
     }

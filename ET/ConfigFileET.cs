@@ -12,6 +12,7 @@ namespace ET
     /// </summary>
     public class ConfigFileET
     {
+        public int Id { get; set; }
         /// <summary>
         /// Đường dẫn đến thư mục dự án
         /// </summary>
@@ -36,13 +37,11 @@ namespace ET
         /// Lưu thêm số tuần thực tập
         /// </summary>
         public int Weeks { get; set; }
-        /// <summary>
-        /// Danh sách thư mục 8 tuần
-        /// </summary>
         public List<string> Folders { get; set; }
+
         /// <summary>
         /// Ngày commit đầu tiên
         /// </summary>
-        public DateTime FirstCommitDate { get; set; }  
+        public DateTime FirstCommitDate { get; set; }
     }
 }
