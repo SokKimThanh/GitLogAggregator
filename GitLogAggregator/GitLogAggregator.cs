@@ -495,7 +495,7 @@ namespace GitLogAggregator
                     DisableControls();
 
                     bool hasSpecificSelection = listViewProjects.SelectedItems.Count > 0;
-
+ 
                     if (!hasSpecificSelection)
                     {
                         // Xóa tất cả các thư mục nếu không có lựa chọn chỉ định
@@ -522,6 +522,9 @@ namespace GitLogAggregator
                                         Directory.Delete(internshipFolderPath, true);  // true để xóa tất cả các file và thư mục con
                                         AppendTextWithScroll($"Đã xóa thư mục thực tập: {internshipFolderPath}\n");
                                     }
+
+                                    // Xóa mục khỏi cơ sở dữ liệu
+                                    gitconfig_bus.DeleteConfigFile(configFileId);
                                 }
                             }
                         }
@@ -569,12 +572,18 @@ namespace GitLogAggregator
                                         AppendTextWithScroll($"Đã xóa thư mục thực tập: {internshipFolderPath}\n");
                                     }
 
+                                    // Xóa mục khỏi cơ sở dữ liệu
+                                    gitconfig_bus.DeleteConfigFile(configFileId);
+
                                     // Xóa các mục liên quan trong ListView
                                     item.Remove();
                                 }
                             }
                         }
                     }
+
+                    // Tải lại danh sách listViewProjects
+                    LoadListViewProjects(gitconfig_bus.GetAllConfigFiles());
 
                     AppendTextWithScroll("Xóa thư mục hoàn tất.\n");
                 }
@@ -599,6 +608,25 @@ namespace GitLogAggregator
                 }
             }
         }
+
+        // Hàm để tải lại danh sách listViewProjects từ cơ sở dữ liệu
+        private void LoadListViewProjects(List<ConfigFileET> configFiles)
+        {
+            listViewProjects.Items.Clear();
+            foreach (var configFile in configFiles)
+            {
+                ListViewItem item = new ListViewItem(configFile.Id.ToString());
+                item.SubItems.Add(configFile.ProjectDirectory);
+                item.SubItems.Add(configFile.InternshipWeekFolder);
+                item.SubItems.Add(configFile.Author);
+                item.SubItems.Add(configFile.StartDate.ToShortDateString());
+                item.SubItems.Add(configFile.EndDate.ToShortDateString());
+                item.SubItems.Add(configFile.Weeks.ToString());
+                item.SubItems.Add(configFile.FirstCommitDate.ToShortDateString());
+                listViewProjects.Items.Add(item);
+            }
+        }
+
 
 
 
