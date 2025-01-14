@@ -66,6 +66,7 @@ namespace DAL
         {
             return db.ConfigFiles.Select(cf => new ConfigFileET
             {
+                Id = cf.Id,
                 ProjectDirectory = cf.ProjectDirectory,
                 InternshipWeekFolder = cf.InternshipWeekFolder,
                 Author = cf.Author,
