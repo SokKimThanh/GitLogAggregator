@@ -495,10 +495,10 @@ namespace GitLogAggregator
                     DisableControls();
 
                     bool hasSpecificSelection = listViewProjects.SelectedItems.Count > 0;
- 
+
                     if (!hasSpecificSelection)
                     {
-                        // Xóa tất cả các thư mục nếu không có lựa chọn chỉ định
+                        // Xóa tất cả các thư mục internship_week nếu không có lựa chọn chỉ định
                         foreach (ListViewItem item in listViewProjects.Items)
                         {
                             if (int.TryParse(item.Text, out int configFileId))
@@ -507,15 +507,7 @@ namespace GitLogAggregator
 
                                 if (configFile != null)
                                 {
-                                    // Xóa thư mục dự án
-                                    string projectFolderPath = configFile.ProjectDirectory;
-                                    if (!string.IsNullOrEmpty(projectFolderPath) && Directory.Exists(projectFolderPath))
-                                    {
-                                        Directory.Delete(projectFolderPath, true);  // true để xóa tất cả các file và thư mục con
-                                        AppendTextWithScroll($"Đã xóa thư mục dự án: {projectFolderPath}\n");
-                                    }
-
-                                    // Xóa thư mục thực tập
+                                    // Xóa thư mục internship_week
                                     string internshipFolderPath = configFile.InternshipWeekFolder;
                                     if (!string.IsNullOrEmpty(internshipFolderPath) && Directory.Exists(internshipFolderPath))
                                     {
@@ -547,7 +539,7 @@ namespace GitLogAggregator
                     }
                     else
                     {
-                        // Xóa các thư mục được chỉ định trong listViewProjects
+                        // Xóa các thư mục internship_week được chỉ định trong listViewProjects
                         foreach (ListViewItem item in listViewProjects.SelectedItems)
                         {
                             if (int.TryParse(item.Text, out int configFileId))
@@ -556,15 +548,7 @@ namespace GitLogAggregator
 
                                 if (configFile != null)
                                 {
-                                    // Xóa thư mục dự án
-                                    string projectFolderPath = configFile.ProjectDirectory;
-                                    if (!string.IsNullOrEmpty(projectFolderPath) && Directory.Exists(projectFolderPath))
-                                    {
-                                        Directory.Delete(projectFolderPath, true);  // true để xóa tất cả các file và thư mục con
-                                        AppendTextWithScroll($"Đã xóa thư mục dự án: {projectFolderPath}\n");
-                                    }
-
-                                    // Xóa thư mục thực tập
+                                    // Xóa thư mục internship_week
                                     string internshipFolderPath = configFile.InternshipWeekFolder;
                                     if (!string.IsNullOrEmpty(internshipFolderPath) && Directory.Exists(internshipFolderPath))
                                     {
@@ -585,7 +569,7 @@ namespace GitLogAggregator
                     // Tải lại danh sách listViewProjects
                     LoadListViewProjects(gitconfig_bus.GetAllConfigFiles());
 
-                    AppendTextWithScroll("Xóa thư mục hoàn tất.\n");
+                    AppendTextWithScroll("Xóa thư mục internship_week hoàn tất.\n");
                 }
                 catch (Exception ex)
                 {
@@ -625,10 +609,7 @@ namespace GitLogAggregator
                 item.SubItems.Add(configFile.FirstCommitDate.ToShortDateString());
                 listViewProjects.Items.Add(item);
             }
-        }
-
-
-
+        } 
 
 
         // Giả sử hàm này lấy đường dẫn thư mục dự án từ ID
