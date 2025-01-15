@@ -28,11 +28,11 @@ namespace ET
         /// <summary>
         /// Ngày bắt đầu thực tập.
         /// </summary>
-        public DateTime StartDate { get; set; }
+        public DateTime InternshipStartDate { get; set; }
         /// <summary>
         /// Ngày kết thúc thực tập.
         /// </summary>
-        public DateTime EndDate { get; set; }
+        public DateTime InternshipEndDate { get; set; }
         /// <summary>
         /// Lưu thêm số tuần thực tập
         /// </summary>

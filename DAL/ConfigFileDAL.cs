@@ -24,8 +24,8 @@ namespace DAL
                 ProjectDirectory = configFile.ProjectDirectory,
                 InternshipWeekFolder = configFile.InternshipWeekFolder,
                 Author = configFile.Author,
-                StartDate = configFile.StartDate,
-                EndDate = configFile.EndDate,
+                StartDate = configFile.InternshipStartDate,
+                EndDate = configFile.InternshipEndDate,
                 Weeks = configFile.Weeks,
                 FirstCommitDate = configFile.FirstCommitDate
             };
@@ -53,8 +53,8 @@ namespace DAL
                 existingConfigFile.ProjectDirectory = configFile.ProjectDirectory;
                 existingConfigFile.InternshipWeekFolder = configFile.InternshipWeekFolder;
                 existingConfigFile.Author = configFile.Author;
-                existingConfigFile.StartDate = configFile.StartDate;
-                existingConfigFile.EndDate = configFile.EndDate;
+                existingConfigFile.StartDate = configFile.InternshipStartDate;
+                existingConfigFile.EndDate = configFile.InternshipEndDate;
                 existingConfigFile.Weeks = configFile.Weeks;
                 existingConfigFile.FirstCommitDate = configFile.FirstCommitDate;
                 db.SubmitChanges();
@@ -70,8 +70,8 @@ namespace DAL
                 ProjectDirectory = cf.ProjectDirectory,
                 InternshipWeekFolder = cf.InternshipWeekFolder,
                 Author = cf.Author,
-                StartDate = (DateTime)cf.StartDate,
-                EndDate = (DateTime)cf.EndDate,
+                InternshipStartDate = (DateTime)cf.StartDate,
+                InternshipEndDate = (DateTime)cf.EndDate,
                 Weeks = (int)cf.Weeks,
                 FirstCommitDate = (DateTime)cf.FirstCommitDate
             }).ToList();
@@ -88,8 +88,8 @@ namespace DAL
                     ProjectDirectory = configFile.ProjectDirectory,
                     InternshipWeekFolder = configFile.InternshipWeekFolder,
                     Author = configFile.Author,
-                    StartDate = (DateTime)configFile.StartDate,
-                    EndDate = (DateTime)configFile.EndDate,
+                    InternshipStartDate = (DateTime)configFile.StartDate,
+                    InternshipEndDate = (DateTime)configFile.EndDate,
                     Weeks = (int)configFile.Weeks,
                     FirstCommitDate = (DateTime)configFile.FirstCommitDate
                 };

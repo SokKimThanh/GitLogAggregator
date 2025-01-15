@@ -217,7 +217,7 @@ namespace DAL
 					this.OnStartDateChanging(value);
 					this.SendPropertyChanging();
 					this._StartDate = value;
-					this.SendPropertyChanged("StartDate");
+					this.SendPropertyChanged("InternshipStartDate");
 					this.OnStartDateChanged();
 				}
 			}
@@ -237,7 +237,7 @@ namespace DAL
 					this.OnEndDateChanging(value);
 					this.SendPropertyChanging();
 					this._EndDate = value;
-					this.SendPropertyChanged("EndDate");
+					this.SendPropertyChanged("InternshipEndDate");
 					this.OnEndDateChanged();
 				}
 			}

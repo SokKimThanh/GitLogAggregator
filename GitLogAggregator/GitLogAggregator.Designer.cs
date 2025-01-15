@@ -124,7 +124,7 @@
             this.btnAggregator.TabIndex = 5;
             this.btnAggregator.Text = "Tổng hợp commit";
             this.btnAggregator.UseVisualStyleBackColor = true;
-            this.btnAggregator.Click += new System.EventHandler(this.BtnAggregate_Click);
+            this.btnAggregator.Click += new System.EventHandler(this.BtnAggregateCommits_Click);
             // 
             // label1
             // 

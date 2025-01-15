@@ -52,22 +52,7 @@ namespace GitLogAggregator.BusinessLogic
         public void AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, int totalWeeks)
         {
             data.AggregateCommits(projectDirectory, author, internshipStartDate, totalWeeks);
-        }
-
-        /// <summary>
-        /// Tìm git từ các thư mục đường dẫn có trong listview
-        /// </summary>
-        /// <param name="listView"></param>
-        /// <returns></returns>
-        public List<string> FindGitRepositories(ListView listView)
-        {
-            return data.FindGitRepositories(listView);
-        }
-
-        public bool IsValidGitRepository(string directory)
-        {
-            return data.IsValidGitRepository(directory);
-        }
+        } 
         /// <summary>
         /// Hiển thị danh sách tác giả trên combobox
         /// </summary>
