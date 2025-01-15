@@ -135,108 +135,142 @@ o Có thể thêm tính năng xuất dữ liệu commit thành file Excel hoặc
 #### 6\. Hỗ Trợ
 
 Nếu gặp sự cố khi sử dụng công cụ, vui lòng liên hệ với bộ phận hỗ trợ qua email: 22211tt0063@mail.tdc.edu.vn hoặc truy cập trang web chính thức để biết thêm chi tiết.
-làm sao để thêm chatbot AI vào mô hình 3 lớp trong c# .net 4.7.2
+
 
 ### Thiết kế cơ sở dữ liệu (CSDL) mới
 
-#### Bảng ConfigFiles
+Dưới đây là thiết kế cơ sở dữ liệu mới bao gồm các bảng và mối quan hệ giữa chúng:
 
--   **Mô tả**: Lưu trữ cấu hình dự án, liên kết với thư mục thực tập
+#### Bảng `ConfigFiles`
 
--   **Các trường**:
-
-    -   ID (INT, Primary Key)
-
-    -   ProjectDirectory (NVARCHAR)
-
-    -   InternshipDirectoryId (INT, Foreign Key)
-
-    -   Author (NVARCHAR)
-
-    -   StartDate (DATETIME)
-
-    -   EndDate (DATETIME)
-
-    -   Weeks (INT)
-
-    -   FirstCommitDate (DATETIME)
-
-    -   CreatedAt (DATETIME)
-
-    -   UpdatedAt (DATETIME)
-
--   **Mối quan hệ**: Nhiều ConfigFiles liên kết với một InternshipDirectories
-
-#### Bảng InternshipDirectories
-
--   **Mô tả**: Đại diện cho các tuần thực tập với đường dẫn thư mục
+-   **Mô tả**: Lưu trữ cấu hình dự án, liên kết với thư mục thực tập.
 
 -   **Các trường**:
 
-    -   ID (INT, Primary Key)
+    | Tên trường | Kiểu dữ liệu | Mô tả |
+    | --- | --- | --- |
+    | ID | INT | Khóa chính, tự tăng. |
+    | ProjectDirectory | NVARCHAR(255) | Đường dẫn thư mục dự án. |
+    | InternshipDirectoryId | INT | Khóa ngoại liên kết với bảng `InternshipDirectories`. |
+    | Author | NVARCHAR(100) | Tác giả của cấu hình. |
+    | StartDate | DATETIME | Ngày bắt đầu dự án. |
+    | EndDate | DATETIME | Ngày kết thúc dự án. |
+    | Weeks | INT | Số tuần thực tập. |
+    | FirstCommitDate | DATETIME | Ngày commit đầu tiên. |
+    | CreatedAt | DATETIME | Thời điểm tạo bản ghi. |
+    | UpdatedAt | DATETIME | Thời điểm cập nhật bản ghi. |
 
-    -   InternshipWeekFolder (NVARCHAR)
+-   **Khóa chính**: `ID`
 
-    -   DateModified (DATETIME)
+-   **Khóa ngoại**: `InternshipDirectoryId` liên kết với `InternshipDirectories.ID`
 
--   **Mối quan hệ**: Một InternshipDirectories có nhiều ConfigFiles
+#### Bảng `InternshipDirectories`
 
-#### Bảng ProjectWeeks
-
--   **Mô tả**: Liên kết giữa dự án và tuần
-
--   **Các trường**:
-
-    -   ProjectWeekId (INT, Primary Key)
-
-    -   ConfigFileId (INT, Foreign Key)
-
-    -   InternshipDirectoryId (INT, Foreign Key)
-
--   **Mối quan hệ**: Một ProjectWeeks liên kết một ConfigFiles và một InternshipDirectories
-
-#### Bảng Commits
-
--   **Mô tả**: Lưu trữ dữ liệu commit, liên kết với project và week
+-   **Mô tả**: Đại diện cho các tuần thực tập với đường dẫn thư mục.
 
 -   **Các trường**:
 
-    -   CommitId (INT, Primary Key)
+    | Tên trường | Kiểu dữ liệu | Mô tả |
+    | --- | --- | --- |
+    | ID | INT | Khóa chính, tự tăng. |
+    | InternshipWeekFolder | NVARCHAR(255) | Đường dẫn thư mục tuần thực tập. |
+    | DateModified | DATETIME | Thời điểm修改 thư mục. |
 
-    -   CommitHash (NVARCHAR, Unique) -- Đảm bảo tính duy nhất của commit
+-   **Khóa chính**: `ID`
 
-    -   CommitMessage (TEXT)
+#### Bảng `ProjectWeeks`
 
-    -   CommitDate (DATETIME)
-
-    -   Author (NVARCHAR)
-
-    -   ProjectWeekId (INT, Foreign Key)
-
--   **Mối quan hệ**: Một ProjectWeeks có nhiều Commits
-
-#### Bảng ChatbotSummary
-
--   **Mô tả**: Lưu trữ phản hồi từ AI chatbot
+-   **Mô tả**: Liên kết giữa dự án và tuần.
 
 -   **Các trường**:
 
-    -   ID (INT, Primary Key)
+    | Tên trường | Kiểu dữ liệu | Mô tả |
+    | --- | --- | --- |
+    | ProjectWeekId | INT | Khóa chính, tự tăng. |
+    | ConfigFileId | INT | Khóa ngoại liên kết với bảng `ConfigFiles`. |
+    | InternshipDirectoryId | INT | Khóa ngoại liên kết với bảng `InternshipDirectories`. |
 
-    -   CommitId (INT, Foreign Key)
+-   **Khóa chính**: `ProjectWeekId`
 
-    -   Attendance (NVARCHAR)
+-   **Khóa ngoại**:
 
-    -   AssignedTasks (TEXT)
+    -   `ConfigFileId` liên kết với `ConfigFiles.ID`
 
-    -   ContentResults (TEXT)
+    -   `InternshipDirectoryId` liên kết với `InternshipDirectories.ID`
 
-    -   SupervisorComments (TEXT)
+#### Bảng `Commits`
 
-    -   Notes (TEXT)
+-   **Mô tả**: Lưu trữ dữ liệu commit, liên kết với project và week.
 
-    -   CreatedAt (DATETIME)
+-   **Các trường**:
 
-    -   UpdatedAt (DATETIME)
+    | Tên trường | Kiểu dữ liệu | Mô tả |
+    | --- | --- | --- |
+    | CommitId | INT | Khóa chính, tự tăng. |
+    | CommitHash | NVARCHAR(100) | Hash của commit, đảm bảo tính duy nhất. |
+    | CommitMessage | TEXT | Nội dung thông báo commit. |
+    | CommitDate | DATETIME | Ngày commit. |
+    | Author | NVARCHAR(100) | Tác giả của commit. |
+    | ProjectWeekId | INT | Khóa ngoại liên kết với bảng `ProjectWeeks`. |
 
--   **Mối quan hệ**: Một Commit có một ChatbotSummary
+-   **Khóa chính**: `CommitId`
+
+-   **Khóa ngoại**: `ProjectWeekId` liên kết với `ProjectWeeks.ProjectWeekId`
+
+-   **Unique Constraint**: `CommitHash` phải là duy nhất.
+
+#### Bảng `ChatbotSummary`
+
+-   **Mô tả**: Lưu trữ phản hồi từ AI chatbot.
+
+-   **Các trường**:
+
+    | Tên trường | Kiểu dữ liệu | Mô tả |
+    | --- | --- | --- |
+    | ID | INT | Khóa chính, tự tăng. |
+    | CommitId | INT | Khóa ngoại liên kết với bảng `Commits`. |
+    | Attendance | NVARCHAR(100) | Tình trạng tham dự. |
+    | AssignedTasks | TEXT | Nhiệm vụ được giao. |
+    | ContentResults | TEXT | Kết quả nội dung. |
+    | SupervisorComments | TEXT | Bình luận của người giám sát. |
+    | Notes | TEXT | Ghi chú khác. |
+    | CreatedAt | DATETIME | Thời điểm tạo bản ghi. |
+    | UpdatedAt | DATETIME | Thời điểm cập nhật bản ghi. |
+
+-   **Khóa chính**: `ID`
+
+-   **Khóa ngoại**: `CommitId` liên kết với `Commits.CommitId`
+
+### Mối quan hệ giữa các bảng
+
+1.  **Một-nhiều (One-to-Many)**:
+
+    -   **InternshipDirectories** (một) ⇨ **ConfigFiles** (nhiều)
+
+    -   **ConfigFiles** (một) ⇨ **ProjectWeeks** (nhiều)
+
+    -   **ProjectWeeks** (một) ⇨ **Commits** (nhiều)
+
+    -   **Commits** (một) ⇨ **ChatbotSummary** (một)
+
+2.  **Nhiều-nhiều (Many-to-Many)**:
+
+    -   Không có mối quan hệ nhiều-nhiều trong thiết kế này.
+
+### Tóm tắt mối quan hệ
+
+-   Một `InternshipDirectories` có nhiều `ConfigFiles`.
+
+-   Một `ConfigFiles` có nhiều `ProjectWeeks`.
+
+-   Một `ProjectWeeks` có nhiều `Commits`.
+
+-   Một `Commits` có một `ChatbotSummary`.
+
+### Lưu ý
+
+-   Các trường `CreatedAt` và `UpdatedAt` trong các bảng có thể được tự động cập nhật bằng các trigger hoặc thông qua ứng dụng.
+
+-   Trường `CommitHash` trong bảng `Commits` cần được đảm bảo là duy nhất để tránh trùng lặp commit.
+
+-   Cần xem xét thêm các索引 (index) cho các khóa ngoại để cải thiện hiệu suất truy vấn.
