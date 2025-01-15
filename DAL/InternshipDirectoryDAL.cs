@@ -9,7 +9,7 @@ public class InternshipDirectoryDAL
 {
     private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
 
-
+    // liet ke
     public List<InternshipDirectoryET> GetAllInternshipDirectories()
     {
         var query = (from directory in db.InternshipDirectories
@@ -22,7 +22,7 @@ public class InternshipDirectoryDAL
                      }).ToList();
         return query;
     }
-
+    // them
     public void InsertInternshipDirectory(string folderPath)
     {
         InternshipDirectory directory = new InternshipDirectory

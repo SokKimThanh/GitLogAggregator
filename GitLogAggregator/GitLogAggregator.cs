@@ -71,7 +71,16 @@ namespace GitLogAggregator
             // Tải dữ liệu từ thư mục `internship_week` và hiển thị lên form
             desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             txtDirectoryProjectPath = Path.Combine(desktopPath, "GitAggregator");
-            txtFolderInternshipPath = Path.Combine(txtDirectoryProjectPath, "internship_week");
+
+            // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
+            LoadInternshipDirectoriesIntoComboBox();
+
+            // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
+            txtFolderInternshipPath = GetLatestInternshipFolderPath();
+            if (string.IsNullOrEmpty(txtFolderInternshipPath))
+            {
+                txtFolderInternshipPath = Path.Combine(txtDirectoryProjectPath, "internship_week");
+            }
 
             DisableControls();
 
@@ -79,27 +88,39 @@ namespace GitLogAggregator
             InitializeProjectListView(listViewProjects);
             LoadProjectListView();
 
-            // build week list view and file list view 
-            BuildWeekFileListView(txtDirectoryProjectPath);
+            // Xây dựng danh sách các tuần và tệp
+            BuildWeekFileListView(txtFolderInternshipPath);
+        }
+
+        // Gọi hàm này để nạp danh sách thư mục thực tập vào ComboBox khi form load
+        private void LoadInternshipDirectoriesIntoComboBox()
+        {
+
+            List<InternshipDirectoryET> directories = internshipDirectoryBUS.GetAllInternshipDirectories();
+
+            cboThuMucThucTap.DataSource = directories;
+            cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Hiển thị đường dẫn thư mục trong ComboBox
+            cboThuMucThucTap.ValueMember = "Id"; // Giá trị ẩn là Id của thư mục
+        }
+
+
+        private string GetLatestInternshipFolderPath()
+        {
+            var directories = internshipDirectoryBUS.GetAllInternshipDirectories();
+            if (directories.Count > 0)
+            {
+                return directories.First().InternshipWeekFolder;
+            }
+            return string.Empty;
         }
 
         /// <summary>
-        /// Xác định đường dẫn tệp đánh dấu
-        /// </summary>
-
-
-        /// <summary>
         /// Người dùng chọn thư mục qua hộp thoại.
         /// Load danh sách tác giả commit từ Git bằng lệnh
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// <summary>
-        /// Người dùng chọn thư mục qua hộp thoại.
-        /// Load danh sách tác giả commit từ Git bằng lệnh
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <summary> 
         private void BtnAddProject_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
@@ -1311,7 +1332,23 @@ namespace GitLogAggregator
             }
         }
 
-       
+        private void cboThuMucThucTap_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Lấy đối tượng ComboBox
+            ComboBox comboBox = (ComboBox)sender;
+
+            // Lấy thư mục thực tập được chọn
+            InternshipDirectoryET selectedDirectory = (InternshipDirectoryET)comboBox.SelectedItem;
+
+            if (selectedDirectory != null)
+            {
+                // Cập nhật đường dẫn thư mục thực tập trên giao diện
+                txtFolderInternshipPath = selectedDirectory.InternshipWeekFolder;
+                AppendTextWithScroll($"Đã chọn đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
+            }
+        }
+
+
     }
 }
 

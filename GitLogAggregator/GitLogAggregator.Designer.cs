@@ -66,6 +66,8 @@
             this.btnDeleteCommits = new System.Windows.Forms.Button();
             this.txtResultMouseEvents = new System.Windows.Forms.RichTextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cboThuMucThucTap = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.setupThuMucThucTap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
@@ -74,10 +76,10 @@
             // cboAuthorCommit
             // 
             this.cboAuthorCommit.FormattingEnabled = true;
-            this.cboAuthorCommit.Location = new System.Drawing.Point(184, 73);
+            this.cboAuthorCommit.Location = new System.Drawing.Point(211, 97);
             this.cboAuthorCommit.Margin = new System.Windows.Forms.Padding(4);
             this.cboAuthorCommit.Name = "cboAuthorCommit";
-            this.cboAuthorCommit.Size = new System.Drawing.Size(199, 25);
+            this.cboAuthorCommit.Size = new System.Drawing.Size(172, 25);
             this.cboAuthorCommit.TabIndex = 0;
             // 
             // btnOpenGitFolder
@@ -95,10 +97,10 @@
             // txtInternshipStartDate
             // 
             this.txtInternshipStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipStartDate.Location = new System.Drawing.Point(184, 108);
+            this.txtInternshipStartDate.Location = new System.Drawing.Point(167, 155);
             this.txtInternshipStartDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtInternshipStartDate.Name = "txtInternshipStartDate";
-            this.txtInternshipStartDate.Size = new System.Drawing.Size(99, 25);
+            this.txtInternshipStartDate.Size = new System.Drawing.Size(134, 25);
             this.txtInternshipStartDate.TabIndex = 3;
             this.txtInternshipStartDate.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
             // 
@@ -141,17 +143,17 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 73);
+            this.label2.Location = new System.Drawing.Point(90, 100);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 17);
+            this.label2.Size = new System.Drawing.Size(108, 17);
             this.label2.TabIndex = 7;
-            this.label2.Text = "Nhập tên tác giả";
+            this.label2.Text = "Nhập tên tác giả:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 108);
+            this.label3.Location = new System.Drawing.Point(19, 133);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(137, 17);
@@ -232,10 +234,10 @@
             this.setupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
             this.setupThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.setupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("setupThuMucThucTap.Image")));
-            this.setupThuMucThucTap.Location = new System.Drawing.Point(29, 16);
+            this.setupThuMucThucTap.Location = new System.Drawing.Point(14, 44);
             this.setupThuMucThucTap.Margin = new System.Windows.Forms.Padding(4);
             this.setupThuMucThucTap.Name = "setupThuMucThucTap";
-            this.setupThuMucThucTap.Size = new System.Drawing.Size(49, 49);
+            this.setupThuMucThucTap.Size = new System.Drawing.Size(68, 73);
             this.setupThuMucThucTap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.setupThuMucThucTap.TabIndex = 16;
             this.setupThuMucThucTap.TabStop = false;
@@ -288,12 +290,12 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(234, 181);
+            this.label8.Location = new System.Drawing.Point(309, 134);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(33, 17);
+            this.label8.Size = new System.Drawing.Size(76, 17);
             this.label8.TabIndex = 9;
-            this.label8.Text = "tuần";
+            this.label8.Text = "Số Tuần TT:";
             // 
             // imageList
             // 
@@ -323,7 +325,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(15, 146);
+            this.label10.Location = new System.Drawing.Point(164, 134);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(137, 17);
@@ -333,17 +335,17 @@
             // txtInternshipEndDate
             // 
             this.txtInternshipEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipEndDate.Location = new System.Drawing.Point(184, 140);
+            this.txtInternshipEndDate.Location = new System.Drawing.Point(18, 154);
             this.txtInternshipEndDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtInternshipEndDate.Name = "txtInternshipEndDate";
-            this.txtInternshipEndDate.Size = new System.Drawing.Size(99, 25);
+            this.txtInternshipEndDate.Size = new System.Drawing.Size(138, 25);
             this.txtInternshipEndDate.TabIndex = 3;
             // 
             // txtNumericsWeek
             // 
-            this.txtNumericsWeek.Location = new System.Drawing.Point(184, 179);
+            this.txtNumericsWeek.Location = new System.Drawing.Point(312, 155);
             this.txtNumericsWeek.Name = "txtNumericsWeek";
-            this.txtNumericsWeek.Size = new System.Drawing.Size(43, 25);
+            this.txtNumericsWeek.Size = new System.Drawing.Size(71, 25);
             this.txtNumericsWeek.TabIndex = 20;
             this.txtNumericsWeek.Value = new decimal(new int[] {
             8,
@@ -455,6 +457,26 @@
             this.label4.TabIndex = 11;
             this.label4.Text = "Sự kiện rê chuột khu vực commit:";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(90, 69);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(113, 17);
+            this.label5.TabIndex = 7;
+            this.label5.Text = "Nơi lưu trữ gitlog:";
+            // 
+            // cboThuMucThucTap
+            // 
+            this.cboThuMucThucTap.FormattingEnabled = true;
+            this.cboThuMucThucTap.Location = new System.Drawing.Point(211, 66);
+            this.cboThuMucThucTap.Margin = new System.Windows.Forms.Padding(4);
+            this.cboThuMucThucTap.Name = "cboThuMucThucTap";
+            this.cboThuMucThucTap.Size = new System.Drawing.Size(172, 25);
+            this.cboThuMucThucTap.TabIndex = 0;
+            this.cboThuMucThucTap.SelectedIndexChanged += new System.EventHandler(this.cboThuMucThucTap_SelectedIndexChanged);
+            // 
             // GitLogAggregator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -479,6 +501,7 @@
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnExcelCommits);
@@ -490,6 +513,7 @@
             this.Controls.Add(this.txtInternshipEndDate);
             this.Controls.Add(this.txtInternshipStartDate);
             this.Controls.Add(this.btnOpenGitFolder);
+            this.Controls.Add(this.cboThuMucThucTap);
             this.Controls.Add(this.cboAuthorCommit);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -547,5 +571,7 @@
         private System.Windows.Forms.Button btnDeleteCommits;
         private System.Windows.Forms.RichTextBox txtResultMouseEvents;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox cboThuMucThucTap;
     }
 }
