@@ -97,6 +97,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GitLogAggregator.dbml</DependentUpon>
     </Compile>
+    <Compile Include="InternshipDirectoryDAL.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

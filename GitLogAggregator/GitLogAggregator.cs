@@ -43,7 +43,7 @@ namespace GitLogAggregator
         // git load config file
         private readonly ConfigFileBUS gitconfig_bus = new ConfigFileBUS();
 
-
+        private readonly InternshipDirectoryBUS internshipDirectoryBUS = new InternshipDirectoryBUS();
         // danh sách tổng hợp commit hợp lệ và không hợp lệ
         /// <summary>
         /// DS commit hợp lệ
@@ -151,8 +151,8 @@ namespace GitLogAggregator
                     ProjectDirectory = projectDirectory,
                     InternshipWeekFolder = txtFolderInternshipPath,
                     Author = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
-                    InternshipStartDate = txtInternshipStartDate.Value,
-                    InternshipEndDate = txtInternshipEndDate.Value,
+                    StartDate = txtInternshipStartDate.Value,
+                    EndDate = txtInternshipEndDate.Value,
                     Weeks = (int)txtNumericsWeek.Value,
                     FirstCommitDate = firstCommitDate,
                 };
@@ -194,11 +194,11 @@ namespace GitLogAggregator
             // hiển thị tác giả commit đầu tiên
             cboAuthorCommit.SelectedItem = configInfo.Author;
 
-            txtInternshipStartDate.Value = configInfo.InternshipStartDate;
-            txtInternshipEndDate.Value = configInfo.InternshipEndDate;
+            txtInternshipStartDate.Value = (DateTime)configInfo.StartDate;
+            txtInternshipEndDate.Value = (DateTime)configInfo.EndDate;
             txtNumericsWeek.Value = configInfo.Weeks;
 
-            txtFirstCommitDate.Value = configInfo.FirstCommitDate;
+            txtFirstCommitDate.Value = (DateTime)configInfo.FirstCommitDate;
         }
 
         private void ListViewProjects_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -214,7 +214,7 @@ namespace GitLogAggregator
                     // Hiển thị dữ liệu thư mục và commit
                     BuildWeekFileListView(txtDirectoryProjectPath);
                     // Hiển thị ngày thực tập tối đa có thể chọn.
-                    SetMaxDateForDateTimePicker(txtInternshipStartDate, config.FirstCommitDate);
+                    SetMaxDateForDateTimePicker(txtInternshipStartDate, (DateTime)config.FirstCommitDate);
                     UpdateControlState(isEnabled: true);
                 }
                 else
@@ -313,10 +313,10 @@ namespace GitLogAggregator
                 ListViewItem item = new ListViewItem(config.Id.ToString());         // ID
                 item.SubItems.Add(config.ProjectDirectory);                         // Đường dẫn dự án
                 item.SubItems.Add(config.Author);                                   // Tác giả thực hiện commit đầu tiên
-                item.SubItems.Add(config.InternshipStartDate.ToString("yyyy-MM-dd"));         // Ngày bắt đầu thực tập
-                item.SubItems.Add(config.InternshipEndDate.ToString("yyyy-MM-dd"));           // Ngày kết thúc thực tập
+                item.SubItems.Add(((DateTime)config.StartDate).ToString("yyyy-MM-dd"));         // Ngày bắt đầu thực tập
+                item.SubItems.Add(((DateTime)config.EndDate).ToString("yyyy-MM-dd"));           // Ngày kết thúc thực tập
                 item.SubItems.Add(config.Weeks.ToString());                         // Số tuần thực tập
-                item.SubItems.Add(config.FirstCommitDate.ToString("yyyy-MM-dd"));   // Ngày commit đầu tiên
+                item.SubItems.Add(((DateTime)config.FirstCommitDate).ToString("yyyy-MM-dd"));   // Ngày commit đầu tiên
                 item.SubItems.Add(config.InternshipWeekFolder);                     // Thư mục thực tập
                 listViewProjects.Items.Add(item);
             }
@@ -616,10 +616,10 @@ namespace GitLogAggregator
                 item.SubItems.Add(configFile.ProjectDirectory);
                 item.SubItems.Add(configFile.InternshipWeekFolder);
                 item.SubItems.Add(configFile.Author);
-                item.SubItems.Add(configFile.InternshipStartDate.ToShortDateString());
-                item.SubItems.Add(configFile.InternshipEndDate.ToShortDateString());
+                item.SubItems.Add(((DateTime)configFile.StartDate).ToShortDateString());
+                item.SubItems.Add(((DateTime)configFile.EndDate).ToShortDateString());
                 item.SubItems.Add(configFile.Weeks.ToString());
-                item.SubItems.Add(configFile.FirstCommitDate.ToShortDateString());
+                item.SubItems.Add(((DateTime)configFile.FirstCommitDate).ToShortDateString());
                 listViewProjects.Items.Add(item);
             }
         }
@@ -654,7 +654,7 @@ namespace GitLogAggregator
 
                 if (configFile != null)
                 {
-                    DateTime internshipStartDate = configFile.InternshipStartDate;
+                    DateTime internshipStartDate = (DateTime)configFile.StartDate;
                     int weeks = configFile.Weeks;
 
                     for (int week = 1; week <= weeks; week++)
@@ -1280,39 +1280,38 @@ namespace GitLogAggregator
             AppendEventsWithScroll("Xuất Excel Commit trong datagridview.\n");
         }
 
-        
+        /// <summary>
+        /// xu ly giao dien chuc nang cap nhat duong dan
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SetupThuMucThucTap_Click(object sender, EventArgs e)
         {
             // Mở hộp thoại chọn thư mục
-            DialogResult result = folderBrowserDialog.ShowDialog();
-            if (result == DialogResult.OK)
+            using (var folderBrowserDialog = new FolderBrowserDialog())
             {
-                // Lấy đường dẫn thư mục
-                string selectedPath = folderBrowserDialog.SelectedPath;
+                folderBrowserDialog.Description = "Chọn thư mục thực tập";
+                folderBrowserDialog.RootFolder = Environment.SpecialFolder.Desktop;
 
-                // Lưu đường dẫn vào cơ sở dữ liệu
-                SaveInternshipFolderPathToDatabase(selectedPath);
+                DialogResult result = folderBrowserDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    // Lấy đường dẫn thư mục
+                    string selectedPath = folderBrowserDialog.SelectedPath;
 
-                // Cập nhật đường dẫn thư mục thực tập
-                txtFolderInternshipPath = selectedPath;
-                AppendTextWithScroll($"Đã cập nhật đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
+                    // Lưu đường dẫn vào cơ sở dữ liệu
+                    // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
+                    internshipDirectoryBUS.InsertInternshipDirectory(selectedPath);
+
+
+                    // Cập nhật đường dẫn thư mục thực tập trên giao diện
+                    txtFolderInternshipPath = selectedPath;
+                    AppendTextWithScroll($"Đã cập nhật đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
+                }
             }
         }
 
-        private void SaveInternshipFolderPathToDatabase(string txtFolderInternshipPath)
-        {
-            // Cập nhật đường dẫn thư mục thực tập trong cơ sở dữ liệu
-            string query = "UPDATE ConfigFiles SET InternshipWeekFolder = @txtFolderInternshipPath WHERE Id = @configFileId";
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@txtFolderInternshipPath", txtFolderInternshipPath);
-                command.Parameters.AddWithValue("@configFileId", selectedConfigFileId); // Đảm bảo bạn có giá trị ID phù hợp
-                connection.Open();
-                command.ExecuteNonQuery();
-            }
-        }
-
+       
     }
 }
 

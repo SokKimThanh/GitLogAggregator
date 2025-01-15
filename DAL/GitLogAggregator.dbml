@@ -4,12 +4,21 @@
     <Type Name="ConfigFile">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="ProjectDirectory" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="InternshipWeekFolder" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="InternshipDirectoryId" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="Author" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
       <Column Name="StartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="Weeks" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="FirstCommitDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="InternshipDirectory_ConfigFile" Member="InternshipDirectory" ThisKey="InternshipDirectoryId" OtherKey="Id" Type="InternshipDirectory" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.InternshipDirectories" Member="InternshipDirectories">
+    <Type Name="InternshipDirectory">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="InternshipWeekFolder" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="InternshipDirectory_ConfigFile" Member="ConfigFiles" ThisKey="Id" OtherKey="InternshipDirectoryId" Type="ConfigFile" />
     </Type>
   </Table>
 </Database>

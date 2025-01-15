@@ -33,6 +33,9 @@ namespace DAL
     partial void InsertConfigFile(ConfigFile instance);
     partial void UpdateConfigFile(ConfigFile instance);
     partial void DeleteConfigFile(ConfigFile instance);
+    partial void InsertInternshipDirectory(InternshipDirectory instance);
+    partial void UpdateInternshipDirectory(InternshipDirectory instance);
+    partial void DeleteInternshipDirectory(InternshipDirectory instance);
     #endregion
 		
 		public GitLogAggregatorDataContext() : 
@@ -72,6 +75,14 @@ namespace DAL
 				return this.GetTable<ConfigFile>();
 			}
 		}
+		
+		public System.Data.Linq.Table<InternshipDirectory> InternshipDirectories
+		{
+			get
+			{
+				return this.GetTable<InternshipDirectory>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConfigFiles")]
@@ -84,7 +95,7 @@ namespace DAL
 		
 		private string _ProjectDirectory;
 		
-		private string _InternshipWeekFolder;
+		private System.Nullable<int> _InternshipDirectoryId;
 		
 		private string _Author;
 		
@@ -96,6 +107,8 @@ namespace DAL
 		
 		private System.Nullable<System.DateTime> _FirstCommitDate;
 		
+		private EntityRef<InternshipDirectory> _InternshipDirectory;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -104,8 +117,8 @@ namespace DAL
     partial void OnIdChanged();
     partial void OnProjectDirectoryChanging(string value);
     partial void OnProjectDirectoryChanged();
-    partial void OnInternshipWeekFolderChanging(string value);
-    partial void OnInternshipWeekFolderChanged();
+    partial void OnInternshipDirectoryIdChanging(System.Nullable<int> value);
+    partial void OnInternshipDirectoryIdChanged();
     partial void OnAuthorChanging(string value);
     partial void OnAuthorChanged();
     partial void OnStartDateChanging(System.Nullable<System.DateTime> value);
@@ -120,6 +133,7 @@ namespace DAL
 		
 		public ConfigFile()
 		{
+			this._InternshipDirectory = default(EntityRef<InternshipDirectory>);
 			OnCreated();
 		}
 		
@@ -163,22 +177,26 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipWeekFolder", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string InternshipWeekFolder
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipDirectoryId", DbType="Int")]
+		public System.Nullable<int> InternshipDirectoryId
 		{
 			get
 			{
-				return this._InternshipWeekFolder;
+				return this._InternshipDirectoryId;
 			}
 			set
 			{
-				if ((this._InternshipWeekFolder != value))
+				if ((this._InternshipDirectoryId != value))
 				{
-					this.OnInternshipWeekFolderChanging(value);
+					if (this._InternshipDirectory.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnInternshipDirectoryIdChanging(value);
 					this.SendPropertyChanging();
-					this._InternshipWeekFolder = value;
-					this.SendPropertyChanged("InternshipWeekFolder");
-					this.OnInternshipWeekFolderChanged();
+					this._InternshipDirectoryId = value;
+					this.SendPropertyChanged("InternshipDirectoryId");
+					this.OnInternshipDirectoryIdChanged();
 				}
 			}
 		}
@@ -217,7 +235,7 @@ namespace DAL
 					this.OnStartDateChanging(value);
 					this.SendPropertyChanging();
 					this._StartDate = value;
-					this.SendPropertyChanged("InternshipStartDate");
+					this.SendPropertyChanged("StartDate");
 					this.OnStartDateChanged();
 				}
 			}
@@ -237,7 +255,7 @@ namespace DAL
 					this.OnEndDateChanging(value);
 					this.SendPropertyChanging();
 					this._EndDate = value;
-					this.SendPropertyChanged("InternshipEndDate");
+					this.SendPropertyChanged("EndDate");
 					this.OnEndDateChanged();
 				}
 			}
@@ -283,6 +301,40 @@ namespace DAL
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="Id", IsForeignKey=true)]
+		public InternshipDirectory InternshipDirectory
+		{
+			get
+			{
+				return this._InternshipDirectory.Entity;
+			}
+			set
+			{
+				InternshipDirectory previousValue = this._InternshipDirectory.Entity;
+				if (((previousValue != value) 
+							|| (this._InternshipDirectory.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._InternshipDirectory.Entity = null;
+						previousValue.ConfigFiles.Remove(this);
+					}
+					this._InternshipDirectory.Entity = value;
+					if ((value != null))
+					{
+						value.ConfigFiles.Add(this);
+						this._InternshipDirectoryId = value.Id;
+					}
+					else
+					{
+						this._InternshipDirectoryId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("InternshipDirectory");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -301,6 +353,144 @@ namespace DAL
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.InternshipDirectories")]
+	public partial class InternshipDirectory : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _InternshipWeekFolder;
+		
+		private System.Nullable<System.DateTime> _DateModified;
+		
+		private EntitySet<ConfigFile> _ConfigFiles;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnInternshipWeekFolderChanging(string value);
+    partial void OnInternshipWeekFolderChanged();
+    partial void OnDateModifiedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateModifiedChanged();
+    #endregion
+		
+		public InternshipDirectory()
+		{
+			this._ConfigFiles = new EntitySet<ConfigFile>(new Action<ConfigFile>(this.attach_ConfigFiles), new Action<ConfigFile>(this.detach_ConfigFiles));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipWeekFolder", DbType="NVarChar(500)")]
+		public string InternshipWeekFolder
+		{
+			get
+			{
+				return this._InternshipWeekFolder;
+			}
+			set
+			{
+				if ((this._InternshipWeekFolder != value))
+				{
+					this.OnInternshipWeekFolderChanging(value);
+					this.SendPropertyChanging();
+					this._InternshipWeekFolder = value;
+					this.SendPropertyChanged("InternshipWeekFolder");
+					this.OnInternshipWeekFolderChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateModified", DbType="DateTime")]
+		public System.Nullable<System.DateTime> DateModified
+		{
+			get
+			{
+				return this._DateModified;
+			}
+			set
+			{
+				if ((this._DateModified != value))
+				{
+					this.OnDateModifiedChanging(value);
+					this.SendPropertyChanging();
+					this._DateModified = value;
+					this.SendPropertyChanged("DateModified");
+					this.OnDateModifiedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_ConfigFiles", ThisKey="Id", OtherKey="InternshipDirectoryId")]
+		public EntitySet<ConfigFile> ConfigFiles
+		{
+			get
+			{
+				return this._ConfigFiles;
+			}
+			set
+			{
+				this._ConfigFiles.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_ConfigFiles(ConfigFile entity)
+		{
+			this.SendPropertyChanging();
+			entity.InternshipDirectory = this;
+		}
+		
+		private void detach_ConfigFiles(ConfigFile entity)
+		{
+			this.SendPropertyChanging();
+			entity.InternshipDirectory = null;
 		}
 	}
 }

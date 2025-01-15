@@ -230,6 +230,7 @@
             // setupThuMucThucTap
             // 
             this.setupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
+            this.setupThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.setupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("setupThuMucThucTap.Image")));
             this.setupThuMucThucTap.Location = new System.Drawing.Point(29, 16);
             this.setupThuMucThucTap.Margin = new System.Windows.Forms.Padding(4);

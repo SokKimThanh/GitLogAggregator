@@ -30,9 +30,9 @@ namespace BUS
         }
 
         // Sửa
-        public void UpdateConfigFile(ConfigFileET configFile, int id)
+        public void UpdateConfigFile(ConfigFileET configFile)
         {
-            data.UpdateConfigFile(configFile, id);
+            data.UpdateConfigFile(configFile);
         }
 
         // Liệt kê

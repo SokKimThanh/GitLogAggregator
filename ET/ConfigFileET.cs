@@ -13,35 +13,13 @@ namespace ET
     public class ConfigFileET
     {
         public int Id { get; set; }
-        /// <summary>
-        /// Đường dẫn đến thư mục dự án
-        /// </summary>
         public string ProjectDirectory { get; set; }
-        /// <summary>
-        /// Đường dẫn đến thư mục thực tập
-        /// </summary>
+        public int? InternshipDirectoryId { get; set; } // Thêm thuộc tính này
         public string InternshipWeekFolder { get; set; }
-        /// <summary>
-        /// Tác giả thực hiện commit
-        /// </summary>
         public string Author { get; set; }
-        /// <summary>
-        /// Ngày bắt đầu thực tập.
-        /// </summary>
-        public DateTime InternshipStartDate { get; set; }
-        /// <summary>
-        /// Ngày kết thúc thực tập.
-        /// </summary>
-        public DateTime InternshipEndDate { get; set; }
-        /// <summary>
-        /// Lưu thêm số tuần thực tập
-        /// </summary>
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public int Weeks { get; set; }
-       
-
-        /// <summary>
-        /// Ngày commit đầu tiên
-        /// </summary>
-        public DateTime FirstCommitDate { get; set; }
+        public DateTime? FirstCommitDate { get; set; }
     }
 }

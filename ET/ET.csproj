@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="ConfigFileET.cs" />
     <Compile Include="DayData.cs" />
+    <Compile Include="InternshipDirectoryET.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionData.cs" />
     <Compile Include="WeekData.cs" />
