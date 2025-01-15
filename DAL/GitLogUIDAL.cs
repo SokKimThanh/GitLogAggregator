@@ -179,14 +179,9 @@ namespace GitLogAggregator.DataAccess
         /// <param name="projectDirectory"></param>
         /// <param name="author"></param>
         /// <param name="internshipStartDate"></param>
-        /// <param name="internshipWeekFolder"></param>
-        /// <returns></returns>
-        public void AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, int totalWeeks)
+        /// <param name="totalWeeks"></param>
+        public void AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, int totalWeeks, string internshipWeekFolder)
         {
-            // Xác định thư mục cố định trên Desktop
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string internshipWeekFolder = Path.Combine(desktopPath, "GitAggregator", "internship_week");
-
             try
             {
                 // Tạo thư mục tổng hợp nếu chưa tồn tại
@@ -202,7 +197,10 @@ namespace GitLogAggregator.DataAccess
                     DateTime weekEndDate = weekStartDate.AddDays(6);
                     int currentWeek = weekOffset + 1;
                     string weekFolder = Path.Combine(internshipWeekFolder, "Week_" + currentWeek);
-                    Directory.CreateDirectory(weekFolder);
+                    if (!Directory.Exists(weekFolder))
+                    {
+                        Directory.CreateDirectory(weekFolder);
+                    }
 
                     string combinedFile = Path.Combine(weekFolder, "combined_commits.txt");
                     bool hasCommits = false;
@@ -255,13 +253,10 @@ namespace GitLogAggregator.DataAccess
             }
         }
 
-
-
         private void AppendToFile(string filePath, string content)
         {
             File.AppendAllText(filePath, content + Environment.NewLine);
         }
-
 
         /// <summary>
         /// Chuyển đổi từ DayOfWeek sang tên tiếng Việt
@@ -285,7 +280,7 @@ namespace GitLogAggregator.DataAccess
                 default: // Nếu cần thêm Chủ nhật
                     return "Chủ nhật";
             }
-        } 
+        }
         /// <summary>
         /// Hiển thị danh sách tác giả trên combobox
         /// </summary>

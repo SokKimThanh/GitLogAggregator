@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GitLogAggregator));
             this.cboAuthorCommit = new System.Windows.Forms.ComboBox();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.btnOpenGitFolder = new System.Windows.Forms.Button();
             this.txtInternshipStartDate = new System.Windows.Forms.DateTimePicker();
             this.txtResult = new System.Windows.Forms.RichTextBox();
@@ -45,7 +45,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.btnClearDataListView = new System.Windows.Forms.Button();
             this.helpButton = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.setupThuMucThucTap = new System.Windows.Forms.PictureBox();
             this.fileListView = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -66,7 +66,7 @@
             this.btnDeleteCommits = new System.Windows.Forms.Button();
             this.txtResultMouseEvents = new System.Windows.Forms.RichTextBox();
             this.label4 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.setupThuMucThucTap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.SuspendLayout();
@@ -227,17 +227,18 @@
             this.helpButton.UseVisualStyleBackColor = false;
             this.helpButton.Click += new System.EventHandler(this.HelpButton_Click);
             // 
-            // pictureBox1
+            // setupThuMucThucTap
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(29, 16);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(49, 49);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 16;
-            this.pictureBox1.TabStop = false;
+            this.setupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
+            this.setupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("setupThuMucThucTap.Image")));
+            this.setupThuMucThucTap.Location = new System.Drawing.Point(29, 16);
+            this.setupThuMucThucTap.Margin = new System.Windows.Forms.Padding(4);
+            this.setupThuMucThucTap.Name = "setupThuMucThucTap";
+            this.setupThuMucThucTap.Size = new System.Drawing.Size(49, 49);
+            this.setupThuMucThucTap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.setupThuMucThucTap.TabIndex = 16;
+            this.setupThuMucThucTap.TabStop = false;
+            this.setupThuMucThucTap.Click += new System.EventHandler(this.SetupThuMucThucTap_Click);
             // 
             // fileListView
             // 
@@ -465,7 +466,7 @@
             this.Controls.Add(this.checkedListBoxCommits);
             this.Controls.Add(this.txtNumericsWeek);
             this.Controls.Add(this.dataGridViewCommits);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.setupThuMucThucTap);
             this.Controls.Add(this.helpButton);
             this.Controls.Add(this.btnClearDataListView);
             this.Controls.Add(this.fileListView);
@@ -499,7 +500,7 @@
             this.Text = "GitLogAggregator";
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.GitLogAggregator_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.setupThuMucThucTap)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).EndInit();
             this.ResumeLayout(false);
@@ -510,7 +511,7 @@
         #endregion
 
         private System.Windows.Forms.ComboBox cboAuthorCommit;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.Button btnOpenGitFolder;
         private System.Windows.Forms.DateTimePicker txtInternshipStartDate;
         private System.Windows.Forms.RichTextBox txtResult;
@@ -523,7 +524,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnClearDataListView;
         private System.Windows.Forms.Button helpButton;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox setupThuMucThucTap;
         private System.Windows.Forms.ListView fileListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.DataGridView dataGridViewCommits;
