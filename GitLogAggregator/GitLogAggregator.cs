@@ -84,8 +84,13 @@ namespace GitLogAggregator
 
             DisableControls();
 
+            txtInternshipStartDate.Enabled = true;// open
+
             // Cài đặt và hiển thị danh sách dự án listview project
             InitializeProjectListView(listViewProjects);
+
+            SetupFileListView();
+
             LoadProjectListView();
 
             // Xây dựng danh sách các tuần và tệp
@@ -160,6 +165,8 @@ namespace GitLogAggregator
 
                 SetMaxDateForDateTimePicker(txtInternshipStartDate, firstCommitDate);
 
+                txtFolderInternshipPath = GetLatestInternshipFolderPath();
+
                 // Xác định và tạo thư mục internship_week trên Desktop
                 if (!Directory.Exists(txtFolderInternshipPath))
                 {
@@ -176,6 +183,7 @@ namespace GitLogAggregator
                     EndDate = txtInternshipEndDate.Value,
                     Weeks = (int)txtNumericsWeek.Value,
                     FirstCommitDate = firstCommitDate,
+                    InternshipDirectoryId = (int)cboThuMucThucTap.SelectedValue
                 };
 
                 // Cập nhật giao diện khi chọn thư mục dự án
@@ -365,6 +373,7 @@ namespace GitLogAggregator
         private void EnableControls()
         {
             cboAuthorCommit.Enabled = true;
+            cboThuMucThucTap.Enabled = true;
             txtNumericsWeek.Enabled = true;
             txtInternshipStartDate.Enabled = true;
             txtInternshipEndDate.Enabled = true;
@@ -381,6 +390,7 @@ namespace GitLogAggregator
         private void DisableControls()
         {
             cboAuthorCommit.Enabled = false;
+            cboThuMucThucTap.Enabled = false;
             txtNumericsWeek.Enabled = false;
             txtInternshipStartDate.Enabled = false;
             txtInternshipEndDate.Enabled = false;
@@ -486,12 +496,7 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnClearDataListView_Click(object sender, EventArgs e)
         {
-            // Kiểm tra sự tồn tại của thư mục GitAggregator
-            if (!Directory.Exists(txtDirectoryProjectPath))
-            {
-                AppendTextWithScroll("Thư mục GitAggregator không tồn tại.\n");
-                return; // Dừng nếu thư mục GitAggregator không tồn tại
-            }
+            txtFolderInternshipPath = GetLatestInternshipFolderPath();
 
             // Kiểm tra sự tồn tại của thư mục internship_week
             if (!Directory.Exists(txtFolderInternshipPath))
@@ -635,12 +640,12 @@ namespace GitLogAggregator
             {
                 ListViewItem item = new ListViewItem(configFile.Id.ToString());
                 item.SubItems.Add(configFile.ProjectDirectory);
-                item.SubItems.Add(configFile.InternshipWeekFolder);
                 item.SubItems.Add(configFile.Author);
                 item.SubItems.Add(((DateTime)configFile.StartDate).ToShortDateString());
                 item.SubItems.Add(((DateTime)configFile.EndDate).ToShortDateString());
                 item.SubItems.Add(configFile.Weeks.ToString());
                 item.SubItems.Add(((DateTime)configFile.FirstCommitDate).ToShortDateString());
+                item.SubItems.Add(configFile.InternshipWeekFolder);
                 listViewProjects.Items.Add(item);
             }
         }
@@ -653,7 +658,7 @@ namespace GitLogAggregator
         {
             weekListView.Items.Clear();
             fileListView.Items.Clear();
-
+            txtFolderInternshipPath = GetLatestInternshipFolderPath();
             // Tạo thư mục internship_week nếu chưa tồn tại
             if (!Directory.Exists(txtFolderInternshipPath))
             {
@@ -753,6 +758,24 @@ namespace GitLogAggregator
                 fileListView.Items.Add(fileItem);
             }
         }
+        private void SetupFileListView()
+        {
+            fileListView.View = View.Details;// Hiển thị chế độ chi tiết
+            fileListView.FullRowSelect = true; // Đảm bảo chọn toàn bộ hàng
+            fileListView.MultiSelect = false; // Đảm bảo chỉ chọn một hàng tại một thời điểm
+
+            // Thiết lập các cột cho listViewProjects (nếu chưa thêm trước đó)
+            if (fileListView.Columns.Count == 0)
+            {
+                // Thêm các cột cho ListView
+                fileListView.Columns.Add("STT", 40); // Số thứ tự
+                fileListView.Columns.Add("Tên File", 120); // Tên file
+                fileListView.Columns.Add("Ngày Tạo", 100); // Ngày tạo
+            }
+
+            // Tự động điều chỉnh kích thước cột
+            fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+        }
 
 
 
@@ -763,7 +786,7 @@ namespace GitLogAggregator
         {
 
             // Xác định đường dẫn thư mục internship_week
-
+            txtFolderInternshipPath = GetLatestInternshipFolderPath();
             // Kiểm tra xem thư mục internship_week có tồn tại không
             if (!Directory.Exists(txtFolderInternshipPath))
             {
@@ -1318,15 +1341,14 @@ namespace GitLogAggregator
                 if (result == DialogResult.OK)
                 {
                     // Lấy đường dẫn thư mục
-                    string selectedPath = folderBrowserDialog.SelectedPath;
+                    txtFolderInternshipPath = folderBrowserDialog.SelectedPath;
 
                     // Lưu đường dẫn vào cơ sở dữ liệu
                     // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
-                    internshipDirectoryBUS.InsertInternshipDirectory(selectedPath);
+                    internshipDirectoryBUS.InsertInternshipDirectory(txtFolderInternshipPath);
 
 
                     // Cập nhật đường dẫn thư mục thực tập trên giao diện
-                    txtFolderInternshipPath = selectedPath;
                     AppendTextWithScroll($"Đã cập nhật đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
                 }
             }

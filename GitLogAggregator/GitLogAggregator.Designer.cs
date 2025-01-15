@@ -97,7 +97,7 @@
             // txtInternshipStartDate
             // 
             this.txtInternshipStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipStartDate.Location = new System.Drawing.Point(167, 155);
+            this.txtInternshipStartDate.Location = new System.Drawing.Point(14, 155);
             this.txtInternshipStartDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtInternshipStartDate.Name = "txtInternshipStartDate";
             this.txtInternshipStartDate.Size = new System.Drawing.Size(134, 25);
@@ -153,7 +153,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(19, 133);
+            this.label3.Location = new System.Drawing.Point(11, 133);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(137, 17);
@@ -169,7 +169,7 @@
             this.weekListView.Location = new System.Drawing.Point(13, 214);
             this.weekListView.Margin = new System.Windows.Forms.Padding(4);
             this.weekListView.Name = "weekListView";
-            this.weekListView.Size = new System.Drawing.Size(94, 191);
+            this.weekListView.Size = new System.Drawing.Size(108, 191);
             this.weekListView.TabIndex = 12;
             this.weekListView.UseCompatibleStateImageBehavior = false;
             this.weekListView.View = System.Windows.Forms.View.Details;
@@ -193,12 +193,12 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(17, 183);
+            this.label7.Location = new System.Drawing.Point(11, 193);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(118, 17);
+            this.label7.Size = new System.Drawing.Size(147, 17);
             this.label7.TabIndex = 9;
-            this.label7.Text = "Danh mục thực tập";
+            this.label7.Text = "Danh mục tuần thực tập";
             // 
             // btnClearDataListView
             // 
@@ -251,10 +251,10 @@
             this.columnHeader4,
             this.columnHeader5});
             this.fileListView.HideSelection = false;
-            this.fileListView.Location = new System.Drawing.Point(115, 214);
+            this.fileListView.Location = new System.Drawing.Point(129, 214);
             this.fileListView.Margin = new System.Windows.Forms.Padding(4);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(268, 191);
+            this.fileListView.Size = new System.Drawing.Size(254, 191);
             this.fileListView.TabIndex = 12;
             this.fileListView.UseCompatibleStateImageBehavior = false;
             this.fileListView.View = System.Windows.Forms.View.Details;
@@ -290,7 +290,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(309, 134);
+            this.label8.Location = new System.Drawing.Point(301, 134);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(76, 17);
@@ -325,7 +325,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(164, 134);
+            this.label10.Location = new System.Drawing.Point(156, 134);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(137, 17);
@@ -335,7 +335,7 @@
             // txtInternshipEndDate
             // 
             this.txtInternshipEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipEndDate.Location = new System.Drawing.Point(18, 154);
+            this.txtInternshipEndDate.Location = new System.Drawing.Point(156, 155);
             this.txtInternshipEndDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtInternshipEndDate.Name = "txtInternshipEndDate";
             this.txtInternshipEndDate.Size = new System.Drawing.Size(138, 25);
@@ -343,9 +343,9 @@
             // 
             // txtNumericsWeek
             // 
-            this.txtNumericsWeek.Location = new System.Drawing.Point(312, 155);
+            this.txtNumericsWeek.Location = new System.Drawing.Point(301, 155);
             this.txtNumericsWeek.Name = "txtNumericsWeek";
-            this.txtNumericsWeek.Size = new System.Drawing.Size(71, 25);
+            this.txtNumericsWeek.Size = new System.Drawing.Size(82, 25);
             this.txtNumericsWeek.TabIndex = 20;
             this.txtNumericsWeek.Value = new decimal(new int[] {
             8,
@@ -465,7 +465,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(113, 17);
             this.label5.TabIndex = 7;
-            this.label5.Text = "Nơi lưu trữ gitlog:";
+            this.label5.Text = "Thư mục thực tập:";
             // 
             // cboThuMucThucTap
             // 
