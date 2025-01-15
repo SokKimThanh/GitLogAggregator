@@ -49,9 +49,9 @@ namespace GitLogAggregator.BusinessLogic
         }
 
 
-        public List<string> AggregateCommits(List<string> projectDirectory, string author, DateTime internshipStartDate, string internshipWeekFolder)
+        public void AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, int totalWeeks)
         {
-            return data.AggregateCommits(projectDirectory, author, internshipStartDate, internshipWeekFolder);
+            data.AggregateCommits(projectDirectory, author, internshipStartDate, totalWeeks);
         }
 
         /// <summary>

@@ -173,48 +173,57 @@ namespace GitLogAggregator.DataAccess
                 throw new Exception($"Ngày không hợp lệ: {dateStr}");
             }
         }
-
-
-
-        public List<string> AggregateCommits(List<string> projectDirectories, string author, DateTime internshipStartDate, string internshipWeekFolder)
+        /// <summary>
+        /// Tổng hợp commit và xuất ra desktop từng thư mục dự án
+        /// </summary>
+        /// <param name="projectDirectory"></param>
+        /// <param name="author"></param>
+        /// <param name="internshipStartDate"></param>
+        /// <param name="internshipWeekFolder"></param>
+        /// <returns></returns>
+        public void AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, int totalWeeks)
         {
-            List<string> folders = new List<string>();
+            // Xác định thư mục cố định trên Desktop
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string internshipWeekFolder = Path.Combine(desktopPath, "GitAggregator", "internship_week");
 
-            for (int weekOffset = 0; weekOffset < 8; weekOffset++)
+            // Tạo thư mục tổng hợp nếu chưa tồn tại
+            if (!Directory.Exists(internshipWeekFolder))
+            {
+                Directory.CreateDirectory(internshipWeekFolder);
+            }
+
+            for (int weekOffset = 0; weekOffset < totalWeeks; weekOffset++)
             {
                 // Xác định thư mục cho tuần hiện tại
-                int currentWeek = CalculateWeekNumber(internshipStartDate, internshipStartDate.AddDays(weekOffset * 7));
+                DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
+                DateTime weekEndDate = weekStartDate.AddDays(6);
+                int currentWeek = weekOffset + 1;
                 string weekFolder = Path.Combine(internshipWeekFolder, "Week_" + currentWeek);
                 Directory.CreateDirectory(weekFolder);
 
                 string combinedFile = Path.Combine(weekFolder, "combined_commits.txt");
-                if (File.Exists(combinedFile))
-                {
-                    File.Delete(combinedFile); // Xóa tệp cũ nếu tồn tại
-                }
+                bool hasCommits = false;
 
-                DateTime currentWeekStart = internshipStartDate.AddDays(weekOffset * 7);
-
-                for (int dayOffset = 0; dayOffset < 6; dayOffset++) // Duyệt qua 6 ngày trong tuần
+                // Duyệt qua từng ngày trong tuần
+                for (int dayOffset = 0; dayOffset < 7; dayOffset++)
                 {
-                    DateTime currentDate = currentWeekStart.AddDays(dayOffset);
-                    string dayOfWeekName = GetDayOfWeekName(currentDate.DayOfWeek);
+                    DateTime currentDate = weekStartDate.AddDays(dayOffset);
+                    string dayOfWeekName = GetDayOfWeekName(currentDate.DayOfWeek); // Hàm chuyển đổi từ DayOfWeek sang tên tiếng Việt
                     string dailyFile = Path.Combine(weekFolder, $"{dayOfWeekName}_commits.txt");
 
-                    foreach (string projectDirectory in projectDirectories) // Duyệt qua từng thư mục dự án
+                    string since = $"{currentDate:yyyy-MM-dd} 00:00";
+                    string until = $"{currentDate:yyyy-MM-dd} 23:59";
+                    string gitLogCommand = $"log --author=\"{author}\" --since=\"{since}\" --until=\"{until}\"";
+
+                    string logOutput = RunGitCommand(gitLogCommand, projectDirectory); // Hàm chạy lệnh git
+
+                    if (!string.IsNullOrEmpty(logOutput))
                     {
-                        string since = $"{currentDate:yyyy-MM-dd} 00:00";
-                        string until = $"{currentDate:yyyy-MM-dd} 23:59";
-                        string gitLogCommand = $"log --author=\"{author}\" --since=\"{since}\" --until=\"{until}\"";
-
-                        string logOutput = RunGitCommand(gitLogCommand, projectDirectory);
-
-                        if (!string.IsNullOrEmpty(logOutput))
-                        {
-                            // Ghi log vào tệp daily và tệp tổng hợp
-                            AppendToFile(dailyFile, logOutput);
-                            AppendToFile(combinedFile, logOutput);
-                        }
+                        // Ghi log vào tệp daily và tệp tổng hợp
+                        AppendToFile(dailyFile, logOutput); // Hàm ghi nội dung vào tệp
+                        AppendToFile(combinedFile, logOutput);
+                        hasCommits = true;
                     }
 
                     if (!File.Exists(dailyFile) && File.Exists(combinedFile))
@@ -223,18 +232,24 @@ namespace GitLogAggregator.DataAccess
                     }
                 }
 
-                // Tổng hợp các commit của tuần vào tệp combined_commits.txt tại đây
-                if (File.Exists(combinedFile))
+                if (!hasCommits)
                 {
-                    string allCommits = File.ReadAllText(combinedFile);
-                    File.AppendAllText(combinedFile, allCommits);
+                    // Xóa thư mục tuần nếu không có commit
+                    Directory.Delete(weekFolder);
                 }
-
-                folders.Add(weekFolder);
-                LogMessages.Add($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}");
+                else
+                {
+                    LogMessages.Add($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}");
+                }
             }
-            return folders;
         }
+
+
+        private void AppendToFile(string filePath, string content)
+        {
+            File.AppendAllText(filePath, content + Environment.NewLine);
+        }
+
 
         /// <summary>
         /// Chuyển đổi từ DayOfWeek sang tên tiếng Việt
@@ -260,19 +275,6 @@ namespace GitLogAggregator.DataAccess
             }
         }
 
-
-
-        /// <summary>
-        /// Thêm nội dung vào tệp (append) với dấu xuống dòng
-        /// </summary>
-        private void AppendToFile(string filePath, string content)
-        {
-            using (StreamWriter writer = new StreamWriter(filePath, true))
-            {
-                writer.WriteLine(content);
-                writer.WriteLine(); // Thêm dòng trống giữa các đoạn log
-            }
-        }
 
         public List<string> FindGitRepositories(ListView listView)
         {

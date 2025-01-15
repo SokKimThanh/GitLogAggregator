@@ -77,7 +77,7 @@
             this.cboAuthorCommit.Location = new System.Drawing.Point(184, 73);
             this.cboAuthorCommit.Margin = new System.Windows.Forms.Padding(4);
             this.cboAuthorCommit.Name = "cboAuthorCommit";
-            this.cboAuthorCommit.Size = new System.Drawing.Size(200, 25);
+            this.cboAuthorCommit.Size = new System.Drawing.Size(199, 25);
             this.cboAuthorCommit.TabIndex = 0;
             // 
             // btnOpenGitFolder
@@ -98,7 +98,7 @@
             this.txtInternshipStartDate.Location = new System.Drawing.Point(184, 108);
             this.txtInternshipStartDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtInternshipStartDate.Name = "txtInternshipStartDate";
-            this.txtInternshipStartDate.Size = new System.Drawing.Size(199, 25);
+            this.txtInternshipStartDate.Size = new System.Drawing.Size(99, 25);
             this.txtInternshipStartDate.TabIndex = 3;
             this.txtInternshipStartDate.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
             // 
@@ -334,7 +334,7 @@
             this.txtInternshipEndDate.Location = new System.Drawing.Point(184, 140);
             this.txtInternshipEndDate.Margin = new System.Windows.Forms.Padding(4);
             this.txtInternshipEndDate.Name = "txtInternshipEndDate";
-            this.txtInternshipEndDate.Size = new System.Drawing.Size(199, 25);
+            this.txtInternshipEndDate.Size = new System.Drawing.Size(99, 25);
             this.txtInternshipEndDate.TabIndex = 3;
             // 
             // txtNumericsWeek

@@ -37,7 +37,7 @@ namespace ET
         /// Lưu thêm số tuần thực tập
         /// </summary>
         public int Weeks { get; set; }
-        public List<string> Folders { get; set; }
+       
 
         /// <summary>
         /// Ngày commit đầu tiên
