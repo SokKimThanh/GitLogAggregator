@@ -127,7 +127,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\arrow.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Git-commit-aggregation-tool.png" />
   </ItemGroup>

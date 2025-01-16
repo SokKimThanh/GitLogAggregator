@@ -45,12 +45,11 @@
             this.label7 = new System.Windows.Forms.Label();
             this.btnClearDataListView = new System.Windows.Forms.Button();
             this.helpButton = new System.Windows.Forms.Button();
-            this.setupThuMucThucTap = new System.Windows.Forms.PictureBox();
             this.fileListView = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.dataGridViewCommits = new System.Windows.Forms.DataGridView();
+            this.dgvReportCommits = new System.Windows.Forms.DataGridView();
             this.label8 = new System.Windows.Forms.Label();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.txtFirstCommitDate = new System.Windows.Forms.DateTimePicker();
@@ -58,9 +57,9 @@
             this.label10 = new System.Windows.Forms.Label();
             this.txtInternshipEndDate = new System.Windows.Forms.DateTimePicker();
             this.txtNumericsWeek = new System.Windows.Forms.NumericUpDown();
-            this.checkedListBoxCommits = new System.Windows.Forms.CheckedListBox();
-            this.btnExcelCommits = new System.Windows.Forms.Button();
-            this.btnReviewCommits = new System.Windows.Forms.Button();
+            this.checkedListBoxCommitsError = new System.Windows.Forms.CheckedListBox();
+            this.btnExportReportExcelCommits = new System.Windows.Forms.Button();
+            this.btnReviewCommitsError = new System.Windows.Forms.Button();
             this.listViewProjects = new System.Windows.Forms.ListView();
             this.txtResultMouseEvents = new System.Windows.Forms.RichTextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -72,27 +71,29 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.searchPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.txtSearchReport = new System.Windows.Forms.TextBox();
+            this.btnSearchReport = new System.Windows.Forms.Button();
+            this.btnNextReport = new System.Windows.Forms.Button();
+            this.btnExpandReport = new System.Windows.Forms.Button();
+            this.btnDeleteCommitsError = new System.Windows.Forms.Button();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.mainGitPanel = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.hệThốngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.thoátToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.danhMụcToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commitsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.weeksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.foldersProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
-            this.searchPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnDeleteCommits = new System.Windows.Forms.Button();
-            this.btnExpanDataGridview = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.setupThuMucThucTap)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).BeginInit();
+            this.btnPreviousReport = new System.Windows.Forms.Button();
+            this.txtSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel9.SuspendLayout();
@@ -100,13 +101,14 @@
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
+            this.tableLayoutPanel7.SuspendLayout();
+            this.searchPanel.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.mainGitPanel.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
-            this.searchPanel.SuspendLayout();
-            this.tableLayoutPanel7.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtSetupThuMucThucTap)).BeginInit();
             this.SuspendLayout();
             // 
             // cboAuthorCommit
@@ -114,7 +116,7 @@
             this.cboAuthorCommit.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cboAuthorCommit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboAuthorCommit.FormattingEnabled = true;
-            this.cboAuthorCommit.Location = new System.Drawing.Point(129, 81);
+            this.cboAuthorCommit.Location = new System.Drawing.Point(128, 81);
             this.cboAuthorCommit.Name = "cboAuthorCommit";
             this.cboAuthorCommit.Size = new System.Drawing.Size(153, 25);
             this.cboAuthorCommit.TabIndex = 0;
@@ -149,7 +151,7 @@
             this.txtResult.Location = new System.Drawing.Point(3, 26);
             this.txtResult.Name = "txtResult";
             this.txtResult.ReadOnly = true;
-            this.txtResult.Size = new System.Drawing.Size(370, 82);
+            this.txtResult.Size = new System.Drawing.Size(369, 82);
             this.txtResult.TabIndex = 4;
             this.txtResult.Text = "";
             // 
@@ -159,7 +161,7 @@
             this.btnAggregator.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnAggregator.Location = new System.Drawing.Point(257, 3);
             this.btnAggregator.Name = "btnAggregator";
-            this.btnAggregator.Size = new System.Drawing.Size(122, 29);
+            this.btnAggregator.Size = new System.Drawing.Size(121, 29);
             this.btnAggregator.TabIndex = 5;
             this.btnAggregator.Text = "Tổng hợp commit";
             this.btnAggregator.UseVisualStyleBackColor = true;
@@ -175,7 +177,7 @@
             this.label1.Location = new System.Drawing.Point(4, 0);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(277, 39);
+            this.label1.Size = new System.Drawing.Size(276, 39);
             this.label1.TabIndex = 6;
             this.label1.Text = "GitLogAggregator";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -229,7 +231,7 @@
             this.label6.Location = new System.Drawing.Point(3, 3);
             this.label6.Margin = new System.Windows.Forms.Padding(3);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(370, 17);
+            this.label6.Size = new System.Drawing.Size(369, 17);
             this.label6.TabIndex = 11;
             this.label6.Text = "Hiển thị thông báo:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -242,7 +244,7 @@
             this.label7.Location = new System.Drawing.Point(3, 3);
             this.label7.Margin = new System.Windows.Forms.Padding(3);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(376, 24);
+            this.label7.Size = new System.Drawing.Size(375, 24);
             this.label7.TabIndex = 9;
             this.label7.Text = "Danh mục tuần thực tập";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -276,20 +278,6 @@
             this.helpButton.UseVisualStyleBackColor = false;
             this.helpButton.Click += new System.EventHandler(this.HelpButton_Click);
             // 
-            // setupThuMucThucTap
-            // 
-            this.setupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
-            this.setupThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.setupThuMucThucTap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.setupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("setupThuMucThucTap.Image")));
-            this.setupThuMucThucTap.Location = new System.Drawing.Point(23, 3);
-            this.setupThuMucThucTap.Name = "setupThuMucThucTap";
-            this.setupThuMucThucTap.Size = new System.Drawing.Size(65, 118);
-            this.setupThuMucThucTap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.setupThuMucThucTap.TabIndex = 16;
-            this.setupThuMucThucTap.TabStop = false;
-            this.setupThuMucThucTap.Click += new System.EventHandler(this.SetupThuMucThucTap_Click);
-            // 
             // fileListView
             // 
             this.fileListView.BackColor = System.Drawing.Color.WhiteSmoke;
@@ -301,7 +289,7 @@
             this.fileListView.HideSelection = false;
             this.fileListView.Location = new System.Drawing.Point(124, 33);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(255, 187);
+            this.fileListView.Size = new System.Drawing.Size(254, 187);
             this.fileListView.TabIndex = 12;
             this.fileListView.UseCompatibleStateImageBehavior = false;
             this.fileListView.View = System.Windows.Forms.View.Details;
@@ -323,24 +311,24 @@
             this.columnHeader5.Text = "Ngày Tạo";
             this.columnHeader5.Width = 100;
             // 
-            // dataGridViewCommits
+            // dgvReportCommits
             // 
-            this.dataGridViewCommits.BackgroundColor = System.Drawing.Color.Gainsboro;
-            this.dataGridViewCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dataGridViewCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.tableLayoutPanel7.SetColumnSpan(this.dataGridViewCommits, 2);
-            this.dataGridViewCommits.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewCommits.Location = new System.Drawing.Point(3, 39);
-            this.dataGridViewCommits.Name = "dataGridViewCommits";
-            this.dataGridViewCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridViewCommits.Size = new System.Drawing.Size(595, 267);
-            this.dataGridViewCommits.TabIndex = 18;
+            this.dgvReportCommits.BackgroundColor = System.Drawing.Color.Gainsboro;
+            this.dgvReportCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgvReportCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.tableLayoutPanel7.SetColumnSpan(this.dgvReportCommits, 2);
+            this.dgvReportCommits.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvReportCommits.Location = new System.Drawing.Point(3, 39);
+            this.dgvReportCommits.Name = "dgvReportCommits";
+            this.dgvReportCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.dgvReportCommits.Size = new System.Drawing.Size(574, 260);
+            this.dgvReportCommits.TabIndex = 18;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label8.Location = new System.Drawing.Point(257, 3);
+            this.label8.Location = new System.Drawing.Point(256, 3);
             this.label8.Margin = new System.Windows.Forms.Padding(3);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(122, 37);
@@ -350,9 +338,15 @@
             // 
             // imageList
             // 
-            this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
             this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList.Images.SetKeyName(0, "arrow.png");
+            this.imageList.Images.SetKeyName(1, "right-arrow.png");
+            this.imageList.Images.SetKeyName(2, "magnifying-glass.png");
+            this.imageList.Images.SetKeyName(3, "recycle-bin.png");
+            this.imageList.Images.SetKeyName(4, "git-aggregation-logo.png");
+            this.imageList.Images.SetKeyName(5, "Git-commit-aggregation-tool.png");
+            this.imageList.Images.SetKeyName(6, "expand-arrows.png");
             // 
             // txtFirstCommitDate
             // 
@@ -361,7 +355,7 @@
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.txtFirstCommitDate.Location = new System.Drawing.Point(3, 39);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
-            this.txtFirstCommitDate.Size = new System.Drawing.Size(614, 25);
+            this.txtFirstCommitDate.Size = new System.Drawing.Size(615, 25);
             this.txtFirstCommitDate.TabIndex = 3;
             // 
             // label9
@@ -372,7 +366,7 @@
             this.label9.Location = new System.Drawing.Point(3, 3);
             this.label9.Margin = new System.Windows.Forms.Padding(3);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(614, 30);
+            this.label9.Size = new System.Drawing.Size(615, 30);
             this.label9.TabIndex = 8;
             this.label9.Text = "Ngày commit đầu tiên";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -384,7 +378,7 @@
             this.label10.Location = new System.Drawing.Point(127, 3);
             this.label10.Margin = new System.Windows.Forms.Padding(3);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(124, 37);
+            this.label10.Size = new System.Drawing.Size(123, 37);
             this.label10.TabIndex = 8;
             this.label10.Text = "Ngày kết thúc TT:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -395,13 +389,13 @@
             this.txtInternshipEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.txtInternshipEndDate.Location = new System.Drawing.Point(127, 46);
             this.txtInternshipEndDate.Name = "txtInternshipEndDate";
-            this.txtInternshipEndDate.Size = new System.Drawing.Size(124, 25);
+            this.txtInternshipEndDate.Size = new System.Drawing.Size(123, 25);
             this.txtInternshipEndDate.TabIndex = 3;
             // 
             // txtNumericsWeek
             // 
             this.txtNumericsWeek.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNumericsWeek.Location = new System.Drawing.Point(257, 46);
+            this.txtNumericsWeek.Location = new System.Drawing.Point(256, 46);
             this.txtNumericsWeek.Name = "txtNumericsWeek";
             this.txtNumericsWeek.Size = new System.Drawing.Size(122, 25);
             this.txtNumericsWeek.TabIndex = 20;
@@ -412,43 +406,43 @@
             0});
             this.txtNumericsWeek.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
             // 
-            // checkedListBoxCommits
+            // checkedListBoxCommitsError
             // 
-            this.checkedListBoxCommits.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.checkedListBoxCommits.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBoxCommits.FormattingEnabled = true;
-            this.checkedListBoxCommits.Items.AddRange(new object[] {
+            this.checkedListBoxCommitsError.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.checkedListBoxCommitsError.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkedListBoxCommitsError.FormattingEnabled = true;
+            this.checkedListBoxCommitsError.Items.AddRange(new object[] {
             "Danh sách commit phát hiện lỗi"});
-            this.checkedListBoxCommits.Location = new System.Drawing.Point(3, 3);
-            this.checkedListBoxCommits.Name = "checkedListBoxCommits";
-            this.checkedListBoxCommits.Size = new System.Drawing.Size(601, 96);
-            this.checkedListBoxCommits.TabIndex = 23;
+            this.checkedListBoxCommitsError.Location = new System.Drawing.Point(3, 3);
+            this.checkedListBoxCommitsError.Name = "checkedListBoxCommitsError";
+            this.checkedListBoxCommitsError.Size = new System.Drawing.Size(580, 96);
+            this.checkedListBoxCommitsError.TabIndex = 23;
             // 
-            // btnExcelCommits
+            // btnExportReportExcelCommits
             // 
-            this.btnExcelCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnExcelCommits.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnExcelCommits.Location = new System.Drawing.Point(313, 73);
-            this.btnExcelCommits.Name = "btnExcelCommits";
-            this.btnExcelCommits.Size = new System.Drawing.Size(304, 48);
-            this.btnExcelCommits.TabIndex = 5;
-            this.btnExcelCommits.Text = "Xuất excel";
-            this.btnExcelCommits.UseVisualStyleBackColor = true;
-            this.btnExcelCommits.Click += new System.EventHandler(this.BtnExportExcel_Click);
-            this.btnExcelCommits.MouseEnter += new System.EventHandler(this.btnExcelCommits_MouseEnter);
+            this.btnExportReportExcelCommits.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnExportReportExcelCommits.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnExportReportExcelCommits.Location = new System.Drawing.Point(313, 73);
+            this.btnExportReportExcelCommits.Name = "btnExportReportExcelCommits";
+            this.btnExportReportExcelCommits.Size = new System.Drawing.Size(305, 48);
+            this.btnExportReportExcelCommits.TabIndex = 5;
+            this.btnExportReportExcelCommits.Text = "Xuất excel";
+            this.btnExportReportExcelCommits.UseVisualStyleBackColor = true;
+            this.btnExportReportExcelCommits.Click += new System.EventHandler(this.BtnExportExcel_Click);
+            this.btnExportReportExcelCommits.MouseEnter += new System.EventHandler(this.BtnExcelCommits_MouseEnter);
             // 
-            // btnReviewCommits
+            // btnReviewCommitsError
             // 
-            this.btnReviewCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnReviewCommits.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnReviewCommits.Location = new System.Drawing.Point(3, 73);
-            this.btnReviewCommits.Name = "btnReviewCommits";
-            this.btnReviewCommits.Size = new System.Drawing.Size(304, 48);
-            this.btnReviewCommits.TabIndex = 5;
-            this.btnReviewCommits.Text = "Kiểm tra";
-            this.btnReviewCommits.UseVisualStyleBackColor = true;
-            this.btnReviewCommits.Click += new System.EventHandler(this.BtnReviewCommits_Click);
-            this.btnReviewCommits.MouseEnter += new System.EventHandler(this.btnReviewCommits_MouseEnter);
+            this.btnReviewCommitsError.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReviewCommitsError.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnReviewCommitsError.Location = new System.Drawing.Point(3, 73);
+            this.btnReviewCommitsError.Name = "btnReviewCommitsError";
+            this.btnReviewCommitsError.Size = new System.Drawing.Size(304, 48);
+            this.btnReviewCommitsError.TabIndex = 5;
+            this.btnReviewCommitsError.Text = "Kiểm tra";
+            this.btnReviewCommitsError.UseVisualStyleBackColor = true;
+            this.btnReviewCommitsError.Click += new System.EventHandler(this.BtnReviewCommits_Click);
+            this.btnReviewCommitsError.MouseEnter += new System.EventHandler(this.BtnReviewCommits_MouseEnter);
             // 
             // listViewProjects
             // 
@@ -458,7 +452,7 @@
             this.listViewProjects.HideSelection = false;
             this.listViewProjects.Location = new System.Drawing.Point(3, 38);
             this.listViewProjects.Name = "listViewProjects";
-            this.listViewProjects.Size = new System.Drawing.Size(376, 96);
+            this.listViewProjects.Size = new System.Drawing.Size(375, 96);
             this.listViewProjects.TabIndex = 24;
             this.listViewProjects.UseCompatibleStateImageBehavior = false;
             this.listViewProjects.View = System.Windows.Forms.View.Details;
@@ -503,11 +497,11 @@
             this.cboThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cboThuMucThucTap.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboThuMucThucTap.FormattingEnabled = true;
-            this.cboThuMucThucTap.Location = new System.Drawing.Point(129, 42);
+            this.cboThuMucThucTap.Location = new System.Drawing.Point(128, 42);
             this.cboThuMucThucTap.Name = "cboThuMucThucTap";
             this.cboThuMucThucTap.Size = new System.Drawing.Size(153, 25);
             this.cboThuMucThucTap.TabIndex = 0;
-            this.cboThuMucThucTap.SelectedIndexChanged += new System.EventHandler(this.cboThuMucThucTap_SelectedIndexChanged);
+            this.cboThuMucThucTap.SelectedIndexChanged += new System.EventHandler(this.CboThuMucThucTap_SelectedIndexChanged);
             // 
             // tableLayoutPanel1
             // 
@@ -517,14 +511,14 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.21779F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel9, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.helpButton, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.setupThuMucThucTap, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.txtSetupThuMucThucTap, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(382, 124);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(381, 124);
             this.tableLayoutPanel1.TabIndex = 26;
             // 
             // tableLayoutPanel9
@@ -544,7 +538,7 @@
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(285, 118);
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(284, 118);
             this.tableLayoutPanel9.TabIndex = 17;
             // 
             // tableLayoutPanel2
@@ -566,7 +560,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(382, 86);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(381, 86);
             this.tableLayoutPanel2.TabIndex = 27;
             // 
             // tableLayoutPanel3
@@ -584,7 +578,7 @@
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(382, 223);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(381, 223);
             this.tableLayoutPanel3.TabIndex = 28;
             // 
             // tableLayoutPanel4
@@ -593,39 +587,148 @@
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.Controls.Add(this.txtFirstCommitDate, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.btnReviewCommits, 0, 2);
-            this.tableLayoutPanel4.Controls.Add(this.btnExcelCommits, 1, 2);
+            this.tableLayoutPanel4.Controls.Add(this.btnReviewCommitsError, 0, 2);
+            this.tableLayoutPanel4.Controls.Add(this.btnExportReportExcelCommits, 1, 2);
             this.tableLayoutPanel4.Controls.Add(this.label9, 0, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(382, 0);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 3;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 29.24528F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 27.35849F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 42.45283F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(620, 124);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(621, 124);
             this.tableLayoutPanel4.TabIndex = 29;
             // 
             // tableLayoutPanel5
             // 
             this.tableLayoutPanel5.ColumnCount = 2;
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 13F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tableLayoutPanel5.Controls.Add(this.tableLayoutPanel7, 0, 1);
-            this.tableLayoutPanel5.Controls.Add(this.checkedListBoxCommits, 0, 0);
-            this.tableLayoutPanel5.Controls.Add(this.btnExpanDataGridview, 1, 1);
-            this.tableLayoutPanel5.Controls.Add(this.btnDeleteCommits, 1, 0);
+            this.tableLayoutPanel5.Controls.Add(this.checkedListBoxCommitsError, 0, 0);
+            this.tableLayoutPanel5.Controls.Add(this.btnExpandReport, 1, 1);
+            this.tableLayoutPanel5.Controls.Add(this.btnDeleteCommitsError, 1, 0);
             this.tableLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel5.Location = new System.Drawing.Point(382, 124);
+            this.tableLayoutPanel5.Location = new System.Drawing.Point(381, 124);
             this.tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel5.Name = "tableLayoutPanel5";
             this.tableLayoutPanel5.RowCount = 2;
             this.mainGitPanel.SetRowSpan(this.tableLayoutPanel5, 3);
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 22.90249F));
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 77.0975F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(620, 446);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(621, 446);
             this.tableLayoutPanel5.TabIndex = 30;
+            // 
+            // tableLayoutPanel7
+            // 
+            this.tableLayoutPanel7.ColumnCount = 2;
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel7.Controls.Add(this.searchPanel, 0, 0);
+            this.tableLayoutPanel7.Controls.Add(this.dgvReportCommits, 0, 1);
+            this.tableLayoutPanel7.Controls.Add(this.btnNextReport, 1, 2);
+            this.tableLayoutPanel7.Controls.Add(this.btnPreviousReport, 0, 2);
+            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 105);
+            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
+            this.tableLayoutPanel7.RowCount = 3;
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel7.Size = new System.Drawing.Size(580, 338);
+            this.tableLayoutPanel7.TabIndex = 37;
+            // 
+            // searchPanel
+            // 
+            this.searchPanel.ColumnCount = 2;
+            this.tableLayoutPanel7.SetColumnSpan(this.searchPanel, 2);
+            this.searchPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.searchPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.searchPanel.Controls.Add(this.txtSearchReport, 0, 0);
+            this.searchPanel.Controls.Add(this.btnSearchReport, 1, 0);
+            this.searchPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.searchPanel.Location = new System.Drawing.Point(3, 3);
+            this.searchPanel.Name = "searchPanel";
+            this.searchPanel.RowCount = 1;
+            this.searchPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.searchPanel.Size = new System.Drawing.Size(574, 30);
+            this.searchPanel.TabIndex = 37;
+            // 
+            // txtSearchReport
+            // 
+            this.txtSearchReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSearchReport.Location = new System.Drawing.Point(3, 3);
+            this.txtSearchReport.Name = "txtSearchReport";
+            this.txtSearchReport.Size = new System.Drawing.Size(471, 25);
+            this.txtSearchReport.TabIndex = 33;
+            // 
+            // btnSearchReport
+            // 
+            this.btnSearchReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnSearchReport.FlatAppearance.BorderSize = 0;
+            this.btnSearchReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSearchReport.ImageKey = "magnifying-glass.png";
+            this.btnSearchReport.ImageList = this.imageList;
+            this.btnSearchReport.Location = new System.Drawing.Point(480, 3);
+            this.btnSearchReport.Name = "btnSearchReport";
+            this.btnSearchReport.Size = new System.Drawing.Size(91, 24);
+            this.btnSearchReport.TabIndex = 34;
+            this.btnSearchReport.UseVisualStyleBackColor = false;
+            // 
+            // btnNextReport
+            // 
+            this.btnNextReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnNextReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnNextReport.FlatAppearance.BorderSize = 0;
+            this.btnNextReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNextReport.ImageKey = "right-arrow.png";
+            this.btnNextReport.ImageList = this.imageList;
+            this.btnNextReport.Location = new System.Drawing.Point(293, 305);
+            this.btnNextReport.Name = "btnNextReport";
+            this.btnNextReport.Size = new System.Drawing.Size(284, 30);
+            this.btnNextReport.TabIndex = 38;
+            this.btnNextReport.UseVisualStyleBackColor = false;
+            // 
+            // btnExpandReport
+            // 
+            this.btnExpandReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnExpandReport.Cursor = System.Windows.Forms.Cursors.SizeWE;
+            this.btnExpandReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnExpandReport.FlatAppearance.BorderSize = 0;
+            this.btnExpandReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExpandReport.ImageKey = "expand-arrows.png";
+            this.btnExpandReport.ImageList = this.imageList;
+            this.btnExpandReport.Location = new System.Drawing.Point(587, 103);
+            this.btnExpandReport.Margin = new System.Windows.Forms.Padding(1);
+            this.btnExpandReport.Name = "btnExpandReport";
+            this.btnExpandReport.Size = new System.Drawing.Size(33, 342);
+            this.btnExpandReport.TabIndex = 25;
+            this.btnExpandReport.UseVisualStyleBackColor = false;
+            this.btnExpandReport.MouseEnter += new System.EventHandler(this.BtnExpanDataGridview_MouseEnter);
+            this.btnExpandReport.MouseLeave += new System.EventHandler(this.BtnExpanDataGridview_MouseLeave);
+            // 
+            // btnDeleteCommitsError
+            // 
+            this.btnDeleteCommitsError.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnDeleteCommitsError.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDeleteCommitsError.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnDeleteCommitsError.FlatAppearance.BorderSize = 0;
+            this.btnDeleteCommitsError.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDeleteCommitsError.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDeleteCommitsError.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.btnDeleteCommitsError.ImageKey = "recycle-bin.png";
+            this.btnDeleteCommitsError.ImageList = this.imageList;
+            this.btnDeleteCommitsError.Location = new System.Drawing.Point(587, 1);
+            this.btnDeleteCommitsError.Margin = new System.Windows.Forms.Padding(1);
+            this.btnDeleteCommitsError.Name = "btnDeleteCommitsError";
+            this.btnDeleteCommitsError.Size = new System.Drawing.Size(33, 100);
+            this.btnDeleteCommitsError.TabIndex = 25;
+            this.btnDeleteCommitsError.UseVisualStyleBackColor = false;
+            this.btnDeleteCommitsError.Click += new System.EventHandler(this.BtnDeleteCommits_Click);
+            this.btnDeleteCommitsError.MouseEnter += new System.EventHandler(this.OnMouseEnter);
+            this.btnDeleteCommitsError.MouseLeave += new System.EventHandler(this.OnMouseLeave);
             // 
             // tableLayoutPanel6
             // 
@@ -633,7 +736,7 @@
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel6.Controls.Add(this.txtResultMouseEvents, 1, 1);
             this.tableLayoutPanel6.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel6.Location = new System.Drawing.Point(385, 573);
+            this.tableLayoutPanel6.Location = new System.Drawing.Point(384, 573);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.RowCount = 1;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -685,26 +788,48 @@
             this.tableLayoutPanel8.RowCount = 2;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 26.22951F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 73.77049F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(382, 137);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(381, 137);
             this.tableLayoutPanel8.TabIndex = 33;
             // 
-            // textBox1
+            // tableLayoutPanel10
             // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(3, 3);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(492, 25);
-            this.textBox1.TabIndex = 33;
+            this.tableLayoutPanel10.ColumnCount = 1;
+            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel10.Controls.Add(this.label6, 0, 0);
+            this.tableLayoutPanel10.Controls.Add(this.txtResult, 0, 1);
+            this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 573);
+            this.tableLayoutPanel10.Name = "tableLayoutPanel10";
+            this.tableLayoutPanel10.RowCount = 2;
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel10.Size = new System.Drawing.Size(375, 111);
+            this.tableLayoutPanel10.TabIndex = 34;
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hệThốngToolStripMenuItem,
             this.danhMụcToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1002, 24);
             this.menuStrip1.TabIndex = 35;
             this.menuStrip1.Text = "menuStrip1";
+            // 
+            // hệThốngToolStripMenuItem
+            // 
+            this.hệThốngToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.thoátToolStripMenuItem});
+            this.hệThốngToolStripMenuItem.Name = "hệThốngToolStripMenuItem";
+            this.hệThốngToolStripMenuItem.Size = new System.Drawing.Size(69, 20);
+            this.hệThốngToolStripMenuItem.Text = "Hệ thống";
+            // 
+            // thoátToolStripMenuItem
+            // 
+            this.thoátToolStripMenuItem.Name = "thoátToolStripMenuItem";
+            this.thoátToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.thoátToolStripMenuItem.Text = "Thoát";
             // 
             // danhMụcToolStripMenuItem
             // 
@@ -748,126 +873,35 @@
             this.cònToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.cònToolStripMenuItem.Text = "ConfigFiles";
             // 
-            // tableLayoutPanel10
+            // btnPreviousReport
             // 
-            this.tableLayoutPanel10.ColumnCount = 1;
-            this.tableLayoutPanel10.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel10.Controls.Add(this.label6, 0, 0);
-            this.tableLayoutPanel10.Controls.Add(this.txtResult, 0, 1);
-            this.tableLayoutPanel10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel10.Location = new System.Drawing.Point(3, 573);
-            this.tableLayoutPanel10.Name = "tableLayoutPanel10";
-            this.tableLayoutPanel10.RowCount = 2;
-            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel10.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel10.Size = new System.Drawing.Size(376, 111);
-            this.tableLayoutPanel10.TabIndex = 34;
+            this.btnPreviousReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnPreviousReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnPreviousReport.FlatAppearance.BorderSize = 0;
+            this.btnPreviousReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPreviousReport.ImageKey = "arrow.png";
+            this.btnPreviousReport.ImageList = this.imageList;
+            this.btnPreviousReport.Location = new System.Drawing.Point(3, 305);
+            this.btnPreviousReport.Name = "btnPreviousReport";
+            this.btnPreviousReport.Size = new System.Drawing.Size(284, 30);
+            this.btnPreviousReport.TabIndex = 38;
+            this.btnPreviousReport.UseVisualStyleBackColor = false;
             // 
-            // searchPanel
+            // txtSetupThuMucThucTap
             // 
-            this.searchPanel.ColumnCount = 2;
-            this.tableLayoutPanel7.SetColumnSpan(this.searchPanel, 2);
-            this.searchPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.searchPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.searchPanel.Controls.Add(this.textBox1, 0, 0);
-            this.searchPanel.Controls.Add(this.button1, 1, 0);
-            this.searchPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.searchPanel.Location = new System.Drawing.Point(3, 3);
-            this.searchPanel.Name = "searchPanel";
-            this.searchPanel.RowCount = 1;
-            this.searchPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.searchPanel.Size = new System.Drawing.Size(595, 30);
-            this.searchPanel.TabIndex = 37;
-            // 
-            // button1
-            // 
-            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(501, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(91, 24);
-            this.button1.TabIndex = 34;
-            this.button1.UseVisualStyleBackColor = false;
-            // 
-            // tableLayoutPanel7
-            // 
-            this.tableLayoutPanel7.ColumnCount = 2;
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel7.Controls.Add(this.searchPanel, 0, 0);
-            this.tableLayoutPanel7.Controls.Add(this.dataGridViewCommits, 0, 1);
-            this.tableLayoutPanel7.Controls.Add(this.button3, 1, 2);
-            this.tableLayoutPanel7.Controls.Add(this.button2, 0, 2);
-            this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 105);
-            this.tableLayoutPanel7.Name = "tableLayoutPanel7";
-            this.tableLayoutPanel7.RowCount = 3;
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel7.Size = new System.Drawing.Size(601, 338);
-            this.tableLayoutPanel7.TabIndex = 37;
-            // 
-            // btnDeleteCommits
-            // 
-            this.btnDeleteCommits.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.btnDeleteCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnDeleteCommits.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnDeleteCommits.FlatAppearance.BorderSize = 0;
-            this.btnDeleteCommits.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDeleteCommits.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDeleteCommits.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.btnDeleteCommits.Location = new System.Drawing.Point(608, 1);
-            this.btnDeleteCommits.Margin = new System.Windows.Forms.Padding(1);
-            this.btnDeleteCommits.Name = "btnDeleteCommits";
-            this.btnDeleteCommits.Size = new System.Drawing.Size(11, 100);
-            this.btnDeleteCommits.TabIndex = 25;
-            this.btnDeleteCommits.Text = "Xóa";
-            this.btnDeleteCommits.UseVisualStyleBackColor = false;
-            this.btnDeleteCommits.Click += new System.EventHandler(this.BtnDeleteCommits_Click);
-            this.btnDeleteCommits.MouseEnter += new System.EventHandler(this.OnMouseEnter);
-            this.btnDeleteCommits.MouseLeave += new System.EventHandler(this.OnMouseLeave);
-            // 
-            // btnExpanDataGridview
-            // 
-            this.btnExpanDataGridview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnExpanDataGridview.Cursor = System.Windows.Forms.Cursors.SizeWE;
-            this.btnExpanDataGridview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnExpanDataGridview.FlatAppearance.BorderSize = 0;
-            this.btnExpanDataGridview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExpanDataGridview.Location = new System.Drawing.Point(608, 103);
-            this.btnExpanDataGridview.Margin = new System.Windows.Forms.Padding(1);
-            this.btnExpanDataGridview.Name = "btnExpanDataGridview";
-            this.btnExpanDataGridview.Size = new System.Drawing.Size(11, 342);
-            this.btnExpanDataGridview.TabIndex = 25;
-            this.btnExpanDataGridview.UseVisualStyleBackColor = false;
-            this.btnExpanDataGridview.MouseEnter += new System.EventHandler(this.btnExpanDataGridview_MouseEnter);
-            this.btnExpanDataGridview.MouseLeave += new System.EventHandler(this.btnExpanDataGridview_MouseLeave);
-            // 
-            // button2
-            // 
-            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Location = new System.Drawing.Point(3, 312);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(294, 23);
-            this.button2.TabIndex = 38;
-            this.button2.UseVisualStyleBackColor = false;
-            // 
-            // button3
-            // 
-            this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button3.FlatAppearance.BorderSize = 0;
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Location = new System.Drawing.Point(303, 312);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(295, 23);
-            this.button3.TabIndex = 38;
-            this.button3.UseVisualStyleBackColor = false;
+            this.txtSetupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
+            this.txtSetupThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.txtSetupThuMucThucTap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSetupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("txtSetupThuMucThucTap.Image")));
+            this.txtSetupThuMucThucTap.Location = new System.Drawing.Point(23, 3);
+            this.txtSetupThuMucThucTap.Name = "txtSetupThuMucThucTap";
+            this.txtSetupThuMucThucTap.Size = new System.Drawing.Size(65, 118);
+            this.txtSetupThuMucThucTap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.txtSetupThuMucThucTap.TabIndex = 16;
+            this.txtSetupThuMucThucTap.TabStop = false;
+            this.txtSetupThuMucThucTap.Click += new System.EventHandler(this.SetupThuMucThucTap_Click);
+            this.txtSetupThuMucThucTap.MouseEnter += new System.EventHandler(this.setupThuMucThucTap_MouseEnter);
+            this.txtSetupThuMucThucTap.MouseLeave += new System.EventHandler(this.setupThuMucThucTap_MouseLeave);
             // 
             // GitLogAggregator
             // 
@@ -889,8 +923,7 @@
             this.Text = "GitLogAggregator";
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.GitLogAggregator_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.setupThuMucThucTap)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCommits)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel9.ResumeLayout(false);
@@ -902,17 +935,18 @@
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.tableLayoutPanel5.ResumeLayout(false);
+            this.tableLayoutPanel7.ResumeLayout(false);
+            this.searchPanel.ResumeLayout(false);
+            this.searchPanel.PerformLayout();
             this.tableLayoutPanel6.ResumeLayout(false);
             this.tableLayoutPanel6.PerformLayout();
             this.mainGitPanel.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.tableLayoutPanel10.ResumeLayout(false);
             this.tableLayoutPanel10.PerformLayout();
-            this.searchPanel.ResumeLayout(false);
-            this.searchPanel.PerformLayout();
-            this.tableLayoutPanel7.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtSetupThuMucThucTap)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -934,10 +968,10 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnClearDataListView;
         private System.Windows.Forms.Button helpButton;
-        private System.Windows.Forms.PictureBox setupThuMucThucTap;
+        private System.Windows.Forms.PictureBox txtSetupThuMucThucTap;
         private System.Windows.Forms.ListView fileListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.DataGridView dataGridViewCommits;
+        private System.Windows.Forms.DataGridView dgvReportCommits;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.DateTimePicker txtFirstCommitDate;
@@ -945,9 +979,9 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.DateTimePicker txtInternshipEndDate;
         private System.Windows.Forms.NumericUpDown txtNumericsWeek;
-        private System.Windows.Forms.CheckedListBox checkedListBoxCommits;
-        private System.Windows.Forms.Button btnExcelCommits;
-        private System.Windows.Forms.Button btnReviewCommits;
+        private System.Windows.Forms.CheckedListBox checkedListBoxCommitsError;
+        private System.Windows.Forms.Button btnExportReportExcelCommits;
+        private System.Windows.Forms.Button btnReviewCommitsError;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
@@ -965,7 +999,7 @@
         private System.Windows.Forms.TableLayoutPanel mainGitPanel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox txtSearchReport;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem danhMụcToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem commitsToolStripMenuItem;
@@ -975,11 +1009,13 @@
         private System.Windows.Forms.ToolStripMenuItem cònToolStripMenuItem;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel10;
         private System.Windows.Forms.TableLayoutPanel searchPanel;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSearchReport;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button btnExpanDataGridview;
-        private System.Windows.Forms.Button btnDeleteCommits;
+        private System.Windows.Forms.Button btnNextReport;
+        private System.Windows.Forms.Button btnPreviousReport;
+        private System.Windows.Forms.Button btnExpandReport;
+        private System.Windows.Forms.Button btnDeleteCommitsError;
+        private System.Windows.Forms.ToolStripMenuItem hệThốngToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem thoátToolStripMenuItem;
     }
 }
