@@ -91,6 +91,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChatbotSummaryDAL.cs" />
+    <Compile Include="CommitInfoDAL.cs" />
     <Compile Include="ConfigFileDAL.cs" />
     <Compile Include="GitLogAggregator.designer.cs">
       <AutoGen>True</AutoGen>
@@ -98,6 +100,7 @@
       <DependentUpon>GitLogAggregator.dbml</DependentUpon>
     </Compile>
     <Compile Include="InternshipDirectoryDAL.cs" />
+    <Compile Include="ProjectWeekInfoDAL.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

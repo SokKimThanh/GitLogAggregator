@@ -30,9 +30,18 @@ namespace DAL
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
+    partial void InsertProjectWeek(ProjectWeek instance);
+    partial void UpdateProjectWeek(ProjectWeek instance);
+    partial void DeleteProjectWeek(ProjectWeek instance);
+    partial void InsertCommit(Commit instance);
+    partial void UpdateCommit(Commit instance);
+    partial void DeleteCommit(Commit instance);
     partial void InsertConfigFile(ConfigFile instance);
     partial void UpdateConfigFile(ConfigFile instance);
     partial void DeleteConfigFile(ConfigFile instance);
+    partial void InsertChatbotSummary(ChatbotSummary instance);
+    partial void UpdateChatbotSummary(ChatbotSummary instance);
+    partial void DeleteChatbotSummary(ChatbotSummary instance);
     partial void InsertInternshipDirectory(InternshipDirectory instance);
     partial void UpdateInternshipDirectory(InternshipDirectory instance);
     partial void DeleteInternshipDirectory(InternshipDirectory instance);
@@ -68,11 +77,35 @@ namespace DAL
 			OnCreated();
 		}
 		
+		public System.Data.Linq.Table<ProjectWeek> ProjectWeeks
+		{
+			get
+			{
+				return this.GetTable<ProjectWeek>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Commit> Commits
+		{
+			get
+			{
+				return this.GetTable<Commit>();
+			}
+		}
+		
 		public System.Data.Linq.Table<ConfigFile> ConfigFiles
 		{
 			get
 			{
 				return this.GetTable<ConfigFile>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ChatbotSummary> ChatbotSummaries
+		{
+			get
+			{
+				return this.GetTable<ChatbotSummary>();
 			}
 		}
 		
@@ -85,27 +118,25 @@ namespace DAL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConfigFiles")]
-	public partial class ConfigFile : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ProjectWeeks")]
+	public partial class ProjectWeek : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _Id;
+		private int _ProjectWeekId;
 		
-		private string _ProjectDirectory;
+		private int _ConfigFileId;
 		
-		private System.Nullable<int> _InternshipDirectoryId;
+		private int _InternshipDirectoryId;
 		
-		private string _Author;
+		private System.Nullable<System.DateTime> _CreatedAt;
 		
-		private System.Nullable<System.DateTime> _StartDate;
+		private System.Nullable<System.DateTime> _UpdatedAt;
 		
-		private System.Nullable<System.DateTime> _EndDate;
+		private EntitySet<Commit> _Commits;
 		
-		private System.Nullable<int> _Weeks;
-		
-		private System.Nullable<System.DateTime> _FirstCommitDate;
+		private EntityRef<ConfigFile> _ConfigFile;
 		
 		private EntityRef<InternshipDirectory> _InternshipDirectory;
 		
@@ -113,46 +144,626 @@ namespace DAL
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnProjectDirectoryChanging(string value);
-    partial void OnProjectDirectoryChanged();
-    partial void OnInternshipDirectoryIdChanging(System.Nullable<int> value);
+    partial void OnProjectWeekIdChanging(int value);
+    partial void OnProjectWeekIdChanged();
+    partial void OnConfigFileIdChanging(int value);
+    partial void OnConfigFileIdChanged();
+    partial void OnInternshipDirectoryIdChanging(int value);
     partial void OnInternshipDirectoryIdChanged();
-    partial void OnAuthorChanging(string value);
-    partial void OnAuthorChanged();
-    partial void OnStartDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnStartDateChanged();
-    partial void OnEndDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnEndDateChanged();
-    partial void OnWeeksChanging(System.Nullable<int> value);
-    partial void OnWeeksChanged();
-    partial void OnFirstCommitDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnFirstCommitDateChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
     #endregion
 		
-		public ConfigFile()
+		public ProjectWeek()
 		{
+			this._Commits = new EntitySet<Commit>(new Action<Commit>(this.attach_Commits), new Action<Commit>(this.detach_Commits));
+			this._ConfigFile = default(EntityRef<ConfigFile>);
 			this._InternshipDirectory = default(EntityRef<InternshipDirectory>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectWeekId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ProjectWeekId
 		{
 			get
 			{
-				return this._Id;
+				return this._ProjectWeekId;
 			}
 			set
 			{
-				if ((this._Id != value))
+				if ((this._ProjectWeekId != value))
 				{
-					this.OnIdChanging(value);
+					this.OnProjectWeekIdChanging(value);
 					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
+					this._ProjectWeekId = value;
+					this.SendPropertyChanged("ProjectWeekId");
+					this.OnProjectWeekIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConfigFileId", DbType="Int NOT NULL")]
+		public int ConfigFileId
+		{
+			get
+			{
+				return this._ConfigFileId;
+			}
+			set
+			{
+				if ((this._ConfigFileId != value))
+				{
+					if (this._ConfigFile.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnConfigFileIdChanging(value);
+					this.SendPropertyChanging();
+					this._ConfigFileId = value;
+					this.SendPropertyChanged("ConfigFileId");
+					this.OnConfigFileIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipDirectoryId", DbType="Int NOT NULL")]
+		public int InternshipDirectoryId
+		{
+			get
+			{
+				return this._InternshipDirectoryId;
+			}
+			set
+			{
+				if ((this._InternshipDirectoryId != value))
+				{
+					if (this._InternshipDirectory.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnInternshipDirectoryIdChanging(value);
+					this.SendPropertyChanging();
+					this._InternshipDirectoryId = value;
+					this.SendPropertyChanged("InternshipDirectoryId");
+					this.OnInternshipDirectoryIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProjectWeek_Commit", Storage="_Commits", ThisKey="ProjectWeekId", OtherKey="ProjectWeekId")]
+		public EntitySet<Commit> Commits
+		{
+			get
+			{
+				return this._Commits;
+			}
+			set
+			{
+				this._Commits.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConfigFile_ProjectWeek", Storage="_ConfigFile", ThisKey="ConfigFileId", OtherKey="ID", IsForeignKey=true)]
+		public ConfigFile ConfigFile
+		{
+			get
+			{
+				return this._ConfigFile.Entity;
+			}
+			set
+			{
+				ConfigFile previousValue = this._ConfigFile.Entity;
+				if (((previousValue != value) 
+							|| (this._ConfigFile.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ConfigFile.Entity = null;
+						previousValue.ProjectWeeks.Remove(this);
+					}
+					this._ConfigFile.Entity = value;
+					if ((value != null))
+					{
+						value.ProjectWeeks.Add(this);
+						this._ConfigFileId = value.ID;
+					}
+					else
+					{
+						this._ConfigFileId = default(int);
+					}
+					this.SendPropertyChanged("ConfigFile");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ID", IsForeignKey=true)]
+		public InternshipDirectory InternshipDirectory
+		{
+			get
+			{
+				return this._InternshipDirectory.Entity;
+			}
+			set
+			{
+				InternshipDirectory previousValue = this._InternshipDirectory.Entity;
+				if (((previousValue != value) 
+							|| (this._InternshipDirectory.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._InternshipDirectory.Entity = null;
+						previousValue.ProjectWeeks.Remove(this);
+					}
+					this._InternshipDirectory.Entity = value;
+					if ((value != null))
+					{
+						value.ProjectWeeks.Add(this);
+						this._InternshipDirectoryId = value.ID;
+					}
+					else
+					{
+						this._InternshipDirectoryId = default(int);
+					}
+					this.SendPropertyChanged("InternshipDirectory");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Commits(Commit entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProjectWeek = this;
+		}
+		
+		private void detach_Commits(Commit entity)
+		{
+			this.SendPropertyChanging();
+			entity.ProjectWeek = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Commits")]
+	public partial class Commit : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CommitId;
+		
+		private string _CommitHash;
+		
+		private string _CommitMessage;
+		
+		private System.DateTime _CommitDate;
+		
+		private string _Author;
+		
+		private int _ProjectWeekId;
+		
+		private System.Nullable<System.DateTime> _CreatedAt;
+		
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntitySet<ChatbotSummary> _ChatbotSummaries;
+		
+		private EntityRef<ProjectWeek> _ProjectWeek;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCommitIdChanging(int value);
+    partial void OnCommitIdChanged();
+    partial void OnCommitHashChanging(string value);
+    partial void OnCommitHashChanged();
+    partial void OnCommitMessageChanging(string value);
+    partial void OnCommitMessageChanged();
+    partial void OnCommitDateChanging(System.DateTime value);
+    partial void OnCommitDateChanged();
+    partial void OnAuthorChanging(string value);
+    partial void OnAuthorChanged();
+    partial void OnProjectWeekIdChanging(int value);
+    partial void OnProjectWeekIdChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
+    #endregion
+		
+		public Commit()
+		{
+			this._ChatbotSummaries = new EntitySet<ChatbotSummary>(new Action<ChatbotSummary>(this.attach_ChatbotSummaries), new Action<ChatbotSummary>(this.detach_ChatbotSummaries));
+			this._ProjectWeek = default(EntityRef<ProjectWeek>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int CommitId
+		{
+			get
+			{
+				return this._CommitId;
+			}
+			set
+			{
+				if ((this._CommitId != value))
+				{
+					this.OnCommitIdChanging(value);
+					this.SendPropertyChanging();
+					this._CommitId = value;
+					this.SendPropertyChanged("CommitId");
+					this.OnCommitIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitHash", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string CommitHash
+		{
+			get
+			{
+				return this._CommitHash;
+			}
+			set
+			{
+				if ((this._CommitHash != value))
+				{
+					this.OnCommitHashChanging(value);
+					this.SendPropertyChanging();
+					this._CommitHash = value;
+					this.SendPropertyChanged("CommitHash");
+					this.OnCommitHashChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitMessage", DbType="Text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		public string CommitMessage
+		{
+			get
+			{
+				return this._CommitMessage;
+			}
+			set
+			{
+				if ((this._CommitMessage != value))
+				{
+					this.OnCommitMessageChanging(value);
+					this.SendPropertyChanging();
+					this._CommitMessage = value;
+					this.SendPropertyChanged("CommitMessage");
+					this.OnCommitMessageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitDate", DbType="DateTime NOT NULL")]
+		public System.DateTime CommitDate
+		{
+			get
+			{
+				return this._CommitDate;
+			}
+			set
+			{
+				if ((this._CommitDate != value))
+				{
+					this.OnCommitDateChanging(value);
+					this.SendPropertyChanging();
+					this._CommitDate = value;
+					this.SendPropertyChanged("CommitDate");
+					this.OnCommitDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Author", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Author
+		{
+			get
+			{
+				return this._Author;
+			}
+			set
+			{
+				if ((this._Author != value))
+				{
+					this.OnAuthorChanging(value);
+					this.SendPropertyChanging();
+					this._Author = value;
+					this.SendPropertyChanged("Author");
+					this.OnAuthorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectWeekId", DbType="Int NOT NULL")]
+		public int ProjectWeekId
+		{
+			get
+			{
+				return this._ProjectWeekId;
+			}
+			set
+			{
+				if ((this._ProjectWeekId != value))
+				{
+					if (this._ProjectWeek.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProjectWeekIdChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectWeekId = value;
+					this.SendPropertyChanged("ProjectWeekId");
+					this.OnProjectWeekIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="CommitId", OtherKey="CommitId")]
+		public EntitySet<ChatbotSummary> ChatbotSummaries
+		{
+			get
+			{
+				return this._ChatbotSummaries;
+			}
+			set
+			{
+				this._ChatbotSummaries.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProjectWeek_Commit", Storage="_ProjectWeek", ThisKey="ProjectWeekId", OtherKey="ProjectWeekId", IsForeignKey=true)]
+		public ProjectWeek ProjectWeek
+		{
+			get
+			{
+				return this._ProjectWeek.Entity;
+			}
+			set
+			{
+				ProjectWeek previousValue = this._ProjectWeek.Entity;
+				if (((previousValue != value) 
+							|| (this._ProjectWeek.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProjectWeek.Entity = null;
+						previousValue.Commits.Remove(this);
+					}
+					this._ProjectWeek.Entity = value;
+					if ((value != null))
+					{
+						value.Commits.Add(this);
+						this._ProjectWeekId = value.ProjectWeekId;
+					}
+					else
+					{
+						this._ProjectWeekId = default(int);
+					}
+					this.SendPropertyChanged("ProjectWeek");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_ChatbotSummaries(ChatbotSummary entity)
+		{
+			this.SendPropertyChanging();
+			entity.Commit = this;
+		}
+		
+		private void detach_ChatbotSummaries(ChatbotSummary entity)
+		{
+			this.SendPropertyChanging();
+			entity.Commit = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConfigFiles")]
+	public partial class ConfigFile : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private string _ProjectDirectory;
+		
+		private int _InternshipDirectoryId;
+		
+		private string _Author;
+		
+		private System.DateTime _StartDate;
+		
+		private System.DateTime _EndDate;
+		
+		private int _Weeks;
+		
+		private System.DateTime _FirstCommitDate;
+		
+		private System.Nullable<System.DateTime> _CreatedAt;
+		
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntitySet<ProjectWeek> _ProjectWeeks;
+		
+		private EntityRef<InternshipDirectory> _InternshipDirectory;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnProjectDirectoryChanging(string value);
+    partial void OnProjectDirectoryChanged();
+    partial void OnInternshipDirectoryIdChanging(int value);
+    partial void OnInternshipDirectoryIdChanged();
+    partial void OnAuthorChanging(string value);
+    partial void OnAuthorChanged();
+    partial void OnStartDateChanging(System.DateTime value);
+    partial void OnStartDateChanged();
+    partial void OnEndDateChanging(System.DateTime value);
+    partial void OnEndDateChanged();
+    partial void OnWeeksChanging(int value);
+    partial void OnWeeksChanged();
+    partial void OnFirstCommitDateChanging(System.DateTime value);
+    partial void OnFirstCommitDateChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
+    #endregion
+		
+		public ConfigFile()
+		{
+			this._ProjectWeeks = new EntitySet<ProjectWeek>(new Action<ProjectWeek>(this.attach_ProjectWeeks), new Action<ProjectWeek>(this.detach_ProjectWeeks));
+			this._InternshipDirectory = default(EntityRef<InternshipDirectory>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
 				}
 			}
 		}
@@ -177,8 +788,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipDirectoryId", DbType="Int")]
-		public System.Nullable<int> InternshipDirectoryId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipDirectoryId", DbType="Int NOT NULL")]
+		public int InternshipDirectoryId
 		{
 			get
 			{
@@ -201,7 +812,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Author", DbType="NVarChar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Author", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
 		public string Author
 		{
 			get
@@ -221,8 +832,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> StartDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartDate", DbType="DateTime NOT NULL")]
+		public System.DateTime StartDate
 		{
 			get
 			{
@@ -241,8 +852,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> EndDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="DateTime NOT NULL")]
+		public System.DateTime EndDate
 		{
 			get
 			{
@@ -261,8 +872,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Weeks", DbType="Int")]
-		public System.Nullable<int> Weeks
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Weeks", DbType="Int NOT NULL")]
+		public int Weeks
 		{
 			get
 			{
@@ -281,8 +892,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstCommitDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> FirstCommitDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstCommitDate", DbType="DateTime NOT NULL")]
+		public System.DateTime FirstCommitDate
 		{
 			get
 			{
@@ -301,7 +912,60 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="Id", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConfigFile_ProjectWeek", Storage="_ProjectWeeks", ThisKey="ID", OtherKey="ConfigFileId")]
+		public EntitySet<ProjectWeek> ProjectWeeks
+		{
+			get
+			{
+				return this._ProjectWeeks;
+			}
+			set
+			{
+				this._ProjectWeeks.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ID", IsForeignKey=true)]
 		public InternshipDirectory InternshipDirectory
 		{
 			get
@@ -324,13 +988,320 @@ namespace DAL
 					if ((value != null))
 					{
 						value.ConfigFiles.Add(this);
-						this._InternshipDirectoryId = value.Id;
+						this._InternshipDirectoryId = value.ID;
 					}
 					else
 					{
-						this._InternshipDirectoryId = default(Nullable<int>);
+						this._InternshipDirectoryId = default(int);
 					}
 					this.SendPropertyChanged("InternshipDirectory");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_ProjectWeeks(ProjectWeek entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConfigFile = this;
+		}
+		
+		private void detach_ProjectWeeks(ProjectWeek entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConfigFile = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ChatbotSummary")]
+	public partial class ChatbotSummary : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ID;
+		
+		private int _CommitId;
+		
+		private string _Attendance;
+		
+		private string _AssignedTasks;
+		
+		private string _ContentResults;
+		
+		private string _SupervisorComments;
+		
+		private string _Notes;
+		
+		private System.Nullable<System.DateTime> _CreatedAt;
+		
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntityRef<Commit> _Commit;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
+    partial void OnCommitIdChanging(int value);
+    partial void OnCommitIdChanged();
+    partial void OnAttendanceChanging(string value);
+    partial void OnAttendanceChanged();
+    partial void OnAssignedTasksChanging(string value);
+    partial void OnAssignedTasksChanged();
+    partial void OnContentResultsChanging(string value);
+    partial void OnContentResultsChanged();
+    partial void OnSupervisorCommentsChanging(string value);
+    partial void OnSupervisorCommentsChanged();
+    partial void OnNotesChanging(string value);
+    partial void OnNotesChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
+    #endregion
+		
+		public ChatbotSummary()
+		{
+			this._Commit = default(EntityRef<Commit>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this.OnIDChanging(value);
+					this.SendPropertyChanging();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", DbType="Int NOT NULL")]
+		public int CommitId
+		{
+			get
+			{
+				return this._CommitId;
+			}
+			set
+			{
+				if ((this._CommitId != value))
+				{
+					if (this._Commit.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCommitIdChanging(value);
+					this.SendPropertyChanging();
+					this._CommitId = value;
+					this.SendPropertyChanged("CommitId");
+					this.OnCommitIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Attendance", DbType="NVarChar(255)")]
+		public string Attendance
+		{
+			get
+			{
+				return this._Attendance;
+			}
+			set
+			{
+				if ((this._Attendance != value))
+				{
+					this.OnAttendanceChanging(value);
+					this.SendPropertyChanging();
+					this._Attendance = value;
+					this.SendPropertyChanged("Attendance");
+					this.OnAttendanceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedTasks", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		public string AssignedTasks
+		{
+			get
+			{
+				return this._AssignedTasks;
+			}
+			set
+			{
+				if ((this._AssignedTasks != value))
+				{
+					this.OnAssignedTasksChanging(value);
+					this.SendPropertyChanging();
+					this._AssignedTasks = value;
+					this.SendPropertyChanged("AssignedTasks");
+					this.OnAssignedTasksChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ContentResults", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		public string ContentResults
+		{
+			get
+			{
+				return this._ContentResults;
+			}
+			set
+			{
+				if ((this._ContentResults != value))
+				{
+					this.OnContentResultsChanging(value);
+					this.SendPropertyChanging();
+					this._ContentResults = value;
+					this.SendPropertyChanged("ContentResults");
+					this.OnContentResultsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SupervisorComments", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		public string SupervisorComments
+		{
+			get
+			{
+				return this._SupervisorComments;
+			}
+			set
+			{
+				if ((this._SupervisorComments != value))
+				{
+					this.OnSupervisorCommentsChanging(value);
+					this.SendPropertyChanging();
+					this._SupervisorComments = value;
+					this.SendPropertyChanged("SupervisorComments");
+					this.OnSupervisorCommentsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Notes", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		public string Notes
+		{
+			get
+			{
+				return this._Notes;
+			}
+			set
+			{
+				if ((this._Notes != value))
+				{
+					this.OnNotesChanging(value);
+					this.SendPropertyChanging();
+					this._Notes = value;
+					this.SendPropertyChanged("Notes");
+					this.OnNotesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_ChatbotSummary", Storage="_Commit", ThisKey="CommitId", OtherKey="CommitId", IsForeignKey=true)]
+		public Commit Commit
+		{
+			get
+			{
+				return this._Commit.Entity;
+			}
+			set
+			{
+				Commit previousValue = this._Commit.Entity;
+				if (((previousValue != value) 
+							|| (this._Commit.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Commit.Entity = null;
+						previousValue.ChatbotSummaries.Remove(this);
+					}
+					this._Commit.Entity = value;
+					if ((value != null))
+					{
+						value.ChatbotSummaries.Add(this);
+						this._CommitId = value.CommitId;
+					}
+					else
+					{
+						this._CommitId = default(int);
+					}
+					this.SendPropertyChanged("Commit");
 				}
 			}
 		}
@@ -362,11 +1333,17 @@ namespace DAL
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _Id;
+		private int _ID;
 		
 		private string _InternshipWeekFolder;
 		
-		private System.Nullable<System.DateTime> _DateModified;
+		private System.DateTime _DateModified;
+		
+		private System.Nullable<System.DateTime> _CreatedAt;
+		
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntitySet<ProjectWeek> _ProjectWeeks;
 		
 		private EntitySet<ConfigFile> _ConfigFiles;
 		
@@ -374,41 +1351,46 @@ namespace DAL
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
+    partial void OnIDChanging(int value);
+    partial void OnIDChanged();
     partial void OnInternshipWeekFolderChanging(string value);
     partial void OnInternshipWeekFolderChanged();
-    partial void OnDateModifiedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateModifiedChanging(System.DateTime value);
     partial void OnDateModifiedChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
     #endregion
 		
 		public InternshipDirectory()
 		{
+			this._ProjectWeeks = new EntitySet<ProjectWeek>(new Action<ProjectWeek>(this.attach_ProjectWeeks), new Action<ProjectWeek>(this.detach_ProjectWeeks));
 			this._ConfigFiles = new EntitySet<ConfigFile>(new Action<ConfigFile>(this.attach_ConfigFiles), new Action<ConfigFile>(this.detach_ConfigFiles));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ID
 		{
 			get
 			{
-				return this._Id;
+				return this._ID;
 			}
 			set
 			{
-				if ((this._Id != value))
+				if ((this._ID != value))
 				{
-					this.OnIdChanging(value);
+					this.OnIDChanging(value);
 					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
+					this._ID = value;
+					this.SendPropertyChanged("ID");
+					this.OnIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipWeekFolder", DbType="NVarChar(500)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipWeekFolder", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
 		public string InternshipWeekFolder
 		{
 			get
@@ -428,8 +1410,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateModified", DbType="DateTime")]
-		public System.Nullable<System.DateTime> DateModified
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateModified", DbType="DateTime NOT NULL")]
+		public System.DateTime DateModified
 		{
 			get
 			{
@@ -448,7 +1430,60 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_ConfigFiles", ThisKey="Id", OtherKey="InternshipDirectoryId")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_ProjectWeeks", ThisKey="ID", OtherKey="InternshipDirectoryId")]
+		public EntitySet<ProjectWeek> ProjectWeeks
+		{
+			get
+			{
+				return this._ProjectWeeks;
+			}
+			set
+			{
+				this._ProjectWeeks.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_ConfigFiles", ThisKey="ID", OtherKey="InternshipDirectoryId")]
 		public EntitySet<ConfigFile> ConfigFiles
 		{
 			get
@@ -479,6 +1514,18 @@ namespace DAL
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ProjectWeeks(ProjectWeek entity)
+		{
+			this.SendPropertyChanging();
+			entity.InternshipDirectory = this;
+		}
+		
+		private void detach_ProjectWeeks(ProjectWeek entity)
+		{
+			this.SendPropertyChanging();
+			entity.InternshipDirectory = null;
 		}
 		
 		private void attach_ConfigFiles(ConfigFile entity)

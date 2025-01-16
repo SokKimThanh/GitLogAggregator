@@ -16,7 +16,7 @@ public class InternshipDirectoryDAL
                      orderby directory.DateModified descending
                      select new InternshipDirectoryET
                      {
-                         Id = directory.Id,
+                         Id = directory.ID,
                          InternshipWeekFolder = directory.InternshipWeekFolder,
                          DateModified = (DateTime)directory.DateModified
                      }).ToList();
@@ -38,7 +38,7 @@ public class InternshipDirectoryDAL
     {
         var query = from directory in db.InternshipDirectories
                     orderby directory.DateModified descending
-                    select directory.Id;
+                    select directory.ID;
         return query.FirstOrDefault();
     }
 }
