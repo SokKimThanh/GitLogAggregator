@@ -14,11 +14,10 @@ using ET;
 
 namespace GitLogAggregator.DataAccess
 {
-    public class GitlogDAL
+    public class GitlogUIDAL
     {
         public List<string> LogMessages { get; private set; }
-        ConfigFileDAL gitconfig_dal = new ConfigFileDAL();
-        public GitlogDAL()
+        public GitlogUIDAL()
         {
             LogMessages = new List<string>();
         }
@@ -52,7 +51,7 @@ namespace GitLogAggregator.DataAccess
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = "git",
-                    Arguments = "log --reverse --format='%ae' -1",
+                    Arguments = "log --reverse --format='%an' -1",  // Đổi từ '%ae' sang '%an' để lấy tên tác giả
                     WorkingDirectory = folderPath,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
@@ -69,6 +68,7 @@ namespace GitLogAggregator.DataAccess
                 throw;
             }
         }
+
 
         public List<string> GetGitAuthors(string projectDirectory)
         {

@@ -11,13 +11,13 @@ namespace BUS
 {
     public class GitLogFormatBUS
     {
-        private readonly GitLogFormatDAL data;
+        private readonly GitFormatDAL data;
 
         public List<string> LogMessages => data.LogMessages;
 
         public GitLogFormatBUS()
         {
-            data = new GitLogFormatDAL();
+            data = new GitFormatDAL();
         }
         public void CreateExcelFile(string filePath, List<WeekData> commits, DateTime internshipEndDate)
         {

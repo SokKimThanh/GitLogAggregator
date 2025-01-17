@@ -11,17 +11,19 @@ namespace DAL
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
 
         // Thêm
-        public void AddConfigFile(ConfigFileET configFile)
+        public void AddConfigFile(ConfigET configFile)
         {
             var newConfigFile = new ConfigFile
             {
                 ProjectDirectory = configFile.ProjectDirectory,
                 InternshipDirectoryId = (int)configFile.InternshipDirectoryId,
                 Author = configFile.Author,
-                StartDate = (DateTime)configFile.StartDate,
+                StartDate = (DateTime)configFile.InternshipStartDate,
                 EndDate = (DateTime)configFile.EndDate,
                 Weeks = configFile.Weeks,
-                FirstCommitDate = (DateTime)configFile.FirstCommitDate
+                FirstCommitDate = (DateTime)configFile.FirstCommitDate,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
             db.ConfigFiles.InsertOnSubmit(newConfigFile);
             db.SubmitChanges();
@@ -39,10 +41,10 @@ namespace DAL
         }
 
         // Sửa
-        public void UpdateConfigFile(ConfigFileET configFile)
+        public void UpdateConfigFile(ConfigET configFile)
         {
             var query = from cf in db.ConfigFiles
-                        where cf.ID == configFile.Id
+                        where cf.ID == configFile.ConfigFileId
                         select cf;
 
             var existingConfigFile = query.SingleOrDefault();
@@ -51,7 +53,7 @@ namespace DAL
                 existingConfigFile.ProjectDirectory = configFile.ProjectDirectory;
                 existingConfigFile.InternshipDirectoryId = (int)configFile.InternshipDirectoryId;
                 existingConfigFile.Author = configFile.Author;
-                existingConfigFile.StartDate = (DateTime)configFile.StartDate;
+                existingConfigFile.StartDate = (DateTime)configFile.InternshipStartDate;
                 existingConfigFile.EndDate = (DateTime)configFile.EndDate;
                 existingConfigFile.Weeks = configFile.Weeks;
                 existingConfigFile.FirstCommitDate = (DateTime)configFile.FirstCommitDate;
@@ -60,19 +62,19 @@ namespace DAL
         }
 
         // Liệt kê
-        public List<ConfigFileET> GetAllConfigFiles()
+        public List<ConfigET> GetAllConfigFiles()
         {
             var query = from configFile in db.ConfigFiles
                         join directory in db.InternshipDirectories on configFile.InternshipDirectoryId equals directory.ID into directories
                         from dir in directories.DefaultIfEmpty()
-                        select new ConfigFileET
+                        select new ConfigET
                         {
-                            Id = configFile.ID,
+                            ConfigFileId = configFile.ID,
                             ProjectDirectory = configFile.ProjectDirectory,
                             InternshipDirectoryId = configFile.InternshipDirectoryId,
                             InternshipWeekFolder = dir != null ? dir.InternshipWeekFolder : null,
                             Author = configFile.Author,
-                            StartDate = configFile.StartDate,
+                            InternshipStartDate = configFile.StartDate,
                             EndDate = configFile.EndDate,
                             Weeks = (int)configFile.Weeks,
                             FirstCommitDate = configFile.FirstCommitDate
@@ -81,20 +83,20 @@ namespace DAL
         }
 
         // Tìm kiếm
-        public ConfigFileET GetConfigFileById(int id)
+        public ConfigET GetConfigFileById(int id)
         {
             var query = from configFile in db.ConfigFiles
                         join directory in db.InternshipDirectories on configFile.InternshipDirectoryId equals directory.ID into directories
                         from dir in directories.DefaultIfEmpty()
                         where configFile.ID == id
-                        select new ConfigFileET
+                        select new ConfigET
                         {
-                            Id = configFile.ID,
+                            ConfigFileId = configFile.ID,
                             ProjectDirectory = configFile.ProjectDirectory,
                             InternshipDirectoryId = configFile.InternshipDirectoryId,
                             InternshipWeekFolder = dir != null ? dir.InternshipWeekFolder : null,
                             Author = configFile.Author,
-                            StartDate = configFile.StartDate,
+                            InternshipStartDate = configFile.StartDate,
                             EndDate = configFile.EndDate,
                             Weeks = (int)configFile.Weeks,
                             FirstCommitDate = configFile.FirstCommitDate

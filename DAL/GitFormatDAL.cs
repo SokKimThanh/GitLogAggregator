@@ -9,12 +9,12 @@ using ET;
 
 namespace DAL
 {
-    public class GitLogFormatDAL
+    public class GitFormatDAL
     {
         
         public List<string> LogMessages { get; private set; }
 
-        public GitLogFormatDAL()
+        public GitFormatDAL()
         {
             LogMessages = new List<string>();
         }

@@ -48,13 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatbotSummaryBUS.cs" />
-    <Compile Include="CommitInfoBUS.cs" />
-    <Compile Include="ConfigFileBUS.cs" />
+    <Compile Include="CommitBUS.cs" />
+    <Compile Include="ConfigBUS.cs" />
     <Compile Include="GitLogCheckCommitBUS.cs" />
     <Compile Include="GitLogFormatBUS.cs" />
     <Compile Include="GitLogUIBUS.cs" />
     <Compile Include="InternshipDirectoryBUS.cs" />
-    <Compile Include="ProjectWeekInfoBUS.cs" />
+    <Compile Include="ProjectWeeksBUS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace BUS
 {
-    public class ConfigFileBUS
+    public class ConfigBUS
     {
         ConfigFileDAL data;
 
-        public ConfigFileBUS()
+        public ConfigBUS()
         {
             data = new ConfigFileDAL();
         }
 
         // Thêm
-        public void AddConfigFile(ConfigFileET configFile)
+        public void AddConfigFile(ConfigET configFile)
         {
             data.AddConfigFile(configFile);
         }
@@ -30,19 +30,19 @@ namespace BUS
         }
 
         // Sửa
-        public void UpdateConfigFile(ConfigFileET configFile)
+        public void UpdateConfigFile(ConfigET configFile)
         {
             data.UpdateConfigFile(configFile);
         }
 
         // Liệt kê
-        public List<ConfigFileET> GetAllConfigFiles()
+        public List<ConfigET> GetAllConfigFiles()
         {
             return data.GetAllConfigFiles();
         }
 
         // Tìm kiếm
-        public ConfigFileET GetConfigFileById(int id)
+        public ConfigET GetConfigFileById(int id)
         {
             return data.GetConfigFileById(id);
         }

@@ -8,31 +8,31 @@ using System.Threading.Tasks;
 
 namespace BUS
 {
-    public class CommitInfoBUS
+    public class CommitBUS
     {
-        private CommitInfoDAL commitInfoDAL = new CommitInfoDAL();
+        private CommitDAL commitInfoDAL = new CommitDAL();
 
-        public void CreateCommit(CommitInfo commitInfo)
+        public void Create(CommitET commitInfo)
         {
             commitInfoDAL.Create(commitInfo);
         }
 
-        public void DeleteCommit(int commitId)
+        public void Delete(int commitId)
         {
             commitInfoDAL.Delete(commitId);
         }
 
-        public void UpdateCommit(CommitInfo commitInfo)
+        public void Update(CommitET commitInfo)
         {
             commitInfoDAL.Update(commitInfo);
         }
 
-        public List<CommitInfo> GetAllCommits()
+        public List<CommitET> GetAll()
         {
             return commitInfoDAL.GetAll();
         }
 
-        public CommitInfo GetCommitById(int commitId)
+        public CommitET GetById(int commitId)
         {
             return commitInfoDAL.GetById(commitId);
         }

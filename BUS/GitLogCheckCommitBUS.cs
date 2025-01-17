@@ -17,7 +17,7 @@ namespace BUS
     public class GitLogCheckCommitBUS
     {
 
-        readonly GitLogCheckCommitDAL data = new GitLogCheckCommitDAL();
+        readonly GitCheckCommitDAL data = new GitCheckCommitDAL();
 
         public DataTable ConvertToDataTable(List<WeekData> weekDataList)
         {

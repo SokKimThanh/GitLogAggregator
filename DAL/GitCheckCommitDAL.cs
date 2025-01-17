@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 namespace DAL
 {
-    public class GitLogCheckCommitDAL
+    public class GitCheckCommitDAL
     {
 
         // Method to convert List<WeekData> to DataTable

@@ -7,23 +7,39 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class ProjectWeekInfoDAL
+
+
+    public class ProjectWeeksDAL
     {
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
 
+        private CommitDAL commitInfoDAL = new CommitDAL();
+
+        public void SaveProjectWeekAndCommits(ProjectWeekET projectWeek, List<ET.CommitET> commits)
+        {
+            // Lưu thông tin tuần thực tập
+            Create(projectWeek);
+
+            // Lưu thông tin commit
+            foreach (var commit in commits)
+            {
+                commitInfoDAL.Create(commit);
+            }
+        }
+
         // Thêm tuần dự án mới
-        public void Create(ProjectWeekInfo projectWeek)
+        public int Create(ProjectWeekET projectWeek)
         {
             var projectWeekEntity = new ProjectWeek
             {
                 ProjectWeekId = projectWeek.ProjectWeekId,
-                ConfigFileId = projectWeek.ConfigFileId,
                 InternshipDirectoryId = projectWeek.InternshipDirectoryId,
                 CreatedAt = projectWeek.CreatedAt,
                 UpdatedAt = projectWeek.UpdatedAt
             };
             db.ProjectWeeks.InsertOnSubmit(projectWeekEntity);
             db.SubmitChanges();
+            return projectWeekEntity.ProjectWeekId;
         }
 
 
@@ -39,12 +55,11 @@ namespace DAL
         }
 
         // Cập nhật thông tin tuần dự án
-        public void Update(ProjectWeekInfo projectWeek)
+        public void Update(ProjectWeekET projectWeek)
         {
             var existingWeek = db.ProjectWeeks.SingleOrDefault(p => p.ProjectWeekId == projectWeek.ProjectWeekId);
             if (existingWeek != null)
             {
-                existingWeek.ConfigFileId = projectWeek.ConfigFileId;
                 existingWeek.InternshipDirectoryId = projectWeek.InternshipDirectoryId;
                 existingWeek.CreatedAt = projectWeek.CreatedAt;
                 existingWeek.UpdatedAt = projectWeek.UpdatedAt;
@@ -53,12 +68,11 @@ namespace DAL
         }
 
         // Lấy tất cả tuần dự án
-        public List<ProjectWeekInfo> GetAll()
+        public List<ProjectWeekET> GetAll()
         {
-            return db.ProjectWeeks.Select(p => new ProjectWeekInfo
+            return db.ProjectWeeks.Select(p => new ProjectWeekET
             {
                 ProjectWeekId = p.ProjectWeekId,
-                ConfigFileId = p.ConfigFileId,
                 InternshipDirectoryId = p.InternshipDirectoryId,
                 CreatedAt = (DateTime)p.CreatedAt,
                 UpdatedAt = (DateTime)p.UpdatedAt
@@ -66,15 +80,14 @@ namespace DAL
         }
 
         // Lấy tuần dự án theo ID
-        public ProjectWeekInfo GetById(int projectWeekId)
+        public ProjectWeekET GetById(int projectWeekId)
         {
             var projectWeek = db.ProjectWeeks.SingleOrDefault(p => p.ProjectWeekId == projectWeekId);
             if (projectWeek != null)
             {
-                return new ProjectWeekInfo
+                return new ProjectWeekET
                 {
                     ProjectWeekId = projectWeek.ProjectWeekId,
-                    ConfigFileId = projectWeek.ConfigFileId,
                     InternshipDirectoryId = projectWeek.InternshipDirectoryId,
                     CreatedAt = (DateTime)projectWeek.CreatedAt,
                     UpdatedAt = (DateTime)projectWeek.UpdatedAt
@@ -82,6 +95,27 @@ namespace DAL
             }
             return null;
         }
-    }
 
+        // Hàm lấy thông tin tuần dựa trên khoảng thời gian và ID thư mục thực tập
+        public ProjectWeekET GetProjectWeekByDateRangeAndDirectoryId(DateTime startDate, DateTime endDate, int internshipDirectoryId)
+        {
+            var projectWeek = db.ProjectWeeks.FirstOrDefault(pw =>
+                pw.WeekStartDate == startDate && pw.WeekEndDate == endDate && pw.InternshipDirectoryId == internshipDirectoryId
+            );
+
+            if (projectWeek != null)
+            {
+                return new ProjectWeekET
+                {
+                    ProjectWeekId = projectWeek.ProjectWeekId,
+                    InternshipDirectoryId = projectWeek.InternshipDirectoryId,
+                    CreatedAt = (DateTime)projectWeek.CreatedAt,
+                    UpdatedAt = (DateTime)projectWeek.UpdatedAt,
+                    WeekStartDate = (DateTime)projectWeek.WeekStartDate,
+                    WeekEndDate = (DateTime)projectWeek.WeekEndDate
+                };
+            }
+            return null;
+        }
+    } 
 }

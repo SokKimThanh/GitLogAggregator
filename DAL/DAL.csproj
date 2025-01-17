@@ -92,7 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatbotSummaryDAL.cs" />
-    <Compile Include="CommitInfoDAL.cs" />
+    <Compile Include="CommitDAL.cs" />
     <Compile Include="ConfigFileDAL.cs" />
     <Compile Include="GitLogAggregator.designer.cs">
       <AutoGen>True</AutoGen>
@@ -100,16 +100,16 @@
       <DependentUpon>GitLogAggregator.dbml</DependentUpon>
     </Compile>
     <Compile Include="InternshipDirectoryDAL.cs" />
-    <Compile Include="ProjectWeekInfoDAL.cs" />
+    <Compile Include="ProjectWeeksDAL.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Utilities\DateHelpers.cs" />
-    <Compile Include="GitLogCheckCommitDAL.cs" />
-    <Compile Include="GitLogFormatDAL.cs" />
-    <Compile Include="GitLogUIDAL.cs" />
+    <Compile Include="GitCheckCommitDAL.cs" />
+    <Compile Include="GitFormatDAL.cs" />
+    <Compile Include="GitUIDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\FileHelper.cs" />
     <Compile Include="Utilities\LogHelper.cs" />

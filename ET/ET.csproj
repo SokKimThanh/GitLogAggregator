@@ -47,11 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatbotSummary.cs" />
-    <Compile Include="CommitInfo.cs" />
+    <Compile Include="CommitET.cs" />
     <Compile Include="ConfigFileET.cs" />
     <Compile Include="DayData.cs" />
     <Compile Include="InternshipDirectoryET.cs" />
-    <Compile Include="ProjectWeekInfo.cs" />
+    <Compile Include="ProjectWeekET.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionData.cs" />
     <Compile Include="WeekData.cs" />
