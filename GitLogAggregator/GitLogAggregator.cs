@@ -493,9 +493,7 @@ namespace GitLogAggregator
             {
                 DisableControls();
 
-                // Cài đặt quyền truy cập mạnh nhất cho thư mục internship_week
-                //SetPermissions(txtFolderInternshipPath);
-
+            
                 // Xóa toàn bộ thư mục internship_week
                 try
                 {
@@ -1165,13 +1163,21 @@ namespace GitLogAggregator
                     // Lấy đường dẫn thư mục
                     txtFolderInternshipPath = folderBrowserDialog.SelectedPath;
 
-                    // Lưu đường dẫn vào cơ sở dữ liệu
+                     
                     // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
                     internshipDirectoryBUS.InsertInternshipDirectory(txtFolderInternshipPath);
 
+                    // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
+                    cboThuMucThucTap.DataSource = internshipDirectoryBUS.GetAllInternshipDirectories();
+                    cboThuMucThucTap.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
+                    cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
+
+                    // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
+                    txtFolderInternshipPath = GetLatestInternshipFolderPath();
 
                     // Cập nhật đường dẫn thư mục thực tập trên giao diện
                     AppendTextWithScroll($"Đã cập nhật đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
+
                 }
             }
         }

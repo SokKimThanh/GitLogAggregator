@@ -221,7 +221,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitMessage", DbType="Text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitMessage", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
 		public string CommitMessage
 		{
 			get
