@@ -693,6 +693,7 @@
             this.btnSearchReport.Size = new System.Drawing.Size(91, 24);
             this.btnSearchReport.TabIndex = 34;
             this.btnSearchReport.UseVisualStyleBackColor = false;
+            this.btnSearchReport.Click += new System.EventHandler(this.btnSearchReport_Click);
             // 
             // btnNextReport
             // 

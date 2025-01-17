@@ -13,10 +13,25 @@ namespace DAL
         // Thêm commit mới
         public void Create(CommitET c)
         {
+            // Kiểm tra xem CommitHash đã tồn tại chưa
+            var isDuplicate = db.Commits.Any(x => x.CommitHash == c.CommitHash);
+            if (isDuplicate)
+            {
+                throw new Exception("Trùng dữ liệu.");
+            }
+
+            // Kiểm tra xem ProjectWeekId có tồn tại không
+            var projectWeekExists = db.ProjectWeeks.Any(pw => pw.ProjectWeekId == c.ProjectWeekId);
+            if (!projectWeekExists)
+            {
+                throw new Exception("Không đúng tuần thực tập.");
+            }
+
+            // Tạo commit mới
             var commit = new Commit
             {
                 CommitHash = c.CommitHash,
-                CommitMessage = c.CommitMessage, // Commit message is already a string, which supports Unicode
+                CommitMessage = c.CommitMessage,
                 CommitDate = c.CommitDate,
                 Author = c.Author,
                 ProjectWeekId = c.ProjectWeekId,
@@ -25,6 +40,8 @@ namespace DAL
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
+
+            // Thêm commit vào cơ sở dữ liệu
             db.Commits.InsertOnSubmit(commit);
             db.SubmitChanges();
         }
@@ -62,7 +79,7 @@ namespace DAL
         // Lấy tất cả commit
         public List<CommitET> GetAll()
         {
-            return db.Commits.Select(c => new CommitET
+            return db.Commits.OrderByDescending(c => c.CreatedAt).Select(c => new CommitET
             {
                 CommitId = c.CommitId,
                 CommitHash = c.CommitHash,

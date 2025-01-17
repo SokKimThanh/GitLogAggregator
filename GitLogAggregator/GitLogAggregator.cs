@@ -18,6 +18,7 @@ using Path = System.IO.Path;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using Size = System.Drawing.Size;
 using DataTable = System.Data.DataTable;
+using System.Text;
 
 
 namespace GitLogAggregator
@@ -113,6 +114,9 @@ namespace GitLogAggregator
 
             // Xây dựng danh sách các tuần và tệp
             BuildWeekFileListView(txtFolderInternshipPath);
+
+            dgvReportCommits.DataSource = commitBUS.GetAll();
+
         }
 
 
@@ -493,7 +497,7 @@ namespace GitLogAggregator
             {
                 DisableControls();
 
-            
+
                 // Xóa toàn bộ thư mục internship_week
                 try
                 {
@@ -1163,7 +1167,7 @@ namespace GitLogAggregator
                     // Lấy đường dẫn thư mục
                     txtFolderInternshipPath = folderBrowserDialog.SelectedPath;
 
-                     
+
                     // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
                     internshipDirectoryBUS.InsertInternshipDirectory(txtFolderInternshipPath);
 
@@ -1210,45 +1214,26 @@ namespace GitLogAggregator
             txtSetupThuMucThucTap.BorderStyle = BorderStyle.None;
             txtResultMouseEvents.Clear();
         }
-        public string RunGitCommand(string command, string projectDirectory)
+        private string RunGitCommand(string command, string workingDirectory)
         {
-            try
+            var processStartInfo = new ProcessStartInfo
             {
-                var processStartInfo = new ProcessStartInfo("git", command)
-                {
-                    WorkingDirectory = projectDirectory,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    StandardOutputEncoding = System.Text.Encoding.UTF8
-                };
+                FileName = "git",
+                Arguments = command,
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = Encoding.UTF8 // Đảm bảo đọc đầu ra với UTF-8
+            };
 
-                using (var process = Process.Start(processStartInfo))
-                {
-                    if (process == null)
-                        throw new InvalidOperationException("Process could not be started.");
-
-                    using (var reader = process.StandardOutput)
-                    {
-                        string output = reader.ReadToEnd();
-                        string errorOutput = process.StandardError.ReadToEnd();
-
-                        process.WaitForExit();
-
-                        if (process.ExitCode != 0)
-                        {
-                            throw new InvalidOperationException($"Git command failed with error: {errorOutput}");
-                        }
-
-                        return output;
-                    }
-                }
-            }
-            catch (Exception ex)
+            using (var process = new Process())
             {
-                MessageBox.Show($"Lỗi khi chạy lệnh git: {ex.Message}");
-                throw;
+                process.StartInfo = processStartInfo;
+                process.Start();
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                return output;
             }
         }
         public void AggregateCommits(ConfigET config)
@@ -1360,33 +1345,42 @@ namespace GitLogAggregator
         private List<CommitET> ParseGitLog(string logOutput)
         {
             var commits = new List<CommitET>();
-            var lines = logOutput.Split('\n');
+            var lines = logOutput.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries); // Loại bỏ các dòng trống
+
             foreach (var line in lines)
             {
-                if (!string.IsNullOrWhiteSpace(line))
+                var parts = line.Split('|');
+                if (parts.Length == 4) // Đảm bảo có đủ 4 phần: CommitHash, CommitMessage, CommitDate, Author
                 {
-                    var parts = line.Split('|');
-                    if (parts.Length == 4)
+                    try
                     {
-                        try
+                        // Phân tích thời gian commit từ định dạng ISO 8601 kèm theo múi giờ
+                        var commitDate = DateTime.ParseExact(
+                            parts[2].Trim(), // Loại bỏ khoảng trắng thừa
+                            "yyyy-MM-dd HH:mm:ss zzz", // Định dạng thời gian từ Git
+                            CultureInfo.InvariantCulture // Sử dụng CultureInfo mặc định
+                        );
+
+                        // Thêm commit vào danh sách
+                        commits.Add(new CommitET
                         {
-                            var commitDate = DateTime.Parse(parts[2]);
-                            var commitMessage = System.Text.Encoding.UTF8.GetString(System.Text.Encoding.Default.GetBytes(parts[1]));
-                            commits.Add(new CommitET
-                            {
-                                CommitHash = parts[0],
-                                CommitMessage = commitMessage,
-                                CommitDate = commitDate,
-                                Author = parts[3]
-                            });
-                        }
-                        catch (FormatException ex)
-                        {
-                            Console.WriteLine($"Error parsing date: {ex.Message}");
-                        }
+                            CommitHash = parts[0].Trim(),
+                            CommitMessage = parts[1].Trim(), // Không cần chuyển đổi encoding nếu đầu vào đã là UTF-8
+                            CommitDate = commitDate,
+                            Author = parts[3].Trim()
+                        });
+                    }
+                    catch (FormatException ex)
+                    {
+                        Console.WriteLine($"Error parsing date: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Unexpected error: {ex.Message}");
                     }
                 }
             }
+
             return commits;
         }
         private void btnSaveGit_Click(object sender, EventArgs e)
@@ -1402,6 +1396,37 @@ namespace GitLogAggregator
             foreach (ConfigET config in configs)
             {
                 AggregateCommits(config);
+            }
+        }
+
+        private void btnSearchReport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (txtSearchReport.Text == "")
+                {
+                    dgvReportCommits.DataSource = commitBUS.GetAll();
+                    AppendTextWithScroll("Vui lòng nhập thông tin tìm kiếm.\n");
+                    return;
+                }
+                Random d = new Random();
+                commitBUS.Create(new CommitET()
+                {
+                    Author = "hoang van mach",
+                    CommitDate = DateTime.Now,
+                    CommitHash = d.Next(32343).ToString(),
+                    CommitMessage = txtSearchReport.Text,
+                    Date = DateTime.Now,
+                    Period = DeterminePeriod(DateTime.Now.Hour),
+                    ProjectWeekId = 35
+                });
+                dgvReportCommits.DataSource = commitBUS.GetAll();
+                txtSearchReport.Clear();
+            }
+            catch (Exception ex)
+            {
+                txtSearchReport.Clear();
+                AppendTextWithScroll($"Lỗi: {ex.Message}");
             }
         }
     }
