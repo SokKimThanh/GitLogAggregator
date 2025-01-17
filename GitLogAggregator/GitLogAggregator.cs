@@ -58,7 +58,7 @@ namespace GitLogAggregator
         // thong tin commit theo tuan
         private readonly CommitBUS commitBUS = new CommitBUS();
 
-
+        private readonly RemoveBUS removeBUS = new RemoveBUS();
 
 
         // danh sách tổng hợp commit hợp lệ và không hợp lệ
@@ -497,7 +497,6 @@ namespace GitLogAggregator
             {
                 DisableControls();
 
-
                 // Xóa toàn bộ thư mục internship_week
                 try
                 {
@@ -528,9 +527,19 @@ namespace GitLogAggregator
 
                 dgvReportCommits.DataSource = null;
                 AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
+                 
+                cboAuthorCommit.DataSource = null;
+
+                cboThuMucThucTap.DataSource = null;
+
+                
+
+                // Xóa dữ liệu trong các bảng
+                removeBUS.ClearAllTables();
 
                 // Tải lại danh sách listViewProjects
                 LoadListViewProjects(configBus.GetAllConfigFiles());
+
 
                 AppendTextWithScroll("Xóa thư mục internship_week và các mục trong bảng ConfigFile hoàn tất.\n");
             }
@@ -1275,15 +1284,16 @@ namespace GitLogAggregator
                     {
                         DateTime currentDate = weekStartDate.AddDays(dayOffset);
 
-                        // Determine the period (morning, afternoon, evening)
-                        string period = DeterminePeriod(currentDate.Hour);
-
+                        // Lấy các commit trong ngày hiện tại
                         var dailyCommits = commits.Where(c => c.CommitDate.Date == currentDate.Date).ToList();
 
                         if (dailyCommits.Any())
                         {
                             foreach (var commit in dailyCommits)
                             {
+                                // Determine the period based on the commit's hour
+                                string period = DeterminePeriod(commit.CommitDate.Hour);
+
                                 // Ghi log vào db
                                 var commitInfo = new CommitET
                                 {
@@ -1292,8 +1302,8 @@ namespace GitLogAggregator
                                     CommitDate = commit.CommitDate,
                                     Author = commit.Author,
                                     ProjectWeekId = projectWeekId,
-                                    Date = currentDate,
-                                    Period = period,
+                                    Date = currentDate, // Ngày hiện tại trong vòng lặp
+                                    Period = period,    // Period được tính từ CommitDate
                                     CreatedAt = DateTime.Now,
                                     UpdatedAt = DateTime.Now
                                 };
@@ -1323,21 +1333,20 @@ namespace GitLogAggregator
                 AppendTextWithScroll($"Lỗi: Đã xảy ra lỗi khi tổng hợp commits. Chi tiết: {ex.Message}\n");
             }
         }
-
         // Helper method to determine the period of the day
         private string DeterminePeriod(int hour)
         {
-            if (hour >= 0 && hour < 12)
+            if (hour >= 6 && hour < 12)
             {
-                return "S";
+                return "S"; // Sáng: 6 giờ đến trước 12 giờ
             }
             else if (hour >= 12 && hour < 18)
             {
-                return "C";
+                return "C"; // Chiều: 12 giờ đến trước 18 giờ
             }
             else
             {
-                return "T";
+                return "T"; // Tối: 18 giờ đến trước 6 giờ sáng hôm sau
             }
         }
 

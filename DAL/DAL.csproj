@@ -106,6 +106,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RemoveAllTableDAL.cs" />
     <Compile Include="Utilities\DateHelpers.cs" />
     <Compile Include="GitCheckCommitDAL.cs" />
     <Compile Include="GitFormatDAL.cs" />
