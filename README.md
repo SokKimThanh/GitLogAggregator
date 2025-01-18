@@ -1,4 +1,6 @@
-![image](https://github.com/user-attachments/assets/c2d2d887-6a10-4e16-a6b5-0039b7c4a4d1)
+
+![Screenshot 2025-01-17 174355](https://github.com/user-attachments/assets/376f9ec7-21c3-44c9-8689-93a00014c94e)
+![image](https://github.com/user-attachments/assets/2ae0acb8-aa50-4eb9-abc4-996474fb97bf)
 
 ### Hướng Dẫn Sử Dụng Công Cụ Quản Lý Commit Git
 
@@ -136,6 +138,7 @@ o Có thể thêm tính năng xuất dữ liệu commit thành file Excel hoặc
 
 Nếu gặp sự cố khi sử dụng công cụ, vui lòng liên hệ với bộ phận hỗ trợ qua email: 22211tt0063@mail.tdc.edu.vn hoặc truy cập trang web chính thức để biết thêm chi tiết.
 
+![image](https://github.com/user-attachments/assets/2367ba4c-ba4d-48ef-b71f-0025164ed26b)
 
 ### 1\. **Tổng Quan Database**
 
