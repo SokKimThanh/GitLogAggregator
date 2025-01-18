@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BUS
 {
-  
+
     public class InternshipDirectoryBUS
     {
         private InternshipDirectoryDAL dal = new InternshipDirectoryDAL();
@@ -24,6 +24,11 @@ namespace BUS
         public InternshipDirectoryET GetByID(int id)
         {
             return dal.GetByID(id);
+        }
+
+        public InternshipDirectoryET GetByPath(string internshipWeekFolder)
+        {
+            return dal.GetByPath(internshipWeekFolder);
         }
 
         public void Add(InternshipDirectoryET entity)

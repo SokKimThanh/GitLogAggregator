@@ -1,4 +1,5 @@
 ﻿using DAL;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using ET;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,28 @@ public class InternshipDirectoryDAL
             throw new Exception("Error in GetByID: " + ex.Message);
         }
     }
+    public InternshipDirectoryET GetByPath(string internshipWeekFolder)
+    {
+        try
+        {
+            var query = from i in db.InternshipDirectories
+                        where i.InternshipWeekFolder == internshipWeekFolder
+                        select new InternshipDirectoryET
+                        {
+                            ID = i.ID,
+                            InternshipWeekFolder = i.InternshipWeekFolder,
+                            DateModified = i.DateModified,
+                            CreatedAt = i.CreatedAt.Value,
+                            UpdatedAt = i.UpdatedAt.Value
+                        };
 
+            return query.SingleOrDefault();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error in GetByPath: " + ex.Message);
+        }
+    }
     public void Add(InternshipDirectoryET et)
     {
         try

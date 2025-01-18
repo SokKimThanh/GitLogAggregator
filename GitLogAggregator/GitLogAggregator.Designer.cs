@@ -67,7 +67,7 @@
             this.cboThuMucThucTap = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
-            this.txtSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
+            this.btnSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
@@ -98,7 +98,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel9.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSetupThuMucThucTap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnSetupThuMucThucTap)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -512,7 +512,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.21779F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel9, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.helpButton, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.txtSetupThuMucThucTap, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnSetupThuMucThucTap, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -542,21 +542,21 @@
             this.tableLayoutPanel9.Size = new System.Drawing.Size(284, 118);
             this.tableLayoutPanel9.TabIndex = 17;
             // 
-            // txtSetupThuMucThucTap
+            // btnSetupThuMucThucTap
             // 
-            this.txtSetupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
-            this.txtSetupThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.txtSetupThuMucThucTap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSetupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("txtSetupThuMucThucTap.Image")));
-            this.txtSetupThuMucThucTap.Location = new System.Drawing.Point(23, 3);
-            this.txtSetupThuMucThucTap.Name = "txtSetupThuMucThucTap";
-            this.txtSetupThuMucThucTap.Size = new System.Drawing.Size(65, 118);
-            this.txtSetupThuMucThucTap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.txtSetupThuMucThucTap.TabIndex = 16;
-            this.txtSetupThuMucThucTap.TabStop = false;
-            this.txtSetupThuMucThucTap.Click += new System.EventHandler(this.SetupThuMucThucTap_Click);
-            this.txtSetupThuMucThucTap.MouseEnter += new System.EventHandler(this.SetupThuMucThucTap_MouseEnter);
-            this.txtSetupThuMucThucTap.MouseLeave += new System.EventHandler(this.SetupThuMucThucTap_MouseLeave);
+            this.btnSetupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
+            this.btnSetupThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSetupThuMucThucTap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSetupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("btnSetupThuMucThucTap.Image")));
+            this.btnSetupThuMucThucTap.Location = new System.Drawing.Point(23, 3);
+            this.btnSetupThuMucThucTap.Name = "btnSetupThuMucThucTap";
+            this.btnSetupThuMucThucTap.Size = new System.Drawing.Size(65, 118);
+            this.btnSetupThuMucThucTap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.btnSetupThuMucThucTap.TabIndex = 16;
+            this.btnSetupThuMucThucTap.TabStop = false;
+            this.btnSetupThuMucThucTap.Click += new System.EventHandler(this.BtnSetupThuMucThucTap_Click);
+            this.btnSetupThuMucThucTap.MouseEnter += new System.EventHandler(this.SetupThuMucThucTap_MouseEnter);
+            this.btnSetupThuMucThucTap.MouseLeave += new System.EventHandler(this.SetupThuMucThucTap_MouseLeave);
             // 
             // tableLayoutPanel2
             // 
@@ -946,7 +946,7 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel9.ResumeLayout(false);
             this.tableLayoutPanel9.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.txtSetupThuMucThucTap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.btnSetupThuMucThucTap)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
@@ -986,7 +986,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnClearDataListView;
         private System.Windows.Forms.Button helpButton;
-        private System.Windows.Forms.PictureBox txtSetupThuMucThucTap;
+        private System.Windows.Forms.PictureBox btnSetupThuMucThucTap;
         private System.Windows.Forms.ListView fileListView;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.DataGridView dgvReportCommits;

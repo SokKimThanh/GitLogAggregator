@@ -1174,7 +1174,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SetupThuMucThucTap_Click(object sender, EventArgs e)
+        private void BtnSetupThuMucThucTap_Click(object sender, EventArgs e)
         {
             // Mở hộp thoại chọn thư mục
             using (var folderBrowserDialog = new FolderBrowserDialog())
@@ -1187,14 +1187,43 @@ namespace GitLogAggregator
                 {
                     // Lấy đường dẫn thư mục
                     txtFolderInternshipPath = folderBrowserDialog.SelectedPath;
-                    InternshipDirectoryET internshipDirectory = new InternshipDirectoryET
-                    {
-                        InternshipWeekFolder = txtFolderInternshipPath,
-                        DateModified = DateTime.Now
-                    };
 
-                    // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
-                    internshipDirectoryBUS.Add(internshipDirectory);
+                    // Kiểm tra nếu là thư mục git
+                    if (Directory.Exists(Path.Combine(txtFolderInternshipPath, ".git")))
+                    {
+                        MessageBox.Show("Thư mục đã chọn là thư mục git. Vui lòng chọn thư mục khác.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Kiểm tra nếu là thư mục thông thường đã có dữ liệu
+                    if (Directory.EnumerateFileSystemEntries(txtFolderInternshipPath).Any())
+                    {
+                        // Kiểm tra nếu là thư mục đã lưu trong cơ sở dữ liệu
+                        var existingDirectory = internshipDirectoryBUS.GetByPath(txtFolderInternshipPath);
+                        if (existingDirectory != null)
+                        {
+                            // Tải lại các thiết lập từ thư mục đã lưu
+                            // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
+                            txtFolderInternshipPath = existingDirectory.InternshipWeekFolder;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Thư mục đã chọn không phải là thư mục thực tập đã lưu. Vui lòng chọn thư mục khác hoặc tạo thư mục rỗng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // Thư mục rỗng, thiết lập thao tác cài đặt mới
+                        InternshipDirectoryET internshipDirectory = new InternshipDirectoryET
+                        {
+                            InternshipWeekFolder = txtFolderInternshipPath,
+                            DateModified = DateTime.Now
+                        };
+
+                        // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
+                        internshipDirectoryBUS.Add(internshipDirectory);
+                    }
 
                     // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
                     cboThuMucThucTap.DataSource = internshipDirectoryBUS.GetAll();
@@ -1206,10 +1235,19 @@ namespace GitLogAggregator
 
                     // Cập nhật đường dẫn thư mục thực tập trên giao diện
                     AppendTextWithScroll($"Đã cập nhật đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
-
                 }
             }
         }
+
+        private void LoadSettingsFromDirectory(InternshipDirectoryET existingDirectory)
+        {
+            // Tải lại các thiết lập từ thư mục đã lưu
+            // Ví dụ:
+            // txtFolderInternshipPath = existingDirectory.InternshipWeekFolder;
+            // dateModified = existingDirectory.DateModified;
+            // ...
+        }
+
 
         private void CboThuMucThucTap_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1230,13 +1268,13 @@ namespace GitLogAggregator
         private void SetupThuMucThucTap_MouseEnter(object sender, EventArgs e)
         {
             AppendEventsWithScroll("Chọn thư mục thực tập\n");
-            txtSetupThuMucThucTap.BorderStyle = BorderStyle.FixedSingle;
+            btnSetupThuMucThucTap.BorderStyle = BorderStyle.FixedSingle;
             // them màu border khi hover
         }
 
         private void SetupThuMucThucTap_MouseLeave(object sender, EventArgs e)
         {
-            txtSetupThuMucThucTap.BorderStyle = BorderStyle.None;
+            btnSetupThuMucThucTap.BorderStyle = BorderStyle.None;
             txtResultMouseEvents.Clear();
         }
         private string RunGitCommand(string command, string workingDirectory)
