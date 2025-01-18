@@ -1,4 +1,5 @@
 ﻿using DAL;
+using ET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,31 +10,31 @@ namespace BUS
 {
     public class ChatbotSummaryBUS
     {
-        private ChatbotSummaryDAL chatbotSummaryDAL = new ChatbotSummaryDAL();
+        private ChatbotSummaryDAL dal = new ChatbotSummaryDAL();
 
-        public void CreateChatbotSummary(ChatbotSummary chatbotSummary)
+        public List<ChatbotSummaryET> GetAll()
         {
-            chatbotSummaryDAL.Create(chatbotSummary);
+            return dal.GetAll();
         }
 
-        public void DeleteChatbotSummary(int chatbotSummaryId)
+        public ChatbotSummaryET GetByID(int id)
         {
-            chatbotSummaryDAL.Delete(chatbotSummaryId);
+            return dal.GetByID(id);
         }
 
-        public void UpdateChatbotSummary(ChatbotSummary chatbotSummary)
+        public void Add(ChatbotSummaryET entity)
         {
-            chatbotSummaryDAL.Update(chatbotSummary);
+            dal.Add(entity);
         }
 
-        public List<ChatbotSummary> GetAllChatbotSummaries()
+        public void Update(ChatbotSummaryET entity)
         {
-            return chatbotSummaryDAL.GetAll();
+            dal.Update(entity);
         }
 
-        public ChatbotSummary GetChatbotSummaryById(int chatbotSummaryId)
+        public void Delete(int id)
         {
-            return chatbotSummaryDAL.GetById(chatbotSummaryId);
+            dal.Delete(id);
         }
     }
 

@@ -93,6 +93,8 @@
   <ItemGroup>
     <Compile Include="ChatbotSummaryDAL.cs" />
     <Compile Include="CommitDAL.cs" />
+    <Compile Include="CommitGroupDAL.cs" />
+    <Compile Include="CommitGroupMemberDAL.cs" />
     <Compile Include="ConfigFileDAL.cs" />
     <Compile Include="GitLogAggregator.designer.cs">
       <AutoGen>True</AutoGen>

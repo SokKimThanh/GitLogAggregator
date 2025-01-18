@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 
 namespace BUS
 {
-    public class CommitBUS
+    public class ProjectWeekBUS
     {
-        private CommitDAL dal = new CommitDAL();
+        private ProjectWeekDAL dal = new ProjectWeekDAL();
 
-        public List<CommitET> GetAll()
+        public List<ProjectWeekET> GetAll()
         {
             return dal.GetAll();
         }
 
-        public CommitET GetByID(int id)
+        public ProjectWeekET GetByID(int id)
         {
             return dal.GetByID(id);
         }
 
-        public void Add(CommitET entity)
+        public void Add(ProjectWeekET entity)
         {
             dal.Add(entity);
         }
 
-        public void Update(CommitET entity)
+        public void Update(ProjectWeekET entity)
         {
             dal.Update(entity);
         }
@@ -36,9 +36,12 @@ namespace BUS
         {
             dal.Delete(id);
         }
-
-        public CommitET GetLastInserted()
+        /// <summary>
+        /// Lấy ra bản ghi cuối cùng
+        /// </summary> 
+        public ProjectWeekET GetLastInserted()
         {
+
             return dal.GetLastInserted();
         }
     }

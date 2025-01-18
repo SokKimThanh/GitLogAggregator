@@ -1,4 +1,6 @@
-﻿using ET;
+﻿using DAL;
+using DocumentFormat.OpenXml.Wordprocessing;
+using ET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,115 +9,145 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-
-
-    public class ProjectWeeksDAL
+    public class ProjectWeekDAL
     {
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
-
-        private CommitDAL commitInfoDAL = new CommitDAL();
-
-        public void SaveProjectWeekAndCommits(ProjectWeekET projectWeek, List<ET.CommitET> commits)
-        {
-            // Lưu thông tin tuần thực tập
-            Create(projectWeek);
-
-            // Lưu thông tin commit
-            foreach (var commit in commits)
-            {
-                commitInfoDAL.Create(commit);
-            }
-        }
-
-        // Thêm tuần dự án mới
-        public int Create(ProjectWeekET projectWeek)
-        {
-            var projectWeekEntity = new ProjectWeek
-            {
-                ProjectWeekId = projectWeek.ProjectWeekId,
-                InternshipDirectoryId = projectWeek.InternshipDirectoryId,
-                CreatedAt = projectWeek.CreatedAt,
-                UpdatedAt = projectWeek.UpdatedAt
-            };
-            db.ProjectWeeks.InsertOnSubmit(projectWeekEntity);
-            db.SubmitChanges();
-            return projectWeekEntity.ProjectWeekId;
-        }
-
-
-        // Xóa tuần dự án theo ID
-        public void Delete(int projectWeekId)
-        {
-            var projectWeek = db.ProjectWeeks.SingleOrDefault(p => p.ProjectWeekId == projectWeekId);
-            if (projectWeek != null)
-            {
-                db.ProjectWeeks.DeleteOnSubmit(projectWeek);
-                db.SubmitChanges();
-            }
-        }
-
-        // Cập nhật thông tin tuần dự án
-        public void Update(ProjectWeekET projectWeek)
-        {
-            var existingWeek = db.ProjectWeeks.SingleOrDefault(p => p.ProjectWeekId == projectWeek.ProjectWeekId);
-            if (existingWeek != null)
-            {
-                existingWeek.InternshipDirectoryId = projectWeek.InternshipDirectoryId;
-                existingWeek.CreatedAt = projectWeek.CreatedAt;
-                existingWeek.UpdatedAt = projectWeek.UpdatedAt;
-                db.SubmitChanges();
-            }
-        }
-
-        // Lấy tất cả tuần dự án
         public List<ProjectWeekET> GetAll()
         {
-            return db.ProjectWeeks.Select(p => new ProjectWeekET
+            try
             {
-                ProjectWeekId = p.ProjectWeekId,
-                InternshipDirectoryId = p.InternshipDirectoryId,
-                CreatedAt = (DateTime)p.CreatedAt,
-                UpdatedAt = (DateTime)p.UpdatedAt
-            }).ToList();
+                var query = from p in db.ProjectWeeks
+                            orderby p.CreatedAt descending
+                            select new ProjectWeekET
+                            {
+                                ProjectWeekId = p.ProjectWeekId,
+                                WeekStartDate = p.WeekStartDate.Value,
+                                WeekEndDate = p.WeekEndDate.Value,
+                                InternshipDirectoryId = p.InternshipDirectoryId,
+                                CreatedAt = p.CreatedAt.Value,
+                                UpdatedAt = p.UpdatedAt.Value
+                            };
+
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in GetAll: " + ex.Message);
+            }
         }
 
-        // Lấy tuần dự án theo ID
-        public ProjectWeekET GetById(int projectWeekId)
+        public ProjectWeekET GetByID(int id)
         {
-            var projectWeek = db.ProjectWeeks.SingleOrDefault(p => p.ProjectWeekId == projectWeekId);
-            if (projectWeek != null)
+            try
             {
-                return new ProjectWeekET
+                var query = from p in db.ProjectWeeks
+                            where p.ProjectWeekId == id
+                            select new ProjectWeekET
+                            {
+                                ProjectWeekId = p.ProjectWeekId,
+                                WeekStartDate = p.WeekStartDate.Value,
+                                WeekEndDate = p.WeekEndDate.Value,
+                                InternshipDirectoryId = p.InternshipDirectoryId,
+                                CreatedAt = p.CreatedAt.Value,
+                                UpdatedAt = p.UpdatedAt.Value
+                            };
+
+                return query.SingleOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in GetByID: " + ex.Message);
+            }
+        }
+
+        public void Add(ProjectWeekET et)
+        {
+            try
+            {
+                var entity = new ProjectWeek
                 {
-                    ProjectWeekId = projectWeek.ProjectWeekId,
-                    InternshipDirectoryId = projectWeek.InternshipDirectoryId,
-                    CreatedAt = (DateTime)projectWeek.CreatedAt,
-                    UpdatedAt = (DateTime)projectWeek.UpdatedAt
+                    WeekStartDate = et.WeekStartDate,
+                    WeekEndDate = et.WeekEndDate,
+                    InternshipDirectoryId = et.InternshipDirectoryId,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+                db.ProjectWeeks.InsertOnSubmit(entity);
+                db.SubmitChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Add: " + ex.Message);
+            }
+        }
+        /// <summary>
+        /// Lấy ra bản ghi cuối cùng
+        /// </summary> 
+        public ProjectWeekET GetLastInserted()
+        {
+
+            var projectweek = db.ProjectWeeks
+                          .OrderByDescending(pw => pw.ProjectWeekId) // Giả sử Id là khóa chính, tự tăng
+                          .FirstOrDefault();
+
+            if (projectweek != null)
+            {
+                return new ProjectWeekET()
+                {
+                    ProjectWeekId = projectweek.ProjectWeekId,
+                    WeekStartDate = projectweek.WeekStartDate.Value,
+                    WeekEndDate = projectweek.WeekEndDate.Value,
+                    InternshipDirectoryId = projectweek.InternshipDirectoryId,
+                    CreatedAt = projectweek.CreatedAt.Value,
+                    UpdatedAt = projectweek.UpdatedAt.Value
                 };
             }
             return null;
         }
 
-        // Hàm lấy thông tin tuần dựa trên khoảng thời gian và ID thư mục thực tập
-        public ProjectWeekET GetProjectWeekByDateRangeAndDirectoryId(DateTime startDate, DateTime endDate, int internshipDirectoryId)
+        public void Update(ProjectWeekET et)
         {
-            var projectWeek = db.ProjectWeeks.FirstOrDefault(pw =>
-                pw.WeekStartDate == startDate && pw.WeekEndDate == endDate && pw.InternshipDirectoryId == internshipDirectoryId
-            );
-
-            if (projectWeek != null)
+            try
             {
-                return new ProjectWeekET
-                {
-                    ProjectWeekId = projectWeek.ProjectWeekId,
-                    InternshipDirectoryId = projectWeek.InternshipDirectoryId,
-                    CreatedAt = (DateTime)projectWeek.CreatedAt,
-                    UpdatedAt = (DateTime)projectWeek.UpdatedAt,
-                    WeekStartDate = (DateTime)projectWeek.WeekStartDate,
-                    WeekEndDate = (DateTime)projectWeek.WeekEndDate
-                };
+                var query = from p in db.ProjectWeeks
+                            where p.ProjectWeekId == et.ProjectWeekId
+                            select p;
+
+                var entity = query.SingleOrDefault();
+                if (entity == null) return;
+
+                entity.WeekStartDate = et.WeekStartDate;
+                entity.WeekEndDate = et.WeekEndDate;
+                entity.InternshipDirectoryId = et.InternshipDirectoryId;
+                entity.UpdatedAt = DateTime.Now;
+
+                db.SubmitChanges();
             }
-            return null;
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Update: " + ex.Message);
+            }
         }
-    } 
+
+        public void Delete(int id)
+        {
+            try
+            {
+                var query = from p in db.ProjectWeeks
+                            where p.ProjectWeekId == id
+                            select p;
+
+                var entity = query.SingleOrDefault();
+                if (entity == null) return;
+
+                db.ProjectWeeks.DeleteOnSubmit(entity);
+                db.SubmitChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Delete: " + ex.Message);
+            }
+        }
+
+    }
 }

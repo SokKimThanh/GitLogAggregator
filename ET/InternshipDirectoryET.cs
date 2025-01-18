@@ -8,8 +8,10 @@ namespace ET
 {
     public class InternshipDirectoryET
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string InternshipWeekFolder { get; set; }
         public DateTime DateModified { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

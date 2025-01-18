@@ -193,7 +193,7 @@ namespace DAL
 					this.OnGroupIdChanging(value);
 					this.SendPropertyChanging();
 					this._GroupId = value;
-					this.SendPropertyChanged("GroupId");
+					this.SendPropertyChanged("CommitGroupId");
 					this.OnGroupIdChanged();
 				}
 			}
@@ -243,7 +243,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroup", ThisKey="GroupId", OtherKey="GroupId", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroup", ThisKey="CommitGroupId", OtherKey="CommitGroupId", IsForeignKey=true)]
 		public CommitGroup CommitGroup
 		{
 			get
@@ -648,7 +648,7 @@ namespace DAL
 					this.OnGroupIdChanging(value);
 					this.SendPropertyChanging();
 					this._GroupId = value;
-					this.SendPropertyChanged("GroupId");
+					this.SendPropertyChanged("CommitGroupId");
 					this.OnGroupIdChanged();
 				}
 			}
@@ -774,7 +774,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroupMembers", ThisKey="GroupId", OtherKey="GroupId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroupMembers", ThisKey="CommitGroupId", OtherKey="CommitGroupId")]
 		public EntitySet<CommitGroupMember> CommitGroupMembers
 		{
 			get
@@ -787,7 +787,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="GroupId", OtherKey="GroupId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="CommitGroupId", OtherKey="CommitGroupId")]
 		public EntitySet<ChatbotSummary> ChatbotSummaries
 		{
 			get
@@ -1206,9 +1206,9 @@ namespace DAL
 		
 		private string _Author;
 		
-		private System.DateTime _StartDate;
+		private System.DateTime _InternshipStartDate;
 		
-		private System.DateTime _EndDate;
+		private System.DateTime _InternshipEndDate;
 		
 		private int _Weeks;
 		
@@ -1232,10 +1232,10 @@ namespace DAL
     partial void OnInternshipDirectoryIdChanged();
     partial void OnAuthorChanging(string value);
     partial void OnAuthorChanged();
-    partial void OnStartDateChanging(System.DateTime value);
-    partial void OnStartDateChanged();
-    partial void OnEndDateChanging(System.DateTime value);
-    partial void OnEndDateChanged();
+    partial void OnInternshipStartDateChanging(System.DateTime value);
+    partial void OnInternshipStartDateChanged();
+    partial void OnInternshipEndDateChanging(System.DateTime value);
+    partial void OnInternshipEndDateChanged();
     partial void OnWeeksChanging(int value);
     partial void OnWeeksChanged();
     partial void OnFirstCommitDateChanging(System.DateTime value);
@@ -1336,42 +1336,42 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartDate", DbType="DateTime NOT NULL")]
-		public System.DateTime StartDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipStartDate", DbType="DateTime NOT NULL")]
+		public System.DateTime InternshipStartDate
 		{
 			get
 			{
-				return this._StartDate;
+				return this._InternshipStartDate;
 			}
 			set
 			{
-				if ((this._StartDate != value))
+				if ((this._InternshipStartDate != value))
 				{
-					this.OnStartDateChanging(value);
+					this.OnInternshipStartDateChanging(value);
 					this.SendPropertyChanging();
-					this._StartDate = value;
-					this.SendPropertyChanged("StartDate");
-					this.OnStartDateChanged();
+					this._InternshipStartDate = value;
+					this.SendPropertyChanged("InternshipStartDate");
+					this.OnInternshipStartDateChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="DateTime NOT NULL")]
-		public System.DateTime EndDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipEndDate", DbType="DateTime NOT NULL")]
+		public System.DateTime InternshipEndDate
 		{
 			get
 			{
-				return this._EndDate;
+				return this._InternshipEndDate;
 			}
 			set
 			{
-				if ((this._EndDate != value))
+				if ((this._InternshipEndDate != value))
 				{
-					this.OnEndDateChanging(value);
+					this.OnInternshipEndDateChanging(value);
 					this.SendPropertyChanging();
-					this._EndDate = value;
-					this.SendPropertyChanged("EndDate");
-					this.OnEndDateChanged();
+					this._InternshipEndDate = value;
+					this.SendPropertyChanged("InternshipEndDate");
+					this.OnInternshipEndDateChanged();
 				}
 			}
 		}
@@ -1605,7 +1605,7 @@ namespace DAL
 					this.OnGroupIdChanging(value);
 					this.SendPropertyChanging();
 					this._GroupId = value;
-					this.SendPropertyChanged("GroupId");
+					this.SendPropertyChanged("CommitGroupId");
 					this.OnGroupIdChanged();
 				}
 			}
@@ -1751,7 +1751,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_CommitGroup", ThisKey="GroupId", OtherKey="GroupId", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_CommitGroup", ThisKey="CommitGroupId", OtherKey="CommitGroupId", IsForeignKey=true)]
 		public CommitGroup CommitGroup
 		{
 			get

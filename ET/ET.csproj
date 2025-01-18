@@ -46,8 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatbotSummary.cs" />
+    <Compile Include="ChatbotSummaryET.cs" />
     <Compile Include="CommitET.cs" />
+    <Compile Include="CommitGroupET.cs" />
+    <Compile Include="CommitGroupMemberET.cs" />
     <Compile Include="ConfigFileET.cs" />
     <Compile Include="DayData.cs" />
     <Compile Include="InternshipDirectoryET.cs" />

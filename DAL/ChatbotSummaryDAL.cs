@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ET;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,82 +9,131 @@ namespace DAL
 {
     public class ChatbotSummaryDAL
     {
-        private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
+        private readonly GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
 
-        // Thêm phản hồi mới từ chatbot
-        public void Create(ChatbotSummary chatbotSummary)
+        public List<ChatbotSummaryET> GetAll()
         {
-            db.ChatbotSummaries.InsertOnSubmit(chatbotSummary);
-            db.SubmitChanges();
-        }
-
-        // Xóa phản hồi từ chatbot theo ID
-        public void Delete(int chatbotSummaryId)
-        {
-            var summary = db.ChatbotSummaries.SingleOrDefault(s => s.ID == chatbotSummaryId);
-            if (summary != null)
+            try
             {
-                db.ChatbotSummaries.DeleteOnSubmit(summary);
-                db.SubmitChanges();
+                var query = from c in db.ChatbotSummaries
+                            orderby c.CreatedAt descending
+                            select new ChatbotSummaryET
+                            {
+                                ID = c.ID,
+                                GroupId = c.GroupId,
+                                Attendance = c.Attendance,
+                                AssignedTasks = c.AssignedTasks,
+                                ContentResults = c.ContentResults,
+                                SupervisorComments = c.SupervisorComments,
+                                Notes = c.Notes,
+                                CreatedAt = c.CreatedAt.Value,
+                                UpdatedAt = c.UpdatedAt.Value
+                            };
+
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in GetAll: " + ex.Message);
             }
         }
 
-        // Cập nhật thông tin phản hồi từ chatbot
-        public void Update(ChatbotSummary chatbotSummary)
+        public ChatbotSummaryET GetByID(int id)
         {
-            var existingSummary = db.ChatbotSummaries.SingleOrDefault(s => s.ID == chatbotSummary.ID);
-            if (existingSummary != null)
+            try
             {
-                existingSummary.CommitId = chatbotSummary.CommitId;
-                existingSummary.Attendance = chatbotSummary.Attendance;
-                existingSummary.AssignedTasks = chatbotSummary.AssignedTasks;
-                existingSummary.ContentResults = chatbotSummary.ContentResults;
-                existingSummary.SupervisorComments = chatbotSummary.SupervisorComments;
-                existingSummary.Notes = chatbotSummary.Notes;
-                existingSummary.CreatedAt = chatbotSummary.CreatedAt;
-                existingSummary.UpdatedAt = chatbotSummary.UpdatedAt;
-                db.SubmitChanges();
+                var query = from c in db.ChatbotSummaries
+                            where c.ID == id
+                            select new ChatbotSummaryET
+                            {
+                                ID = c.ID,
+                                GroupId = c.GroupId,
+                                Attendance = c.Attendance,
+                                AssignedTasks = c.AssignedTasks,
+                                ContentResults = c.ContentResults,
+                                SupervisorComments = c.SupervisorComments,
+                                Notes = c.Notes,
+                                CreatedAt = c.CreatedAt.Value,
+                                UpdatedAt = c.UpdatedAt.Value
+                            };
+
+                return query.SingleOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in GetByID: " + ex.Message);
             }
         }
 
-        // Lấy tất cả phản hồi từ chatbot
-        public List<ChatbotSummary> GetAll()
+        public void Add(ChatbotSummaryET et)
         {
-            return db.ChatbotSummaries.Select(s => new ChatbotSummary
+            try
             {
-                ID = s.ID,
-                CommitId = s.CommitId,
-                Attendance = s.Attendance,
-                AssignedTasks = s.AssignedTasks,
-                ContentResults = s.ContentResults,
-                SupervisorComments = s.SupervisorComments,
-                Notes = s.Notes,
-                CreatedAt = s.CreatedAt,
-                UpdatedAt = s.UpdatedAt
-            }).ToList();
-        }
-
-        // Lấy phản hồi từ chatbot theo ID
-        public ChatbotSummary GetById(int chatbotSummaryId)
-        {
-            var summary = db.ChatbotSummaries.SingleOrDefault(s => s.ID == chatbotSummaryId);
-            if (summary != null)
-            {
-                return new ChatbotSummary
+                var entity = new ChatbotSummary
                 {
-                    ID = summary.ID,
-                    CommitId = summary.CommitId,
-                    Attendance = summary.Attendance,
-                    AssignedTasks = summary.AssignedTasks,
-                    ContentResults = summary.ContentResults,
-                    SupervisorComments = summary.SupervisorComments,
-                    Notes = summary.Notes,
-                    CreatedAt = summary.CreatedAt,
-                    UpdatedAt = summary.UpdatedAt
+                    GroupId = et.GroupId,
+                    Attendance = et.Attendance,
+                    AssignedTasks = et.AssignedTasks,
+                    ContentResults = et.ContentResults,
+                    SupervisorComments = et.SupervisorComments,
+                    Notes = et.Notes,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
                 };
+                db.ChatbotSummaries.InsertOnSubmit(entity);
+                db.SubmitChanges();
             }
-            return null;
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Add: " + ex.Message);
+            }
+        }
+
+        public void Update(ChatbotSummaryET et)
+        {
+            try
+            {
+                var query = from c in db.ChatbotSummaries
+                            where c.ID == et.ID
+                            select c;
+
+                var entity = query.SingleOrDefault();
+                if (entity == null) return;
+
+                entity.GroupId = et.GroupId;
+                entity.Attendance = et.Attendance;
+                entity.AssignedTasks = et.AssignedTasks;
+                entity.ContentResults = et.ContentResults;
+                entity.SupervisorComments = et.SupervisorComments;
+                entity.Notes = et.Notes;
+                entity.UpdatedAt = DateTime.Now;
+
+                db.SubmitChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Update: " + ex.Message);
+            }
+        }
+
+        public void Delete(int id)
+        {
+            try
+            {
+                var query = from c in db.ChatbotSummaries
+                            where c.ID == id
+                            select c;
+
+                var entity = query.SingleOrDefault();
+                if (entity == null) return;
+
+                db.ChatbotSummaries.DeleteOnSubmit(entity);
+                db.SubmitChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in Delete: " + ex.Message);
+            }
         }
     }
-
 }

@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 
 namespace BUS
 {
-    public class CommitBUS
+    public class CommitGroupBUS
     {
-        private CommitDAL dal = new CommitDAL();
+        private CommitGroupDAL dal = new CommitGroupDAL();
 
-        public List<CommitET> GetAll()
+        public List<CommitGroupET> GetAll()
         {
             return dal.GetAll();
         }
 
-        public CommitET GetByID(int id)
+        public CommitGroupET GetByID(int id)
         {
             return dal.GetByID(id);
         }
 
-        public void Add(CommitET entity)
+        public void Add(CommitGroupET entity)
         {
             dal.Add(entity);
         }
 
-        public void Update(CommitET entity)
+        public void Update(CommitGroupET entity)
         {
             dal.Update(entity);
         }
@@ -36,10 +36,13 @@ namespace BUS
         {
             dal.Delete(id);
         }
-
-        public CommitET GetLastInserted()
+        /// <summary>
+        /// Lấy thông tin của bản ghi cuối cùng được thêm vào
+        /// </summary> 
+        public CommitGroupET GetLastInserted()
         {
             return dal.GetLastInserted();
         }
     }
+
 }

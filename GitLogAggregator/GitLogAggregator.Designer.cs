@@ -555,8 +555,8 @@
             this.txtSetupThuMucThucTap.TabIndex = 16;
             this.txtSetupThuMucThucTap.TabStop = false;
             this.txtSetupThuMucThucTap.Click += new System.EventHandler(this.SetupThuMucThucTap_Click);
-            this.txtSetupThuMucThucTap.MouseEnter += new System.EventHandler(this.setupThuMucThucTap_MouseEnter);
-            this.txtSetupThuMucThucTap.MouseLeave += new System.EventHandler(this.setupThuMucThucTap_MouseLeave);
+            this.txtSetupThuMucThucTap.MouseEnter += new System.EventHandler(this.SetupThuMucThucTap_MouseEnter);
+            this.txtSetupThuMucThucTap.MouseLeave += new System.EventHandler(this.SetupThuMucThucTap_MouseLeave);
             // 
             // tableLayoutPanel2
             // 
@@ -693,7 +693,7 @@
             this.btnSearchReport.Size = new System.Drawing.Size(91, 24);
             this.btnSearchReport.TabIndex = 34;
             this.btnSearchReport.UseVisualStyleBackColor = false;
-            this.btnSearchReport.Click += new System.EventHandler(this.btnSearchReport_Click);
+            this.btnSearchReport.Click += new System.EventHandler(this.BtnSearchReport_Click);
             // 
             // btnNextReport
             // 
@@ -837,7 +837,7 @@
             this.btnSaveGit.Size = new System.Drawing.Size(21, 35);
             this.btnSaveGit.TabIndex = 25;
             this.btnSaveGit.UseVisualStyleBackColor = false;
-            this.btnSaveGit.Click += new System.EventHandler(this.btnSaveGit_Click);
+            this.btnSaveGit.Click += new System.EventHandler(this.BtnSaveGit_Click);
             // 
             // tableLayoutPanel10
             // 
@@ -894,31 +894,31 @@
             // commitsToolStripMenuItem
             // 
             this.commitsToolStripMenuItem.Name = "commitsToolStripMenuItem";
-            this.commitsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.commitsToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.commitsToolStripMenuItem.Text = "Commits";
             // 
             // weeksToolStripMenuItem
             // 
             this.weeksToolStripMenuItem.Name = "weeksToolStripMenuItem";
-            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.weeksToolStripMenuItem.Text = "Weeks";
             // 
             // foldersProjectToolStripMenuItem
             // 
             this.foldersProjectToolStripMenuItem.Name = "foldersProjectToolStripMenuItem";
-            this.foldersProjectToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.foldersProjectToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.foldersProjectToolStripMenuItem.Text = "FoldersProject";
             // 
             // chatbotSummaryToolStripMenuItem
             // 
             this.chatbotSummaryToolStripMenuItem.Name = "chatbotSummaryToolStripMenuItem";
-            this.chatbotSummaryToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
-            this.chatbotSummaryToolStripMenuItem.Text = "ChatbotSummary";
+            this.chatbotSummaryToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.chatbotSummaryToolStripMenuItem.Text = "ChatbotSummaryET";
             // 
             // cònToolStripMenuItem
             // 
             this.cònToolStripMenuItem.Name = "cònToolStripMenuItem";
-            this.cònToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.cònToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.cònToolStripMenuItem.Text = "ConfigFiles";
             // 
             // GitLogAggregator

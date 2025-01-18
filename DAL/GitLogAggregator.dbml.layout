@@ -1,89 +1,89 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 9" name="GitLogAggregator">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.25, 8.5" name="GitLogAggregator">
   <DataContextMoniker Name="/GitLogAggregatorDataContext" />
   <nestedChildShapes>
-    <classShape Id="eb722910-d1c2-437a-8be7-cc70864702f6" absoluteBounds="8, 1.5, 2, 1.3862939453125003">
+    <classShape Id="5f2bcf47-6a38-4ba9-b4a6-f68f44374426" absoluteBounds="9, 1.75, 2, 1.3862939453125003">
       <DataClassMoniker Name="/GitLogAggregatorDataContext/CommitGroupMember" />
       <nestedChildShapes>
-        <elementListCompartment Id="b73a63df-e31f-4e3d-91d0-1bdeac9b9be0" absoluteBounds="8.015, 1.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="759fabae-dcb9-4a81-94c6-091b44a17a3b" absoluteBounds="9.015, 2.21, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="bdd1093b-ef0e-4835-919f-04b0e641abab" absoluteBounds="2.375, 1.5, 2, 1.9631982421875003">
+    <classShape Id="f52e53f3-8cef-4a20-9a41-ec9b10a065f2" absoluteBounds="3.5, 1.5, 2, 1.9631982421875003">
       <DataClassMoniker Name="/GitLogAggregatorDataContext/ProjectWeek" />
       <nestedChildShapes>
-        <elementListCompartment Id="5da611c4-a3f1-4f54-8f78-792468e4c598" absoluteBounds="2.39, 1.96, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="963046a6-ddc5-4d67-88b2-91e2768ab690" absoluteBounds="3.515, 1.96, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="0444df2f-b05b-413e-83fa-b8510c3240bb" absoluteBounds="8.125, 3.75, 2, 2.1554996744791666">
+    <classShape Id="1a36f683-09cf-459a-8253-3c677c03da97" absoluteBounds="6.25, 5.375, 2, 2.1554996744791666">
       <DataClassMoniker Name="/GitLogAggregatorDataContext/CommitGroup" />
       <nestedChildShapes>
-        <elementListCompartment Id="49e112b5-d47d-4748-9aa6-f51ea83ff69f" absoluteBounds="8.14, 4.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="500b1dfc-8761-43fc-9287-debd6fcb1aae" absoluteBounds="6.265, 5.835, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="135798ec-994c-45b6-bb41-6b79fbf97b9c" absoluteBounds="5, 1.5, 2, 2.7324039713541666">
+    <classShape Id="cdb50be7-7e32-41eb-9ad7-1c2a0a5f137c" absoluteBounds="6.25, 1.125, 2, 2.7324039713541666">
       <DataClassMoniker Name="/GitLogAggregatorDataContext/Commit" />
       <nestedChildShapes>
-        <elementListCompartment Id="df8040b4-0bd3-4c90-92fd-b78855081f0e" absoluteBounds="5.015, 1.96, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="caef64c2-59fa-4d26-af84-1eb864663e05" absoluteBounds="6.265, 1.585, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="ee8bb661-3dd9-488d-9312-ec47a464d67a" absoluteBounds="2.375, 6, 2, 2.7324039713541666">
+    <classShape Id="30df282f-3520-4a31-aceb-db9289fd0a86" absoluteBounds="3.5, 4.625, 2, 2.7324039713541666">
       <DataClassMoniker Name="/GitLogAggregatorDataContext/ConfigFile" />
       <nestedChildShapes>
-        <elementListCompartment Id="39cc4493-c0cd-496d-91fa-d8c0088b7cee" absoluteBounds="2.39, 6.46, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="ae6a4425-0ea8-4132-a830-78fdb0629e48" absoluteBounds="3.515, 5.085, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="822ff0f5-a151-4fd7-8556-ba0891c4795f" absoluteBounds="8.125, 6.25, 2, 2.5401025390625005">
+    <classShape Id="0fa853c8-59aa-48b9-bc96-c605e8c3db3d" absoluteBounds="9, 5.25, 2, 2.5401025390625005">
       <DataClassMoniker Name="/GitLogAggregatorDataContext/ChatbotSummary" />
       <nestedChildShapes>
-        <elementListCompartment Id="7c648e8a-13aa-408b-8111-1cd386c15180" absoluteBounds="8.14, 6.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="4f1d9161-3d15-422a-bd98-82bcf53c5a18" absoluteBounds="9.015, 5.71, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="7f32bd7c-7de5-4ed8-87d1-51f1e678abd0" absoluteBounds="2.375, 3.875, 2, 1.7708968098958326">
+    <classShape Id="135d0ebd-f75b-445e-bb9b-37f2c6f28681" absoluteBounds="0.75, 3.375, 2, 1.7708968098958326">
       <DataClassMoniker Name="/GitLogAggregatorDataContext/InternshipDirectory" />
       <nestedChildShapes>
-        <elementListCompartment Id="6657bac7-985a-42c4-98bb-e54e0e0750a8" absoluteBounds="2.39, 4.335, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="b8935c38-3d38-48a3-a4f2-b06e2c484f4d" absoluteBounds="0.765, 3.835, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(9.0625 : 3.75); (9.0625 : 2.8862939453125)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(8.25 : 5.375); (8.625 : 5); (8.625 : 2.44314697265625); (9 : 2.44314697265625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/GitLogAggregatorDataContext/CommitGroup/CommitGroup_CommitGroupMember" />
       <nodes>
-        <classShapeMoniker Id="0444df2f-b05b-413e-83fa-b8510c3240bb" />
-        <classShapeMoniker Id="eb722910-d1c2-437a-8be7-cc70864702f6" />
+        <classShapeMoniker Id="1a36f683-09cf-459a-8253-3c677c03da97" />
+        <classShapeMoniker Id="5f2bcf47-6a38-4ba9-b4a6-f68f44374426" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(7 : 2.19314697265625); (8 : 2.19314697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(8.25 : 2.03407348632813); (9 : 2.03407348632813)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/GitLogAggregatorDataContext/Commit/Commit_CommitGroupMember" />
       <nodes>
-        <classShapeMoniker Id="135798ec-994c-45b6-bb41-6b79fbf97b9c" />
-        <classShapeMoniker Id="eb722910-d1c2-437a-8be7-cc70864702f6" />
+        <classShapeMoniker Id="cdb50be7-7e32-41eb-9ad7-1c2a0a5f137c" />
+        <classShapeMoniker Id="5f2bcf47-6a38-4ba9-b4a6-f68f44374426" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.375 : 2.48159912109375); (5 : 2.48159912109375)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.5 : 2.48159912109375); (6.25 : 2.48159912109375)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/GitLogAggregatorDataContext/ProjectWeek/ProjectWeek_Commit" />
       <nodes>
-        <classShapeMoniker Id="bdd1093b-ef0e-4835-919f-04b0e641abab" />
-        <classShapeMoniker Id="135798ec-994c-45b6-bb41-6b79fbf97b9c" />
+        <classShapeMoniker Id="f52e53f3-8cef-4a20-9a41-ec9b10a065f2" />
+        <classShapeMoniker Id="cdb50be7-7e32-41eb-9ad7-1c2a0a5f137c" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(9.125 : 5.90549967447917); (9.125 : 6.25)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(8.25 : 6.48400233723958); (9 : 6.48400233723958)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/GitLogAggregatorDataContext/CommitGroup/CommitGroup_ChatbotSummary" />
       <nodes>
-        <classShapeMoniker Id="0444df2f-b05b-413e-83fa-b8510c3240bb" />
-        <classShapeMoniker Id="822ff0f5-a151-4fd7-8556-ba0891c4795f" />
+        <classShapeMoniker Id="1a36f683-09cf-459a-8253-3c677c03da97" />
+        <classShapeMoniker Id="0fa853c8-59aa-48b9-bc96-c605e8c3db3d" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(3.375 : 3.875); (3.375 : 3.4631982421875)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(1.75 : 3.375); (1.75 : 2.4374995); (3.5 : 2.4374995)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/GitLogAggregatorDataContext/InternshipDirectory/InternshipDirectory_ProjectWeek" />
       <nodes>
-        <classShapeMoniker Id="7f32bd7c-7de5-4ed8-87d1-51f1e678abd0" />
-        <classShapeMoniker Id="bdd1093b-ef0e-4835-919f-04b0e641abab" />
+        <classShapeMoniker Id="135d0ebd-f75b-445e-bb9b-37f2c6f28681" />
+        <classShapeMoniker Id="f52e53f3-8cef-4a20-9a41-ec9b10a065f2" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(3.375 : 5.64589680989583); (3.375 : 6)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(2.75 : 4.88544840494792); (3.5 : 4.88544840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/GitLogAggregatorDataContext/InternshipDirectory/InternshipDirectory_ConfigFile" />
       <nodes>
-        <classShapeMoniker Id="7f32bd7c-7de5-4ed8-87d1-51f1e678abd0" />
-        <classShapeMoniker Id="ee8bb661-3dd9-488d-9312-ec47a464d67a" />
+        <classShapeMoniker Id="135d0ebd-f75b-445e-bb9b-37f2c6f28681" />
+        <classShapeMoniker Id="30df282f-3520-4a31-aceb-db9289fd0a86" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

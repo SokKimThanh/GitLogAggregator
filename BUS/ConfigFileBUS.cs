@@ -8,30 +8,26 @@ using System.Threading.Tasks;
 
 namespace BUS
 {
-  
-    public class InternshipDirectoryBUS
+    public class ConfigFileBUS
     {
-        private InternshipDirectoryDAL dal = new InternshipDirectoryDAL();
-        public int GetLatestInternshipDirectoryId()
-        {
-            return dal.GetLatestInternshipDirectoryId();
-        }
-        public List<InternshipDirectoryET> GetAll()
+        private ConfigFileDAL dal = new ConfigFileDAL();
+
+        public List<ConfigFileET> GetAll()
         {
             return dal.GetAll();
         }
 
-        public InternshipDirectoryET GetByID(int id)
+        public ConfigFileET GetByID(int id)
         {
             return dal.GetByID(id);
         }
 
-        public void Add(InternshipDirectoryET entity)
+        public void Add(ConfigFileET entity)
         {
             dal.Add(entity);
         }
 
-        public void Update(InternshipDirectoryET entity)
+        public void Update(ConfigFileET entity)
         {
             dal.Update(entity);
         }
@@ -41,5 +37,4 @@ namespace BUS
             dal.Delete(id);
         }
     }
-
 }

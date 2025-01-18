@@ -15,10 +15,10 @@ namespace DAL
                 // Tạo một DataContext (thay thế bằng DataContext của bạn)
                 using (var db = new GitLogAggregatorDataContext())
                 {
-                    // Xóa dữ liệu từ bảng ChatbotSummary
+                    // Xóa dữ liệu từ bảng ChatbotSummaryET
                     db.ChatbotSummaries.DeleteAllOnSubmit(db.ChatbotSummaries);
                     db.SubmitChanges();
-                    Console.Write("Đã xóa dữ liệu từ bảng ChatbotSummary.\n");
+                    Console.Write("Đã xóa dữ liệu từ bảng ChatbotSummaryET.\n");
 
                     // Xóa dữ liệu từ bảng Commits
                     db.Commits.DeleteAllOnSubmit(db.Commits);
