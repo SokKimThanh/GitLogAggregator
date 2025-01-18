@@ -30,12 +30,18 @@ namespace DAL
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertCommit(Commit instance);
-    partial void UpdateCommit(Commit instance);
-    partial void DeleteCommit(Commit instance);
+    partial void InsertCommitGroupMember(CommitGroupMember instance);
+    partial void UpdateCommitGroupMember(CommitGroupMember instance);
+    partial void DeleteCommitGroupMember(CommitGroupMember instance);
     partial void InsertProjectWeek(ProjectWeek instance);
     partial void UpdateProjectWeek(ProjectWeek instance);
     partial void DeleteProjectWeek(ProjectWeek instance);
+    partial void InsertCommitGroup(CommitGroup instance);
+    partial void UpdateCommitGroup(CommitGroup instance);
+    partial void DeleteCommitGroup(CommitGroup instance);
+    partial void InsertCommit(Commit instance);
+    partial void UpdateCommit(Commit instance);
+    partial void DeleteCommit(Commit instance);
     partial void InsertConfigFile(ConfigFile instance);
     partial void UpdateConfigFile(ConfigFile instance);
     partial void DeleteConfigFile(ConfigFile instance);
@@ -77,11 +83,11 @@ namespace DAL
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Commit> Commits
+		public System.Data.Linq.Table<CommitGroupMember> CommitGroupMembers
 		{
 			get
 			{
-				return this.GetTable<Commit>();
+				return this.GetTable<CommitGroupMember>();
 			}
 		}
 		
@@ -90,6 +96,22 @@ namespace DAL
 			get
 			{
 				return this.GetTable<ProjectWeek>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CommitGroup> CommitGroups
+		{
+			get
+			{
+				return this.GetTable<CommitGroup>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Commit> Commits
+		{
+			get
+			{
+				return this.GetTable<Commit>();
 			}
 		}
 		
@@ -118,70 +140,66 @@ namespace DAL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Commits")]
-	public partial class Commit : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommitGroupMembers")]
+	public partial class CommitGroupMember : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
+		private int _GroupId;
+		
 		private int _CommitId;
 		
-		private string _CommitHash;
+		private System.Nullable<System.DateTime> _AddedAt;
 		
-		private string _CommitMessage;
+		private EntityRef<CommitGroup> _CommitGroup;
 		
-		private System.DateTime _CommitDate;
-		
-		private string _Author;
-		
-		private int _ProjectWeekId;
-		
-		private System.DateTime _Date;
-		
-		private string _Period;
-		
-		private System.Nullable<System.DateTime> _CreatedAt;
-		
-		private System.Nullable<System.DateTime> _UpdatedAt;
-		
-		private EntitySet<ChatbotSummary> _ChatbotSummaries;
-		
-		private EntityRef<ProjectWeek> _ProjectWeek;
+		private EntityRef<Commit> _Commit;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
+    partial void OnGroupIdChanging(int value);
+    partial void OnGroupIdChanged();
     partial void OnCommitIdChanging(int value);
     partial void OnCommitIdChanged();
-    partial void OnCommitHashChanging(string value);
-    partial void OnCommitHashChanged();
-    partial void OnCommitMessageChanging(string value);
-    partial void OnCommitMessageChanged();
-    partial void OnCommitDateChanging(System.DateTime value);
-    partial void OnCommitDateChanged();
-    partial void OnAuthorChanging(string value);
-    partial void OnAuthorChanged();
-    partial void OnProjectWeekIdChanging(int value);
-    partial void OnProjectWeekIdChanged();
-    partial void OnDateChanging(System.DateTime value);
-    partial void OnDateChanged();
-    partial void OnPeriodChanging(string value);
-    partial void OnPeriodChanged();
-    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
-    partial void OnCreatedAtChanged();
-    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
-    partial void OnUpdatedAtChanged();
+    partial void OnAddedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnAddedAtChanged();
     #endregion
 		
-		public Commit()
+		public CommitGroupMember()
 		{
-			this._ChatbotSummaries = new EntitySet<ChatbotSummary>(new Action<ChatbotSummary>(this.attach_ChatbotSummaries), new Action<ChatbotSummary>(this.detach_ChatbotSummaries));
-			this._ProjectWeek = default(EntityRef<ProjectWeek>);
+			this._CommitGroup = default(EntityRef<CommitGroup>);
+			this._Commit = default(EntityRef<Commit>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupId", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int GroupId
+		{
+			get
+			{
+				return this._GroupId;
+			}
+			set
+			{
+				if ((this._GroupId != value))
+				{
+					if (this._CommitGroup.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnGroupIdChanging(value);
+					this.SendPropertyChanging();
+					this._GroupId = value;
+					this.SendPropertyChanged("GroupId");
+					this.OnGroupIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", DbType="Int NOT NULL", IsPrimaryKey=true)]
 		public int CommitId
 		{
 			get
@@ -192,6 +210,10 @@ namespace DAL
 			{
 				if ((this._CommitId != value))
 				{
+					if (this._Commit.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnCommitIdChanging(value);
 					this.SendPropertyChanging();
 					this._CommitId = value;
@@ -201,233 +223,90 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitHash", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string CommitHash
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AddedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> AddedAt
 		{
 			get
 			{
-				return this._CommitHash;
+				return this._AddedAt;
 			}
 			set
 			{
-				if ((this._CommitHash != value))
+				if ((this._AddedAt != value))
 				{
-					this.OnCommitHashChanging(value);
+					this.OnAddedAtChanging(value);
 					this.SendPropertyChanging();
-					this._CommitHash = value;
-					this.SendPropertyChanged("CommitHash");
-					this.OnCommitHashChanged();
+					this._AddedAt = value;
+					this.SendPropertyChanged("AddedAt");
+					this.OnAddedAtChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitMessage", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string CommitMessage
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroup", ThisKey="GroupId", OtherKey="GroupId", IsForeignKey=true)]
+		public CommitGroup CommitGroup
 		{
 			get
 			{
-				return this._CommitMessage;
+				return this._CommitGroup.Entity;
 			}
 			set
 			{
-				if ((this._CommitMessage != value))
-				{
-					this.OnCommitMessageChanging(value);
-					this.SendPropertyChanging();
-					this._CommitMessage = value;
-					this.SendPropertyChanged("CommitMessage");
-					this.OnCommitMessageChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitDate", DbType="DateTime NOT NULL")]
-		public System.DateTime CommitDate
-		{
-			get
-			{
-				return this._CommitDate;
-			}
-			set
-			{
-				if ((this._CommitDate != value))
-				{
-					this.OnCommitDateChanging(value);
-					this.SendPropertyChanging();
-					this._CommitDate = value;
-					this.SendPropertyChanged("CommitDate");
-					this.OnCommitDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Author", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Author
-		{
-			get
-			{
-				return this._Author;
-			}
-			set
-			{
-				if ((this._Author != value))
-				{
-					this.OnAuthorChanging(value);
-					this.SendPropertyChanging();
-					this._Author = value;
-					this.SendPropertyChanged("Author");
-					this.OnAuthorChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectWeekId", DbType="Int NOT NULL")]
-		public int ProjectWeekId
-		{
-			get
-			{
-				return this._ProjectWeekId;
-			}
-			set
-			{
-				if ((this._ProjectWeekId != value))
-				{
-					if (this._ProjectWeek.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnProjectWeekIdChanging(value);
-					this.SendPropertyChanging();
-					this._ProjectWeekId = value;
-					this.SendPropertyChanged("ProjectWeekId");
-					this.OnProjectWeekIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date", DbType="DateTime NOT NULL")]
-		public System.DateTime Date
-		{
-			get
-			{
-				return this._Date;
-			}
-			set
-			{
-				if ((this._Date != value))
-				{
-					this.OnDateChanging(value);
-					this.SendPropertyChanging();
-					this._Date = value;
-					this.SendPropertyChanged("Date");
-					this.OnDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Period", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
-		public string Period
-		{
-			get
-			{
-				return this._Period;
-			}
-			set
-			{
-				if ((this._Period != value))
-				{
-					this.OnPeriodChanging(value);
-					this.SendPropertyChanging();
-					this._Period = value;
-					this.SendPropertyChanged("Period");
-					this.OnPeriodChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
-		public System.Nullable<System.DateTime> CreatedAt
-		{
-			get
-			{
-				return this._CreatedAt;
-			}
-			set
-			{
-				if ((this._CreatedAt != value))
-				{
-					this.OnCreatedAtChanging(value);
-					this.SendPropertyChanging();
-					this._CreatedAt = value;
-					this.SendPropertyChanged("CreatedAt");
-					this.OnCreatedAtChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
-		public System.Nullable<System.DateTime> UpdatedAt
-		{
-			get
-			{
-				return this._UpdatedAt;
-			}
-			set
-			{
-				if ((this._UpdatedAt != value))
-				{
-					this.OnUpdatedAtChanging(value);
-					this.SendPropertyChanging();
-					this._UpdatedAt = value;
-					this.SendPropertyChanged("UpdatedAt");
-					this.OnUpdatedAtChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="CommitId", OtherKey="CommitId")]
-		public EntitySet<ChatbotSummary> ChatbotSummaries
-		{
-			get
-			{
-				return this._ChatbotSummaries;
-			}
-			set
-			{
-				this._ChatbotSummaries.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProjectWeek_Commit", Storage="_ProjectWeek", ThisKey="ProjectWeekId", OtherKey="ProjectWeekId", IsForeignKey=true)]
-		public ProjectWeek ProjectWeek
-		{
-			get
-			{
-				return this._ProjectWeek.Entity;
-			}
-			set
-			{
-				ProjectWeek previousValue = this._ProjectWeek.Entity;
+				CommitGroup previousValue = this._CommitGroup.Entity;
 				if (((previousValue != value) 
-							|| (this._ProjectWeek.HasLoadedOrAssignedValue == false)))
+							|| (this._CommitGroup.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._ProjectWeek.Entity = null;
-						previousValue.Commits.Remove(this);
+						this._CommitGroup.Entity = null;
+						previousValue.CommitGroupMembers.Remove(this);
 					}
-					this._ProjectWeek.Entity = value;
+					this._CommitGroup.Entity = value;
 					if ((value != null))
 					{
-						value.Commits.Add(this);
-						this._ProjectWeekId = value.ProjectWeekId;
+						value.CommitGroupMembers.Add(this);
+						this._GroupId = value.GroupId;
 					}
 					else
 					{
-						this._ProjectWeekId = default(int);
+						this._GroupId = default(int);
 					}
-					this.SendPropertyChanged("ProjectWeek");
+					this.SendPropertyChanged("CommitGroup");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_CommitGroupMember", Storage="_Commit", ThisKey="CommitId", OtherKey="CommitId", IsForeignKey=true)]
+		public Commit Commit
+		{
+			get
+			{
+				return this._Commit.Entity;
+			}
+			set
+			{
+				Commit previousValue = this._Commit.Entity;
+				if (((previousValue != value) 
+							|| (this._Commit.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Commit.Entity = null;
+						previousValue.CommitGroupMembers.Remove(this);
+					}
+					this._Commit.Entity = value;
+					if ((value != null))
+					{
+						value.CommitGroupMembers.Add(this);
+						this._CommitId = value.CommitId;
+					}
+					else
+					{
+						this._CommitId = default(int);
+					}
+					this.SendPropertyChanged("Commit");
 				}
 			}
 		}
@@ -450,18 +329,6 @@ namespace DAL
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
-		}
-		
-		private void attach_ChatbotSummaries(ChatbotSummary entity)
-		{
-			this.SendPropertyChanging();
-			entity.Commit = this;
-		}
-		
-		private void detach_ChatbotSummaries(ChatbotSummary entity)
-		{
-			this.SendPropertyChanging();
-			entity.Commit = null;
 		}
 	}
 	
@@ -713,6 +580,615 @@ namespace DAL
 		{
 			this.SendPropertyChanging();
 			entity.ProjectWeek = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommitGroups")]
+	public partial class CommitGroup : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _GroupId;
+		
+		private string _GroupName;
+		
+		private string _TimeRange;
+		
+		private System.DateTime _StartDate;
+		
+		private System.DateTime _EndDate;
+		
+		private System.Nullable<System.DateTime> _CreatedAt;
+		
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntitySet<CommitGroupMember> _CommitGroupMembers;
+		
+		private EntitySet<ChatbotSummary> _ChatbotSummaries;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnGroupIdChanging(int value);
+    partial void OnGroupIdChanged();
+    partial void OnGroupNameChanging(string value);
+    partial void OnGroupNameChanged();
+    partial void OnTimeRangeChanging(string value);
+    partial void OnTimeRangeChanged();
+    partial void OnStartDateChanging(System.DateTime value);
+    partial void OnStartDateChanged();
+    partial void OnEndDateChanging(System.DateTime value);
+    partial void OnEndDateChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
+    #endregion
+		
+		public CommitGroup()
+		{
+			this._CommitGroupMembers = new EntitySet<CommitGroupMember>(new Action<CommitGroupMember>(this.attach_CommitGroupMembers), new Action<CommitGroupMember>(this.detach_CommitGroupMembers));
+			this._ChatbotSummaries = new EntitySet<ChatbotSummary>(new Action<ChatbotSummary>(this.attach_ChatbotSummaries), new Action<ChatbotSummary>(this.detach_ChatbotSummaries));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int GroupId
+		{
+			get
+			{
+				return this._GroupId;
+			}
+			set
+			{
+				if ((this._GroupId != value))
+				{
+					this.OnGroupIdChanging(value);
+					this.SendPropertyChanging();
+					this._GroupId = value;
+					this.SendPropertyChanged("GroupId");
+					this.OnGroupIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string GroupName
+		{
+			get
+			{
+				return this._GroupName;
+			}
+			set
+			{
+				if ((this._GroupName != value))
+				{
+					this.OnGroupNameChanging(value);
+					this.SendPropertyChanging();
+					this._GroupName = value;
+					this.SendPropertyChanged("GroupName");
+					this.OnGroupNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TimeRange", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string TimeRange
+		{
+			get
+			{
+				return this._TimeRange;
+			}
+			set
+			{
+				if ((this._TimeRange != value))
+				{
+					this.OnTimeRangeChanging(value);
+					this.SendPropertyChanging();
+					this._TimeRange = value;
+					this.SendPropertyChanged("TimeRange");
+					this.OnTimeRangeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartDate", DbType="DateTime NOT NULL")]
+		public System.DateTime StartDate
+		{
+			get
+			{
+				return this._StartDate;
+			}
+			set
+			{
+				if ((this._StartDate != value))
+				{
+					this.OnStartDateChanging(value);
+					this.SendPropertyChanging();
+					this._StartDate = value;
+					this.SendPropertyChanged("StartDate");
+					this.OnStartDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="DateTime NOT NULL")]
+		public System.DateTime EndDate
+		{
+			get
+			{
+				return this._EndDate;
+			}
+			set
+			{
+				if ((this._EndDate != value))
+				{
+					this.OnEndDateChanging(value);
+					this.SendPropertyChanging();
+					this._EndDate = value;
+					this.SendPropertyChanged("EndDate");
+					this.OnEndDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroupMembers", ThisKey="GroupId", OtherKey="GroupId")]
+		public EntitySet<CommitGroupMember> CommitGroupMembers
+		{
+			get
+			{
+				return this._CommitGroupMembers;
+			}
+			set
+			{
+				this._CommitGroupMembers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="GroupId", OtherKey="GroupId")]
+		public EntitySet<ChatbotSummary> ChatbotSummaries
+		{
+			get
+			{
+				return this._ChatbotSummaries;
+			}
+			set
+			{
+				this._ChatbotSummaries.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CommitGroupMembers(CommitGroupMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.CommitGroup = this;
+		}
+		
+		private void detach_CommitGroupMembers(CommitGroupMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.CommitGroup = null;
+		}
+		
+		private void attach_ChatbotSummaries(ChatbotSummary entity)
+		{
+			this.SendPropertyChanging();
+			entity.CommitGroup = this;
+		}
+		
+		private void detach_ChatbotSummaries(ChatbotSummary entity)
+		{
+			this.SendPropertyChanging();
+			entity.CommitGroup = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Commits")]
+	public partial class Commit : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CommitId;
+		
+		private string _CommitHash;
+		
+		private string _CommitMessage;
+		
+		private System.DateTime _CommitDate;
+		
+		private string _Author;
+		
+		private int _ProjectWeekId;
+		
+		private System.DateTime _Date;
+		
+		private string _Period;
+		
+		private System.Nullable<System.DateTime> _CreatedAt;
+		
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntitySet<CommitGroupMember> _CommitGroupMembers;
+		
+		private EntityRef<ProjectWeek> _ProjectWeek;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCommitIdChanging(int value);
+    partial void OnCommitIdChanged();
+    partial void OnCommitHashChanging(string value);
+    partial void OnCommitHashChanged();
+    partial void OnCommitMessageChanging(string value);
+    partial void OnCommitMessageChanged();
+    partial void OnCommitDateChanging(System.DateTime value);
+    partial void OnCommitDateChanged();
+    partial void OnAuthorChanging(string value);
+    partial void OnAuthorChanged();
+    partial void OnProjectWeekIdChanging(int value);
+    partial void OnProjectWeekIdChanged();
+    partial void OnDateChanging(System.DateTime value);
+    partial void OnDateChanged();
+    partial void OnPeriodChanging(string value);
+    partial void OnPeriodChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
+    #endregion
+		
+		public Commit()
+		{
+			this._CommitGroupMembers = new EntitySet<CommitGroupMember>(new Action<CommitGroupMember>(this.attach_CommitGroupMembers), new Action<CommitGroupMember>(this.detach_CommitGroupMembers));
+			this._ProjectWeek = default(EntityRef<ProjectWeek>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int CommitId
+		{
+			get
+			{
+				return this._CommitId;
+			}
+			set
+			{
+				if ((this._CommitId != value))
+				{
+					this.OnCommitIdChanging(value);
+					this.SendPropertyChanging();
+					this._CommitId = value;
+					this.SendPropertyChanged("CommitId");
+					this.OnCommitIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitHash", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string CommitHash
+		{
+			get
+			{
+				return this._CommitHash;
+			}
+			set
+			{
+				if ((this._CommitHash != value))
+				{
+					this.OnCommitHashChanging(value);
+					this.SendPropertyChanging();
+					this._CommitHash = value;
+					this.SendPropertyChanged("CommitHash");
+					this.OnCommitHashChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitMessage", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
+		public string CommitMessage
+		{
+			get
+			{
+				return this._CommitMessage;
+			}
+			set
+			{
+				if ((this._CommitMessage != value))
+				{
+					this.OnCommitMessageChanging(value);
+					this.SendPropertyChanging();
+					this._CommitMessage = value;
+					this.SendPropertyChanged("CommitMessage");
+					this.OnCommitMessageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitDate", DbType="DateTime NOT NULL")]
+		public System.DateTime CommitDate
+		{
+			get
+			{
+				return this._CommitDate;
+			}
+			set
+			{
+				if ((this._CommitDate != value))
+				{
+					this.OnCommitDateChanging(value);
+					this.SendPropertyChanging();
+					this._CommitDate = value;
+					this.SendPropertyChanged("CommitDate");
+					this.OnCommitDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Author", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Author
+		{
+			get
+			{
+				return this._Author;
+			}
+			set
+			{
+				if ((this._Author != value))
+				{
+					this.OnAuthorChanging(value);
+					this.SendPropertyChanging();
+					this._Author = value;
+					this.SendPropertyChanged("Author");
+					this.OnAuthorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectWeekId", DbType="Int NOT NULL")]
+		public int ProjectWeekId
+		{
+			get
+			{
+				return this._ProjectWeekId;
+			}
+			set
+			{
+				if ((this._ProjectWeekId != value))
+				{
+					if (this._ProjectWeek.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProjectWeekIdChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectWeekId = value;
+					this.SendPropertyChanged("ProjectWeekId");
+					this.OnProjectWeekIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date", DbType="DateTime NOT NULL")]
+		public System.DateTime Date
+		{
+			get
+			{
+				return this._Date;
+			}
+			set
+			{
+				if ((this._Date != value))
+				{
+					this.OnDateChanging(value);
+					this.SendPropertyChanging();
+					this._Date = value;
+					this.SendPropertyChanged("Date");
+					this.OnDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Period", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
+		public string Period
+		{
+			get
+			{
+				return this._Period;
+			}
+			set
+			{
+				if ((this._Period != value))
+				{
+					this.OnPeriodChanging(value);
+					this.SendPropertyChanging();
+					this._Period = value;
+					this.SendPropertyChanged("Period");
+					this.OnPeriodChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_CommitGroupMember", Storage="_CommitGroupMembers", ThisKey="CommitId", OtherKey="CommitId")]
+		public EntitySet<CommitGroupMember> CommitGroupMembers
+		{
+			get
+			{
+				return this._CommitGroupMembers;
+			}
+			set
+			{
+				this._CommitGroupMembers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ProjectWeek_Commit", Storage="_ProjectWeek", ThisKey="ProjectWeekId", OtherKey="ProjectWeekId", IsForeignKey=true)]
+		public ProjectWeek ProjectWeek
+		{
+			get
+			{
+				return this._ProjectWeek.Entity;
+			}
+			set
+			{
+				ProjectWeek previousValue = this._ProjectWeek.Entity;
+				if (((previousValue != value) 
+							|| (this._ProjectWeek.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ProjectWeek.Entity = null;
+						previousValue.Commits.Remove(this);
+					}
+					this._ProjectWeek.Entity = value;
+					if ((value != null))
+					{
+						value.Commits.Add(this);
+						this._ProjectWeekId = value.ProjectWeekId;
+					}
+					else
+					{
+						this._ProjectWeekId = default(int);
+					}
+					this.SendPropertyChanged("ProjectWeek");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CommitGroupMembers(CommitGroupMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Commit = this;
+		}
+		
+		private void detach_CommitGroupMembers(CommitGroupMember entity)
+		{
+			this.SendPropertyChanging();
+			entity.Commit = null;
 		}
 	}
 	
@@ -1043,7 +1519,7 @@ namespace DAL
 		
 		private int _ID;
 		
-		private int _CommitId;
+		private int _GroupId;
 		
 		private string _Attendance;
 		
@@ -1059,7 +1535,7 @@ namespace DAL
 		
 		private System.Nullable<System.DateTime> _UpdatedAt;
 		
-		private EntityRef<Commit> _Commit;
+		private EntityRef<CommitGroup> _CommitGroup;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1067,8 +1543,8 @@ namespace DAL
     partial void OnCreated();
     partial void OnIDChanging(int value);
     partial void OnIDChanged();
-    partial void OnCommitIdChanging(int value);
-    partial void OnCommitIdChanged();
+    partial void OnGroupIdChanging(int value);
+    partial void OnGroupIdChanged();
     partial void OnAttendanceChanging(string value);
     partial void OnAttendanceChanged();
     partial void OnAssignedTasksChanging(string value);
@@ -1087,7 +1563,7 @@ namespace DAL
 		
 		public ChatbotSummary()
 		{
-			this._Commit = default(EntityRef<Commit>);
+			this._CommitGroup = default(EntityRef<CommitGroup>);
 			OnCreated();
 		}
 		
@@ -1111,26 +1587,26 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", DbType="Int NOT NULL")]
-		public int CommitId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupId", DbType="Int NOT NULL")]
+		public int GroupId
 		{
 			get
 			{
-				return this._CommitId;
+				return this._GroupId;
 			}
 			set
 			{
-				if ((this._CommitId != value))
+				if ((this._GroupId != value))
 				{
-					if (this._Commit.HasLoadedOrAssignedValue)
+					if (this._CommitGroup.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnCommitIdChanging(value);
+					this.OnGroupIdChanging(value);
 					this.SendPropertyChanging();
-					this._CommitId = value;
-					this.SendPropertyChanged("CommitId");
-					this.OnCommitIdChanged();
+					this._GroupId = value;
+					this.SendPropertyChanged("GroupId");
+					this.OnGroupIdChanged();
 				}
 			}
 		}
@@ -1275,36 +1751,36 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_ChatbotSummary", Storage="_Commit", ThisKey="CommitId", OtherKey="CommitId", IsForeignKey=true)]
-		public Commit Commit
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_CommitGroup", ThisKey="GroupId", OtherKey="GroupId", IsForeignKey=true)]
+		public CommitGroup CommitGroup
 		{
 			get
 			{
-				return this._Commit.Entity;
+				return this._CommitGroup.Entity;
 			}
 			set
 			{
-				Commit previousValue = this._Commit.Entity;
+				CommitGroup previousValue = this._CommitGroup.Entity;
 				if (((previousValue != value) 
-							|| (this._Commit.HasLoadedOrAssignedValue == false)))
+							|| (this._CommitGroup.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._Commit.Entity = null;
+						this._CommitGroup.Entity = null;
 						previousValue.ChatbotSummaries.Remove(this);
 					}
-					this._Commit.Entity = value;
+					this._CommitGroup.Entity = value;
 					if ((value != null))
 					{
 						value.ChatbotSummaries.Add(this);
-						this._CommitId = value.CommitId;
+						this._GroupId = value.GroupId;
 					}
 					else
 					{
-						this._CommitId = default(int);
+						this._GroupId = default(int);
 					}
-					this.SendPropertyChanged("Commit");
+					this.SendPropertyChanged("CommitGroup");
 				}
 			}
 		}
