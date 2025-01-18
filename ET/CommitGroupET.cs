@@ -8,7 +8,7 @@ namespace ET
 {
     public class CommitGroupET
     {
-        public int GroupId { get; set; }
+        public int CommitGroupId { get; set; }
         public string GroupName { get; set; }
         public string TimeRange { get; set; }
         public DateTime StartDate { get; set; }

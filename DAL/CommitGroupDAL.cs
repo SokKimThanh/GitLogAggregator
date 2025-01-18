@@ -19,7 +19,7 @@ namespace DAL
                             orderby c.CreatedAt descending
                             select new CommitGroupET
                             {
-                                GroupId = c.GroupId,
+                                CommitGroupId = c.CommitGroupId,
                                 GroupName = c.GroupName,
                                 TimeRange = c.TimeRange,
                                 StartDate = c.StartDate,
@@ -41,10 +41,10 @@ namespace DAL
             try
             {
                 var query = from c in db.CommitGroups
-                            where c.GroupId == id
+                            where c.CommitGroupId == id
                             select new CommitGroupET
                             {
-                                GroupId = c.GroupId,
+                                CommitGroupId = c.CommitGroupId,
                                 GroupName = c.GroupName,
                                 TimeRange = c.TimeRange,
                                 StartDate = c.StartDate,
@@ -72,7 +72,7 @@ namespace DAL
                             orderby c.CreatedAt descending
                             select new CommitGroupET
                             {
-                                GroupId = c.GroupId,
+                                CommitGroupId = c.CommitGroupId,
                                 GroupName = c.GroupName,
                                 TimeRange = c.TimeRange,
                                 StartDate = c.StartDate,
@@ -115,7 +115,7 @@ namespace DAL
             try
             {
                 var query = from c in db.CommitGroups
-                            where c.GroupId == et.GroupId
+                            where c.CommitGroupId == et.CommitGroupId
                             select c;
 
                 var entity = query.SingleOrDefault();
@@ -140,7 +140,7 @@ namespace DAL
             try
             {
                 var query = from c in db.CommitGroups
-                            where c.GroupId == id
+                            where c.CommitGroupId == id
                             select c;
 
                 var entity = query.SingleOrDefault();

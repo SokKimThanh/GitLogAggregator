@@ -156,7 +156,7 @@ ADD CONSTRAINT UQ_CommitHash UNIQUE (CommitHash);
 GO
 -- Tạo bảng CommitGroups
 CREATE TABLE CommitGroups (
-    GroupId INT IDENTITY(1,1),
+    CommitGroupId INT IDENTITY(1,1),
     GroupName NVARCHAR(255) NOT NULL,
     TimeRange NVARCHAR(50) NOT NULL,
     StartDate DATETIME NOT NULL,
@@ -168,7 +168,7 @@ GO
 
 -- Thêm khóa chính cho bảng CommitGroups
 ALTER TABLE CommitGroups
-ADD CONSTRAINT PK_CommitGroups PRIMARY KEY (GroupId);
+ADD CONSTRAINT PK_CommitGroups PRIMARY KEY (CommitGroupId);
 GO
 
 -- Thêm ràng buộc giá trị mặc định cho CreatedAt và UpdatedAt
@@ -182,7 +182,7 @@ GO
 
 -- Tạo bảng CommitGroupMembers
 CREATE TABLE CommitGroupMembers (
-    GroupId INT NOT NULL,
+    CommitGroupId INT NOT NULL,
     CommitId INT NOT NULL,
     AddedAt DATETIME
 );
@@ -190,12 +190,12 @@ GO
 
 -- Thêm khóa chính phức hợp cho bảng CommitGroupMembers
 ALTER TABLE CommitGroupMembers
-ADD CONSTRAINT PK_CommitGroupMembers PRIMARY KEY (GroupId, CommitId);
+ADD CONSTRAINT PK_CommitGroupMembers PRIMARY KEY (CommitGroupId, CommitId);
 GO
 
 -- Thêm khóa ngoại liên kết đến bảng CommitGroups
 ALTER TABLE CommitGroupMembers
-ADD CONSTRAINT FK_CommitGroupMembers_CommitGroups FOREIGN KEY (GroupId) REFERENCES CommitGroups(GroupId);
+ADD CONSTRAINT FK_CommitGroupMembers_CommitGroups FOREIGN KEY (CommitGroupId) REFERENCES CommitGroups(CommitGroupId);
 GO
 
 -- Thêm khóa ngoại liên kết đến bảng Commits
@@ -211,7 +211,7 @@ GO
 -- Tạo bảng ChatbotSummary
 CREATE TABLE ChatbotSummary (
     ID INT IDENTITY(1,1),
-    GroupId INT NOT NULL,
+    CommitGroupId INT NOT NULL,
     Attendance NVARCHAR(255),
     AssignedTasks TEXT,
     ContentResults TEXT,
@@ -229,7 +229,7 @@ GO
 
 -- Thêm khóa ngoại liên kết đến bảng CommitGroups
 ALTER TABLE ChatbotSummary
-ADD CONSTRAINT FK_ChatbotSummary_CommitGroups FOREIGN KEY (GroupId) REFERENCES CommitGroups(GroupId);
+ADD CONSTRAINT FK_ChatbotSummary_CommitGroups FOREIGN KEY (CommitGroupId) REFERENCES CommitGroups(CommitGroupId);
 GO
 
 -- Thêm ràng buộc giá trị mặc định cho CreatedAt và UpdatedAt

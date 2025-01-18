@@ -9,7 +9,7 @@ namespace ET
     public class ChatbotSummaryET
     {
         public int ID { get; set; }
-        public int GroupId { get; set; }
+        public int CommitGroupId { get; set; }
         public string Attendance { get; set; }
         public string AssignedTasks { get; set; }
         public string ContentResults { get; set; }

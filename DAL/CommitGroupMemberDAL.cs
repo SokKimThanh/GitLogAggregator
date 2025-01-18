@@ -16,10 +16,10 @@ namespace DAL
             try
             {
                 var query = from c in db.CommitGroupMembers
-                            orderby c.GroupId descending
+                            orderby c.CommitGroupId descending
                             select new CommitGroupMemberET
                             {
-                                CommitGroupId = c.GroupId,
+                                CommitGroupId = c.CommitGroupId,
                                 CommitId = c.CommitId,
                                 AddedAt = c.AddedAt.Value
                             };
@@ -37,10 +37,10 @@ namespace DAL
             try
             {
                 var query = from c in db.CommitGroupMembers
-                            where c.GroupId == groupId && c.CommitId == commitId
+                            where c.CommitGroupId == groupId && c.CommitId == commitId
                             select new CommitGroupMemberET
                             {
-                                CommitGroupId = c.GroupId,
+                                CommitGroupId = c.CommitGroupId,
                                 CommitId = c.CommitId,
                                 AddedAt = c.AddedAt.Value
                             };
@@ -59,7 +59,7 @@ namespace DAL
             {
                 var entity = new CommitGroupMember
                 {
-                    GroupId = et.CommitGroupId,
+                    CommitGroupId = et.CommitGroupId,
                     CommitId = et.CommitId,
                     AddedAt = et.AddedAt
                 };
@@ -77,13 +77,13 @@ namespace DAL
             try
             {
                 var query = from c in db.CommitGroupMembers
-                            where c.GroupId == et.CommitGroupId && c.CommitId == et.CommitId
+                            where c.CommitGroupId == et.CommitGroupId && c.CommitId == et.CommitId
                             select c;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                entity.GroupId = et.CommitGroupId;
+                entity.CommitGroupId = et.CommitGroupId;
                 entity.CommitId = et.CommitId;
                 entity.AddedAt = et.AddedAt;
 
@@ -100,7 +100,7 @@ namespace DAL
             try
             {
                 var query = from c in db.CommitGroupMembers
-                            where c.GroupId == groupId && c.CommitId == commitId
+                            where c.CommitGroupId == groupId && c.CommitId == commitId
                             select c;
 
                 var entity = query.SingleOrDefault();

@@ -20,7 +20,7 @@ namespace DAL
                             select new ChatbotSummaryET
                             {
                                 ID = c.ID,
-                                GroupId = c.GroupId,
+                                CommitGroupId = c.CommitGroupId,
                                 Attendance = c.Attendance,
                                 AssignedTasks = c.AssignedTasks,
                                 ContentResults = c.ContentResults,
@@ -47,7 +47,7 @@ namespace DAL
                             select new ChatbotSummaryET
                             {
                                 ID = c.ID,
-                                GroupId = c.GroupId,
+                                CommitGroupId = c.CommitGroupId,
                                 Attendance = c.Attendance,
                                 AssignedTasks = c.AssignedTasks,
                                 ContentResults = c.ContentResults,
@@ -71,7 +71,7 @@ namespace DAL
             {
                 var entity = new ChatbotSummary
                 {
-                    GroupId = et.GroupId,
+                    CommitGroupId = et.CommitGroupId,
                     Attendance = et.Attendance,
                     AssignedTasks = et.AssignedTasks,
                     ContentResults = et.ContentResults,
@@ -100,7 +100,7 @@ namespace DAL
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                entity.GroupId = et.GroupId;
+                entity.CommitGroupId = et.CommitGroupId;
                 entity.Attendance = et.Attendance;
                 entity.AssignedTasks = et.AssignedTasks;
                 entity.ContentResults = et.ContentResults;

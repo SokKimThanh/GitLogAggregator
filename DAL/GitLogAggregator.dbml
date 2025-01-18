@@ -2,10 +2,10 @@
   <Connection Mode="AppSettings" ConnectionString="Data Source=SOKKIMTHANH;Initial Catalog=GitLogAggregatorDB;Integrated Security=True;Trust Server Certificate=True" SettingsObjectName="DAL.Properties.Settings" SettingsPropertyName="GitLogAggregatorDBConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.CommitGroupMembers" Member="CommitGroupMembers">
     <Type Name="CommitGroupMember">
-      <Column Name="GroupId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CommitGroupId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="CommitId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="AddedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="CommitGroup_CommitGroupMember" Member="CommitGroup" ThisKey="GroupId" OtherKey="GroupId" Type="CommitGroup" IsForeignKey="true" />
+      <Association Name="CommitGroup_CommitGroupMember" Member="CommitGroup" ThisKey="CommitGroupId" OtherKey="CommitGroupId" Type="CommitGroup" IsForeignKey="true" />
       <Association Name="Commit_CommitGroupMember" Member="Commit" ThisKey="CommitId" OtherKey="CommitId" Type="Commit" IsForeignKey="true" />
     </Type>
   </Table>
@@ -23,15 +23,15 @@
   </Table>
   <Table Name="dbo.CommitGroups" Member="CommitGroups">
     <Type Name="CommitGroup">
-      <Column Name="GroupId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CommitGroupId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="GroupName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="TimeRange" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="StartDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="EndDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="CommitGroup_CommitGroupMember" Member="CommitGroupMembers" ThisKey="GroupId" OtherKey="GroupId" Type="CommitGroupMember" />
-      <Association Name="CommitGroup_ChatbotSummary" Member="ChatbotSummaries" ThisKey="GroupId" OtherKey="GroupId" Type="ChatbotSummary" />
+      <Association Name="CommitGroup_CommitGroupMember" Member="CommitGroupMembers" ThisKey="CommitGroupId" OtherKey="CommitGroupId" Type="CommitGroupMember" />
+      <Association Name="CommitGroup_ChatbotSummary" Member="ChatbotSummaries" ThisKey="CommitGroupId" OtherKey="CommitGroupId" Type="ChatbotSummary" />
     </Type>
   </Table>
   <Table Name="dbo.Commits" Member="Commits">
@@ -68,7 +68,7 @@
   <Table Name="dbo.ChatbotSummary" Member="ChatbotSummaries">
     <Type Name="ChatbotSummary">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="GroupId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CommitGroupId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Attendance" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="AssignedTasks" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="ContentResults" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
@@ -76,7 +76,7 @@
       <Column Name="Notes" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="CommitGroup_ChatbotSummary" Member="CommitGroup" ThisKey="GroupId" OtherKey="GroupId" Type="CommitGroup" IsForeignKey="true" />
+      <Association Name="CommitGroup_ChatbotSummary" Member="CommitGroup" ThisKey="CommitGroupId" OtherKey="CommitGroupId" Type="CommitGroup" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.InternshipDirectories" Member="InternshipDirectories">

@@ -146,7 +146,7 @@ namespace DAL
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _GroupId;
+		private int _CommitGroupId;
 		
 		private int _CommitId;
 		
@@ -160,8 +160,8 @@ namespace DAL
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnGroupIdChanging(int value);
-    partial void OnGroupIdChanged();
+    partial void OnCommitGroupIdChanging(int value);
+    partial void OnCommitGroupIdChanged();
     partial void OnCommitIdChanging(int value);
     partial void OnCommitIdChanged();
     partial void OnAddedAtChanging(System.Nullable<System.DateTime> value);
@@ -175,26 +175,26 @@ namespace DAL
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupId", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int GroupId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitGroupId", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int CommitGroupId
 		{
 			get
 			{
-				return this._GroupId;
+				return this._CommitGroupId;
 			}
 			set
 			{
-				if ((this._GroupId != value))
+				if ((this._CommitGroupId != value))
 				{
 					if (this._CommitGroup.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnGroupIdChanging(value);
+					this.OnCommitGroupIdChanging(value);
 					this.SendPropertyChanging();
-					this._GroupId = value;
+					this._CommitGroupId = value;
 					this.SendPropertyChanged("CommitGroupId");
-					this.OnGroupIdChanged();
+					this.OnCommitGroupIdChanged();
 				}
 			}
 		}
@@ -266,11 +266,11 @@ namespace DAL
 					if ((value != null))
 					{
 						value.CommitGroupMembers.Add(this);
-						this._GroupId = value.GroupId;
+						this._CommitGroupId = value.CommitGroupId;
 					}
 					else
 					{
-						this._GroupId = default(int);
+						this._CommitGroupId = default(int);
 					}
 					this.SendPropertyChanged("CommitGroup");
 				}
@@ -589,7 +589,7 @@ namespace DAL
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _GroupId;
+		private int _CommitGroupId;
 		
 		private string _GroupName;
 		
@@ -611,8 +611,8 @@ namespace DAL
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnGroupIdChanging(int value);
-    partial void OnGroupIdChanged();
+    partial void OnCommitGroupIdChanging(int value);
+    partial void OnCommitGroupIdChanged();
     partial void OnGroupNameChanging(string value);
     partial void OnGroupNameChanged();
     partial void OnTimeRangeChanging(string value);
@@ -634,22 +634,22 @@ namespace DAL
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int GroupId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitGroupId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int CommitGroupId
 		{
 			get
 			{
-				return this._GroupId;
+				return this._CommitGroupId;
 			}
 			set
 			{
-				if ((this._GroupId != value))
+				if ((this._CommitGroupId != value))
 				{
-					this.OnGroupIdChanging(value);
+					this.OnCommitGroupIdChanging(value);
 					this.SendPropertyChanging();
-					this._GroupId = value;
+					this._CommitGroupId = value;
 					this.SendPropertyChanged("CommitGroupId");
-					this.OnGroupIdChanged();
+					this.OnCommitGroupIdChanged();
 				}
 			}
 		}
@@ -1519,7 +1519,7 @@ namespace DAL
 		
 		private int _ID;
 		
-		private int _GroupId;
+		private int _CommitGroupId;
 		
 		private string _Attendance;
 		
@@ -1543,8 +1543,8 @@ namespace DAL
     partial void OnCreated();
     partial void OnIDChanging(int value);
     partial void OnIDChanged();
-    partial void OnGroupIdChanging(int value);
-    partial void OnGroupIdChanged();
+    partial void OnCommitGroupIdChanging(int value);
+    partial void OnCommitGroupIdChanged();
     partial void OnAttendanceChanging(string value);
     partial void OnAttendanceChanged();
     partial void OnAssignedTasksChanging(string value);
@@ -1587,26 +1587,26 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupId", DbType="Int NOT NULL")]
-		public int GroupId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitGroupId", DbType="Int NOT NULL")]
+		public int CommitGroupId
 		{
 			get
 			{
-				return this._GroupId;
+				return this._CommitGroupId;
 			}
 			set
 			{
-				if ((this._GroupId != value))
+				if ((this._CommitGroupId != value))
 				{
 					if (this._CommitGroup.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnGroupIdChanging(value);
+					this.OnCommitGroupIdChanging(value);
 					this.SendPropertyChanging();
-					this._GroupId = value;
+					this._CommitGroupId = value;
 					this.SendPropertyChanged("CommitGroupId");
-					this.OnGroupIdChanged();
+					this.OnCommitGroupIdChanged();
 				}
 			}
 		}
@@ -1774,11 +1774,11 @@ namespace DAL
 					if ((value != null))
 					{
 						value.ChatbotSummaries.Add(this);
-						this._GroupId = value.GroupId;
+						this._CommitGroupId = value.CommitGroupId;
 					}
 					else
 					{
-						this._GroupId = default(int);
+						this._CommitGroupId = default(int);
 					}
 					this.SendPropertyChanged("CommitGroup");
 				}
