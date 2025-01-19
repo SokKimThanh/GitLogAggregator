@@ -181,10 +181,12 @@ namespace GitLogAggregator
 
             // Hiển thị hint cho các control
             SetupHoverEventsForControls(txtResultMouseEvents);
+            //
+            // Cấu hình trạng thái của CheckBox và ComboBox
+            //
+            ConfigureSearchControls();
 
             // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
-            chkSearchAllWeeks.Checked = true; // chọn tìm kiếm tất cả các tuần
-            ConfigureSearchControls();          // Cấu hình trạng thái của CheckBox và ComboBox
             if (chkSearchAllWeeks.Checked)
             {
                 SearchAllWeeks();
@@ -196,9 +198,13 @@ namespace GitLogAggregator
         }
         private void SearchAllWeeks()
         {
+            // Gọi hàm tìm kiếm tất cả các tuần
             var searchResult = commitBUS.SearchCommits("", projectWeekId: 0, searchAllWeeks: 1);
+
+            // Hiển thị kết quả lên DataGridView
             dgvReportCommits.DataSource = searchResult;
 
+            // Ghi thông báo kết quả
             if (searchResult != null && searchResult.Any())
             {
                 AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {searchResult.Count} kết quả.\n");
@@ -212,13 +218,13 @@ namespace GitLogAggregator
         {
             if (chkSearchAllWeeks.Checked)
             {
-                cboProjectWeek.Enabled = false;
-                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể";
+                cboProjectWeek.Enabled = false; // Khóa ComboBox
+                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Thay đổi text
             }
             else
             {
-                cboProjectWeek.Enabled = true;
-                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần";
+                cboProjectWeek.Enabled = true; // Mở khóa ComboBox
+                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Thay đổi text
             }
         }
 
@@ -1822,10 +1828,22 @@ git %*
                 AppendTextWithScroll("Đã hủy lưu thông tin cấu hình.\n");
             }
         }
+        private bool IsSearchingAllWeeks()
+        {
+            // Kiểm tra nếu CheckBox được chọn và DataGridView đang hiển thị dữ liệu
+            return chkSearchAllWeeks.Checked && dgvReportCommits.DataSource != null;
+        }
         private void BtnSearchReport_Click(object sender, EventArgs e)
         {
             try
             {
+                // Kiểm tra nếu đang ở trạng thái "tất cả"
+                if (IsSearchingAllWeeks())
+                {
+                    AppendTextWithScroll("Bạn đang xem tất cả các tuần. Vui lòng bỏ chọn 'Tìm kiếm tất cả các tuần' để tìm kiếm theo tuần cụ thể.\n");
+                    return;
+                }
+
                 int projectWeekId = 0;
                 int searchAllWeeks = chkSearchAllWeeks.Checked ? 1 : 0; // 1 nếu chọn tìm kiếm tất cả, 0 nếu không
 
