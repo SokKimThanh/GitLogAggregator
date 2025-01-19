@@ -49,7 +49,7 @@
   <ItemGroup>
     <Compile Include="ChatbotSummaryBUS.cs" />
     <Compile Include="CommitBUS.cs" />
-    <Compile Include="CommitGroupBUS.cs" />
+    <Compile Include="CommitPeriodBUS.cs" />
     <Compile Include="CommitGroupMemberBUS.cs" />
     <Compile Include="ConfigFileBUS.cs" />
     <Compile Include="GitLogCheckCommitBUS.cs" />

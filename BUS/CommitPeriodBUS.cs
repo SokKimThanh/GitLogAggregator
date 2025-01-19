@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BUS
 {
-    public class CommitGroupBUS
+    public class CommitPeriodBUS
     {
         private CommitPeriodDAL dal = new CommitPeriodDAL();
 

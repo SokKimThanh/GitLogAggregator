@@ -56,7 +56,7 @@ namespace GitLogAggregator
         // commit group member
         private readonly CommitGroupMemberBUS commitGroupMembersBUS = new CommitGroupMemberBUS();
 
-        private readonly CommitGroupBUS commitGroupsBUS = new CommitGroupBUS();
+        private readonly CommitPeriodBUS commitPeriodBUS = new CommitPeriodBUS();
 
         private readonly ChatbotSummaryBUS chatbotSummariesBUS = new ChatbotSummaryBUS();
 
@@ -1623,7 +1623,7 @@ git %*
                 }
 
                 // Xác định thư mục dự án Git và chạy lệnh git thông qua file batch để lấy thông tin commit
-                string gitLogCommand = $"log --pretty=format:\"%H|%s|%ci|%an|%ae\"";
+                string gitLogCommand = $"log --reverse --pretty=format:\"%H|%s|%ci|%an|%ae\"";
                 string logOutput = RunGitCommandViaBatch(batchFilePath, gitLogCommand, config.ProjectDirectory); // Hàm chạy lệnh git qua batch
                 var commits = ParseGitLog(logOutput); // Process the log output
 
@@ -1639,13 +1639,22 @@ git %*
                     try
                     {
                         // Kiểm tra xem commit đã tồn tại chưa
-                        var existingCommit = commitBUS.GetAll()
-                            .FirstOrDefault(c => c.CommitHash == commit.CommitHash);
+                        var existingCommit = commitBUS.GetAll().FirstOrDefault(c => c.CommitHash == commit.CommitHash);
 
                         if (existingCommit == null)
                         {
                             // Xác định period từ giờ commit
                             string period = DeterminePeriod(commit.CommitDate.Hour);
+
+                            // Tìm ProjectWeekId tương ứng với ngày của commit
+                            var projectWeek = weeks.FirstOrDefault(w =>
+                                commit.CommitDate >= w.WeekStartDate && commit.CommitDate <= w.WeekEndDate);
+
+                            if (projectWeek == null)
+                            {
+                                AppendTextWithScroll($"Không tìm thấy tuần phù hợp cho commit {commit.CommitHash}.\n");
+                                continue;
+                            }
 
                             // Tạo thông tin commit để lưu vào DB
                             var commitInfo = new CommitET
@@ -1655,7 +1664,7 @@ git %*
                                 CommitDate = commit.CommitDate,
                                 Author = commit.Author,
                                 AuthorEmail = commit.AuthorEmail,
-                                ProjectWeekId = 0, // Tạm thời để 0, sẽ cập nhật sau
+                                ProjectWeekId = projectWeek.ProjectWeekId, // Gán ProjectWeekId chính xác
                                 Date = commit.CommitDate.Date, // Ngày của commit
                                 Period = period, // Period được tính từ CommitDate
                                 CreatedAt = DateTime.Now,
@@ -1684,10 +1693,10 @@ git %*
                 foreach (var week in weeks)
                 {
                     // Lấy nhóm commit tương ứng với tuần hiện tại
-                    var commitGroup = commitGroupsBUS.GetAll()
+                    var commitPeriod = commitPeriodBUS.GetAll()
                         .FirstOrDefault(g => g.PeriodName == week.ProjectWeekName);
 
-                    if (commitGroup == null)
+                    if (commitPeriod == null)
                     {
                         AppendTextWithScroll($"Không tìm thấy nhóm commit cho tuần {week.ProjectWeekName}.\n");
                         continue;
@@ -1705,7 +1714,7 @@ git %*
                             // Thêm commit vào nhóm commit của tuần hiện tại
                             var commitGroupMember = new CommitGroupMemberET
                             {
-                                PeriodID = commitGroup.PeriodID,
+                                PeriodID = commitPeriod.PeriodID,
                                 CommitId = commit.CommitId,
                                 AddedAt = DateTime.Now
                             };
@@ -1823,7 +1832,9 @@ git %*
                 {
                     AggregateCommits(config);
                 }
-
+                // Hiển thị dữ liệu đã thêm vào csdl lên dgv
+                dgvReportCommits.DataSource = commitBUS.GetAll();
+                
                 AppendTextWithScroll("Lưu thông tin cấu hình thành công.\n");
             }
             else
@@ -1976,7 +1987,7 @@ git %*
             }
 
             // Kiểm tra xem đã có dữ liệu CommitPeriod và ProjectWeek trong khoảng thời gian thực tập chưa
-            var existingCommitGroups = commitGroupsBUS.GetAll()
+            var existingCommitGroups = commitPeriodBUS.GetAll()
                 .Where(g => g.PeriodStartDate >= internshipStartDate && g.PeriodEndDate <= internshipEndDate)
                 .ToList();
 
@@ -2029,7 +2040,7 @@ git %*
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now
                         };
-                        commitGroupsBUS.Add(commitGroup);
+                        commitPeriodBUS.Add(commitGroup);
                     }
                 }
             }
