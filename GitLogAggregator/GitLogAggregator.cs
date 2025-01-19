@@ -168,11 +168,38 @@ namespace GitLogAggregator
 
             dgvReportCommits.DataSource = commitBUS.GetAll();
 
+            // Cấu hình nút "Lưu Git"
+            ConfigureButton(btnSaveGit, ButtonImage.AddIcon);
+
+            // Cấu hình nút "Xóa tất cả"
+            ConfigureButton(btnRemoveAll, ButtonImage.DeleteIcon);
+
+            // Cấu hình nút "Tạo tuần"
+            ConfigureButton(btnCreateWeek, ButtonImage.AddIcon);
+
             DisableControls();
             btnAggregator.Enabled = true;//open
+
+
+
         }
+        private void ConfigureButton(Button button, ButtonImage buttonImage)
+        {
+            // Lấy imageKey từ từ điển dựa trên giá trị ButtonImage
+            if (ButtonImageMap.ImageKeys.TryGetValue(buttonImage, out string imageKey))
+            {
+                button.ImageKey = imageKey;
+            }
+            else
+            {
+                throw new ArgumentException("Invalid button image value", nameof(buttonImage));
+            }
 
-
+            // Đặt các thuộc tính mặc định
+            button.ImageAlign = ContentAlignment.MiddleLeft;
+            button.TextAlign = ContentAlignment.MiddleRight;
+            button.TextImageRelation = TextImageRelation.ImageBeforeText;
+        }
 
         private string GetLatestInternshipFolderPath()
         {
@@ -378,9 +405,6 @@ namespace GitLogAggregator
         {
             btnClearDataListView.Enabled = isEnabled;
             btnExportReportExcelCommits.Enabled = isEnabled;
-            btnReviewCommitsError.Enabled = isEnabled;
-            btnDeleteCommitsError.Enabled = !isEnabled;
-            btnExpandReport.Enabled = !isEnabled;
             txtInternshipEndDate.Enabled = !isEnabled;
             txtFirstCommitDate.Enabled = !isEnabled;
             txtNumericsWeek.Enabled = !isEnabled;
@@ -402,9 +426,7 @@ namespace GitLogAggregator
             btnClearDataListView.Enabled = true;
             btnOpenGitFolder.Enabled = true;
             btnExportReportExcelCommits.Enabled = true;
-            btnReviewCommitsError.Enabled = true;
-            btnDeleteCommitsError.Enabled = true;
-            btnExpandReport.Enabled = true;
+
             // Thêm các điều khiển khác nếu cần
         }
         private void DisableControls()
@@ -419,9 +441,6 @@ namespace GitLogAggregator
             btnClearDataListView.Enabled = false;
             btnOpenGitFolder.Enabled = false;
             btnExportReportExcelCommits.Enabled = false;
-            btnReviewCommitsError.Enabled = false;
-            btnDeleteCommitsError.Enabled = false;
-            btnExpandReport.Enabled = false;
             // Thêm các điều khiển khác nếu cần
         }
         /// <summary>
@@ -707,8 +726,7 @@ namespace GitLogAggregator
                 listViewProjects.Items.Clear();
                 AppendTextWithScroll("Danh sách config đã được làm trống.\n");
 
-                checkedListBoxCommitsError.Items.Clear();
-                AppendTextWithScroll("Danh sách commit đã được làm trống.\n");
+
 
                 dgvReportCommits.DataSource = null;
                 AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
@@ -735,9 +753,7 @@ namespace GitLogAggregator
                 EnableControls();
                 btnClearDataListView.Enabled = false;  // Vô hiệu hóa nút xóa
                 AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
-                btnDeleteCommitsError.Enabled = false;
-                btnReviewCommitsError.Enabled = false;
-                AppendTextWithScroll("Nút Kiểm tra đã bị vô hiệu hóa sau khi xóa thư mục.\n");
+
                 btnExportReportExcelCommits.Enabled = false;
                 txtInternshipEndDate.Enabled = false;
                 txtFirstCommitDate.Enabled = false;
@@ -1101,12 +1117,7 @@ namespace GitLogAggregator
             // Đọc danh sách commit từ file
             List<string> commits = gitgui_bus.ReadCommitsFromFile(filePath);
 
-            // Hiển thị danh sách commit trong checkedListBox1
-            checkedListBoxCommitsError.Items.Clear();
-            foreach (var commit in commits)
-            {
-                checkedListBoxCommitsError.Items.Add(commit);
-            }
+
         }
 
         private void BtnExportExcel_Click(object sender, EventArgs e)
@@ -1152,16 +1163,11 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnReviewCommits_Click(object sender, EventArgs e)
         {
-            btnReviewCommitsError.Enabled = false;
+
             txtResult.Clear();
             string internshipWeekFolder = Path.Combine(txtDirectoryProjectPath, "internship_week");
 
-            if (!Directory.Exists(internshipWeekFolder))
-            {
-                AppendTextWithScroll("Thư mục internship_week không tồn tại.\n");
-                btnReviewCommitsError.Enabled = true;
-                return;
-            }
+
 
             DateTime internshipStartDate = txtInternshipStartDate.Value;
             DateTime internshipEndDate = txtInternshipEndDate.Value;
@@ -1182,11 +1188,6 @@ namespace GitLogAggregator
                 gitlogcheckcommit_bus.ProcessCommitsInWeek(combinedFilePath, week, internshipStartDate, internshipEndDate, weekDatas, invalidCommits);
             }
 
-            checkedListBoxCommitsError.Items.Clear();
-            foreach (var commit in invalidCommits)
-            {
-                checkedListBoxCommitsError.Items.Add(commit);
-            }
 
             DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
             dgvReportCommits.DataSource = dataTable;
@@ -1200,9 +1201,7 @@ namespace GitLogAggregator
             {
                 AppendTextWithScroll($"Kiểm tra thành công. CommitET không hợp lệ: {invalidCommitCount}\n");
             }
-            btnReviewCommitsError.Enabled = false;
-            btnDeleteCommitsError.Enabled = false;
-            btnExpandReport.Enabled = true;
+
         }
 
         private void BtnDeleteCommits_Click(object sender, EventArgs e)
@@ -1251,14 +1250,7 @@ namespace GitLogAggregator
             DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
             dgvReportCommits.DataSource = dataTable;
 
-            // Clear the data source of the CheckedListBox
-            checkedListBoxCommitsError.Items.Clear();
 
-            // Inform the user that the process is complete
-            btnDeleteCommitsError.Enabled = false;
-            AppendTextWithScroll("Xóa thành công danh sách commits lỗi.\n");
-            btnReviewCommitsError.Enabled = false; // khóa nút kiểm tra sau khi xóa commit
-            AppendTextWithScroll("Khóa nút kiểm tra commits lỗi sau khi xóa thành công danh sách commit lỗi.\n");
         }
         /// <summary>
         /// Kiểm tra sự tồn tại của thư mục tuần và file combined_commits.txt
@@ -1278,26 +1270,6 @@ namespace GitLogAggregator
             }
 
             return true;
-        }
-        private void OnMouseEnter(object sender, EventArgs e)
-        {
-            btnDeleteCommitsError.BackColor = Color.FromArgb(255, 128, 128);
-            AppendEventsWithScroll("Xóa commits lỗi.\n");
-        }
-        private void OnMouseLeave(object sender, EventArgs e)
-        {
-            btnDeleteCommitsError.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
-        }
-
-        private void BtnExpanDataGridview_MouseEnter(object sender, EventArgs e)
-        {
-            btnDeleteCommitsError.BackColor = Color.FromArgb(255, 128, 128);
-            AppendEventsWithScroll("Mở rộng datagridview ở Form khác.\n");
-        }
-
-        private void BtnExpanDataGridview_MouseLeave(object sender, EventArgs e)
-        {
-            btnDeleteCommitsError.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
         }
 
         private void BtnReviewCommits_MouseEnter(object sender, EventArgs e)
@@ -1693,20 +1665,40 @@ git %*
         }
         private void BtnSaveGit_Click(object sender, EventArgs e)
         {
-            List<ConfigFileET> configs = configBus.GetAll();
+            // Hiển thị hộp thoại xác nhận
+            DialogResult result = MessageBox.Show(
+                "Bạn có chắc chắn muốn lưu thông tin cấu hình không?", // Nội dung thông báo
+                "Xác nhận lưu",                                        // Tiêu đề hộp thoại
+                MessageBoxButtons.YesNo,                               // Nút Yes và No
+                MessageBoxIcon.Question                                // Biểu tượng câu hỏi
+            );
 
-            if (configs == null || configs.Count == 0)
+            // Kiểm tra kết quả từ hộp thoại
+            if (result == DialogResult.Yes)
             {
-                AppendTextWithScroll("Không có cấu hình nào được tìm thấy.\n");
-                return;
+                // Nếu người dùng chọn "Yes", thực hiện lưu
+                List<ConfigFileET> configs = configBus.GetAll();
+
+                if (configs == null || configs.Count == 0)
+                {
+                    AppendTextWithScroll("Không có cấu hình nào được tìm thấy.\n");
+                    return;
+                }
+
+                // Lưu thông tin cấu hình vào cơ sở dữ liệu
+                foreach (ConfigFileET config in configs)
+                {
+                    AggregateCommits(config);
+                }
+
+                AppendTextWithScroll("Lưu thông tin cấu hình thành công.\n");
             }
-            // Lưu thông tin cấu hình vào cơ sở dữ liệu
-            foreach (ConfigFileET config in configs)
+            else
             {
-                AggregateCommits(config);
+                // Nếu người dùng chọn "No", hiển thị thông báo hủy
+                AppendTextWithScroll("Đã hủy lưu thông tin cấu hình.\n");
             }
         }
-
         private void BtnSearchReport_Click(object sender, EventArgs e)
         {
             try
@@ -1734,19 +1726,31 @@ git %*
 
         private void btnRemoveAll_Click(object sender, EventArgs e)
         {
-            removeBUS.ClearAllTables();
-            dgvReportCommits.DataSource = commitBUS.GetAll();
+            // Hiển thị hộp thoại xác nhận
+            DialogResult result = MessageBox.Show(
+                "Bạn có chắc chắn muốn xóa tất cả dữ liệu không?", // Nội dung thông báo
+                "Xác nhận xóa",                                    // Tiêu đề hộp thoại
+                MessageBoxButtons.YesNo,                           // Nút Yes và No
+                MessageBoxIcon.Warning                             // Biểu tượng cảnh báo
+            );
+
+            // Kiểm tra kết quả từ hộp thoại
+            if (result == DialogResult.Yes)
+            {
+                // Nếu người dùng chọn "Yes", thực hiện xóa
+                removeBUS.ClearAllTables();
+                dgvReportCommits.DataSource = commitBUS.GetAll();
+            }
+            // Nếu người dùng chọn "No", không làm gì cả
         }
 
         private void btnCreateWeek_MouseEnter(object sender, EventArgs e)
         {
-            btnCreateWeek.BackColor = Color.FromArgb(150, 255, 192);
             AppendEventsWithScroll("Tạo tuần thực tập\n");
         }
 
         private void btnCreateWeek_MouseLeave(object sender, EventArgs e)
         {
-            btnCreateWeek.BackColor = Color.FromArgb(192, 255, 192);
             txtResultMouseEvents.Clear();
         }
         /// <summary>
@@ -1861,6 +1865,26 @@ git %*
             {
                 txtInternshipStartDate.Value = DateTime.Now; // Đặt lại giá trị mặc định (tùy chọn)
             }
+        }
+
+        private void btnRemoveAll_MouseEnter(object sender, EventArgs e)
+        {
+            AppendEventsWithScroll("Xóa tất cả bảng trong csdl\n");
+        }
+
+        private void btnRemoveAll_MouseLeave(object sender, EventArgs e)
+        {
+            txtResultMouseEvents.Clear();
+        }
+
+        private void btnSaveGit_MouseEnter(object sender, EventArgs e)
+        {
+            AppendEventsWithScroll("Lưu các commit git log dự án vào csdl\n");
+        }
+
+        private void btnSaveGit_MouseLeave(object sender, EventArgs e)
+        {
+            txtResultMouseEvents.Clear();
         }
     }
 }
