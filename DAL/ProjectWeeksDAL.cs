@@ -21,6 +21,7 @@ namespace DAL
                             select new ProjectWeekET
                             {
                                 ProjectWeekId = p.ProjectWeekId,
+                                ProjectWeekName = p.ProjectWeekName,
                                 WeekStartDate = p.WeekStartDate.Value,
                                 WeekEndDate = p.WeekEndDate.Value,
                                 InternshipDirectoryId = p.InternshipDirectoryId,
@@ -45,6 +46,7 @@ namespace DAL
                             select new ProjectWeekET
                             {
                                 ProjectWeekId = p.ProjectWeekId,
+                                ProjectWeekName = p.ProjectWeekName,
                                 WeekStartDate = p.WeekStartDate.Value,
                                 WeekEndDate = p.WeekEndDate.Value,
                                 InternshipDirectoryId = p.InternshipDirectoryId,
@@ -66,6 +68,7 @@ namespace DAL
             {
                 var entity = new ProjectWeek
                 {
+                    ProjectWeekName = et.ProjectWeekName,
                     WeekStartDate = et.WeekStartDate,
                     WeekEndDate = et.WeekEndDate,
                     InternshipDirectoryId = et.InternshipDirectoryId,
@@ -95,6 +98,7 @@ namespace DAL
                 return new ProjectWeekET()
                 {
                     ProjectWeekId = projectweek.ProjectWeekId,
+                    ProjectWeekName = projectweek.ProjectWeekName,
                     WeekStartDate = projectweek.WeekStartDate.Value,
                     WeekEndDate = projectweek.WeekEndDate.Value,
                     InternshipDirectoryId = projectweek.InternshipDirectoryId,
@@ -115,7 +119,7 @@ namespace DAL
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
-
+                entity.ProjectWeekName = et.ProjectWeekName;
                 entity.WeekStartDate = et.WeekStartDate;
                 entity.WeekEndDate = et.WeekEndDate;
                 entity.InternshipDirectoryId = et.InternshipDirectoryId;

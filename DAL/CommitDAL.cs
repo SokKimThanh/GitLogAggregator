@@ -23,6 +23,7 @@ namespace DAL
                                 CommitMessage = c.CommitMessage,
                                 CommitDate = c.CommitDate,
                                 Author = c.Author,
+                                AuthorEmail = c.AuthorEmail,
                                 ProjectWeekId = c.ProjectWeekId,
                                 Date = c.Date,
                                 Period = c.Period,
@@ -51,6 +52,7 @@ namespace DAL
                                 CommitMessage = c.CommitMessage,
                                 CommitDate = c.CommitDate,
                                 Author = c.Author,
+                                AuthorEmail = c.AuthorEmail,
                                 ProjectWeekId = c.ProjectWeekId,
                                 Date = c.Date,
                                 Period = c.Period,
@@ -78,6 +80,7 @@ namespace DAL
                                 CommitMessage = c.CommitMessage,
                                 CommitDate = c.CommitDate,
                                 Author = c.Author,
+                                AuthorEmail = c.AuthorEmail,
                                 ProjectWeekId = c.ProjectWeekId,
                                 Date = c.Date,
                                 Period = c.Period,
@@ -108,20 +111,37 @@ namespace DAL
                 var projectWeekExists = db.ProjectWeeks.Any(pw => pw.ProjectWeekId == c.ProjectWeekId);
                 if (!projectWeekExists)
                 {
-                    throw new Exception("Không đúng tuần thực tập.");
+                    // Nếu tuần thực tập chưa tồn tại, tạo mới
+                    var newProjectWeek = new ProjectWeek
+                    {
+                        ProjectWeekId = c.ProjectWeekId,
+                        ProjectWeekName = $"Tuần {c.ProjectWeekId}", // Tên tuần mặc định
+                        WeekStartDate = DateTime.Now, // Ngày bắt đầu mặc định
+                        WeekEndDate = DateTime.Now.AddDays(6), // Ngày kết thúc mặc định
+                        InternshipDirectoryId = 1, // ID thư mục thực tập mặc định
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+
+                    db.ProjectWeeks.InsertOnSubmit(newProjectWeek);
+                    db.SubmitChanges();
                 }
+
+                // Thêm commit vào database
                 var entity = new Commit
                 {
                     CommitHash = c.CommitHash,
                     CommitMessage = c.CommitMessage,
                     CommitDate = c.CommitDate,
                     Author = c.Author,
+                    AuthorEmail = c.AuthorEmail,
                     ProjectWeekId = c.ProjectWeekId,
                     Date = c.Date,
                     Period = c.Period,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
+
                 db.Commits.InsertOnSubmit(entity);
                 db.SubmitChanges();
             }
@@ -146,6 +166,7 @@ namespace DAL
                 entity.CommitMessage = et.CommitMessage;
                 entity.CommitDate = et.CommitDate;
                 entity.Author = et.Author;
+                entity.AuthorEmail = et.AuthorEmail;
                 entity.ProjectWeekId = et.ProjectWeekId;
                 entity.Date = et.Date;
                 entity.Period = et.Period;

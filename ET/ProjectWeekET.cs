@@ -9,6 +9,7 @@ namespace ET
     public class ProjectWeekET
     {
         public int ProjectWeekId { get; set; }
+        public string ProjectWeekName { get; set; }
         public DateTime WeekStartDate { get; set; }
         public DateTime WeekEndDate { get; set; }
         public int InternshipDirectoryId { get; set; }

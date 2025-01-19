@@ -12,6 +12,7 @@
   <Table Name="dbo.ProjectWeeks" Member="ProjectWeeks">
     <Type Name="ProjectWeek">
       <Column Name="ProjectWeekId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProjectWeekName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="WeekStartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="WeekEndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="InternshipDirectoryId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
@@ -41,6 +42,7 @@
       <Column Name="CommitMessage" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
       <Column Name="CommitDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Author" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="AuthorEmail" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="ProjectWeekId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Period" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />

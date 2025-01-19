@@ -340,6 +340,8 @@ namespace DAL
 		
 		private int _ProjectWeekId;
 		
+		private string _ProjectWeekName;
+		
 		private System.Nullable<System.DateTime> _WeekStartDate;
 		
 		private System.Nullable<System.DateTime> _WeekEndDate;
@@ -360,6 +362,8 @@ namespace DAL
     partial void OnCreated();
     partial void OnProjectWeekIdChanging(int value);
     partial void OnProjectWeekIdChanged();
+    partial void OnProjectWeekNameChanging(string value);
+    partial void OnProjectWeekNameChanged();
     partial void OnWeekStartDateChanging(System.Nullable<System.DateTime> value);
     partial void OnWeekStartDateChanged();
     partial void OnWeekEndDateChanging(System.Nullable<System.DateTime> value);
@@ -395,6 +399,26 @@ namespace DAL
 					this._ProjectWeekId = value;
 					this.SendPropertyChanged("ProjectWeekId");
 					this.OnProjectWeekIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProjectWeekName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string ProjectWeekName
+		{
+			get
+			{
+				return this._ProjectWeekName;
+			}
+			set
+			{
+				if ((this._ProjectWeekName != value))
+				{
+					this.OnProjectWeekNameChanging(value);
+					this.SendPropertyChanging();
+					this._ProjectWeekName = value;
+					this.SendPropertyChanged("ProjectWeekName");
+					this.OnProjectWeekNameChanged();
 				}
 			}
 		}
@@ -861,6 +885,8 @@ namespace DAL
 		
 		private string _Author;
 		
+		private string _AuthorEmail;
+		
 		private int _ProjectWeekId;
 		
 		private System.DateTime _Date;
@@ -889,6 +915,8 @@ namespace DAL
     partial void OnCommitDateChanged();
     partial void OnAuthorChanging(string value);
     partial void OnAuthorChanged();
+    partial void OnAuthorEmailChanging(string value);
+    partial void OnAuthorEmailChanged();
     partial void OnProjectWeekIdChanging(int value);
     partial void OnProjectWeekIdChanged();
     partial void OnDateChanging(System.DateTime value);
@@ -1004,6 +1032,26 @@ namespace DAL
 					this._Author = value;
 					this.SendPropertyChanged("Author");
 					this.OnAuthorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorEmail", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string AuthorEmail
+		{
+			get
+			{
+				return this._AuthorEmail;
+			}
+			set
+			{
+				if ((this._AuthorEmail != value))
+				{
+					this.OnAuthorEmailChanging(value);
+					this.SendPropertyChanging();
+					this._AuthorEmail = value;
+					this.SendPropertyChanged("AuthorEmail");
+					this.OnAuthorEmailChanged();
 				}
 			}
 		}

@@ -22,8 +22,8 @@ namespace DAL
                                 CommitGroupId = c.CommitGroupId,
                                 GroupName = c.GroupName,
                                 TimeRange = c.TimeRange,
-                                StartDate = c.StartDate,
-                                EndDate = c.EndDate,
+                                WeekStartDate = c.StartDate,
+                                WeekEndDate = c.EndDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -47,8 +47,8 @@ namespace DAL
                                 CommitGroupId = c.CommitGroupId,
                                 GroupName = c.GroupName,
                                 TimeRange = c.TimeRange,
-                                StartDate = c.StartDate,
-                                EndDate = c.EndDate,
+                                WeekStartDate = c.StartDate,
+                                WeekEndDate = c.EndDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -75,8 +75,8 @@ namespace DAL
                                 CommitGroupId = c.CommitGroupId,
                                 GroupName = c.GroupName,
                                 TimeRange = c.TimeRange,
-                                StartDate = c.StartDate,
-                                EndDate = c.EndDate,
+                                WeekStartDate = c.StartDate,
+                                WeekEndDate = c.EndDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -96,8 +96,8 @@ namespace DAL
                 {
                     GroupName = et.GroupName,
                     TimeRange = et.TimeRange,
-                    StartDate = et.StartDate,
-                    EndDate = et.EndDate,
+                    StartDate = et.WeekStartDate,
+                    EndDate = et.WeekEndDate,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
@@ -123,8 +123,8 @@ namespace DAL
 
                 entity.GroupName = et.GroupName;
                 entity.TimeRange = et.TimeRange;
-                entity.StartDate = et.StartDate;
-                entity.EndDate = et.EndDate;
+                entity.StartDate = et.WeekStartDate;
+                entity.EndDate = et.WeekEndDate;
                 entity.UpdatedAt = DateTime.Now;
 
                 db.SubmitChanges();

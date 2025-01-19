@@ -84,6 +84,7 @@
             this.mainGitPanel = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSaveGit = new System.Windows.Forms.Button();
+            this.btnRemoveAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel10 = new System.Windows.Forms.TableLayoutPanel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.hệThốngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,6 +95,8 @@
             this.foldersProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnCreateWeek = new System.Windows.Forms.Button();
+            this.chkUseDate = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -138,7 +141,7 @@
             // 
             this.txtInternshipStartDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtInternshipStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipStartDate.Location = new System.Drawing.Point(3, 46);
+            this.txtInternshipStartDate.Location = new System.Drawing.Point(3, 33);
             this.txtInternshipStartDate.Name = "txtInternshipStartDate";
             this.txtInternshipStartDate.Size = new System.Drawing.Size(118, 25);
             this.txtInternshipStartDate.TabIndex = 3;
@@ -200,7 +203,7 @@
             this.label3.Location = new System.Drawing.Point(3, 3);
             this.label3.Margin = new System.Windows.Forms.Padding(3);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(118, 37);
+            this.label3.Size = new System.Drawing.Size(118, 24);
             this.label3.TabIndex = 8;
             this.label3.Text = "Ngày bắt đầu TT:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -332,7 +335,7 @@
             this.label8.Location = new System.Drawing.Point(256, 3);
             this.label8.Margin = new System.Windows.Forms.Padding(3);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(122, 37);
+            this.label8.Size = new System.Drawing.Size(122, 24);
             this.label8.TabIndex = 9;
             this.label8.Text = "Số ngày TT:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -348,6 +351,7 @@
             this.imageList.Images.SetKeyName(4, "git-aggregation-logo.png");
             this.imageList.Images.SetKeyName(5, "Git-commit-aggregation-tool.png");
             this.imageList.Images.SetKeyName(6, "expand-arrows.png");
+            this.imageList.Images.SetKeyName(7, "plus.png");
             // 
             // txtFirstCommitDate
             // 
@@ -379,7 +383,7 @@
             this.label10.Location = new System.Drawing.Point(127, 3);
             this.label10.Margin = new System.Windows.Forms.Padding(3);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(123, 37);
+            this.label10.Size = new System.Drawing.Size(123, 24);
             this.label10.TabIndex = 8;
             this.label10.Text = "Ngày kết thúc TT:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -388,7 +392,7 @@
             // 
             this.txtInternshipEndDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtInternshipEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipEndDate.Location = new System.Drawing.Point(127, 46);
+            this.txtInternshipEndDate.Location = new System.Drawing.Point(127, 33);
             this.txtInternshipEndDate.Name = "txtInternshipEndDate";
             this.txtInternshipEndDate.Size = new System.Drawing.Size(123, 25);
             this.txtInternshipEndDate.TabIndex = 3;
@@ -396,7 +400,7 @@
             // txtNumericsWeek
             // 
             this.txtNumericsWeek.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNumericsWeek.Location = new System.Drawing.Point(256, 46);
+            this.txtNumericsWeek.Location = new System.Drawing.Point(256, 33);
             this.txtNumericsWeek.Name = "txtNumericsWeek";
             this.txtNumericsWeek.Size = new System.Drawing.Size(122, 25);
             this.txtNumericsWeek.TabIndex = 20;
@@ -570,13 +574,16 @@
             this.tableLayoutPanel2.Controls.Add(this.txtInternshipStartDate, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.txtInternshipEndDate, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.txtNumericsWeek, 2, 1);
+            this.tableLayoutPanel2.Controls.Add(this.btnCreateWeek, 2, 2);
+            this.tableLayoutPanel2.Controls.Add(this.chkUseDate, 0, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 124);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(381, 86);
             this.tableLayoutPanel2.TabIndex = 27;
             // 
@@ -738,6 +745,7 @@
             this.btnExpandReport.Size = new System.Drawing.Size(33, 342);
             this.btnExpandReport.TabIndex = 25;
             this.btnExpandReport.UseVisualStyleBackColor = false;
+            this.btnExpandReport.Click += new System.EventHandler(this.btnExpandReport_Click);
             this.btnExpandReport.MouseEnter += new System.EventHandler(this.BtnExpanDataGridview_MouseEnter);
             this.btnExpandReport.MouseLeave += new System.EventHandler(this.BtnExpanDataGridview_MouseLeave);
             // 
@@ -815,6 +823,7 @@
             this.tableLayoutPanel8.Controls.Add(this.btnAggregator, 2, 0);
             this.tableLayoutPanel8.Controls.Add(this.listViewProjects, 0, 1);
             this.tableLayoutPanel8.Controls.Add(this.btnSaveGit, 3, 0);
+            this.tableLayoutPanel8.Controls.Add(this.btnRemoveAll, 3, 1);
             this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel8.Location = new System.Drawing.Point(0, 433);
             this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
@@ -828,7 +837,6 @@
             // btnSaveGit
             // 
             this.btnSaveGit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnSaveGit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnSaveGit.FlatAppearance.BorderSize = 0;
             this.btnSaveGit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSaveGit.Location = new System.Drawing.Point(360, 0);
@@ -838,6 +846,19 @@
             this.btnSaveGit.TabIndex = 25;
             this.btnSaveGit.UseVisualStyleBackColor = false;
             this.btnSaveGit.Click += new System.EventHandler(this.BtnSaveGit_Click);
+            // 
+            // btnRemoveAll
+            // 
+            this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnRemoveAll.FlatAppearance.BorderSize = 0;
+            this.btnRemoveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRemoveAll.Location = new System.Drawing.Point(360, 35);
+            this.btnRemoveAll.Margin = new System.Windows.Forms.Padding(0);
+            this.btnRemoveAll.Name = "btnRemoveAll";
+            this.btnRemoveAll.Size = new System.Drawing.Size(21, 30);
+            this.btnRemoveAll.TabIndex = 25;
+            this.btnRemoveAll.UseVisualStyleBackColor = false;
+            this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
             // 
             // tableLayoutPanel10
             // 
@@ -920,6 +941,36 @@
             this.cònToolStripMenuItem.Name = "cònToolStripMenuItem";
             this.cònToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.cònToolStripMenuItem.Text = "ConfigFiles";
+            // 
+            // btnCreateWeek
+            // 
+            this.btnCreateWeek.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnCreateWeek.FlatAppearance.BorderSize = 0;
+            this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCreateWeek.ImageKey = "plus.png";
+            this.btnCreateWeek.ImageList = this.imageList;
+            this.btnCreateWeek.Location = new System.Drawing.Point(253, 60);
+            this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(0);
+            this.btnCreateWeek.Name = "btnCreateWeek";
+            this.btnCreateWeek.Size = new System.Drawing.Size(33, 26);
+            this.btnCreateWeek.TabIndex = 25;
+            this.btnCreateWeek.UseVisualStyleBackColor = false;
+            this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
+            this.btnCreateWeek.MouseEnter += new System.EventHandler(this.btnCreateWeek_MouseEnter);
+            this.btnCreateWeek.MouseLeave += new System.EventHandler(this.btnCreateWeek_MouseLeave);
+            // 
+            // chkUseDate
+            // 
+            this.chkUseDate.AutoSize = true;
+            this.chkUseDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkUseDate.Location = new System.Drawing.Point(3, 60);
+            this.chkUseDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.chkUseDate.Name = "chkUseDate";
+            this.chkUseDate.Size = new System.Drawing.Size(121, 26);
+            this.chkUseDate.TabIndex = 26;
+            this.chkUseDate.Text = "Chọn ngày TT";
+            this.chkUseDate.UseVisualStyleBackColor = true;
+            this.chkUseDate.CheckedChanged += new System.EventHandler(this.chkUseDate_CheckedChanged);
             // 
             // GitLogAggregator
             // 
@@ -1036,5 +1087,8 @@
         private System.Windows.Forms.ToolStripMenuItem hệThốngToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem thoátToolStripMenuItem;
         private System.Windows.Forms.Button btnSaveGit;
+        private System.Windows.Forms.Button btnRemoveAll;
+        private System.Windows.Forms.Button btnCreateWeek;
+        private System.Windows.Forms.CheckBox chkUseDate;
     }
 }

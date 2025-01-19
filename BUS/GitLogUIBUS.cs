@@ -47,10 +47,7 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.GetFirstCommitDate(folderPath);
         }
-        public void AggregateCommits(string projectDirectory, string author, DateTime internshipStartDate, int totalWeeks, string internshipWeekFolder)
-        {
-            data.AggregateCommits(projectDirectory, author, internshipStartDate, totalWeeks, internshipWeekFolder);
-        }
+         
         /// <summary>
         /// Hiển thị danh sách tác giả trên combobox
         /// </summary>

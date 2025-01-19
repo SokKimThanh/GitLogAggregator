@@ -15,7 +15,7 @@ namespace DAL
             try
             {
                 var query = from c in db.ConfigFiles
-                            orderby c.CreatedAt descending
+                            orderby c.FirstCommitDate ascending
                             select new ConfigFileET
                             {
                                 ID = c.ID,

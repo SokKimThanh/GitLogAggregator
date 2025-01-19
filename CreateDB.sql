@@ -76,6 +76,7 @@ GO
 -- Tạo bảng ProjectWeeks
 CREATE TABLE ProjectWeeks (
     ProjectWeekId INT IDENTITY(1,1),
+ 	ProjectWeekName NVARCHAR(255) NOT NULL,
     WeekStartDate DATETIME,
     WeekEndDate DATETIME,
     InternshipDirectoryId INT NOT NULL,
@@ -118,6 +119,7 @@ CREATE TABLE Commits (
     CommitMessage NVARCHAR(MAX) NOT NULL,
     CommitDate DATETIME NOT NULL,
     Author NVARCHAR(255) NOT NULL,
+	AuthorEmail NVARCHAR(255) NOT NULL,
     ProjectWeekId INT NOT NULL,
     Date DATETIME NOT NULL,
     Period NVARCHAR(10) NOT NULL,

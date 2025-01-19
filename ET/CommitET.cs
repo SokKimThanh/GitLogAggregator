@@ -13,6 +13,7 @@ namespace ET
         public string CommitMessage { get; set; }    // Commit message
         public DateTime CommitDate { get; set; }     // Date and time of the commit
         public string Author { get; set; }           // Author of the commit
+        public string AuthorEmail { get; set; }      // Thêm thuộc tính email
         public int ProjectWeekId { get; set; }       // Identifier for the project week
         public DateTime Date { get; set; }           // Date of the commit
         public string Period { get; set; }           // Period of the day (morning, afternoon, evening)
