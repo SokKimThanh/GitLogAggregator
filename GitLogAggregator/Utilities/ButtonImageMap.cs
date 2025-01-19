@@ -10,7 +10,8 @@ namespace GitLogAggregator.Utilities
     {
         AddIcon,
         DeleteIcon,
-        EditIcon
+        EditIcon,
+        SearchIcon
     }
 
     public static class ButtonImageMap
@@ -19,7 +20,8 @@ namespace GitLogAggregator.Utilities
         {
             { ButtonImage.AddIcon, "add_icon.png" },
             { ButtonImage.DeleteIcon, "delete_icon.png" },
-            { ButtonImage.EditIcon, "edit_icon.png" }
+            { ButtonImage.EditIcon, "edit_icon.png" },
+            { ButtonImage.SearchIcon, "search_icon.png" }
         };
     }
 }

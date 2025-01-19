@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Linq;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace DAL
@@ -38,7 +39,47 @@ namespace DAL
                 throw new Exception("Error in GetAll: " + ex.Message);
             }
         }
+        // Tìm kiếm commit theo tên và projectWeekId
+        public List<CommitET> SearchCommits(string searchValue, int projectWeekId)
+        {
+            try
+            {
+                // Truy vấn dữ liệu bằng LINQ
+                var result = (from c in db.Commits
+                                  // Tìm kiếm theo CommitMessage
+                              where (c.CommitMessage != null && (string.IsNullOrEmpty(searchValue) || c.CommitMessage.Contains(searchValue)))
+                              // Lọc theo ProjectWeekId
+                                    && c.ProjectWeekId == projectWeekId
+                              // Sắp xếp theo ngày tạo giảm dần
+                              orderby c.AuthorEmail descending
+                              select new CommitET
+                              {
+                                  CommitId = c.CommitId,
+                                  CommitHash = c.CommitHash,
+                                  CommitMessage = c.CommitMessage,
+                                  CommitDate = c.CommitDate,
+                                  Author = c.Author,
+                                  AuthorEmail = c.AuthorEmail,
+                                  ProjectWeekId = c.ProjectWeekId,
+                                  Date = c.Date,
+                                  Period = c.Period,
+                                  CreatedAt = c.CreatedAt.Value,
+                                  UpdatedAt = c.UpdatedAt.Value
+                              }).ToList();
 
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in SearchCommits: " + ex.Message);
+            }
+        }
+
+        // Giải phóng tài nguyên khi đối tượng CommitDAL bị hủy
+        public void Dispose()
+        {
+            db.Dispose();
+        }
         public CommitET GetByID(int id)
         {
             try

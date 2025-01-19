@@ -75,6 +75,7 @@
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.btnNextReport = new System.Windows.Forms.Button();
             this.btnPreviousReport = new System.Windows.Forms.Button();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.searchPanel = new System.Windows.Forms.TableLayoutPanel();
             this.txtSearchReport = new System.Windows.Forms.TextBox();
             this.btnSearchReport = new System.Windows.Forms.Button();
@@ -94,7 +95,8 @@
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crudImageList = new System.Windows.Forms.ImageList(this.components);
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.label11 = new System.Windows.Forms.Label();
+            this.cboProjectWeek = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -105,13 +107,13 @@
             this.tableLayoutPanel4.SuspendLayout();
             this.tableLayoutPanel5.SuspendLayout();
             this.tableLayoutPanel7.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.searchPanel.SuspendLayout();
             this.tableLayoutPanel6.SuspendLayout();
             this.mainGitPanel.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
             this.menuStrip1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cboAuthorCommit
@@ -354,9 +356,9 @@
             // txtFirstCommitDate
             // 
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtFirstCommitDate.Location = new System.Drawing.Point(3, 54);
+            this.txtFirstCommitDate.Location = new System.Drawing.Point(147, 3);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
-            this.txtFirstCommitDate.Size = new System.Drawing.Size(615, 25);
+            this.txtFirstCommitDate.Size = new System.Drawing.Size(471, 25);
             this.txtFirstCommitDate.TabIndex = 3;
             // 
             // label9
@@ -601,18 +603,20 @@
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.ColumnCount = 1;
+            this.tableLayoutPanel4.ColumnCount = 2;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.Controls.Add(this.label9, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.txtFirstCommitDate, 0, 2);
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 477F));
+            this.tableLayoutPanel4.Controls.Add(this.label9, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.txtFirstCommitDate, 1, 0);
+            this.tableLayoutPanel4.Controls.Add(this.label11, 0, 1);
+            this.tableLayoutPanel4.Controls.Add(this.cboProjectWeek, 1, 1);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
-            this.tableLayoutPanel4.RowCount = 4;
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel4.RowCount = 2;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 35.92233F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 31.06796F));
             this.tableLayoutPanel4.Size = new System.Drawing.Size(621, 103);
             this.tableLayoutPanel4.TabIndex = 29;
             // 
@@ -680,6 +684,19 @@
             this.btnPreviousReport.Size = new System.Drawing.Size(8, 389);
             this.btnPreviousReport.TabIndex = 38;
             this.btnPreviousReport.UseVisualStyleBackColor = false;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.tableLayoutPanel7.SetColumnSpan(this.flowLayoutPanel1, 3);
+            this.flowLayoutPanel1.Controls.Add(this.btnExportReportExcelCommits);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 389);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(615, 36);
+            this.flowLayoutPanel1.TabIndex = 37;
             // 
             // searchPanel
             // 
@@ -897,18 +914,26 @@
             this.crudImageList.Images.SetKeyName(1, "add_icon.png");
             this.crudImageList.Images.SetKeyName(2, "delete_icon.png");
             // 
-            // flowLayoutPanel1
+            // label11
             // 
-            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.tableLayoutPanel7.SetColumnSpan(this.flowLayoutPanel1, 3);
-            this.flowLayoutPanel1.Controls.Add(this.btnExportReportExcelCommits);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 389);
-            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(615, 36);
-            this.flowLayoutPanel1.TabIndex = 37;
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(3, 58);
+            this.label11.Margin = new System.Windows.Forms.Padding(3);
+            this.label11.Name = "label11";
+            this.label11.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.label11.Size = new System.Drawing.Size(134, 17);
+            this.label11.TabIndex = 8;
+            this.label11.Text = "Lọc commit theo tuần";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // cboProjectWeek
+            // 
+            this.cboProjectWeek.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboProjectWeek.FormattingEnabled = true;
+            this.cboProjectWeek.Location = new System.Drawing.Point(147, 58);
+            this.cboProjectWeek.Name = "cboProjectWeek";
+            this.cboProjectWeek.Size = new System.Drawing.Size(471, 25);
+            this.cboProjectWeek.TabIndex = 9;
             // 
             // GitLogAggregator
             // 
@@ -944,6 +969,7 @@
             this.tableLayoutPanel4.PerformLayout();
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel7.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.searchPanel.ResumeLayout(false);
             this.searchPanel.PerformLayout();
             this.tableLayoutPanel6.ResumeLayout(false);
@@ -954,7 +980,6 @@
             this.tableLayoutPanel10.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1027,5 +1052,7 @@
         private System.Windows.Forms.CheckBox chkUseDate;
         private System.Windows.Forms.ImageList crudImageList;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.ComboBox cboProjectWeek;
     }
 }

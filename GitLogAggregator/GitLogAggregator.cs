@@ -156,16 +156,26 @@ namespace GitLogAggregator
             // Xây dựng danh sách các tuần và tệp
             BuildWeekFileListView(txtFolderInternshipPath);
 
+            // Hiển thị dữ liệu commit đã lưu trong cơ sở dữ liệu
             dgvReportCommits.DataSource = commitBUS.GetAll();
 
-            // Cấu hình nút "Lưu Git"
-            ConfigureButton(btnSaveGit, ButtonImage.AddIcon);
+            // Cập nhật danh sách tuần trên ComboBox
+            cboProjectWeek.DataSource = projectWeeksBUS.GetAll();
+            cboProjectWeek.ValueMember = "ProjectWeekId";
+            cboProjectWeek.DisplayMember = "ProjectWeekName";
 
-            // Cấu hình nút "Xóa tất cả"
-            ConfigureButton(btnRemoveAll, ButtonImage.DeleteIcon);
+            // Danh sách các nút và icon tương ứng
+            var buttonsToConfigure = new Dictionary<Button, ButtonImage>
+            {
+                { btnSaveGit, ButtonImage.AddIcon },
+                { btnRemoveAll, ButtonImage.DeleteIcon },
+                { btnCreateWeek, ButtonImage.AddIcon },
+                { btnSearchReport, ButtonImage.SearchIcon } // Ví dụ thêm nút chỉnh sửa
+            };
 
-            // Cấu hình nút "Tạo tuần"
-            ConfigureButton(btnCreateWeek, ButtonImage.AddIcon);
+            // Cấu hình các nút
+            ConfigureButtons(buttonsToConfigure);
+
 
             // Hiển thị hint cho các control
             SetupHoverEventsForControls(txtResultMouseEvents);
@@ -175,6 +185,31 @@ namespace GitLogAggregator
             btnAggregator.Enabled = true;//open
 
         }
+
+        private void ConfigureButtons(Dictionary<Button, ButtonImage> buttonsToConfigure)
+        {
+            foreach (var item in buttonsToConfigure)
+            {
+                Button button = item.Key;
+                ButtonImage buttonImage = item.Value;
+
+                // Lấy imageKey từ từ điển dựa trên giá trị ButtonImage
+                if (ButtonImageMap.ImageKeys.TryGetValue(buttonImage, out string imageKey))
+                {
+                    button.ImageKey = imageKey;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid button image value", nameof(buttonImage));
+                }
+
+                // Đặt các thuộc tính mặc định
+                button.ImageAlign = ContentAlignment.MiddleLeft;
+                button.TextAlign = ContentAlignment.MiddleRight;
+                button.TextImageRelation = TextImageRelation.ImageBeforeText;
+            }
+        }
+
         private void SetupMouseHoverEvents(Control control, string message, RichTextBox textBox)
         {
             // Sự kiện khi rê chuột vào control
@@ -338,6 +373,7 @@ namespace GitLogAggregator
 
             // Load lại dữ liệu lên ListView
             LoadProjectListView();
+
 
             AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
 
@@ -1735,14 +1771,26 @@ git %*
         {
             try
             {
-                if (txtSearchReport.Text == "")
+                if (string.IsNullOrEmpty(txtSearchReport.Text))
                 {
                     dgvReportCommits.DataSource = commitBUS.GetAll();
                     AppendTextWithScroll("Vui lòng nhập thông tin tìm kiếm.\n");
                     return;
                 }
 
+                // Lấy giá trị ProjectWeekId từ ComboBox
+                int projectWeekId = Convert.ToInt32(cboProjectWeek.SelectedValue);
+
+                // Gọi hàm tìm kiếm
+                var searchResult = commitBUS.SearchCommits(txtSearchReport.Text, projectWeekId);
+
+                // Hiển thị kết quả lên DataGridView
+                dgvReportCommits.DataSource = searchResult;
+
+                // Xóa nội dung tìm kiếm
                 txtSearchReport.Clear();
+
+                AppendTextWithScroll("Tìm kiếm thành công.\n");
             }
             catch (Exception ex)
             {
@@ -1869,6 +1917,11 @@ git %*
             }
             AppendTextWithScroll("Tạo xong commitgroup.\n");
             AppendTextWithScroll("Tạo xong projectweek.\n");
+
+            // Cập nhật lại danh sách tuần trên ComboBox
+            cboProjectWeek.DataSource = commitBUS.GetAll();
+            cboProjectWeek.ValueMember = "ProjectWeekId";
+            cboProjectWeek.DisplayMember = "ProjectWeekName";
         }
 
         private void chkUseDate_CheckedChanged(object sender, EventArgs e)

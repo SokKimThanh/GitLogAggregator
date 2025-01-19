@@ -41,5 +41,14 @@ namespace BUS
         {
             return dal.GetLastInserted();
         }
+        public List<CommitET> SearchCommits(string searchValue, int projectWeekId)
+        {
+            return dal.SearchCommits(searchValue, projectWeekId);
+        }
+
+        public void Dispose()
+        {
+            dal.Dispose();
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace DAL
             try
             {
                 var query = from p in db.ProjectWeeks
-                            orderby p.CreatedAt descending
+                            orderby p.ProjectWeekName ascending
                             select new ProjectWeekET
                             {
                                 ProjectWeekId = p.ProjectWeekId,
