@@ -67,15 +67,17 @@
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnCreateWeek = new System.Windows.Forms.Button();
+            this.chkUseDate = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnNextReport = new System.Windows.Forms.Button();
+            this.btnPreviousReport = new System.Windows.Forms.Button();
             this.searchPanel = new System.Windows.Forms.TableLayoutPanel();
             this.txtSearchReport = new System.Windows.Forms.TextBox();
             this.btnSearchReport = new System.Windows.Forms.Button();
-            this.btnNextReport = new System.Windows.Forms.Button();
-            this.btnPreviousReport = new System.Windows.Forms.Button();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
             this.mainGitPanel = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
@@ -91,8 +93,6 @@
             this.foldersProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnCreateWeek = new System.Windows.Forms.Button();
-            this.chkUseDate = new System.Windows.Forms.CheckBox();
             this.crudImageList = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
@@ -318,10 +318,10 @@
             this.dgvReportCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgvReportCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvReportCommits.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvReportCommits.Location = new System.Drawing.Point(20, 3);
+            this.dgvReportCommits.Location = new System.Drawing.Point(8, 3);
             this.dgvReportCommits.Name = "dgvReportCommits";
             this.dgvReportCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dgvReportCommits.Size = new System.Drawing.Size(571, 383);
+            this.dgvReportCommits.Size = new System.Drawing.Size(599, 388);
             this.dgvReportCommits.TabIndex = 18;
             // 
             // label8
@@ -406,7 +406,7 @@
             // btnExportReportExcelCommits
             // 
             this.btnExportReportExcelCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnExportReportExcelCommits.Location = new System.Drawing.Point(20, 392);
+            this.btnExportReportExcelCommits.Location = new System.Drawing.Point(8, 397);
             this.btnExportReportExcelCommits.Name = "btnExportReportExcelCommits";
             this.btnExportReportExcelCommits.Size = new System.Drawing.Size(103, 25);
             this.btnExportReportExcelCommits.TabIndex = 5;
@@ -525,8 +525,6 @@
             this.btnSetupThuMucThucTap.TabIndex = 16;
             this.btnSetupThuMucThucTap.TabStop = false;
             this.btnSetupThuMucThucTap.Click += new System.EventHandler(this.BtnSetupThuMucThucTap_Click);
-            this.btnSetupThuMucThucTap.MouseEnter += new System.EventHandler(this.SetupThuMucThucTap_MouseEnter);
-            this.btnSetupThuMucThucTap.MouseLeave += new System.EventHandler(this.SetupThuMucThucTap_MouseLeave);
             // 
             // tableLayoutPanel2
             // 
@@ -552,6 +550,33 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(381, 107);
             this.tableLayoutPanel2.TabIndex = 27;
+            // 
+            // btnCreateWeek
+            // 
+            this.btnCreateWeek.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnCreateWeek.FlatAppearance.BorderSize = 0;
+            this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCreateWeek.ImageKey = "plus.png";
+            this.btnCreateWeek.Location = new System.Drawing.Point(253, 82);
+            this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(0);
+            this.btnCreateWeek.Name = "btnCreateWeek";
+            this.btnCreateWeek.Size = new System.Drawing.Size(33, 25);
+            this.btnCreateWeek.TabIndex = 25;
+            this.btnCreateWeek.UseVisualStyleBackColor = false;
+            this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
+            // 
+            // chkUseDate
+            // 
+            this.chkUseDate.AutoSize = true;
+            this.chkUseDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkUseDate.Location = new System.Drawing.Point(3, 82);
+            this.chkUseDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.chkUseDate.Name = "chkUseDate";
+            this.chkUseDate.Size = new System.Drawing.Size(121, 25);
+            this.chkUseDate.TabIndex = 26;
+            this.chkUseDate.Text = "Chọn ngày TT";
+            this.chkUseDate.UseVisualStyleBackColor = true;
+            this.chkUseDate.CheckedChanged += new System.EventHandler(this.chkUseDate_CheckedChanged);
             // 
             // tableLayoutPanel3
             // 
@@ -608,9 +633,9 @@
             // tableLayoutPanel7
             // 
             this.tableLayoutPanel7.ColumnCount = 3;
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 2.861953F));
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 97.13805F));
-            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel7.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel7.Controls.Add(this.dgvReportCommits, 1, 1);
             this.tableLayoutPanel7.Controls.Add(this.btnNextReport, 2, 1);
             this.tableLayoutPanel7.Controls.Add(this.btnPreviousReport, 0, 1);
@@ -621,9 +646,37 @@
             this.tableLayoutPanel7.RowCount = 3;
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.Size = new System.Drawing.Size(615, 425);
             this.tableLayoutPanel7.TabIndex = 37;
+            // 
+            // btnNextReport
+            // 
+            this.btnNextReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.btnNextReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnNextReport.FlatAppearance.BorderSize = 0;
+            this.btnNextReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnNextReport.ImageIndex = 1;
+            this.btnNextReport.Location = new System.Drawing.Point(610, 0);
+            this.btnNextReport.Margin = new System.Windows.Forms.Padding(0);
+            this.btnNextReport.Name = "btnNextReport";
+            this.btnNextReport.Size = new System.Drawing.Size(5, 394);
+            this.btnNextReport.TabIndex = 38;
+            this.btnNextReport.UseVisualStyleBackColor = false;
+            // 
+            // btnPreviousReport
+            // 
+            this.btnPreviousReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.btnPreviousReport.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnPreviousReport.FlatAppearance.BorderSize = 0;
+            this.btnPreviousReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPreviousReport.ImageIndex = 0;
+            this.btnPreviousReport.Location = new System.Drawing.Point(0, 0);
+            this.btnPreviousReport.Margin = new System.Windows.Forms.Padding(0);
+            this.btnPreviousReport.Name = "btnPreviousReport";
+            this.btnPreviousReport.Size = new System.Drawing.Size(5, 394);
+            this.btnPreviousReport.TabIndex = 38;
+            this.btnPreviousReport.UseVisualStyleBackColor = false;
             // 
             // searchPanel
             // 
@@ -660,32 +713,6 @@
             this.btnSearchReport.TabIndex = 34;
             this.btnSearchReport.UseVisualStyleBackColor = false;
             this.btnSearchReport.Click += new System.EventHandler(this.BtnSearchReport_Click);
-            // 
-            // btnNextReport
-            // 
-            this.btnNextReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.btnNextReport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnNextReport.FlatAppearance.BorderSize = 0;
-            this.btnNextReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNextReport.ImageIndex = 1;
-            this.btnNextReport.Location = new System.Drawing.Point(597, 3);
-            this.btnNextReport.Name = "btnNextReport";
-            this.btnNextReport.Size = new System.Drawing.Size(15, 383);
-            this.btnNextReport.TabIndex = 38;
-            this.btnNextReport.UseVisualStyleBackColor = false;
-            // 
-            // btnPreviousReport
-            // 
-            this.btnPreviousReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.btnPreviousReport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnPreviousReport.FlatAppearance.BorderSize = 0;
-            this.btnPreviousReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPreviousReport.ImageIndex = 0;
-            this.btnPreviousReport.Location = new System.Drawing.Point(3, 3);
-            this.btnPreviousReport.Name = "btnPreviousReport";
-            this.btnPreviousReport.Size = new System.Drawing.Size(11, 383);
-            this.btnPreviousReport.TabIndex = 38;
-            this.btnPreviousReport.UseVisualStyleBackColor = false;
             // 
             // tableLayoutPanel6
             // 
@@ -734,7 +761,7 @@
             this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 29F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             this.tableLayoutPanel8.Controls.Add(this.btnOpenGitFolder, 0, 0);
             this.tableLayoutPanel8.Controls.Add(this.btnClearDataListView, 1, 0);
             this.tableLayoutPanel8.Controls.Add(this.btnAggregator, 2, 0);
@@ -763,8 +790,6 @@
             this.btnSaveGit.TabIndex = 25;
             this.btnSaveGit.UseVisualStyleBackColor = false;
             this.btnSaveGit.Click += new System.EventHandler(this.BtnSaveGit_Click);
-            this.btnSaveGit.MouseEnter += new System.EventHandler(this.btnSaveGit_MouseEnter);
-            this.btnSaveGit.MouseLeave += new System.EventHandler(this.btnSaveGit_MouseLeave);
             // 
             // btnRemoveAll
             // 
@@ -778,8 +803,6 @@
             this.btnRemoveAll.TabIndex = 25;
             this.btnRemoveAll.UseVisualStyleBackColor = false;
             this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
-            this.btnRemoveAll.MouseEnter += new System.EventHandler(this.btnRemoveAll_MouseEnter);
-            this.btnRemoveAll.MouseLeave += new System.EventHandler(this.btnRemoveAll_MouseLeave);
             // 
             // tableLayoutPanel10
             // 
@@ -862,35 +885,6 @@
             this.cònToolStripMenuItem.Name = "cònToolStripMenuItem";
             this.cònToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.cònToolStripMenuItem.Text = "ConfigFiles";
-            // 
-            // btnCreateWeek
-            // 
-            this.btnCreateWeek.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnCreateWeek.FlatAppearance.BorderSize = 0;
-            this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCreateWeek.ImageKey = "plus.png";
-            this.btnCreateWeek.Location = new System.Drawing.Point(253, 82);
-            this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(0);
-            this.btnCreateWeek.Name = "btnCreateWeek";
-            this.btnCreateWeek.Size = new System.Drawing.Size(33, 25);
-            this.btnCreateWeek.TabIndex = 25;
-            this.btnCreateWeek.UseVisualStyleBackColor = false;
-            this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
-            this.btnCreateWeek.MouseEnter += new System.EventHandler(this.btnCreateWeek_MouseEnter);
-            this.btnCreateWeek.MouseLeave += new System.EventHandler(this.btnCreateWeek_MouseLeave);
-            // 
-            // chkUseDate
-            // 
-            this.chkUseDate.AutoSize = true;
-            this.chkUseDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkUseDate.Location = new System.Drawing.Point(3, 82);
-            this.chkUseDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.chkUseDate.Name = "chkUseDate";
-            this.chkUseDate.Size = new System.Drawing.Size(121, 25);
-            this.chkUseDate.TabIndex = 26;
-            this.chkUseDate.Text = "Chọn ngày TT";
-            this.chkUseDate.UseVisualStyleBackColor = true;
-            this.chkUseDate.CheckedChanged += new System.EventHandler(this.chkUseDate_CheckedChanged);
             // 
             // crudImageList
             // 

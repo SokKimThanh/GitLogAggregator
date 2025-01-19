@@ -9,17 +9,9 @@ using GitLogAggregator.BusinessLogic;
 using ET;
 using BUS;
 using System.Data;
-using ClosedXML.Excel;
 using GitLogAggregator.Utilities;
 using System.Globalization;
-using System.Data.SqlClient;
-using DocumentFormat.OpenXml.Vml;
-using Path = System.IO.Path;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using Size = System.Drawing.Size;
-using DataTable = System.Data.DataTable;
 using System.Text;
-using DocumentFormat.OpenXml.VariantTypes;
 
 
 namespace GitLogAggregator
@@ -107,8 +99,6 @@ namespace GitLogAggregator
                 txtFolderInternshipPath = Path.Combine(txtDirectoryProjectPath, "internship_week");
             }
 
-
-
             // Cài đặt và hiển thị danh sách dự án listview project
             listViewProjects.Columns.Clear();
             listViewProjects.View = View.Details;
@@ -177,11 +167,51 @@ namespace GitLogAggregator
             // Cấu hình nút "Tạo tuần"
             ConfigureButton(btnCreateWeek, ButtonImage.AddIcon);
 
+            // Hiển thị hint cho các control
+            SetupHoverEventsForControls(txtResultMouseEvents);
+
+
             DisableControls();
             btnAggregator.Enabled = true;//open
 
+        }
+        private void SetupMouseHoverEvents(Control control, string message, RichTextBox textBox)
+        {
+            // Sự kiện khi rê chuột vào control
+            control.MouseEnter += (sender, e) =>
+            {
+                textBox.Clear();
+                textBox.AppendText(message);
+                textBox.ScrollToCaret();
+            };
 
+            // Sự kiện khi rê chuột ra khỏi control
+            control.MouseLeave += (sender, e) =>
+            {
+                textBox.Clear();
+            };
+        }
+        private void SetupHoverEventsForControls(RichTextBox textBox)
+        {
+            // Danh sách các control và thông báo tương ứng
+            var controlsAndMessages = new Dictionary<Control, string>
+            {
+                { btnRemoveAll, "Xóa tất cả bảng trong csdl" },
+                { btnSaveGit, "Lưu các commit git log dự án vào csdl" },
+                { btnNextReport, "Tiếp theo commit kế" },
+                { btnPreviousReport, "Lùi lại commit trước" },
+                { btnSearchReport, "Tìm kiếm commit" },
+                { btnExportReportExcelCommits, "Xuất excel commit" },
+                { btnCreateWeek, "Tạo danh mục tuần thực tập và nhóm commit thực tập theo tuần" },
+                { btnOpenGitFolder, "Mở thư mục dự án git" },
+                { btnSetupThuMucThucTap, "Thêm thư mục dự án vào csdl" },
+            };
 
+            // Thiết lập sự kiện cho từng control
+            foreach (var item in controlsAndMessages)
+            {
+                SetupMouseHoverEvents(item.Key, item.Value, textBox);
+            }
         }
         private void ConfigureButton(Button button, ButtonImage buttonImage)
         {
@@ -1370,18 +1400,7 @@ namespace GitLogAggregator
             }
         }
 
-        private void SetupThuMucThucTap_MouseEnter(object sender, EventArgs e)
-        {
-            AppendEventsWithScroll("Chọn thư mục thực tập\n");
-            btnSetupThuMucThucTap.BorderStyle = BorderStyle.FixedSingle;
-            // them màu border khi hover
-        }
 
-        private void SetupThuMucThucTap_MouseLeave(object sender, EventArgs e)
-        {
-            btnSetupThuMucThucTap.BorderStyle = BorderStyle.None;
-            txtResultMouseEvents.Clear();
-        }
         public string RunGitCommand(string command, string workingDirectory)
         {
             var processStartInfo = new ProcessStartInfo
@@ -1718,12 +1737,6 @@ git %*
                 AppendTextWithScroll($"Lỗi: {ex.Message}");
             }
         }
-
-        private void btnExpandReport_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnRemoveAll_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
@@ -1742,16 +1755,6 @@ git %*
                 dgvReportCommits.DataSource = commitBUS.GetAll();
             }
             // Nếu người dùng chọn "No", không làm gì cả
-        }
-
-        private void btnCreateWeek_MouseEnter(object sender, EventArgs e)
-        {
-            AppendEventsWithScroll("Tạo tuần thực tập\n");
-        }
-
-        private void btnCreateWeek_MouseLeave(object sender, EventArgs e)
-        {
-            txtResultMouseEvents.Clear();
         }
         /// <summary>
         /// kiểm tra ngày commit đầu tiên của các project xem nó có nằm trong tuần thực tập thì mới được tạo tuần và commit group
@@ -1865,26 +1868,6 @@ git %*
             {
                 txtInternshipStartDate.Value = DateTime.Now; // Đặt lại giá trị mặc định (tùy chọn)
             }
-        }
-
-        private void btnRemoveAll_MouseEnter(object sender, EventArgs e)
-        {
-            AppendEventsWithScroll("Xóa tất cả bảng trong csdl\n");
-        }
-
-        private void btnRemoveAll_MouseLeave(object sender, EventArgs e)
-        {
-            txtResultMouseEvents.Clear();
-        }
-
-        private void btnSaveGit_MouseEnter(object sender, EventArgs e)
-        {
-            AppendEventsWithScroll("Lưu các commit git log dự án vào csdl\n");
-        }
-
-        private void btnSaveGit_MouseLeave(object sender, EventArgs e)
-        {
-            txtResultMouseEvents.Clear();
         }
     }
 }
