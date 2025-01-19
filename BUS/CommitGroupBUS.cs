@@ -10,24 +10,24 @@ namespace BUS
 {
     public class CommitGroupBUS
     {
-        private CommitGroupDAL dal = new CommitGroupDAL();
+        private CommitPeriodDAL dal = new CommitPeriodDAL();
 
-        public List<CommitGroupET> GetAll()
+        public List<CommitPeriodET> GetAll()
         {
             return dal.GetAll();
         }
 
-        public CommitGroupET GetByID(int id)
+        public CommitPeriodET GetByID(int id)
         {
             return dal.GetByID(id);
         }
 
-        public void Add(CommitGroupET entity)
+        public void Add(CommitPeriodET entity)
         {
             dal.Add(entity);
         }
 
-        public void Update(CommitGroupET entity)
+        public void Update(CommitPeriodET entity)
         {
             dal.Update(entity);
         }
@@ -39,7 +39,7 @@ namespace BUS
         /// <summary>
         /// Lấy thông tin của bản ghi cuối cùng được thêm vào
         /// </summary> 
-        public CommitGroupET GetLastInserted()
+        public CommitPeriodET GetLastInserted()
         {
             return dal.GetLastInserted();
         }

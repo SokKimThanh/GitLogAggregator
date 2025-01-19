@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class CommitGroupDAL
+    public class CommitPeriodDAL
     {
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
 
-        public List<CommitGroupET> GetAll()
+        public List<CommitPeriodET> GetAll()
         {
             try
             {
-                var query = from c in db.CommitGroups
+                var query = from c in db.CommitPeriods
                             orderby c.CreatedAt descending
-                            select new CommitGroupET
+                            select new CommitPeriodET
                             {
-                                CommitGroupId = c.CommitGroupId,
-                                GroupName = c.GroupName,
-                                TimeRange = c.TimeRange,
-                                WeekStartDate = c.StartDate,
-                                WeekEndDate = c.EndDate,
+                                PeriodID = c.PeriodID,
+                                PeriodName = c.PeriodName,
+                                PeriodDuration = c.PeriodDuration,
+                                PeriodStartDate = c.PeriodStartDate,
+                                PeriodEndDate = c.PeriodEndDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -36,19 +36,19 @@ namespace DAL
             }
         }
 
-        public CommitGroupET GetByID(int id)
+        public CommitPeriodET GetByID(int id)
         {
             try
             {
-                var query = from c in db.CommitGroups
-                            where c.CommitGroupId == id
-                            select new CommitGroupET
+                var query = from c in db.CommitPeriods
+                            where c.PeriodID == id
+                            select new CommitPeriodET
                             {
-                                CommitGroupId = c.CommitGroupId,
-                                GroupName = c.GroupName,
-                                TimeRange = c.TimeRange,
-                                WeekStartDate = c.StartDate,
-                                WeekEndDate = c.EndDate,
+                                PeriodID = c.PeriodID,
+                                PeriodName = c.PeriodName,
+                                PeriodDuration = c.PeriodDuration,
+                                PeriodStartDate = c.PeriodStartDate,
+                                PeriodEndDate = c.PeriodEndDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -64,19 +64,19 @@ namespace DAL
         /// <summary>
         /// Lấy thông tin của bản ghi cuối cùng được thêm vào
         /// </summary> 
-        public CommitGroupET GetLastInserted()
+        public CommitPeriodET GetLastInserted()
         {
             try
             {
-                var query = from c in db.CommitGroups
+                var query = from c in db.CommitPeriods
                             orderby c.CreatedAt descending
-                            select new CommitGroupET
+                            select new CommitPeriodET
                             {
-                                CommitGroupId = c.CommitGroupId,
-                                GroupName = c.GroupName,
-                                TimeRange = c.TimeRange,
-                                WeekStartDate = c.StartDate,
-                                WeekEndDate = c.EndDate,
+                                PeriodID = c.PeriodID,
+                                PeriodName = c.PeriodName,
+                                PeriodDuration = c.PeriodDuration,
+                                PeriodStartDate = c.PeriodStartDate,
+                                PeriodEndDate = c.PeriodEndDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -88,20 +88,20 @@ namespace DAL
             }
         }
 
-        public void Add(CommitGroupET et)
+        public void Add(CommitPeriodET et)
         {
             try
             {
-                var entity = new CommitGroup
+                var entity = new CommitPeriod
                 {
-                    GroupName = et.GroupName,
-                    TimeRange = et.TimeRange,
-                    StartDate = et.WeekStartDate,
-                    EndDate = et.WeekEndDate,
+                    PeriodName = et.PeriodName,
+                    PeriodDuration = et.PeriodDuration,
+                    PeriodStartDate = et.PeriodStartDate,
+                    PeriodEndDate = et.PeriodEndDate,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
-                db.CommitGroups.InsertOnSubmit(entity);
+                db.CommitPeriods.InsertOnSubmit(entity);
                 db.SubmitChanges();
             }
             catch (Exception ex)
@@ -110,21 +110,21 @@ namespace DAL
             }
         }
 
-        public void Update(CommitGroupET et)
+        public void Update(CommitPeriodET et)
         {
             try
             {
-                var query = from c in db.CommitGroups
-                            where c.CommitGroupId == et.CommitGroupId
+                var query = from c in db.CommitPeriods
+                            where c.PeriodID == et.PeriodID
                             select c;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                entity.GroupName = et.GroupName;
-                entity.TimeRange = et.TimeRange;
-                entity.StartDate = et.WeekStartDate;
-                entity.EndDate = et.WeekEndDate;
+                entity.PeriodName = et.PeriodName;
+                entity.PeriodDuration = et.PeriodDuration;
+                entity.PeriodStartDate = et.PeriodStartDate;
+                entity.PeriodEndDate = et.PeriodEndDate;
                 entity.UpdatedAt = DateTime.Now;
 
                 db.SubmitChanges();
@@ -139,14 +139,14 @@ namespace DAL
         {
             try
             {
-                var query = from c in db.CommitGroups
-                            where c.CommitGroupId == id
+                var query = from c in db.CommitPeriods
+                            where c.PeriodID == id
                             select c;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                db.CommitGroups.DeleteOnSubmit(entity);
+                db.CommitPeriods.DeleteOnSubmit(entity);
                 db.SubmitChanges();
             }
             catch (Exception ex)

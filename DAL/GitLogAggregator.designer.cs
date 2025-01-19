@@ -36,9 +36,9 @@ namespace DAL
     partial void InsertProjectWeek(ProjectWeek instance);
     partial void UpdateProjectWeek(ProjectWeek instance);
     partial void DeleteProjectWeek(ProjectWeek instance);
-    partial void InsertCommitGroup(CommitGroup instance);
-    partial void UpdateCommitGroup(CommitGroup instance);
-    partial void DeleteCommitGroup(CommitGroup instance);
+    partial void InsertCommitPeriod(CommitPeriod instance);
+    partial void UpdateCommitPeriod(CommitPeriod instance);
+    partial void DeleteCommitPeriod(CommitPeriod instance);
     partial void InsertCommit(Commit instance);
     partial void UpdateCommit(Commit instance);
     partial void DeleteCommit(Commit instance);
@@ -99,11 +99,11 @@ namespace DAL
 			}
 		}
 		
-		public System.Data.Linq.Table<CommitGroup> CommitGroups
+		public System.Data.Linq.Table<CommitPeriod> CommitPeriods
 		{
 			get
 			{
-				return this.GetTable<CommitGroup>();
+				return this.GetTable<CommitPeriod>();
 			}
 		}
 		
@@ -146,13 +146,13 @@ namespace DAL
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _CommitGroupId;
+		private int _PeriodID;
 		
 		private int _CommitId;
 		
 		private System.Nullable<System.DateTime> _AddedAt;
 		
-		private EntityRef<CommitGroup> _CommitGroup;
+		private EntityRef<CommitPeriod> _CommitPeriod;
 		
 		private EntityRef<Commit> _Commit;
 		
@@ -160,8 +160,8 @@ namespace DAL
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnCommitGroupIdChanging(int value);
-    partial void OnCommitGroupIdChanged();
+    partial void OnPeriodIDChanging(int value);
+    partial void OnPeriodIDChanged();
     partial void OnCommitIdChanging(int value);
     partial void OnCommitIdChanged();
     partial void OnAddedAtChanging(System.Nullable<System.DateTime> value);
@@ -170,31 +170,31 @@ namespace DAL
 		
 		public CommitGroupMember()
 		{
-			this._CommitGroup = default(EntityRef<CommitGroup>);
+			this._CommitPeriod = default(EntityRef<CommitPeriod>);
 			this._Commit = default(EntityRef<Commit>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitGroupId", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int CommitGroupId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int PeriodID
 		{
 			get
 			{
-				return this._CommitGroupId;
+				return this._PeriodID;
 			}
 			set
 			{
-				if ((this._CommitGroupId != value))
+				if ((this._PeriodID != value))
 				{
-					if (this._CommitGroup.HasLoadedOrAssignedValue)
+					if (this._CommitPeriod.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnCommitGroupIdChanging(value);
+					this.OnPeriodIDChanging(value);
 					this.SendPropertyChanging();
-					this._CommitGroupId = value;
-					this.SendPropertyChanged("CommitGroupId");
-					this.OnCommitGroupIdChanged();
+					this._PeriodID = value;
+					this.SendPropertyChanged("PeriodID");
+					this.OnPeriodIDChanged();
 				}
 			}
 		}
@@ -243,36 +243,36 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroup", ThisKey="CommitGroupId", OtherKey="CommitGroupId", IsForeignKey=true)]
-		public CommitGroup CommitGroup
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_CommitGroupMember", Storage="_CommitPeriod", ThisKey="PeriodID", OtherKey="PeriodID", IsForeignKey=true)]
+		public CommitPeriod CommitPeriod
 		{
 			get
 			{
-				return this._CommitGroup.Entity;
+				return this._CommitPeriod.Entity;
 			}
 			set
 			{
-				CommitGroup previousValue = this._CommitGroup.Entity;
+				CommitPeriod previousValue = this._CommitPeriod.Entity;
 				if (((previousValue != value) 
-							|| (this._CommitGroup.HasLoadedOrAssignedValue == false)))
+							|| (this._CommitPeriod.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._CommitGroup.Entity = null;
+						this._CommitPeriod.Entity = null;
 						previousValue.CommitGroupMembers.Remove(this);
 					}
-					this._CommitGroup.Entity = value;
+					this._CommitPeriod.Entity = value;
 					if ((value != null))
 					{
 						value.CommitGroupMembers.Add(this);
-						this._CommitGroupId = value.CommitGroupId;
+						this._PeriodID = value.PeriodID;
 					}
 					else
 					{
-						this._CommitGroupId = default(int);
+						this._PeriodID = default(int);
 					}
-					this.SendPropertyChanged("CommitGroup");
+					this.SendPropertyChanged("CommitPeriod");
 				}
 			}
 		}
@@ -607,21 +607,21 @@ namespace DAL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommitGroups")]
-	public partial class CommitGroup : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommitPeriods")]
+	public partial class CommitPeriod : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _CommitGroupId;
+		private int _PeriodID;
 		
-		private string _GroupName;
+		private string _PeriodName;
 		
-		private string _TimeRange;
+		private string _PeriodDuration;
 		
-		private System.DateTime _StartDate;
+		private System.DateTime _PeriodStartDate;
 		
-		private System.DateTime _EndDate;
+		private System.DateTime _PeriodEndDate;
 		
 		private System.Nullable<System.DateTime> _CreatedAt;
 		
@@ -635,125 +635,125 @@ namespace DAL
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnCommitGroupIdChanging(int value);
-    partial void OnCommitGroupIdChanged();
-    partial void OnGroupNameChanging(string value);
-    partial void OnGroupNameChanged();
-    partial void OnTimeRangeChanging(string value);
-    partial void OnTimeRangeChanged();
-    partial void OnStartDateChanging(System.DateTime value);
-    partial void OnStartDateChanged();
-    partial void OnEndDateChanging(System.DateTime value);
-    partial void OnEndDateChanged();
+    partial void OnPeriodIDChanging(int value);
+    partial void OnPeriodIDChanged();
+    partial void OnPeriodNameChanging(string value);
+    partial void OnPeriodNameChanged();
+    partial void OnPeriodDurationChanging(string value);
+    partial void OnPeriodDurationChanged();
+    partial void OnPeriodStartDateChanging(System.DateTime value);
+    partial void OnPeriodStartDateChanged();
+    partial void OnPeriodEndDateChanging(System.DateTime value);
+    partial void OnPeriodEndDateChanged();
     partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
     partial void OnCreatedAtChanged();
     partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
     partial void OnUpdatedAtChanged();
     #endregion
 		
-		public CommitGroup()
+		public CommitPeriod()
 		{
 			this._CommitGroupMembers = new EntitySet<CommitGroupMember>(new Action<CommitGroupMember>(this.attach_CommitGroupMembers), new Action<CommitGroupMember>(this.detach_CommitGroupMembers));
 			this._ChatbotSummaries = new EntitySet<ChatbotSummary>(new Action<ChatbotSummary>(this.attach_ChatbotSummaries), new Action<ChatbotSummary>(this.detach_ChatbotSummaries));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitGroupId", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int CommitGroupId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int PeriodID
 		{
 			get
 			{
-				return this._CommitGroupId;
+				return this._PeriodID;
 			}
 			set
 			{
-				if ((this._CommitGroupId != value))
+				if ((this._PeriodID != value))
 				{
-					this.OnCommitGroupIdChanging(value);
+					this.OnPeriodIDChanging(value);
 					this.SendPropertyChanging();
-					this._CommitGroupId = value;
-					this.SendPropertyChanged("CommitGroupId");
-					this.OnCommitGroupIdChanged();
+					this._PeriodID = value;
+					this.SendPropertyChanged("PeriodID");
+					this.OnPeriodIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string GroupName
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string PeriodName
 		{
 			get
 			{
-				return this._GroupName;
+				return this._PeriodName;
 			}
 			set
 			{
-				if ((this._GroupName != value))
+				if ((this._PeriodName != value))
 				{
-					this.OnGroupNameChanging(value);
+					this.OnPeriodNameChanging(value);
 					this.SendPropertyChanging();
-					this._GroupName = value;
-					this.SendPropertyChanged("GroupName");
-					this.OnGroupNameChanged();
+					this._PeriodName = value;
+					this.SendPropertyChanged("PeriodName");
+					this.OnPeriodNameChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TimeRange", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string TimeRange
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodDuration", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string PeriodDuration
 		{
 			get
 			{
-				return this._TimeRange;
+				return this._PeriodDuration;
 			}
 			set
 			{
-				if ((this._TimeRange != value))
+				if ((this._PeriodDuration != value))
 				{
-					this.OnTimeRangeChanging(value);
+					this.OnPeriodDurationChanging(value);
 					this.SendPropertyChanging();
-					this._TimeRange = value;
-					this.SendPropertyChanged("TimeRange");
-					this.OnTimeRangeChanged();
+					this._PeriodDuration = value;
+					this.SendPropertyChanged("PeriodDuration");
+					this.OnPeriodDurationChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartDate", DbType="DateTime NOT NULL")]
-		public System.DateTime StartDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodStartDate", DbType="DateTime NOT NULL")]
+		public System.DateTime PeriodStartDate
 		{
 			get
 			{
-				return this._StartDate;
+				return this._PeriodStartDate;
 			}
 			set
 			{
-				if ((this._StartDate != value))
+				if ((this._PeriodStartDate != value))
 				{
-					this.OnStartDateChanging(value);
+					this.OnPeriodStartDateChanging(value);
 					this.SendPropertyChanging();
-					this._StartDate = value;
-					this.SendPropertyChanged("StartDate");
-					this.OnStartDateChanged();
+					this._PeriodStartDate = value;
+					this.SendPropertyChanged("PeriodStartDate");
+					this.OnPeriodStartDateChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndDate", DbType="DateTime NOT NULL")]
-		public System.DateTime EndDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodEndDate", DbType="DateTime NOT NULL")]
+		public System.DateTime PeriodEndDate
 		{
 			get
 			{
-				return this._EndDate;
+				return this._PeriodEndDate;
 			}
 			set
 			{
-				if ((this._EndDate != value))
+				if ((this._PeriodEndDate != value))
 				{
-					this.OnEndDateChanging(value);
+					this.OnPeriodEndDateChanging(value);
 					this.SendPropertyChanging();
-					this._EndDate = value;
-					this.SendPropertyChanged("EndDate");
-					this.OnEndDateChanged();
+					this._PeriodEndDate = value;
+					this.SendPropertyChanged("PeriodEndDate");
+					this.OnPeriodEndDateChanged();
 				}
 			}
 		}
@@ -798,7 +798,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_CommitGroupMember", Storage="_CommitGroupMembers", ThisKey="CommitGroupId", OtherKey="CommitGroupId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_CommitGroupMember", Storage="_CommitGroupMembers", ThisKey="PeriodID", OtherKey="PeriodID")]
 		public EntitySet<CommitGroupMember> CommitGroupMembers
 		{
 			get
@@ -811,7 +811,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="CommitGroupId", OtherKey="CommitGroupId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="PeriodID", OtherKey="PeriodID")]
 		public EntitySet<ChatbotSummary> ChatbotSummaries
 		{
 			get
@@ -847,25 +847,25 @@ namespace DAL
 		private void attach_CommitGroupMembers(CommitGroupMember entity)
 		{
 			this.SendPropertyChanging();
-			entity.CommitGroup = this;
+			entity.CommitPeriod = this;
 		}
 		
 		private void detach_CommitGroupMembers(CommitGroupMember entity)
 		{
 			this.SendPropertyChanging();
-			entity.CommitGroup = null;
+			entity.CommitPeriod = null;
 		}
 		
 		private void attach_ChatbotSummaries(ChatbotSummary entity)
 		{
 			this.SendPropertyChanging();
-			entity.CommitGroup = this;
+			entity.CommitPeriod = this;
 		}
 		
 		private void detach_ChatbotSummaries(ChatbotSummary entity)
 		{
 			this.SendPropertyChanging();
-			entity.CommitGroup = null;
+			entity.CommitPeriod = null;
 		}
 	}
 	
@@ -1567,7 +1567,7 @@ namespace DAL
 		
 		private int _ID;
 		
-		private int _CommitGroupId;
+		private int _PeriodID;
 		
 		private string _Attendance;
 		
@@ -1583,7 +1583,7 @@ namespace DAL
 		
 		private System.Nullable<System.DateTime> _UpdatedAt;
 		
-		private EntityRef<CommitGroup> _CommitGroup;
+		private EntityRef<CommitPeriod> _CommitPeriod;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1591,8 +1591,8 @@ namespace DAL
     partial void OnCreated();
     partial void OnIDChanging(int value);
     partial void OnIDChanged();
-    partial void OnCommitGroupIdChanging(int value);
-    partial void OnCommitGroupIdChanged();
+    partial void OnPeriodIDChanging(int value);
+    partial void OnPeriodIDChanged();
     partial void OnAttendanceChanging(string value);
     partial void OnAttendanceChanged();
     partial void OnAssignedTasksChanging(string value);
@@ -1611,7 +1611,7 @@ namespace DAL
 		
 		public ChatbotSummary()
 		{
-			this._CommitGroup = default(EntityRef<CommitGroup>);
+			this._CommitPeriod = default(EntityRef<CommitPeriod>);
 			OnCreated();
 		}
 		
@@ -1635,26 +1635,26 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitGroupId", DbType="Int NOT NULL")]
-		public int CommitGroupId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", DbType="Int NOT NULL")]
+		public int PeriodID
 		{
 			get
 			{
-				return this._CommitGroupId;
+				return this._PeriodID;
 			}
 			set
 			{
-				if ((this._CommitGroupId != value))
+				if ((this._PeriodID != value))
 				{
-					if (this._CommitGroup.HasLoadedOrAssignedValue)
+					if (this._CommitPeriod.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnCommitGroupIdChanging(value);
+					this.OnPeriodIDChanging(value);
 					this.SendPropertyChanging();
-					this._CommitGroupId = value;
-					this.SendPropertyChanged("CommitGroupId");
-					this.OnCommitGroupIdChanged();
+					this._PeriodID = value;
+					this.SendPropertyChanged("PeriodID");
+					this.OnPeriodIDChanged();
 				}
 			}
 		}
@@ -1799,36 +1799,36 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitGroup_ChatbotSummary", Storage="_CommitGroup", ThisKey="CommitGroupId", OtherKey="CommitGroupId", IsForeignKey=true)]
-		public CommitGroup CommitGroup
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_ChatbotSummary", Storage="_CommitPeriod", ThisKey="PeriodID", OtherKey="PeriodID", IsForeignKey=true)]
+		public CommitPeriod CommitPeriod
 		{
 			get
 			{
-				return this._CommitGroup.Entity;
+				return this._CommitPeriod.Entity;
 			}
 			set
 			{
-				CommitGroup previousValue = this._CommitGroup.Entity;
+				CommitPeriod previousValue = this._CommitPeriod.Entity;
 				if (((previousValue != value) 
-							|| (this._CommitGroup.HasLoadedOrAssignedValue == false)))
+							|| (this._CommitPeriod.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._CommitGroup.Entity = null;
+						this._CommitPeriod.Entity = null;
 						previousValue.ChatbotSummaries.Remove(this);
 					}
-					this._CommitGroup.Entity = value;
+					this._CommitPeriod.Entity = value;
 					if ((value != null))
 					{
 						value.ChatbotSummaries.Add(this);
-						this._CommitGroupId = value.CommitGroupId;
+						this._PeriodID = value.PeriodID;
 					}
 					else
 					{
-						this._CommitGroupId = default(int);
+						this._PeriodID = default(int);
 					}
-					this.SendPropertyChanged("CommitGroup");
+					this.SendPropertyChanged("CommitPeriod");
 				}
 			}
 		}

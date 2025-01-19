@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="ChatbotSummaryET.cs" />
     <Compile Include="CommitET.cs" />
-    <Compile Include="CommitWeekET.cs" />
+    <Compile Include="CommitPeriodET.cs" />
     <Compile Include="CommitGroupMemberET.cs" />
     <Compile Include="ConfigFileET.cs" />
     <Compile Include="DayData.cs" />

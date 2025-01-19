@@ -29,16 +29,16 @@ namespace DAL
                     db.SubmitChanges();
                     Console.Write("Đã xóa dữ liệu từ bảng Commits.\n");
 
-                    // Sau khi xóa các bảng con, xóa dữ liệu trong bảng cha CommitGroups
-                    db.CommitGroups.DeleteAllOnSubmit(db.CommitGroups);
+                    // Sau khi xóa các bảng con, xóa dữ liệu trong bảng cha CommitPeriods
+                    db.CommitPeriods.DeleteAllOnSubmit(db.CommitPeriods);
                     // Lưu thay đổi để xóa dữ liệu trong bảng chính
                     db.SubmitChanges();
-                    Console.Write("Đã xóa dữ liệu từ bảng CommitGroups.\n");
+                    Console.Write("Đã xóa dữ liệu từ bảng CommitPeriods.\n");
 
                     // Xóa dữ liệu từ bảng ProjectWeeks
                     db.ProjectWeeks.DeleteAllOnSubmit(db.ProjectWeeks);
                     db.SubmitChanges();
-                    Console.Write("Đã xóa dữ liệu từ bảng ProjectWeeks.\n"); 
+                    Console.Write("Đã xóa dữ liệu từ bảng ProjectWeeks.\n");
 
                     // Xóa dữ liệu từ bảng ConfigFiles
                     //db.ConfigFiles.DeleteAllOnSubmit(db.ConfigFiles);
