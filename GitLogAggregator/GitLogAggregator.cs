@@ -1946,6 +1946,12 @@ git %*
             DateTime internshipEndDate = txtInternshipEndDate.Value.Date;
 
             int weeks = (int)txtNumericsWeek.Value;
+            if (weeks <= 0)
+            {
+                AppendTextWithScroll("Số tuần phải lớn hơn 0.\n");
+                return;
+            }
+
             var configs = configBus.GetAll();
             if (configs.Count == 0)
             {
@@ -1953,7 +1959,7 @@ git %*
                 return;
             }
 
-            // kiểm tra ngày commit đầu tiên của các project xem nó có nằm trong tuần thực tập thì mới được tạo tuần và commit group
+            // Kiểm tra ngày commit đầu tiên của các project xem nó có nằm trong tuần thực tập không
             var check = false;
             foreach (var c in configs)
             {
@@ -1969,29 +1975,27 @@ git %*
                 return;
             }
 
-            // Tạo hoặc lấy danh sách các tuần từ database
-            var allCommitGroup = commitGroupsBUS.GetAll();
-            var allWeek = projectWeeksBUS.GetAll();
-            if (allCommitGroup.Count > 0)
+            // Kiểm tra xem đã có dữ liệu CommitPeriod và ProjectWeek trong khoảng thời gian thực tập chưa
+            var existingCommitGroups = commitGroupsBUS.GetAll()
+                .Where(g => g.PeriodStartDate >= internshipStartDate && g.PeriodEndDate <= internshipEndDate)
+                .ToList();
+
+            var existingProjectWeeks = projectWeeksBUS.GetAll()
+                .Where(w => w.WeekStartDate >= internshipStartDate && w.WeekEndDate <= internshipEndDate)
+                .ToList();
+
+            if (existingCommitGroups.Count > 0 || existingProjectWeeks.Count > 0)
             {
-                foreach (var commitGroup in allCommitGroup)
-                {
-                    commitGroupsBUS.Delete(commitGroup.PeriodID);
-                }
+                AppendTextWithScroll("Đã có dữ liệu CommitPeriod và ProjectWeek trong khoảng thời gian thực tập, không cần tạo thêm.\n");
+                return;
             }
-            if (allWeek.Count > 0)
-            {
-                foreach (var week in allWeek)
-                {
-                    projectWeeksBUS.Delete(week.ProjectWeekId);
-                }
-            }
-            // Tạo các tuần và commit group mới
+
+            // Tạo các tuần và CommitGroup mới
             for (int weekOffset = 0; weekOffset < weeks; weekOffset++)
             {
                 DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
                 DateTime weekEndDate = weekStartDate.AddDays(6);
-                string projectWeekName = $"Tuần {weekOffset + 1}";
+                string projectWeekName = $"Tuần {weekOffset + 1}"; // Bắt đầu từ Tuần 1
 
                 // Tạo ProjectWeek
                 var projectWeek = new ProjectWeekET
@@ -2005,7 +2009,7 @@ git %*
                 };
                 projectWeeksBUS.Add(projectWeek);
 
-                // Tạo các CommitGroup cho từng buổi trong tuần
+                // Tạo các CommitGroup (buổi) cho từng ngày trong tuần
                 for (int dayOffset = 0; dayOffset < 7; dayOffset++) // 7 ngày trong tuần
                 {
                     DateTime currentDate = weekStartDate.AddDays(dayOffset);
@@ -2029,11 +2033,12 @@ git %*
                     }
                 }
             }
+
             AppendTextWithScroll("Tạo xong commitgroup.\n");
             AppendTextWithScroll("Tạo xong projectweek.\n");
 
             // Cập nhật lại danh sách tuần trên ComboBox
-            cboProjectWeek.DataSource = commitBUS.GetAll();
+            cboProjectWeek.DataSource = projectWeeksBUS.GetAll();
             cboProjectWeek.ValueMember = "ProjectWeekId";
             cboProjectWeek.DisplayMember = "ProjectWeekName";
         }
