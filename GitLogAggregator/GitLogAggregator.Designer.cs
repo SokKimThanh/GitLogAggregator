@@ -94,6 +94,7 @@
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crudImageList = new System.Windows.Forms.ImageList(this.components);
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -110,6 +111,7 @@
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel10.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // cboAuthorCommit
@@ -318,10 +320,10 @@
             this.dgvReportCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dgvReportCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvReportCommits.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvReportCommits.Location = new System.Drawing.Point(8, 3);
+            this.dgvReportCommits.Location = new System.Drawing.Point(11, 3);
             this.dgvReportCommits.Name = "dgvReportCommits";
             this.dgvReportCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dgvReportCommits.Size = new System.Drawing.Size(599, 388);
+            this.dgvReportCommits.Size = new System.Drawing.Size(593, 383);
             this.dgvReportCommits.TabIndex = 18;
             // 
             // label8
@@ -406,9 +408,10 @@
             // btnExportReportExcelCommits
             // 
             this.btnExportReportExcelCommits.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnExportReportExcelCommits.Location = new System.Drawing.Point(8, 397);
+            this.btnExportReportExcelCommits.Location = new System.Drawing.Point(512, 0);
+            this.btnExportReportExcelCommits.Margin = new System.Windows.Forms.Padding(0);
             this.btnExportReportExcelCommits.Name = "btnExportReportExcelCommits";
-            this.btnExportReportExcelCommits.Size = new System.Drawing.Size(103, 25);
+            this.btnExportReportExcelCommits.Size = new System.Drawing.Size(103, 37);
             this.btnExportReportExcelCommits.TabIndex = 5;
             this.btnExportReportExcelCommits.Text = "Xuất excel";
             this.btnExportReportExcelCommits.UseVisualStyleBackColor = true;
@@ -639,7 +642,7 @@
             this.tableLayoutPanel7.Controls.Add(this.dgvReportCommits, 1, 1);
             this.tableLayoutPanel7.Controls.Add(this.btnNextReport, 2, 1);
             this.tableLayoutPanel7.Controls.Add(this.btnPreviousReport, 0, 1);
-            this.tableLayoutPanel7.Controls.Add(this.btnExportReportExcelCommits, 1, 2);
+            this.tableLayoutPanel7.Controls.Add(this.flowLayoutPanel1, 0, 2);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(3, 39);
             this.tableLayoutPanel7.Name = "tableLayoutPanel7";
@@ -657,10 +660,10 @@
             this.btnNextReport.FlatAppearance.BorderSize = 0;
             this.btnNextReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnNextReport.ImageIndex = 1;
-            this.btnNextReport.Location = new System.Drawing.Point(610, 0);
+            this.btnNextReport.Location = new System.Drawing.Point(607, 0);
             this.btnNextReport.Margin = new System.Windows.Forms.Padding(0);
             this.btnNextReport.Name = "btnNextReport";
-            this.btnNextReport.Size = new System.Drawing.Size(5, 394);
+            this.btnNextReport.Size = new System.Drawing.Size(8, 389);
             this.btnNextReport.TabIndex = 38;
             this.btnNextReport.UseVisualStyleBackColor = false;
             // 
@@ -674,7 +677,7 @@
             this.btnPreviousReport.Location = new System.Drawing.Point(0, 0);
             this.btnPreviousReport.Margin = new System.Windows.Forms.Padding(0);
             this.btnPreviousReport.Name = "btnPreviousReport";
-            this.btnPreviousReport.Size = new System.Drawing.Size(5, 394);
+            this.btnPreviousReport.Size = new System.Drawing.Size(8, 389);
             this.btnPreviousReport.TabIndex = 38;
             this.btnPreviousReport.UseVisualStyleBackColor = false;
             // 
@@ -894,6 +897,19 @@
             this.crudImageList.Images.SetKeyName(1, "add_icon.png");
             this.crudImageList.Images.SetKeyName(2, "delete_icon.png");
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.tableLayoutPanel7.SetColumnSpan(this.flowLayoutPanel1, 3);
+            this.flowLayoutPanel1.Controls.Add(this.btnExportReportExcelCommits);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 389);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(615, 36);
+            this.flowLayoutPanel1.TabIndex = 37;
+            // 
             // GitLogAggregator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -938,6 +954,7 @@
             this.tableLayoutPanel10.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1009,5 +1026,6 @@
         private System.Windows.Forms.Button btnCreateWeek;
         private System.Windows.Forms.CheckBox chkUseDate;
         private System.Windows.Forms.ImageList crudImageList;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

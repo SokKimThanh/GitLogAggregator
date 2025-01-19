@@ -205,6 +205,19 @@ namespace GitLogAggregator
                 { btnCreateWeek, "Tạo danh mục tuần thực tập và nhóm commit thực tập theo tuần" },
                 { btnOpenGitFolder, "Mở thư mục dự án git" },
                 { btnSetupThuMucThucTap, "Thêm thư mục dự án vào csdl" },
+                { btnAggregator, "Tổng hợp dữ liệu từ nhiều nguồn" },
+                { btnClearDataListView, "Xóa dữ liệu hiển thị trong ListView" },
+                { chkUseDate, "Bật/tắt chức năng sử dụng ngày tháng" },
+                { txtInternshipStartDate, "Nhập ngày bắt đầu thực tập" },
+                { cboAuthorCommit, "Chọn tác giả commit" },
+                { cboThuMucThucTap, "Chọn thư mục thực tập" },
+                { helpButton, "Hiển thị hướng dẫn sử dụng" },
+                { listViewProjects, "Hiển thị danh sách các dự án" },
+                { dgvReportCommits, "Hiển thị báo cáo các commit" },
+                { txtSearchReport, "Nhập từ khóa tìm kiếm commit" },
+                { txtResultMouseEvents, "Hiển thị thông báo khi rê chuột vào các control" },
+                { txtResult, "Hiển thị kết quả của các thao tác" },
+                { txtFirstCommitDate, "Hiển thị ngày commit đầu tiên" }
             };
 
             // Thiết lập sự kiện cho từng control
