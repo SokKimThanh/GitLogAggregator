@@ -40,7 +40,7 @@ namespace DAL
             }
         }
         // Tìm kiếm commit theo tên và projectWeekId
-        public List<CommitET> SearchCommits(string searchValue, int projectWeekId)
+        public List<CommitET> SearchCommits(string searchValue, int projectWeekId, int searchAllWeeks = 0)
         {
             try
             {
@@ -48,20 +48,20 @@ namespace DAL
                 var result = (from c in db.Commits
                                   // Tìm kiếm theo CommitMessage
                               where (c.CommitMessage != null && (string.IsNullOrEmpty(searchValue) || c.CommitMessage.Contains(searchValue)))
-                              // Lọc theo ProjectWeekId
-                                    && c.ProjectWeekId == projectWeekId
-                              // Sắp xếp theo ngày tạo giảm dần
-                              orderby c.AuthorEmail descending
+                              // Lọc theo ProjectWeekId (nếu không tìm kiếm tất cả các tuần)
+                              && (searchAllWeeks == 1 || c.ProjectWeekId == projectWeekId)
+                              // Sắp xếp theo ngày commit
+                              orderby c.CommitDate ascending
                               select new CommitET
                               {
                                   CommitId = c.CommitId,
                                   CommitHash = c.CommitHash,
                                   CommitMessage = c.CommitMessage,
-                                  CommitDate = c.CommitDate,
+                                  CommitDate = c.CommitDate, // ngày giờ commit
                                   Author = c.Author,
                                   AuthorEmail = c.AuthorEmail,
                                   ProjectWeekId = c.ProjectWeekId,
-                                  Date = c.Date,
+                                  Date = c.Date, // ngày commit
                                   Period = c.Period,
                                   CreatedAt = c.CreatedAt.Value,
                                   UpdatedAt = c.UpdatedAt.Value

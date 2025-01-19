@@ -164,7 +164,7 @@ namespace GitLogAggregator
             cboProjectWeek.ValueMember = "ProjectWeekId";
             cboProjectWeek.DisplayMember = "ProjectWeekName";
 
-            // Danh sách các nút và icon tương ứng
+            // Danh sách các nút crud và icon tương ứng
             var buttonsToConfigure = new Dictionary<Button, ButtonImage>
             {
                 { btnSaveGit, ButtonImage.AddIcon },
@@ -173,19 +173,73 @@ namespace GitLogAggregator
                 { btnSearchReport, ButtonImage.SearchIcon } // Ví dụ thêm nút chỉnh sửa
             };
 
-            // Cấu hình các nút
+            // Cấu hình các nút icon crud
             ConfigureButtons(buttonsToConfigure);
 
+            // biến tất cả combobox về dạng dropdownlist
+            SetAllComboBoxesToDropDownList(this);
 
             // Hiển thị hint cho các control
             SetupHoverEventsForControls(txtResultMouseEvents);
 
+            // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
+            chkSearchAllWeeks.Checked = true; // chọn tìm kiếm tất cả các tuần
+            ConfigureSearchControls();          // Cấu hình trạng thái của CheckBox và ComboBox
+            if (chkSearchAllWeeks.Checked)
+            {
+                SearchAllWeeks();
+            }
 
             DisableControls();
             btnAggregator.Enabled = true;//open
 
         }
+        private void SearchAllWeeks()
+        {
+            var searchResult = commitBUS.SearchCommits("", projectWeekId: 0, searchAllWeeks: 1);
+            dgvReportCommits.DataSource = searchResult;
 
+            if (searchResult != null && searchResult.Any())
+            {
+                AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {searchResult.Count} kết quả.\n");
+            }
+            else
+            {
+                AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
+            }
+        }
+        private void ConfigureSearchControls()
+        {
+            if (chkSearchAllWeeks.Checked)
+            {
+                cboProjectWeek.Enabled = false;
+                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể";
+            }
+            else
+            {
+                cboProjectWeek.Enabled = true;
+                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần";
+            }
+        }
+
+        private void SetAllComboBoxesToDropDownList(Control parentControl)
+        {
+            // Duyệt qua tất cả các control trên form
+            foreach (Control control in parentControl.Controls)
+            {
+                // Nếu control là ComboBox, đặt DropDownStyle thành DropDownList
+                if (control is ComboBox comboBox)
+                {
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                }
+
+                // Nếu control có chứa các control con (ví dụ: Panel, GroupBox), đệ quy để duyệt tiếp
+                if (control.HasChildren)
+                {
+                    SetAllComboBoxesToDropDownList(control);
+                }
+            }
+        }
         private void ConfigureButtons(Dictionary<Button, ButtonImage> buttonsToConfigure)
         {
             foreach (var item in buttonsToConfigure)
@@ -252,7 +306,8 @@ namespace GitLogAggregator
                 { txtSearchReport, "Nhập từ khóa tìm kiếm commit" },
                 { txtResultMouseEvents, "Hiển thị thông báo khi rê chuột vào các control" },
                 { txtResult, "Hiển thị kết quả của các thao tác" },
-                { txtFirstCommitDate, "Hiển thị ngày commit đầu tiên" }
+                { txtFirstCommitDate, "Hiển thị ngày commit đầu tiên" },
+                { chkSearchAllWeeks, "Tìm kiếm tất cả các tuần của commit trong datagridview" }
             };
 
             // Thiết lập sự kiện cho từng control
@@ -1771,31 +1826,58 @@ git %*
         {
             try
             {
-                if (string.IsNullOrEmpty(txtSearchReport.Text))
+                int projectWeekId = 0;
+                int searchAllWeeks = chkSearchAllWeeks.Checked ? 1 : 0; // 1 nếu chọn tìm kiếm tất cả, 0 nếu không
+
+                // Nếu không tìm kiếm tất cả các tuần, lấy giá trị ProjectWeekId từ ComboBox
+                if (searchAllWeeks == 0)
                 {
-                    dgvReportCommits.DataSource = commitBUS.GetAll();
-                    AppendTextWithScroll("Vui lòng nhập thông tin tìm kiếm.\n");
-                    return;
+                    projectWeekId = Convert.ToInt32(cboProjectWeek.SelectedValue);
                 }
 
-                // Lấy giá trị ProjectWeekId từ ComboBox
-                int projectWeekId = Convert.ToInt32(cboProjectWeek.SelectedValue);
-
                 // Gọi hàm tìm kiếm
-                var searchResult = commitBUS.SearchCommits(txtSearchReport.Text, projectWeekId);
+                var searchResult = commitBUS.SearchCommits(txtSearchReport.Text, projectWeekId, searchAllWeeks);
 
-                // Hiển thị kết quả lên DataGridView
-                dgvReportCommits.DataSource = searchResult;
+                // Kiểm tra kết quả tìm kiếm
+                if (searchResult != null && searchResult.Any()) // Nếu có dữ liệu
+                {
+                    // Hiển thị kết quả lên DataGridView
+                    dgvReportCommits.DataSource = searchResult;
 
-                // Xóa nội dung tìm kiếm
+                    // Ghi thông báo tìm kiếm thành công
+                    if (string.IsNullOrEmpty(txtSearchReport.Text))
+                    {
+                        AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {searchResult.Count} kết quả.\n");
+                    }
+                    else
+                    {
+                        AppendTextWithScroll($"Tìm kiếm thành công. Tìm thấy {searchResult.Count} kết quả.\n");
+                    }
+                }
+                else // Nếu không có dữ liệu
+                {
+                    // Xóa dữ liệu hiện tại trên DataGridView
+                    dgvReportCommits.DataSource = null;
+
+                    // Ghi thông báo không tìm thấy kết quả
+                    if (string.IsNullOrEmpty(txtSearchReport.Text))
+                    {
+                        AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
+                    }
+                    else
+                    {
+                        AppendTextWithScroll("Không tìm thấy kết quả phù hợp.\n");
+                    }
+                }
+
+                // Xóa nội dung tìm kiếm (nếu cần)
                 txtSearchReport.Clear();
-
-                AppendTextWithScroll("Tìm kiếm thành công.\n");
             }
             catch (Exception ex)
             {
+                // Xóa nội dung tìm kiếm và hiển thị thông báo lỗi
                 txtSearchReport.Clear();
-                AppendTextWithScroll($"Lỗi: {ex.Message}");
+                AppendTextWithScroll($"Lỗi: {ex.Message}\n");
             }
         }
         private void btnRemoveAll_Click(object sender, EventArgs e)
@@ -1933,6 +2015,27 @@ git %*
             if (!chkUseDate.Checked)
             {
                 txtInternshipStartDate.Value = DateTime.Now; // Đặt lại giá trị mặc định (tùy chọn)
+            }
+        }
+
+        private void chkSearchAllWeeks_CheckedChanged(object sender, EventArgs e)
+        {
+            // Kiểm tra xem CheckBox có được chọn không
+            if (chkSearchAllWeeks.Checked)
+            {
+                // Khóa ComboBox tuần
+                cboProjectWeek.Enabled = false;
+
+                // Thay đổi text của CheckBox
+                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể";
+            }
+            else
+            {
+                // Mở khóa ComboBox tuần
+                cboProjectWeek.Enabled = true;
+
+                // Thay đổi text của CheckBox
+                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần";
             }
         }
     }

@@ -97,6 +97,7 @@
             this.crudImageList = new System.Windows.Forms.ImageList(this.components);
             this.label11 = new System.Windows.Forms.Label();
             this.cboProjectWeek = new System.Windows.Forms.ComboBox();
+            this.chkSearchAllWeeks = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -356,9 +357,9 @@
             // txtFirstCommitDate
             // 
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtFirstCommitDate.Location = new System.Drawing.Point(147, 3);
+            this.txtFirstCommitDate.Location = new System.Drawing.Point(159, 3);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
-            this.txtFirstCommitDate.Size = new System.Drawing.Size(471, 25);
+            this.txtFirstCommitDate.Size = new System.Drawing.Size(268, 25);
             this.txtFirstCommitDate.TabIndex = 3;
             // 
             // label9
@@ -603,13 +604,15 @@
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tableLayoutPanel4.ColumnCount = 3;
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 477F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 274F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 191F));
             this.tableLayoutPanel4.Controls.Add(this.label9, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.txtFirstCommitDate, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label11, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.cboProjectWeek, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.chkSearchAllWeeks, 2, 1);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -930,10 +933,21 @@
             // 
             this.cboProjectWeek.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboProjectWeek.FormattingEnabled = true;
-            this.cboProjectWeek.Location = new System.Drawing.Point(147, 58);
+            this.cboProjectWeek.Location = new System.Drawing.Point(159, 58);
             this.cboProjectWeek.Name = "cboProjectWeek";
-            this.cboProjectWeek.Size = new System.Drawing.Size(471, 25);
+            this.cboProjectWeek.Size = new System.Drawing.Size(268, 25);
             this.cboProjectWeek.TabIndex = 9;
+            // 
+            // chkSearchAllWeeks
+            // 
+            this.chkSearchAllWeeks.AutoSize = true;
+            this.chkSearchAllWeeks.Location = new System.Drawing.Point(433, 58);
+            this.chkSearchAllWeeks.Name = "chkSearchAllWeeks";
+            this.chkSearchAllWeeks.Size = new System.Drawing.Size(167, 21);
+            this.chkSearchAllWeeks.TabIndex = 10;
+            this.chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần";
+            this.chkSearchAllWeeks.UseVisualStyleBackColor = true;
+            this.chkSearchAllWeeks.CheckedChanged += new System.EventHandler(this.chkSearchAllWeeks_CheckedChanged);
             // 
             // GitLogAggregator
             // 
@@ -1054,5 +1068,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox cboProjectWeek;
+        private System.Windows.Forms.CheckBox chkSearchAllWeeks;
     }
 }
