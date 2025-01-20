@@ -39,7 +39,6 @@
             this.weekListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
             this.btnClearDataListView = new System.Windows.Forms.Button();
             this.helpButton = new System.Windows.Forms.Button();
             this.fileListView = new System.Windows.Forms.ListView();
@@ -124,9 +123,9 @@
             // 
             this.btnOpenGitFolder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnOpenGitFolder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnOpenGitFolder.Location = new System.Drawing.Point(256, 79);
+            this.btnOpenGitFolder.Location = new System.Drawing.Point(255, 73);
             this.btnOpenGitFolder.Name = "btnOpenGitFolder";
-            this.btnOpenGitFolder.Size = new System.Drawing.Size(122, 25);
+            this.btnOpenGitFolder.Size = new System.Drawing.Size(123, 31);
             this.btnOpenGitFolder.TabIndex = 1;
             this.btnOpenGitFolder.Text = "Thêm dự án thực tập";
             this.btnOpenGitFolder.UseVisualStyleBackColor = true;
@@ -136,9 +135,9 @@
             // 
             this.txtInternshipStartDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtInternshipStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipStartDate.Location = new System.Drawing.Point(3, 41);
+            this.txtInternshipStartDate.Location = new System.Drawing.Point(3, 38);
             this.txtInternshipStartDate.Name = "txtInternshipStartDate";
-            this.txtInternshipStartDate.Size = new System.Drawing.Size(118, 25);
+            this.txtInternshipStartDate.Size = new System.Drawing.Size(120, 25);
             this.txtInternshipStartDate.TabIndex = 3;
             this.txtInternshipStartDate.ValueChanged += new System.EventHandler(this.NumericWeeks_ValueChanged);
             // 
@@ -176,7 +175,7 @@
             this.label3.Location = new System.Drawing.Point(3, 3);
             this.label3.Margin = new System.Windows.Forms.Padding(3);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(118, 32);
+            this.label3.Size = new System.Drawing.Size(120, 29);
             this.label3.TabIndex = 8;
             this.label3.Text = "Ngày bắt đầu TT:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -213,24 +212,13 @@
             this.label6.Text = "Hiển thị thông báo:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 3);
-            this.label7.Margin = new System.Windows.Forms.Padding(3);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(147, 17);
-            this.label7.TabIndex = 9;
-            this.label7.Text = "Danh mục tuần thực tập";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // btnClearDataListView
             // 
             this.btnClearDataListView.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClearDataListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClearDataListView.Location = new System.Drawing.Point(127, 79);
+            this.btnClearDataListView.Location = new System.Drawing.Point(129, 73);
             this.btnClearDataListView.Name = "btnClearDataListView";
-            this.btnClearDataListView.Size = new System.Drawing.Size(123, 25);
+            this.btnClearDataListView.Size = new System.Drawing.Size(120, 31);
             this.btnClearDataListView.TabIndex = 14;
             this.btnClearDataListView.Text = "Làm mới";
             this.btnClearDataListView.UseVisualStyleBackColor = true;
@@ -303,10 +291,10 @@
             // 
             this.label8.AutoSize = true;
             this.label8.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label8.Location = new System.Drawing.Point(256, 3);
+            this.label8.Location = new System.Drawing.Point(255, 3);
             this.label8.Margin = new System.Windows.Forms.Padding(3);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(122, 32);
+            this.label8.Size = new System.Drawing.Size(123, 29);
             this.label8.TabIndex = 9;
             this.label8.Text = "Số ngày TT:";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -340,10 +328,10 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label10.Location = new System.Drawing.Point(127, 3);
+            this.label10.Location = new System.Drawing.Point(129, 3);
             this.label10.Margin = new System.Windows.Forms.Padding(3);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(123, 32);
+            this.label10.Size = new System.Drawing.Size(120, 29);
             this.label10.TabIndex = 8;
             this.label10.Text = "Ngày kết thúc TT:";
             this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -352,17 +340,17 @@
             // 
             this.txtInternshipEndDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtInternshipEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtInternshipEndDate.Location = new System.Drawing.Point(127, 41);
+            this.txtInternshipEndDate.Location = new System.Drawing.Point(129, 38);
             this.txtInternshipEndDate.Name = "txtInternshipEndDate";
-            this.txtInternshipEndDate.Size = new System.Drawing.Size(123, 25);
+            this.txtInternshipEndDate.Size = new System.Drawing.Size(120, 25);
             this.txtInternshipEndDate.TabIndex = 3;
             // 
             // txtNumericsWeek
             // 
             this.txtNumericsWeek.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNumericsWeek.Location = new System.Drawing.Point(256, 41);
+            this.txtNumericsWeek.Location = new System.Drawing.Point(255, 38);
             this.txtNumericsWeek.Name = "txtNumericsWeek";
-            this.txtNumericsWeek.Size = new System.Drawing.Size(122, 25);
+            this.txtNumericsWeek.Size = new System.Drawing.Size(123, 25);
             this.txtNumericsWeek.TabIndex = 20;
             this.txtNumericsWeek.Value = new decimal(new int[] {
             8,
@@ -475,9 +463,9 @@
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.ColumnCount = 3;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32.63403F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.03264F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33223F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33222F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33555F));
             this.tableLayoutPanel2.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.label10, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label8, 2, 0);
@@ -492,9 +480,9 @@
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 3;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(381, 107);
             this.tableLayoutPanel2.TabIndex = 27;
             // 
@@ -502,10 +490,10 @@
             // 
             this.chkUseDate.AutoSize = true;
             this.chkUseDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkUseDate.Location = new System.Drawing.Point(3, 76);
+            this.chkUseDate.Location = new System.Drawing.Point(3, 70);
             this.chkUseDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.chkUseDate.Name = "chkUseDate";
-            this.chkUseDate.Size = new System.Drawing.Size(121, 31);
+            this.chkUseDate.Size = new System.Drawing.Size(123, 37);
             this.chkUseDate.TabIndex = 26;
             this.chkUseDate.Text = "Chọn ngày TT";
             this.chkUseDate.UseVisualStyleBackColor = true;
@@ -534,11 +522,11 @@
             this.flowLayoutPanel2.Controls.Add(this.btnSaveGit);
             this.flowLayoutPanel2.Controls.Add(this.btnRemoveAll);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(250, 0);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(125, 38);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(375, 38);
             this.flowLayoutPanel2.TabIndex = 27;
             // 
             // btnCreateWeek
@@ -547,11 +535,12 @@
             this.btnCreateWeek.FlatAppearance.BorderSize = 0;
             this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateWeek.ImageKey = "plus.png";
-            this.btnCreateWeek.Location = new System.Drawing.Point(88, 1);
+            this.btnCreateWeek.Location = new System.Drawing.Point(253, 1);
             this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(1);
             this.btnCreateWeek.Name = "btnCreateWeek";
-            this.btnCreateWeek.Size = new System.Drawing.Size(36, 39);
+            this.btnCreateWeek.Size = new System.Drawing.Size(121, 39);
             this.btnCreateWeek.TabIndex = 25;
+            this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;
             this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
             // 
@@ -560,11 +549,12 @@
             this.btnSaveGit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.btnSaveGit.FlatAppearance.BorderSize = 0;
             this.btnSaveGit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSaveGit.Location = new System.Drawing.Point(44, 1);
+            this.btnSaveGit.Location = new System.Drawing.Point(124, 1);
             this.btnSaveGit.Margin = new System.Windows.Forms.Padding(1);
             this.btnSaveGit.Name = "btnSaveGit";
-            this.btnSaveGit.Size = new System.Drawing.Size(42, 39);
+            this.btnSaveGit.Size = new System.Drawing.Size(127, 39);
             this.btnSaveGit.TabIndex = 25;
+            this.btnSaveGit.Text = "Tải Commit";
             this.btnSaveGit.UseVisualStyleBackColor = false;
             this.btnSaveGit.Click += new System.EventHandler(this.BtnSaveGit_Click);
             // 
@@ -576,8 +566,9 @@
             this.btnRemoveAll.Location = new System.Drawing.Point(3, 1);
             this.btnRemoveAll.Margin = new System.Windows.Forms.Padding(1);
             this.btnRemoveAll.Name = "btnRemoveAll";
-            this.btnRemoveAll.Size = new System.Drawing.Size(39, 36);
+            this.btnRemoveAll.Size = new System.Drawing.Size(119, 36);
             this.btnRemoveAll.TabIndex = 25;
+            this.btnRemoveAll.Text = "Xóa tất cả";
             this.btnRemoveAll.UseVisualStyleBackColor = false;
             this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
             // 
@@ -602,12 +593,10 @@
             // 
             // tableLayoutPanel8
             // 
-            this.tableLayoutPanel8.ColumnCount = 2;
+            this.tableLayoutPanel8.ColumnCount = 1;
             this.tableLayoutPanel3.SetColumnSpan(this.tableLayoutPanel8, 2);
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 66.66666F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel8.Controls.Add(this.label7, 0, 0);
-            this.tableLayoutPanel8.Controls.Add(this.flowLayoutPanel2, 1, 0);
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 5.333333F));
+            this.tableLayoutPanel8.Controls.Add(this.flowLayoutPanel2, 0, 0);
             this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
@@ -841,6 +830,7 @@
             this.btnSearchReport.Name = "btnSearchReport";
             this.btnSearchReport.Size = new System.Drawing.Size(91, 28);
             this.btnSearchReport.TabIndex = 34;
+            this.btnSearchReport.Text = "Tìm kiếm";
             this.btnSearchReport.UseVisualStyleBackColor = false;
             this.btnSearchReport.Click += new System.EventHandler(this.BtnSearchReport_Click);
             // 
@@ -1005,7 +995,6 @@
             this.flowLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel8.ResumeLayout(false);
-            this.tableLayoutPanel8.PerformLayout();
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
             this.tableLayoutPanel5.ResumeLayout(false);
@@ -1034,7 +1023,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ListView weekListView;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnClearDataListView;
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.PictureBox btnSetupThuMucThucTap;
