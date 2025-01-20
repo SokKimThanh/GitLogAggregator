@@ -47,14 +47,6 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.GetFirstCommitDate(folderPath);
         }
-         
-        /// <summary>
-        /// Hiển thị danh sách tác giả trên combobox
-        /// </summary>
-        public List<string> LoadAuthorsCombobox(string projectDirectory)
-        {
-            return data.LoadAuthorsCombobox(projectDirectory);
-        }
 
         public List<DayData> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
         {

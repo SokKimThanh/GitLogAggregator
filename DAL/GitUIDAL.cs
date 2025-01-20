@@ -182,23 +182,6 @@ namespace GitLogAggregator.DataAccess
                 throw new Exception($"Ngày không hợp lệ: {dateStr}");
             }
         }
-
-        /// <summary>
-        /// Hiển thị danh sách tác giả trên combobox
-        /// </summary>
-        public List<string> LoadAuthorsCombobox(string projectDirectory)
-        {
-            List<string> authors;
-            try
-            {
-                authors = GetAuthorsFromRepository(projectDirectory);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error loading authors: " + ex.Message);
-            }
-            return authors;
-        }
         public List<DayData> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
         {
             List<DayData> dayDataList = new List<DayData>();

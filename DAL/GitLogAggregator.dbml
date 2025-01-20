@@ -81,6 +81,7 @@
       <Column Name="InternshipEndDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Weeks" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="FirstCommitDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FirstCommitAuthor" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="ConfigFile_ConfigAuthor" Member="ConfigAuthors" ThisKey="ConfigID" OtherKey="ConfigID" Type="ConfigAuthor" />

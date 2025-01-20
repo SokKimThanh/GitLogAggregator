@@ -18,10 +18,10 @@ namespace DAL
                             orderby c.FirstCommitDate ascending
                             select new ConfigFileET
                             {
-                                ConfigID = c.ID,
+                                ConfigID = c.ConfigID,
                                 ProjectDirectory = c.ProjectDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
-                                FirstCommitAuthor = c.Author,
+                                FirstCommitAuthor = c.FirstCommitAuthor,
                                 InternshipStartDate = c.InternshipStartDate,
                                 InternshipEndDate = c.InternshipEndDate,
                                 Weeks = c.Weeks,
@@ -37,54 +37,34 @@ namespace DAL
                 throw new Exception("Error in GetAll: " + ex.Message);
             }
         }
-        /// <summary>
-        /// Lấy danh sách tác giả từ bảng ConfigFiles theo id dự án
-        /// </summary> 
-        public List<string> GetAuthorsByProjectId(int projectId)
-        {
-            try
-            {
-                var authors = (from config in db.ConfigFiles
-                               where config.ID == projectId
-                               select config.Author).Distinct().ToList();
 
-                return authors;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Lỗi khi lấy danh sách tác giả: " + ex.Message);
-            }
-        }
-        public List<string> GetAllAuthors()
-        {
-            try
-            {
-                // Truy vấn để lấy danh sách tác giả duy nhất từ bảng ConfigFiles
-                var authors = (from c in db.ConfigFiles
-                               where c.Author != null // Lọc các giá trị null
-                               select c.Author).Distinct().ToList(); // Lấy danh sách tác giả duy nhất
 
-                return authors; // Trả về danh sách tác giả
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error in GetAllAuthors: " + ex.Message);
-            }
-        }
         /// <summary>
         /// Lấy ngày bắt đầu thực tập
         /// </summary>
-        public DateTime? GetInternshipStartDate(int configId)
+        public DateTime GetInternshipStartDate(int configId)
         {
             try
             {
-                // Truy vấn để lấy ngày bắt đầu thực tập dựa trên ConfigID cấu hình
-                var startDate = (from config in db.ConfigFiles
-                                 where config.ID == configId
-                                 select config.InternshipStartDate).FirstOrDefault();
+                // Nếu configId = 0, trả về null
+                if (configId == 0)
+                {
+                    return DateTime.Now;
+                }
 
-                // Trả về ngày bắt đầu thực tập (có thể là null nếu không có giá trị)
-                return startDate;
+                // Truy vấn để lấy ngày bắt đầu thực tập dựa trên ConfigID cấu hình
+                var internshipStartDate = (from config in db.ConfigFiles
+                                           where config.ConfigID == configId
+                                           select config.InternshipStartDate).FirstOrDefault();
+
+                // Kiểm tra nếu internshipStartDate là DateTime.MinValue (01/01/0001)
+                if (internshipStartDate == DateTime.MinValue)
+                {
+                    return DateTime.Now;
+                }
+
+                // Trả về ngày bắt đầu thực tập
+                return internshipStartDate;
             }
             catch (Exception ex)
             {
@@ -93,18 +73,18 @@ namespace DAL
             }
         }
 
-        public ConfigFileET GetByID(int id)
+        public ConfigFileET GetByID(int configID)
         {
             try
             {
                 var query = from c in db.ConfigFiles
-                            where c.ID == id
+                            where c.ConfigID == configID
                             select new ConfigFileET
                             {
-                                ConfigID = c.ID,
+                                ConfigID = c.ConfigID,
                                 ProjectDirectory = c.ProjectDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
-                                FirstCommitAuthor = c.Author,
+                                FirstCommitAuthor = c.FirstCommitAuthor,
                                 InternshipStartDate = c.InternshipStartDate,
                                 InternshipEndDate = c.InternshipEndDate,
                                 Weeks = c.Weeks,
@@ -129,7 +109,7 @@ namespace DAL
                 {
                     ProjectDirectory = et.ProjectDirectory,
                     InternshipDirectoryId = et.InternshipDirectoryId,
-                    Author = et.FirstCommitAuthor,
+                    FirstCommitAuthor = et.FirstCommitAuthor,
                     InternshipStartDate = et.InternshipStartDate,
                     InternshipEndDate = et.InternshipEndDate,
                     Weeks = et.Weeks,
@@ -152,7 +132,7 @@ namespace DAL
             try
             {
                 var query = from c in db.ConfigFiles
-                            where c.ID == et.ConfigID
+                            where c.ConfigID == et.ConfigID
                             select c;
 
                 var entity = query.SingleOrDefault();
@@ -160,7 +140,7 @@ namespace DAL
 
                 entity.ProjectDirectory = et.ProjectDirectory;
                 entity.InternshipDirectoryId = et.InternshipDirectoryId;
-                entity.Author = et.FirstCommitAuthor;
+                entity.FirstCommitAuthor = et.FirstCommitAuthor;
                 entity.InternshipStartDate = et.InternshipStartDate;
                 entity.InternshipEndDate = et.InternshipEndDate;
                 entity.Weeks = et.Weeks;
@@ -180,7 +160,7 @@ namespace DAL
             try
             {
                 var query = from c in db.ConfigFiles
-                            where c.ID == id
+                            where c.ConfigID == id
                             select c;
 
                 var entity = query.SingleOrDefault();

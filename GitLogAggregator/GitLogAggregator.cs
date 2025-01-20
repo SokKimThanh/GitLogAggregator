@@ -102,13 +102,13 @@ namespace GitLogAggregator
 
             // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
             txtFolderInternshipPath = GetLatestInternshipFolderPath();
+            
             // Xây dựng danh sách các tuần và tệp
             BuildWeekFileListView(txtFolderInternshipPath);
 
-
             // Tải ngày bắt đầu thực tập mặc định
-            txtInternshipStartDate.Value = configBus.GetInternshipStartDate(int.Parse(cboConfigFiles.SelectedValue.ToString()));
-
+            int configID = (int)cboConfigFiles.SelectedValue;
+            LoadProjectDetails(0);
 
             // Tự động điều chỉnh kích thước cột
             fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -162,6 +162,23 @@ namespace GitLogAggregator
             }
 
             DisableControls();
+        }
+
+        private void LoadProjectDetails(int configId)
+        {
+            // Lấy ngày bắt đầu thực tập
+            DateTime? startDate = configBus.GetInternshipStartDate(configId);
+
+            if (startDate == null)
+            {
+                // Hiển thị thông báo nếu không có ngày bắt đầu thực tập
+                MessageBox.Show("Vui lòng chọn ngày bắt đầu thực tập.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                // Thiết lập giá trị cho DateTimePicker
+                txtInternshipStartDate.Value = startDate.Value;
+            }
         }
         private void LoadConfigsIntoCombobox()
         {
@@ -899,7 +916,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Danh sách công việc đã được làm mới.\n");
 
                 // Làm mới combobox tác giả commit
-                cboAuthorCommit.DataSource = configBus.GetAllAuthors();
+                cboAuthorCommit.DataSource = authorBUS.GetAll();
                 cboAuthorCommit.DisplayMember = "ToString";
                 cboAuthorCommit.ValueMember = "ToString";
 

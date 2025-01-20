@@ -46,6 +46,7 @@ CREATE TABLE ConfigFiles (
     InternshipEndDate DATETIME NOT NULL, -- Ngày kết thúc thực tập
     Weeks INT NOT NULL, -- Số tuần thực tập
     FirstCommitDate DATETIME NOT NULL, -- Ngày commit đầu tiên
+	FirstCommitAuthor NVARCHAR(255) NOT NULL, -- Tác giả đầu tiên commit
     CreatedAt DATETIME, -- Ngày tạo bản ghi
     UpdatedAt DATETIME -- Ngày cập nhật bản ghi
 );

@@ -556,7 +556,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ConfigID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ID", IsForeignKey=true)]
 		public InternshipDirectory InternshipDirectory
 		{
 			get
@@ -1238,7 +1238,7 @@ namespace DAL
 					this.OnAuthorChanging(value);
 					this.SendPropertyChanging();
 					this._Author = value;
-					this.SendPropertyChanged("FirstCommitAuthor");
+					this.SendPropertyChanged("Author");
 					this.OnAuthorChanged();
 				}
 			}
@@ -1604,7 +1604,7 @@ namespace DAL
 					{
 						this._AuthorID = default(int);
 					}
-					this.SendPropertyChanged("FirstCommitAuthor");
+					this.SendPropertyChanged("Author");
 				}
 			}
 		}
@@ -1684,6 +1684,8 @@ namespace DAL
 		
 		private System.DateTime _FirstCommitDate;
 		
+		private string _FirstCommitAuthor;
+		
 		private System.Nullable<System.DateTime> _CreatedAt;
 		
 		private System.Nullable<System.DateTime> _UpdatedAt;
@@ -1710,6 +1712,8 @@ namespace DAL
     partial void OnWeeksChanged();
     partial void OnFirstCommitDateChanging(System.DateTime value);
     partial void OnFirstCommitDateChanged();
+    partial void OnFirstCommitAuthorChanging(string value);
+    partial void OnFirstCommitAuthorChanged();
     partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
     partial void OnCreatedAtChanged();
     partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
@@ -1867,6 +1871,26 @@ namespace DAL
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstCommitAuthor", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string FirstCommitAuthor
+		{
+			get
+			{
+				return this._FirstCommitAuthor;
+			}
+			set
+			{
+				if ((this._FirstCommitAuthor != value))
+				{
+					this.OnFirstCommitAuthorChanging(value);
+					this.SendPropertyChanging();
+					this._FirstCommitAuthor = value;
+					this.SendPropertyChanged("FirstCommitAuthor");
+					this.OnFirstCommitAuthorChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
 		public System.Nullable<System.DateTime> CreatedAt
 		{
@@ -1920,7 +1944,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ConfigID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ID", IsForeignKey=true)]
 		public InternshipDirectory InternshipDirectory
 		{
 			get
@@ -2057,7 +2081,7 @@ namespace DAL
 					this.OnIDChanging(value);
 					this.SendPropertyChanging();
 					this._ID = value;
-					this.SendPropertyChanged("ConfigID");
+					this.SendPropertyChanged("ID");
 					this.OnIDChanged();
 				}
 			}
@@ -2339,7 +2363,7 @@ namespace DAL
 					this.OnIDChanging(value);
 					this.SendPropertyChanging();
 					this._ID = value;
-					this.SendPropertyChanged("ConfigID");
+					this.SendPropertyChanged("ID");
 					this.OnIDChanged();
 				}
 			}
@@ -2425,7 +2449,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_ProjectWeeks", ThisKey="ConfigID", OtherKey="InternshipDirectoryId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_ProjectWeeks", ThisKey="ID", OtherKey="InternshipDirectoryId")]
 		public EntitySet<ProjectWeek> ProjectWeeks
 		{
 			get
@@ -2438,7 +2462,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_ConfigFiles", ThisKey="ConfigID", OtherKey="InternshipDirectoryId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_ConfigFiles", ThisKey="ID", OtherKey="InternshipDirectoryId")]
 		public EntitySet<ConfigFile> ConfigFiles
 		{
 			get
