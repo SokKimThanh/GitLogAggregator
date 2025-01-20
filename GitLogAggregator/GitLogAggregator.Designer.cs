@@ -121,14 +121,18 @@
             // 
             // btnOpenGitFolder
             // 
+            this.btnOpenGitFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.btnOpenGitFolder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnOpenGitFolder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnOpenGitFolder.Location = new System.Drawing.Point(255, 73);
+            this.btnOpenGitFolder.FlatAppearance.BorderSize = 0;
+            this.btnOpenGitFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOpenGitFolder.Location = new System.Drawing.Point(253, 71);
+            this.btnOpenGitFolder.Margin = new System.Windows.Forms.Padding(1);
             this.btnOpenGitFolder.Name = "btnOpenGitFolder";
-            this.btnOpenGitFolder.Size = new System.Drawing.Size(123, 31);
+            this.btnOpenGitFolder.Size = new System.Drawing.Size(127, 35);
             this.btnOpenGitFolder.TabIndex = 1;
-            this.btnOpenGitFolder.Text = "Thêm dự án thực tập";
-            this.btnOpenGitFolder.UseVisualStyleBackColor = true;
+            this.btnOpenGitFolder.Text = "Thêm dự án";
+            this.btnOpenGitFolder.UseVisualStyleBackColor = false;
             this.btnOpenGitFolder.Click += new System.EventHandler(this.BtnAddProject_Click);
             // 
             // txtInternshipStartDate
@@ -214,14 +218,18 @@
             // 
             // btnClearDataListView
             // 
+            this.btnClearDataListView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.btnClearDataListView.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClearDataListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClearDataListView.Location = new System.Drawing.Point(129, 73);
+            this.btnClearDataListView.FlatAppearance.BorderSize = 0;
+            this.btnClearDataListView.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClearDataListView.Location = new System.Drawing.Point(127, 71);
+            this.btnClearDataListView.Margin = new System.Windows.Forms.Padding(1);
             this.btnClearDataListView.Name = "btnClearDataListView";
-            this.btnClearDataListView.Size = new System.Drawing.Size(120, 31);
+            this.btnClearDataListView.Size = new System.Drawing.Size(124, 35);
             this.btnClearDataListView.TabIndex = 14;
             this.btnClearDataListView.Text = "Làm mới";
-            this.btnClearDataListView.UseVisualStyleBackColor = true;
+            this.btnClearDataListView.UseVisualStyleBackColor = false;
             this.btnClearDataListView.Click += new System.EventHandler(this.BtnRefreshData_Click);
             // 
             // helpButton
@@ -307,10 +315,11 @@
             // 
             // txtFirstCommitDate
             // 
+            this.txtFirstCommitDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtFirstCommitDate.Location = new System.Drawing.Point(163, 3);
+            this.txtFirstCommitDate.Location = new System.Drawing.Point(158, 3);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
-            this.txtFirstCommitDate.Size = new System.Drawing.Size(121, 25);
+            this.txtFirstCommitDate.Size = new System.Drawing.Size(247, 25);
             this.txtFirstCommitDate.TabIndex = 3;
             // 
             // label9
@@ -607,11 +616,10 @@
             // 
             // tableLayoutPanel4
             // 
-            this.tableLayoutPanel4.ColumnCount = 4;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 127F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 179F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 155F));
+            this.tableLayoutPanel4.ColumnCount = 3;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 24.95974F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40.74074F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 34.29952F));
             this.tableLayoutPanel4.Controls.Add(this.label9, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.txtFirstCommitDate, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label11, 0, 1);
@@ -619,7 +627,7 @@
             this.tableLayoutPanel4.Controls.Add(this.chkSearchAllWeeks, 2, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 2);
             this.tableLayoutPanel4.Controls.Add(this.cboSearchByAuthor, 1, 2);
-            this.tableLayoutPanel4.Controls.Add(this.chkPhanTrang, 2, 0);
+            this.tableLayoutPanel4.Controls.Add(this.chkPhanTrang, 2, 2);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -647,15 +655,15 @@
             // 
             this.cboSearchByWeek.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboSearchByWeek.FormattingEnabled = true;
-            this.cboSearchByWeek.Location = new System.Drawing.Point(163, 37);
+            this.cboSearchByWeek.Location = new System.Drawing.Point(158, 37);
             this.cboSearchByWeek.Name = "cboSearchByWeek";
-            this.cboSearchByWeek.Size = new System.Drawing.Size(121, 25);
+            this.cboSearchByWeek.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByWeek.TabIndex = 9;
             // 
             // chkSearchAllWeeks
             // 
             this.chkSearchAllWeeks.AutoSize = true;
-            this.chkSearchAllWeeks.Location = new System.Drawing.Point(290, 37);
+            this.chkSearchAllWeeks.Location = new System.Drawing.Point(411, 37);
             this.chkSearchAllWeeks.Name = "chkSearchAllWeeks";
             this.chkSearchAllWeeks.Size = new System.Drawing.Size(167, 21);
             this.chkSearchAllWeeks.TabIndex = 10;
@@ -680,15 +688,15 @@
             this.cboSearchByAuthor.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cboSearchByAuthor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboSearchByAuthor.FormattingEnabled = true;
-            this.cboSearchByAuthor.Location = new System.Drawing.Point(163, 71);
+            this.cboSearchByAuthor.Location = new System.Drawing.Point(158, 71);
             this.cboSearchByAuthor.Name = "cboSearchByAuthor";
-            this.cboSearchByAuthor.Size = new System.Drawing.Size(121, 25);
+            this.cboSearchByAuthor.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByAuthor.TabIndex = 11;
             // 
             // chkPhanTrang
             // 
             this.chkPhanTrang.AutoSize = true;
-            this.chkPhanTrang.Location = new System.Drawing.Point(290, 3);
+            this.chkPhanTrang.Location = new System.Drawing.Point(411, 71);
             this.chkPhanTrang.Name = "chkPhanTrang";
             this.chkPhanTrang.Size = new System.Drawing.Size(90, 21);
             this.chkPhanTrang.TabIndex = 10;
