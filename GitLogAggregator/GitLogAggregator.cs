@@ -12,6 +12,7 @@ using System.Data;
 using GitLogAggregator.Utilities;
 using System.Globalization;
 using System.Text;
+using System.Threading.Tasks;
 
 
 namespace GitLogAggregator
@@ -85,7 +86,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void GitLogAggregator_Load(object sender, EventArgs e)
+        private async void GitLogAggregator_Load(object sender, EventArgs e)
         {
             // Tải dữ liệu từ thư mục `internship_week` và hiển thị lên form
             desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -161,8 +162,21 @@ namespace GitLogAggregator
             // Xây dựng danh sách các tuần và tệp
             BuildWeekFileListView(txtFolderInternshipPath);
 
-            // Hiển thị dữ liệu commit đã lưu trong cơ sở dữ liệu
-            dgvReportCommits.DataSource = commitBUS.GetAll();
+            try
+            {
+                // Hiển thị thông báo đang tải dữ liệu
+                AppendTextWithScroll("Đang tải dữ liệu...\n");
+
+                // Tải dữ liệu trong nền
+                allSearchResults = await Task.Run(() => commitBUS.SearchCommits("", 0, 1));
+
+                // Hiển thị kết quả theo trang
+                DisplaySearchResults();
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi khi tải dữ liệu ban đầu: {ex.Message}\n");
+            }
 
             // Cập nhật danh sách tuần trên ComboBox
             cboProjectWeek.DataSource = projectWeeksBUS.GetAll();
