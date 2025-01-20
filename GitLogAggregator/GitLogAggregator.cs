@@ -94,6 +94,8 @@ namespace GitLogAggregator
             cboThuMucThucTap.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
             cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
 
+
+            // Tải danh sách tác giả commit vào ComboBox
             LoadAuthorsIntoComboBox();
 
             // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
@@ -106,6 +108,10 @@ namespace GitLogAggregator
             cboConfigFiles.DataSource = configBus.GetAll();
             cboConfigFiles.ValueMember = "ID";
             cboConfigFiles.DisplayMember = "ProjectDirectory";
+
+
+            // Tải ngày bắt đầu thực tập mặc định
+            txtInternshipStartDate.Value = configBus.GetInternshipStartDate(int.Parse(cboConfigFiles.SelectedValue.ToString()));
 
 
             // Tự động điều chỉnh kích thước cột
@@ -264,7 +270,7 @@ namespace GitLogAggregator
 
                 // Đặt các thuộc tính mặc định
                 button.ImageAlign = ContentAlignment.MiddleLeft;
-                button.TextAlign = ContentAlignment.MiddleRight;
+                button.TextAlign = ContentAlignment.MiddleCenter;
                 button.TextImageRelation = TextImageRelation.ImageBeforeText;
             }
         }

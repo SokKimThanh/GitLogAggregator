@@ -223,10 +223,10 @@
             this.btnClearDataListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnClearDataListView.FlatAppearance.BorderSize = 0;
             this.btnClearDataListView.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearDataListView.Location = new System.Drawing.Point(127, 71);
+            this.btnClearDataListView.Location = new System.Drawing.Point(143, 65);
             this.btnClearDataListView.Margin = new System.Windows.Forms.Padding(1);
             this.btnClearDataListView.Name = "btnClearDataListView";
-            this.btnClearDataListView.Size = new System.Drawing.Size(124, 35);
+            this.btnClearDataListView.Size = new System.Drawing.Size(140, 31);
             this.btnClearDataListView.TabIndex = 14;
             this.btnClearDataListView.Text = "Làm mới";
             this.btnClearDataListView.UseVisualStyleBackColor = false;
@@ -441,10 +441,10 @@
             this.tableLayoutPanel9.ColumnCount = 2;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel9.Controls.Add(this.btnCreateWeek, 1, 2);
             this.tableLayoutPanel9.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.cboConfigFiles, 0, 2);
             this.tableLayoutPanel9.Controls.Add(this.cboThuMucThucTap, 0, 1);
+            this.tableLayoutPanel9.Controls.Add(this.btnClearDataListView, 1, 2);
             this.tableLayoutPanel9.Controls.Add(this.cboAuthorCommit, 1, 1);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(94, 3);
@@ -479,8 +479,8 @@
             this.tableLayoutPanel2.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.label10, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label8, 2, 0);
-            this.tableLayoutPanel2.Controls.Add(this.btnClearDataListView, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.txtInternshipStartDate, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.btnCreateWeek, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.txtInternshipEndDate, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.txtNumericsWeek, 2, 1);
             this.tableLayoutPanel2.Controls.Add(this.chkUseDate, 0, 2);
@@ -545,9 +545,9 @@
             this.btnCreateWeek.FlatAppearance.BorderSize = 0;
             this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateWeek.ImageKey = "plus.png";
-            this.btnCreateWeek.Location = new System.Drawing.Point(145, 67);
+            this.btnCreateWeek.Location = new System.Drawing.Point(129, 73);
             this.btnCreateWeek.Name = "btnCreateWeek";
-            this.btnCreateWeek.Size = new System.Drawing.Size(136, 27);
+            this.btnCreateWeek.Size = new System.Drawing.Size(120, 31);
             this.btnCreateWeek.TabIndex = 25;
             this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;

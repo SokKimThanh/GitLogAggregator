@@ -54,6 +54,27 @@ namespace DAL
                 throw new Exception("Error in GetAuthor: " + ex.Message);
             }
         }
+        /// <summary>
+        /// Lấy ngày bắt đầu thực tập
+        /// </summary>
+        public DateTime? GetInternshipStartDate(int configId)
+        {
+            try
+            {
+                // Truy vấn để lấy ngày bắt đầu thực tập dựa trên ID cấu hình
+                var startDate = (from config in db.ConfigFiles
+                                 where config.ID == configId
+                                 select config.InternshipStartDate).FirstOrDefault();
+
+                // Trả về ngày bắt đầu thực tập (có thể là null nếu không có giá trị)
+                return startDate;
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ và thông báo lỗi
+                throw new Exception("Lỗi khi lấy ngày bắt đầu thực tập: " + ex.Message);
+            }
+        }
 
         public ConfigFileET GetByID(int id)
         {
@@ -156,6 +177,8 @@ namespace DAL
                 throw new Exception("Error in Delete: " + ex.Message);
             }
         }
+
+
     }
 
 }

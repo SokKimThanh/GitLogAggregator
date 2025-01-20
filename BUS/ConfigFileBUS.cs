@@ -39,5 +39,10 @@ namespace BUS
         {
             dal.Delete(id);
         }
+
+        public DateTime GetInternshipStartDate(int configId)
+        {
+            return dal.GetInternshipStartDate(configId).Value;
+        }
     }
 }
