@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing;
 using GitLogAggregator.BusinessLogic;
@@ -13,7 +13,8 @@ using GitLogAggregator.Utilities;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
-
+using DocumentFormat.OpenXml.Spreadsheet;
+using Control = System.Windows.Forms.Control;
 
 namespace GitLogAggregator
 {
@@ -160,6 +161,8 @@ namespace GitLogAggregator
 
             DisableControls();
         }
+
+
         private void LoadAuthorsIntoComboBox()
         {
             try
@@ -229,13 +232,13 @@ namespace GitLogAggregator
             // Duyệt qua tất cả các control trên form
             foreach (Control control in parentControl.Controls)
             {
-                // Nếu control là ComboBox, đặt DropDownStyle thành DropDownList
+                // Nếu control là ComboBox, thiết lập DropDownStyle thành DropDownList
                 if (control is ComboBox comboBox)
                 {
                     comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
                 }
 
-                // Nếu control có chứa các control con (ví dụ: Panel, GroupBox), đệ quy để duyệt tiếp
+                // Nếu control có chứa các control con (ví dụ: Panel, GroupBox), đệ quy vào các control con
                 if (control.HasChildren)
                 {
                     SetAllComboBoxesToDropDownList(control);
@@ -703,7 +706,7 @@ namespace GitLogAggregator
                             {
                                 DateTime currentDate = weekStartDate.AddDays(dayOffset);
                                 string dayFolder = weekFolder;
-                                bool hasCommitsInDay = false;
+                                //bool hasCommitsInDay = false;
 
                                 // Tạo thư mục ngày nếu chưa tồn tại
                                 if (!Directory.Exists(dayFolder))
@@ -732,7 +735,7 @@ namespace GitLogAggregator
                                             AppendToFile(dailyFile, commitInfo); // Ghi vào file hàng ngày
                                             AppendToFile(combinedFile, $"[{currentDate:yyyy-MM-dd} {periodAbb}] {commitInfo}"); // Ghi vào file tổng hợp
 
-                                            hasCommitsInDay = true;
+                                            //hasCommitsInDay = true;
                                             hasCommitsInWeek = true;
                                         }
                                     }
@@ -841,73 +844,56 @@ namespace GitLogAggregator
         }
 
         /// <summary>
-        /// Xóa thư mục: Nút xóa sẽ chỉ xóa những thư mục hoặc file không cần thiết
-        /// mà không cần phải tạo lại những thư mục con như internship_week hoặc các thư mục tuần.
+        /// Làm mới dữ liệu: Tải lại dữ liệu từ nguồn và cập nhật các control trên giao diện.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BtnClearDataListView_Click(object sender, EventArgs e)
+        private void BtnRefreshData_Click(object sender, EventArgs e)
         {
-            txtFolderInternshipPath = GetLatestInternshipFolderPath();
-
-            // Kiểm tra sự tồn tại của thư mục internship_week
-            if (!Directory.Exists(txtFolderInternshipPath))
-            {
-                AppendTextWithScroll("Thư mục thực tập không tồn tại.\n");
-                return; // Dừng nếu thư mục internship_week không tồn tại
-            }
-
-            // Hộp thoại xác nhận xóa
-            var result = MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result != DialogResult.Yes)
-            {
-                return; // Dừng nếu người dùng không xác nhận xóa
-            }
-
             try
             {
-                DisableControls();
+                DisableControls(); // Vô hiệu hóa các control trong quá trình làm mới
 
-                // Xóa toàn bộ thư mục internship_week
-                try
+                // Làm mới đường dẫn thư mục thực tập
+                txtFolderInternshipPath = GetLatestInternshipFolderPath();
+
+                // Kiểm tra sự tồn tại của thư mục internship_week
+                if (!Directory.Exists(txtFolderInternshipPath))
                 {
-                    Directory.Delete(txtFolderInternshipPath, true); // Xóa tất cả các file và thư mục con
-                    AppendTextWithScroll($"Đã xóa toàn bộ thư mục thực tập: {txtFolderInternshipPath}\n");
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    AppendTextWithScroll($"Lỗi: Không có quyền truy cập để xóa thư mục '{txtFolderInternshipPath}'. Chi tiết: {ex.Message}\n");
-                    return; // Dừng nếu không thể xóa thư mục do quyền truy cập
+                    AppendTextWithScroll("Thư mục thực tập không tồn tại. Vui lòng kiểm tra lại.\n");
+                    return; // Dừng nếu thư mục không tồn tại
                 }
 
+                // Làm mới danh sách thư mục và file trong ListView
+                BuildWeekFileListView(txtDirectoryProjectPath);
+                AppendTextWithScroll("Danh sách thư mục và file đã được làm mới.\n");
 
-                // Xóa tất cả các mục trong ListView
-                weekListView.Items.Clear();
-                AppendTextWithScroll("Danh sách thư mục đã được làm trống.\n");
+                // Làm mới dữ liệu trong combobox cboConfigFiles
+                cboConfigFiles.DataSource = configBus.GetAll();
+                cboConfigFiles.DisplayMember = "ProjectName";
+                cboConfigFiles.ValueMember = "ID";
+                AppendTextWithScroll("Danh sách config đã được làm mới.\n");
 
-                fileListView.Items.Clear();
-                AppendTextWithScroll("Danh sách file đã được làm trống.\n");
+                // Làm mới dữ liệu trong DataGridView
+                dgvReportCommits.DataSource = commitBUS.GetAll();
+                AppendTextWithScroll("Danh sách công việc đã được làm mới.\n");
 
-                // Xóa dữ liệu trong combobox
-                cboConfigFiles.DataSource = null;
-                AppendTextWithScroll("Danh sách config đã được làm trống.\n");
+                // Làm mới combobox tác giả commit
+                cboAuthorCommit.DataSource = configBus.GetAuthor();
+                cboAuthorCommit.DisplayMember = "ToString";
+                cboAuthorCommit.ValueMember = "ToString";
 
-                // Xóa dữ liệu trong datagridview
-                dgvReportCommits.DataSource = null;
-                AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
+                // Làm mới combobox thư mục thực tập
+                cboThuMucThucTap.DataSource = GetLatestInternshipFolderPath();
+                cboThuMucThucTap.DisplayMember = "ToString";
+                cboThuMucThucTap.ValueMember = "ToString";
+                AppendTextWithScroll("Danh sách thư mục thực tập đã được làm mới.\n");
 
-                cboAuthorCommit.DataSource = null;
-
-                cboThuMucThucTap.DataSource = null;
-
-                // Xóa dữ liệu trong các bảng
-                //removeBUS.ClearAllTables(); 
-
-                // Tải lại danh sách listViewProjects
+                // Làm mới danh sách dự án trong ListView
                 LoadListViewProjects(configBus.GetAll());
+                AppendTextWithScroll("Danh sách dự án đã được làm mới.\n");
 
-
-                AppendTextWithScroll("Xóa thư mục internship_week và các mục trong bảng ConfigFile hoàn tất.\n");
+                AppendTextWithScroll("Làm mới dữ liệu hoàn tất.\n");
             }
             catch (Exception ex)
             {
@@ -915,16 +901,8 @@ namespace GitLogAggregator
             }
             finally
             {
-                EnableControls();
-                btnClearDataListView.Enabled = false;  // Vô hiệu hóa nút xóa
-                AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
-
-                btnExportExcel.Enabled = false;
-                txtInternshipEndDate.Enabled = false;
-                txtFirstCommitDate.Enabled = false;
-                txtNumericsWeek.Enabled = false;
-                txtFolderInternshipPath = string.Empty;
-                txtDirectoryProjectPath = string.Empty;
+                EnableControls(); // Kích hoạt lại các control sau khi hoàn tất
+                AppendTextWithScroll("Các control đã được kích hoạt lại.\n");
             }
         }
 

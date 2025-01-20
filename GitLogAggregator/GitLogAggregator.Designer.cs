@@ -57,14 +57,13 @@
             this.btnExportExcel = new System.Windows.Forms.Button();
             this.txtResultMouseEvents = new System.Windows.Forms.RichTextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.cboThuMucThucTap = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.cboConfigFiles = new System.Windows.Forms.ComboBox();
             this.chkUseDate = new System.Windows.Forms.CheckBox();
+            this.cboConfigFiles = new System.Windows.Forms.ComboBox();
             this.cboAuthorCommit = new System.Windows.Forms.ComboBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnCreateWeek = new System.Windows.Forms.Button();
@@ -77,7 +76,7 @@
             this.cboProjectWeek = new System.Windows.Forms.ComboBox();
             this.chkSearchAllWeeks = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cboSearchByAuthor = new System.Windows.Forms.ComboBox();
             this.chkPhanTrang = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
@@ -125,9 +124,9 @@
             // 
             this.btnOpenGitFolder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnOpenGitFolder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnOpenGitFolder.Location = new System.Drawing.Point(3, 67);
+            this.btnOpenGitFolder.Location = new System.Drawing.Point(256, 79);
             this.btnOpenGitFolder.Name = "btnOpenGitFolder";
-            this.btnOpenGitFolder.Size = new System.Drawing.Size(119, 27);
+            this.btnOpenGitFolder.Size = new System.Drawing.Size(122, 25);
             this.btnOpenGitFolder.TabIndex = 1;
             this.btnOpenGitFolder.Text = "Thêm dự án thực tập";
             this.btnOpenGitFolder.UseVisualStyleBackColor = true;
@@ -168,7 +167,7 @@
             this.label1.Size = new System.Drawing.Size(276, 32);
             this.label1.TabIndex = 6;
             this.label1.Text = "GitLogAggregator";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label3
             // 
@@ -229,13 +228,13 @@
             // 
             this.btnClearDataListView.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClearDataListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClearDataListView.Location = new System.Drawing.Point(128, 67);
+            this.btnClearDataListView.Location = new System.Drawing.Point(127, 79);
             this.btnClearDataListView.Name = "btnClearDataListView";
-            this.btnClearDataListView.Size = new System.Drawing.Size(153, 27);
+            this.btnClearDataListView.Size = new System.Drawing.Size(123, 25);
             this.btnClearDataListView.TabIndex = 14;
             this.btnClearDataListView.Text = "Làm mới";
             this.btnClearDataListView.UseVisualStyleBackColor = true;
-            this.btnClearDataListView.Click += new System.EventHandler(this.BtnClearDataListView_Click);
+            this.btnClearDataListView.Click += new System.EventHandler(this.BtnRefreshData_Click);
             // 
             // helpButton
             // 
@@ -412,24 +411,13 @@
             this.label4.Text = "Sự kiện rê chuột khu vực commit:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 35);
-            this.label5.Margin = new System.Windows.Forms.Padding(3);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(113, 17);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Thư mục thực tập:";
-            // 
             // cboThuMucThucTap
             // 
             this.cboThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cboThuMucThucTap.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboThuMucThucTap.FormattingEnabled = true;
-            this.cboThuMucThucTap.Location = new System.Drawing.Point(128, 35);
+            this.cboThuMucThucTap.Location = new System.Drawing.Point(3, 35);
             this.cboThuMucThucTap.Name = "cboThuMucThucTap";
-            this.cboThuMucThucTap.Size = new System.Drawing.Size(153, 25);
+            this.cboThuMucThucTap.Size = new System.Drawing.Size(136, 25);
             this.cboThuMucThucTap.TabIndex = 0;
             this.cboThuMucThucTap.SelectedIndexChanged += new System.EventHandler(this.CboThuMucThucTap_SelectedIndexChanged);
             // 
@@ -454,13 +442,12 @@
             // tableLayoutPanel9
             // 
             this.tableLayoutPanel9.ColumnCount = 2;
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 44.21053F));
-            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55.78947F));
-            this.tableLayoutPanel9.Controls.Add(this.label5, 0, 1);
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel9.Controls.Add(this.cboThuMucThucTap, 1, 1);
-            this.tableLayoutPanel9.Controls.Add(this.btnClearDataListView, 1, 2);
-            this.tableLayoutPanel9.Controls.Add(this.btnOpenGitFolder, 0, 2);
+            this.tableLayoutPanel9.Controls.Add(this.cboConfigFiles, 0, 2);
+            this.tableLayoutPanel9.Controls.Add(this.cboThuMucThucTap, 0, 1);
+            this.tableLayoutPanel9.Controls.Add(this.cboAuthorCommit, 1, 1);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(94, 3);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -494,12 +481,12 @@
             this.tableLayoutPanel2.Controls.Add(this.label3, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.label10, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label8, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnClearDataListView, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.txtInternshipStartDate, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.txtInternshipEndDate, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.txtNumericsWeek, 2, 1);
             this.tableLayoutPanel2.Controls.Add(this.chkUseDate, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.cboConfigFiles, 1, 2);
-            this.tableLayoutPanel2.Controls.Add(this.cboAuthorCommit, 2, 2);
+            this.tableLayoutPanel2.Controls.Add(this.btnOpenGitFolder, 2, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 103);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
@@ -510,14 +497,6 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(381, 107);
             this.tableLayoutPanel2.TabIndex = 27;
-            // 
-            // cboConfigFiles
-            // 
-            this.cboConfigFiles.FormattingEnabled = true;
-            this.cboConfigFiles.Location = new System.Drawing.Point(127, 79);
-            this.cboConfigFiles.Name = "cboConfigFiles";
-            this.cboConfigFiles.Size = new System.Drawing.Size(121, 25);
-            this.cboConfigFiles.TabIndex = 26;
             // 
             // chkUseDate
             // 
@@ -532,12 +511,21 @@
             this.chkUseDate.UseVisualStyleBackColor = true;
             this.chkUseDate.CheckedChanged += new System.EventHandler(this.chkUseDate_CheckedChanged);
             // 
+            // cboConfigFiles
+            // 
+            this.cboConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboConfigFiles.FormattingEnabled = true;
+            this.cboConfigFiles.Location = new System.Drawing.Point(3, 67);
+            this.cboConfigFiles.Name = "cboConfigFiles";
+            this.cboConfigFiles.Size = new System.Drawing.Size(136, 25);
+            this.cboConfigFiles.TabIndex = 26;
+            // 
             // cboAuthorCommit
             // 
             this.cboAuthorCommit.FormattingEnabled = true;
-            this.cboAuthorCommit.Location = new System.Drawing.Point(256, 79);
+            this.cboAuthorCommit.Location = new System.Drawing.Point(145, 35);
             this.cboAuthorCommit.Name = "cboAuthorCommit";
-            this.cboAuthorCommit.Size = new System.Drawing.Size(121, 25);
+            this.cboAuthorCommit.Size = new System.Drawing.Size(136, 25);
             this.cboAuthorCommit.TabIndex = 26;
             // 
             // flowLayoutPanel2
@@ -545,11 +533,12 @@
             this.flowLayoutPanel2.Controls.Add(this.btnCreateWeek);
             this.flowLayoutPanel2.Controls.Add(this.btnSaveGit);
             this.flowLayoutPanel2.Controls.Add(this.btnRemoveAll);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(221, 0);
+            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(250, 0);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(154, 31);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(125, 38);
             this.flowLayoutPanel2.TabIndex = 27;
             // 
             // btnCreateWeek
@@ -558,10 +547,10 @@
             this.btnCreateWeek.FlatAppearance.BorderSize = 0;
             this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateWeek.ImageKey = "plus.png";
-            this.btnCreateWeek.Location = new System.Drawing.Point(120, 1);
+            this.btnCreateWeek.Location = new System.Drawing.Point(88, 1);
             this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(1);
             this.btnCreateWeek.Name = "btnCreateWeek";
-            this.btnCreateWeek.Size = new System.Drawing.Size(33, 31);
+            this.btnCreateWeek.Size = new System.Drawing.Size(36, 39);
             this.btnCreateWeek.TabIndex = 25;
             this.btnCreateWeek.UseVisualStyleBackColor = false;
             this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
@@ -571,10 +560,10 @@
             this.btnSaveGit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.btnSaveGit.FlatAppearance.BorderSize = 0;
             this.btnSaveGit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSaveGit.Location = new System.Drawing.Point(85, 1);
+            this.btnSaveGit.Location = new System.Drawing.Point(44, 1);
             this.btnSaveGit.Margin = new System.Windows.Forms.Padding(1);
             this.btnSaveGit.Name = "btnSaveGit";
-            this.btnSaveGit.Size = new System.Drawing.Size(33, 35);
+            this.btnSaveGit.Size = new System.Drawing.Size(42, 39);
             this.btnSaveGit.TabIndex = 25;
             this.btnSaveGit.UseVisualStyleBackColor = false;
             this.btnSaveGit.Click += new System.EventHandler(this.BtnSaveGit_Click);
@@ -584,10 +573,10 @@
             this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.btnRemoveAll.FlatAppearance.BorderSize = 0;
             this.btnRemoveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemoveAll.Location = new System.Drawing.Point(47, 1);
+            this.btnRemoveAll.Location = new System.Drawing.Point(3, 1);
             this.btnRemoveAll.Margin = new System.Windows.Forms.Padding(1);
             this.btnRemoveAll.Name = "btnRemoveAll";
-            this.btnRemoveAll.Size = new System.Drawing.Size(36, 36);
+            this.btnRemoveAll.Size = new System.Drawing.Size(39, 36);
             this.btnRemoveAll.TabIndex = 25;
             this.btnRemoveAll.UseVisualStyleBackColor = false;
             this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
@@ -613,13 +602,12 @@
             // 
             // tableLayoutPanel8
             // 
-            this.tableLayoutPanel8.ColumnCount = 3;
+            this.tableLayoutPanel8.ColumnCount = 2;
             this.tableLayoutPanel3.SetColumnSpan(this.tableLayoutPanel8, 2);
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 73.30317F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26.69683F));
-            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 153F));
-            this.tableLayoutPanel8.Controls.Add(this.flowLayoutPanel2, 2, 0);
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 66.66666F));
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel8.Controls.Add(this.label7, 0, 0);
+            this.tableLayoutPanel8.Controls.Add(this.flowLayoutPanel2, 1, 0);
             this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
@@ -641,7 +629,7 @@
             this.tableLayoutPanel4.Controls.Add(this.cboProjectWeek, 1, 1);
             this.tableLayoutPanel4.Controls.Add(this.chkSearchAllWeeks, 2, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 2);
-            this.tableLayoutPanel4.Controls.Add(this.comboBox1, 1, 2);
+            this.tableLayoutPanel4.Controls.Add(this.cboSearchByAuthor, 1, 2);
             this.tableLayoutPanel4.Controls.Add(this.chkPhanTrang, 2, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
@@ -698,15 +686,15 @@
             this.label12.Text = "Lọc commit theo tác giả";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // comboBox1
+            // cboSearchByAuthor
             // 
-            this.comboBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(163, 71);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 25);
-            this.comboBox1.TabIndex = 11;
+            this.cboSearchByAuthor.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cboSearchByAuthor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboSearchByAuthor.FormattingEnabled = true;
+            this.cboSearchByAuthor.Location = new System.Drawing.Point(163, 71);
+            this.cboSearchByAuthor.Name = "cboSearchByAuthor";
+            this.cboSearchByAuthor.Size = new System.Drawing.Size(121, 25);
+            this.cboSearchByAuthor.TabIndex = 11;
             // 
             // chkPhanTrang
             // 
@@ -1066,7 +1054,6 @@
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.RichTextBox txtResultMouseEvents;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cboThuMucThucTap;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
@@ -1103,7 +1090,7 @@
         private System.Windows.Forms.CheckBox chkSearchAllWeeks;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cboSearchByAuthor;
         private System.Windows.Forms.CheckBox chkPhanTrang;
         private System.Windows.Forms.Button btnExportTXT;
         private System.Windows.Forms.ComboBox cboConfigFiles;
