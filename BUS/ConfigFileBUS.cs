@@ -21,7 +21,10 @@ namespace BUS
         {
             return dal.GetByID(id);
         }
-
+        public List<string> GetAuthor()
+        {
+            return dal.GetAuthor();
+        }
         public void Add(ConfigFileET entity)
         {
             dal.Add(entity);

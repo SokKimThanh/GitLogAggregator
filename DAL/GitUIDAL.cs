@@ -173,7 +173,7 @@ namespace GitLogAggregator.DataAccess
                 throw new Exception($"Ngày không hợp lệ: {dateStr}");
             }
         }
-       
+
         /// <summary>
         /// Hiển thị danh sách tác giả trên combobox
         /// </summary>

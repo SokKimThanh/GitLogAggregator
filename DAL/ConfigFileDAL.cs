@@ -38,6 +38,23 @@ namespace DAL
             }
         }
 
+        public List<string> GetAuthor()
+        {
+            try
+            {
+                // Truy vấn để lấy danh sách tác giả duy nhất từ bảng ConfigFiles
+                var authors = (from c in db.ConfigFiles
+                               where c.Author != null // Lọc các giá trị null
+                               select c.Author).Distinct().ToList(); // Lấy danh sách tác giả duy nhất
+
+                return authors; // Trả về danh sách tác giả
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in GetAuthor: " + ex.Message);
+            }
+        }
+
         public ConfigFileET GetByID(int id)
         {
             try

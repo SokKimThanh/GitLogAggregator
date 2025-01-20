@@ -93,6 +93,8 @@ namespace GitLogAggregator
             cboThuMucThucTap.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
             cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
 
+            LoadAuthorsIntoComboBox();
+
             // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
             txtFolderInternshipPath = GetLatestInternshipFolderPath();
             // Xây dựng danh sách các tuần và tệp
@@ -104,8 +106,6 @@ namespace GitLogAggregator
             cboConfigFiles.ValueMember = "ID";
             cboConfigFiles.DisplayMember = "ProjectDirectory";
 
-
-            cboAuthorCommit.DataSource = gitgui_bus.GetGitAuthors(cboConfigFiles.SelectedText);
 
             // Tự động điều chỉnh kích thước cột
             fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -159,6 +159,28 @@ namespace GitLogAggregator
             }
 
             DisableControls();
+        }
+        private void LoadAuthorsIntoComboBox()
+        {
+            try
+            {
+                // Lấy danh sách tác giả từ hàm GetAuthor
+                List<string> authors = configBus.GetAuthor();
+
+                // Gán danh sách tác giả vào ComboBox
+                cboAuthorCommit.DataSource = authors;
+
+                // Thiết lập hiển thị tên tác giả
+                cboAuthorCommit.DisplayMember = "ToString"; // Hiển thị chuỗi tên tác giả
+                cboAuthorCommit.ValueMember = "ToString"; // Giá trị cũng là chuỗi tên tác giả
+
+                // Thông báo thành công
+                AppendTextWithScroll("Danh sách tác giả đã được tải vào ComboBox.\n");
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi khi tải danh sách tác giả: {ex.Message}\n");
+            }
         }
         private void SearchAllWeeks()
         {
@@ -388,6 +410,7 @@ namespace GitLogAggregator
             // Thêm thông tin cấu hình dự án
             configBus.Add(configFile);
 
+
             // Load lại dữ liệu lên ListView
             LoadProjectListView();
 
@@ -406,8 +429,9 @@ namespace GitLogAggregator
         /// <param name="configInfo">Đối tượng ConfigFile chứa thông tin cấu hình</param>
         private void UpdateControls(ConfigFileET configInfo)
         {
-            // load danh sách tác giả
-            cboAuthorCommit.DataSource = gitgui_bus.LoadAuthorsCombobox(configInfo.ProjectDirectory);
+            // Thêm tác giả vào commobbox
+            LoadAuthorsIntoComboBox();
+
             // hiển thị tác giả commit đầu tiên
             cboAuthorCommit.SelectedItem = configInfo.Author;
 
