@@ -12,7 +12,7 @@ namespace ET
         public string CommitHash { get; set; }       // Hash value of the commit
         public string CommitMessage { get; set; }    // Commit message
         public DateTime CommitDate { get; set; }     // Date and time of the commit
-        public string Author { get; set; }           // Author of the commit
+        public string Author { get; set; }           // FirstCommitAuthor of the commit
         public string AuthorEmail { get; set; }      // Thêm thuộc tính email
         public int ProjectWeekId { get; set; }       // Identifier for the project week
         public DateTime Date { get; set; }           // Date of the commit
@@ -23,7 +23,7 @@ namespace ET
         // Optional: Override ToString() for a readable representation of the commit
         public override string ToString()
         {
-            return $"CommitId: {CommitId}, CommitHash: {CommitHash}, CommitMessage: {CommitMessage}, CommitDate: {CommitDate}, Author: {Author}, ProjectWeekId: {ProjectWeekId}, Date: {Date}, Period: {Period}, CreatedAt: {CreatedAt}, UpdatedAt: {UpdatedAt}";
+            return $"CommitId: {CommitId}, CommitHash: {CommitHash}, CommitMessage: {CommitMessage}, CommitDate: {CommitDate}, FirstCommitAuthor: {Author}, ProjectWeekId: {ProjectWeekId}, Date: {Date}, Period: {Period}, CreatedAt: {CreatedAt}, UpdatedAt: {UpdatedAt}";
         }
     }
 }

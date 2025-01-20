@@ -1238,7 +1238,7 @@ namespace DAL
 					this.OnAuthorChanging(value);
 					this.SendPropertyChanging();
 					this._Author = value;
-					this.SendPropertyChanged("Author");
+					this.SendPropertyChanged("FirstCommitAuthor");
 					this.OnAuthorChanged();
 				}
 			}
@@ -1604,7 +1604,7 @@ namespace DAL
 					{
 						this._AuthorID = default(int);
 					}
-					this.SendPropertyChanged("Author");
+					this.SendPropertyChanged("FirstCommitAuthor");
 				}
 			}
 		}

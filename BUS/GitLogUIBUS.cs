@@ -34,7 +34,7 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.GetFirstCommitAuthor(folderPath);
         }
-        public List<string> GetAuthorsFromRepository(string projectDirectory)
+        public List<(string AuthorName, string AuthorEmail)> GetAuthorsFromRepository(string projectDirectory)
         {
             return data.GetAuthorsFromRepository(projectDirectory);
         }

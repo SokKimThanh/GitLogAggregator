@@ -15,7 +15,7 @@ namespace ET
         public int ConfigID { get; set; }
         public string ProjectDirectory { get; set; }
         public int InternshipDirectoryId { get; set; }
-        public string Author { get; set; }
+        public string FirstCommitAuthor { get; set; }
         public DateTime InternshipStartDate { get; set; }
         public DateTime InternshipEndDate { get; set; }
         public int Weeks { get; set; }

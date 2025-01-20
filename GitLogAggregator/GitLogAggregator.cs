@@ -67,7 +67,7 @@ namespace GitLogAggregator
 
         private readonly ChatbotSummaryBUS chatbotSummariesBUS = new ChatbotSummaryBUS();
 
-        // Author BUS
+        // FirstCommitAuthor BUS
         private readonly AuthorBUS authorBUS = new AuthorBUS();
 
         // ConfigAuthor BUS
@@ -421,14 +421,14 @@ namespace GitLogAggregator
                 Directory.CreateDirectory(txtFolderInternshipPath);
             }
 
-            // Lấy danh sách tác giả từ lịch sử commit của repository
-            List<string> authors = gitgui_bus.GetAuthorsFromRepository(projectDirectory);
+            // Lấy danh sách tác giả và email từ lịch sử commit của repository
+            var authors = gitgui_bus.GetAuthorsFromRepository(projectDirectory);
 
             // Tạo đối tượng ConfigFileET và lưu vào cơ sở dữ liệu
             ConfigFileET configFile = new ConfigFileET
             {
                 ProjectDirectory = projectDirectory,
-                Author = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
+                FirstCommitAuthor = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
                 InternshipStartDate = txtInternshipStartDate.Value,
                 InternshipEndDate = txtInternshipEndDate.Value,
                 Weeks = (int)txtNumericsWeek.Value,
@@ -443,7 +443,7 @@ namespace GitLogAggregator
             AuthorBUS authorBUS = new AuthorBUS();
             ConfigAuthorBUS configAuthorBUS = new ConfigAuthorBUS();
 
-            foreach (var authorName in authors)
+            foreach (var (authorName, authorEmail) in authors)
             {
                 // Kiểm tra xem tác giả đã tồn tại trong database chưa
                 AuthorET author = authorBUS.GetByName(authorName);
@@ -453,7 +453,7 @@ namespace GitLogAggregator
                     author = new AuthorET
                     {
                         AuthorName = authorName,
-                        AuthorEmail = authorEmail,
+                        AuthorEmail = authorEmail, // Thêm email vào đối tượng AuthorET
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now
                     };
@@ -1802,7 +1802,7 @@ git %*
             foreach (var line in lines)
             {
                 var parts = line.Split('|');
-                if (parts.Length == 5) // Đảm bảo có đủ 5 phần: CommitHash, CommitMessage, CommitDate, Author, Author Email
+                if (parts.Length == 5) // Đảm bảo có đủ 5 phần: CommitHash, CommitMessage, CommitDate, FirstCommitAuthor, FirstCommitAuthor Email
                 {
                     try
                     {

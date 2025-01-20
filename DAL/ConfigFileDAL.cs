@@ -21,7 +21,7 @@ namespace DAL
                                 ConfigID = c.ID,
                                 ProjectDirectory = c.ProjectDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
-                                Author = c.Author,
+                                FirstCommitAuthor = c.Author,
                                 InternshipStartDate = c.InternshipStartDate,
                                 InternshipEndDate = c.InternshipEndDate,
                                 Weeks = c.Weeks,
@@ -104,7 +104,7 @@ namespace DAL
                                 ConfigID = c.ID,
                                 ProjectDirectory = c.ProjectDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
-                                Author = c.Author,
+                                FirstCommitAuthor = c.Author,
                                 InternshipStartDate = c.InternshipStartDate,
                                 InternshipEndDate = c.InternshipEndDate,
                                 Weeks = c.Weeks,
@@ -129,7 +129,7 @@ namespace DAL
                 {
                     ProjectDirectory = et.ProjectDirectory,
                     InternshipDirectoryId = et.InternshipDirectoryId,
-                    Author = et.Author,
+                    Author = et.FirstCommitAuthor,
                     InternshipStartDate = et.InternshipStartDate,
                     InternshipEndDate = et.InternshipEndDate,
                     Weeks = et.Weeks,
@@ -160,7 +160,7 @@ namespace DAL
 
                 entity.ProjectDirectory = et.ProjectDirectory;
                 entity.InternshipDirectoryId = et.InternshipDirectoryId;
-                entity.Author = et.Author;
+                entity.Author = et.FirstCommitAuthor;
                 entity.InternshipStartDate = et.InternshipStartDate;
                 entity.InternshipEndDate = et.InternshipEndDate;
                 entity.Weeks = et.Weeks;
