@@ -102,7 +102,7 @@ namespace GitLogAggregator
 
             // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
             txtFolderInternshipPath = GetLatestInternshipFolderPath();
-            
+
             // Xây dựng danh sách các tuần và tệp
             BuildWeekFileListView(txtFolderInternshipPath);
 
@@ -342,7 +342,7 @@ namespace GitLogAggregator
                 { btnClearDataListView, "Xóa dữ liệu hiển thị trong ListView" },
                 { chkUseDate, "Bật/tắt chức năng sử dụng ngày tháng" },
                 { txtInternshipStartDate, "Nhập ngày bắt đầu thực tập" },
-                { cboThuMucThucTap, "Chọn thư mục thực tập" },
+                { cboInternshipFolder, "Chọn thư mục thực tập" },
                 { helpButton, "Hiển thị hướng dẫn sử dụng" },
                 { cboConfigFiles, "Hiển thị danh sách các dự án" },
                 { dgvReportCommits, "Hiển thị báo cáo các commit" },
@@ -450,7 +450,7 @@ namespace GitLogAggregator
                 InternshipEndDate = txtInternshipEndDate.Value,
                 Weeks = (int)txtNumericsWeek.Value,
                 FirstCommitDate = firstCommitDate,
-                InternshipDirectoryId = (int)cboThuMucThucTap.SelectedValue
+                InternshipDirectoryId = (int)cboInternshipFolder.SelectedValue
             };
 
             // Lưu thông tin cấu hình dự án vào database
@@ -545,25 +545,12 @@ namespace GitLogAggregator
         }
 
         /// <summary>
-        /// Cập nhật trạng thái giao diện (các nút và control)
-        /// </summary>
-        private void UpdateControlState(bool isEnabled)
-        {
-            btnClearDataListView.Enabled = isEnabled;
-            btnExportExcel.Enabled = isEnabled;
-            txtInternshipEndDate.Enabled = !isEnabled;
-            txtFirstCommitDate.Enabled = !isEnabled;
-            txtNumericsWeek.Enabled = !isEnabled;
-        }
-
-        /// <summary>
         /// Xử lý trường hợp file config bị thiếu
-        /// </summary>
-
+        /// </summary> 
         private void EnableControls()
         {
             cboAuthorCommit.Enabled = true;
-            cboThuMucThucTap.Enabled = true;
+            cboInternshipFolder.Enabled = true;
             txtNumericsWeek.Enabled = true;
             txtInternshipStartDate.Enabled = true;
             txtInternshipEndDate.Enabled = true;
@@ -577,7 +564,7 @@ namespace GitLogAggregator
         private void DisableControls()
         {
             cboAuthorCommit.Enabled = false;
-            cboThuMucThucTap.Enabled = false;
+            cboInternshipFolder.Enabled = false;
             txtNumericsWeek.Enabled = false;
             txtInternshipStartDate.Enabled = false;
             txtInternshipEndDate.Enabled = false;
@@ -921,9 +908,9 @@ namespace GitLogAggregator
                 cboAuthorCommit.ValueMember = "ToString";
 
                 // Làm mới combobox thư mục thực tập
-                cboThuMucThucTap.DataSource = GetLatestInternshipFolderPath();
-                cboThuMucThucTap.DisplayMember = "ToString";
-                cboThuMucThucTap.ValueMember = "ToString";
+                cboInternshipFolder.DataSource = GetLatestInternshipFolderPath();
+                cboInternshipFolder.DisplayMember = "ToString";
+                cboInternshipFolder.ValueMember = "ToString";
                 AppendTextWithScroll("Danh sách thư mục thực tập đã được làm mới.\n");
 
                 // Làm mới danh sách dự án trong ListView
@@ -1517,9 +1504,9 @@ namespace GitLogAggregator
                     }
 
                     // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
-                    cboThuMucThucTap.DataSource = internshipDirectoryBUS.GetAll();
-                    cboThuMucThucTap.ValueMember = "ConfigID"; // Thiết lập trường sẽ làm giá trị
-                    cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
+                    cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
+                    cboInternshipFolder.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
+                    cboInternshipFolder.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
 
                     // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
                     txtFolderInternshipPath = GetLatestInternshipFolderPath();
@@ -2024,12 +2011,14 @@ git %*
         /// <param name="e"></param>
         private void btnCreateWeek_Click(object sender, EventArgs e)
         {
-            int internshipDirectoryId = int.Parse(cboThuMucThucTap.SelectedValue.ToString());
-            if (internshipDirectoryId <= 0)
+
+
+            if (cboInternshipFolder.SelectedValue == null)
             {
                 AppendTextWithScroll("Vui lòng chọn thư mục thực tập trước khi tạo tuần thực tập.\n");
                 return;
             }
+            int internshipDirectoryId = int.Parse(cboInternshipFolder.SelectedValue.ToString());
 
             DateTime internshipStartDate = txtInternshipStartDate.Value.Date;
             if (internshipStartDate == null)

@@ -56,7 +56,7 @@
             this.btnExportExcel = new System.Windows.Forms.Button();
             this.txtResultMouseEvents = new System.Windows.Forms.RichTextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.cboThuMucThucTap = new System.Windows.Forms.ComboBox();
+            this.cboInternshipFolder = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
             this.cboConfigFiles = new System.Windows.Forms.ComboBox();
@@ -408,15 +408,15 @@
             this.label4.Text = "Sự kiện rê chuột khu vực commit:";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // cboThuMucThucTap
+            // cboInternshipFolder
             // 
-            this.cboThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.cboThuMucThucTap.FormattingEnabled = true;
-            this.cboThuMucThucTap.Location = new System.Drawing.Point(3, 35);
-            this.cboThuMucThucTap.Name = "cboThuMucThucTap";
-            this.cboThuMucThucTap.Size = new System.Drawing.Size(136, 25);
-            this.cboThuMucThucTap.TabIndex = 0;
-            this.cboThuMucThucTap.SelectedIndexChanged += new System.EventHandler(this.CboThuMucThucTap_SelectedIndexChanged);
+            this.cboInternshipFolder.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.cboInternshipFolder.FormattingEnabled = true;
+            this.cboInternshipFolder.Location = new System.Drawing.Point(3, 35);
+            this.cboInternshipFolder.Name = "cboInternshipFolder";
+            this.cboInternshipFolder.Size = new System.Drawing.Size(136, 25);
+            this.cboInternshipFolder.TabIndex = 0;
+            this.cboInternshipFolder.SelectedIndexChanged += new System.EventHandler(this.CboThuMucThucTap_SelectedIndexChanged);
             // 
             // tableLayoutPanel1
             // 
@@ -443,7 +443,7 @@
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.cboConfigFiles, 0, 2);
-            this.tableLayoutPanel9.Controls.Add(this.cboThuMucThucTap, 0, 1);
+            this.tableLayoutPanel9.Controls.Add(this.cboInternshipFolder, 0, 1);
             this.tableLayoutPanel9.Controls.Add(this.btnClearDataListView, 1, 1);
             this.tableLayoutPanel9.Controls.Add(this.cboAuthorCommit, 1, 2);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1050,7 +1050,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.RichTextBox txtResultMouseEvents;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cboThuMucThucTap;
+        private System.Windows.Forms.ComboBox cboInternshipFolder;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
