@@ -453,6 +453,7 @@ namespace GitLogAggregator
                     author = new AuthorET
                     {
                         AuthorName = authorName,
+                        AuthorEmail = authorEmail,
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now
                     };
