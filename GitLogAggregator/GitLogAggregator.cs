@@ -165,45 +165,6 @@ namespace GitLogAggregator
 
             DisableControls();
         }
-
-        private void HandleProjectSelection(int selectedId)
-        {
-            listViewProjects.Items.Clear();
-
-            if (selectedId == 0)
-            {
-                // Xử lý khi chọn "Tất cả dự án"
-                var allProjects = configBus.GetAll();
-
-                foreach (var project in allProjects)
-                {
-                    var listItem = new ListViewItem(project.ID.ToString());
-                    listItem.SubItems.Add(project.ProjectDirectory);
-
-                    // Lấy danh sách tất cả tác giả trong dự án
-                    var authors = configBus.GetAuthorsByProjectId(project.ID);
-                    listItem.SubItems.Add(string.Join(", ", authors));
-
-                    listViewProjects.Items.Add(listItem);
-                }
-            }
-            else
-            {
-                // Xử lý khi chọn một dự án cụ thể
-                var project = configBus.GetByID(selectedId);
-                if (project != null)
-                {
-                    var listItem = new ListViewItem(project.ID.ToString());
-                    listItem.SubItems.Add(project.ProjectDirectory);
-
-                    // Lấy danh sách tác giả trong dự án cụ thể
-                    var authors = configBus.GetAuthorsByProjectId(selectedId);
-                    listItem.SubItems.Add(string.Join(", ", authors));
-
-                    listViewProjects.Items.Add(listItem);
-                }
-            }
-        }
         private void LoadConfigsIntoCombobox()
         {
             // Lấy danh sách các dự án từ cơ sở dữ liệu

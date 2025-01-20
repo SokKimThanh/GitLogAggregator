@@ -1,4 +1,6 @@
-﻿--- Cập nhật dữ liệu 18/1/2024
+﻿-- Cập nhật dữ liệu ngày 20/01/2025
+-- tách quan hệ tác giả và config, 1 dự án có nhiều tác giả, 1 tác giả tham gia nhiều dự án
+--- Cập nhật dữ liệu 18/1/2024
 --- chính sửa csdl và thêm bảng mới
 --- SOK KIM THANH 16/01/2025
 --- Tao csdl để lưu trữ thông tin gitlog trong thời gian thực tập
@@ -37,22 +39,16 @@ ADD CONSTRAINT DF_InternshipDirectories_DateModified DEFAULT GETDATE() FOR DateM
 GO
 -- Tạo bảng ConfigFiles
 CREATE TABLE ConfigFiles (
-    ID INT IDENTITY(1,1),
-    ProjectDirectory NVARCHAR(255) NOT NULL,
-    InternshipDirectoryId INT NOT NULL,
-    Author NVARCHAR(255) NOT NULL,
-    InternshipStartDate DATETIME NOT NULL,
-    InternshipEndDate DATETIME NOT NULL,
-    Weeks INT NOT NULL,
-    FirstCommitDate DATETIME NOT NULL,
-    CreatedAt DATETIME,
-    UpdatedAt DATETIME
+    ConfigID INT IDENTITY(1,1) PRIMARY KEY, -- Khóa chính, tự động tăng
+    ProjectDirectory NVARCHAR(255) NOT NULL, -- Đường dẫn thư mục dự án
+    InternshipDirectoryId INT NOT NULL, -- ID thư mục thực tập
+    InternshipStartDate DATETIME NOT NULL, -- Ngày bắt đầu thực tập
+    InternshipEndDate DATETIME NOT NULL, -- Ngày kết thúc thực tập
+    Weeks INT NOT NULL, -- Số tuần thực tập
+    FirstCommitDate DATETIME NOT NULL, -- Ngày commit đầu tiên
+    CreatedAt DATETIME, -- Ngày tạo bản ghi
+    UpdatedAt DATETIME -- Ngày cập nhật bản ghi
 );
-GO
-
--- Thêm khóa chính cho bảng ConfigFiles
-ALTER TABLE ConfigFiles
-ADD CONSTRAINT PK_ConfigFiles PRIMARY KEY (ID);
 GO
 
 -- Thêm khóa ngoại liên kết đến bảng InternshipDirectories
@@ -73,6 +69,45 @@ GO
 ALTER TABLE ConfigFiles
 ADD CONSTRAINT CHK_Weeks CHECK (Weeks > 0);
 GO
+
+-- Tạo bảng Authors
+CREATE TABLE Authors (
+    AuthorID INT IDENTITY(1,1), -- Khóa chính, tự động tăng
+    AuthorName NVARCHAR(255) NOT NULL UNIQUE, -- Tên tác giả (duy nhất)
+	AuthorEmail NVARCHAR(255) NOT NULL UNIQUE,
+    CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo bản ghi
+    UpdatedAt DATETIME DEFAULT GETDATE() -- Ngày cập nhật bản ghi
+);
+GO 
+-- Thêm ràng buộc Primary Key cho cột AuthorID
+ALTER TABLE Authors
+ADD CONSTRAINT PK_Authors PRIMARY KEY (AuthorID);
+GO
+
+-- Tạo bảng ConfigAuthors
+CREATE TABLE ConfigAuthors (
+    ConfigID INT NOT NULL, -- Khóa ngoại tham chiếu đến ConfigFiles
+    AuthorID INT NOT NULL, -- Khóa ngoại tham chiếu đến Authors
+    CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo bản ghi
+    UpdatedAt DATETIME DEFAULT GETDATE() -- Ngày cập nhật bản ghi
+);
+GO
+-- Thêm khóa chính kết hợp cho bảng ConfigAuthors
+ALTER TABLE ConfigAuthors
+ADD CONSTRAINT PK_ConfigAuthors PRIMARY KEY (ConfigID, AuthorID);
+GO
+-- Thêm khóa ngoại tham chiếu đến bảng ConfigFiles
+ALTER TABLE ConfigAuthors
+ADD CONSTRAINT FK_ConfigAuthors_ConfigFiles
+FOREIGN KEY (ConfigID) REFERENCES ConfigFiles(ConfigID) ON DELETE CASCADE;
+GO
+
+-- Thêm khóa ngoại tham chiếu đến bảng Authors
+ALTER TABLE ConfigAuthors
+ADD CONSTRAINT FK_ConfigAuthors_Authors
+FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID) ON DELETE CASCADE;
+GO  
+
 -- Tạo bảng ProjectWeeks
 CREATE TABLE ProjectWeeks (
     ProjectWeekId INT IDENTITY(1,1),
@@ -84,7 +119,6 @@ CREATE TABLE ProjectWeeks (
     UpdatedAt DATETIME
 );
 GO
-
 -- Thêm khóa chính cho bảng ProjectWeeks
 ALTER TABLE ProjectWeeks
 ADD CONSTRAINT PK_ProjectWeeks PRIMARY KEY (ProjectWeekId);
