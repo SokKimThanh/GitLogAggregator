@@ -72,7 +72,27 @@ namespace DAL
                 throw new Exception("Lỗi khi lấy ngày bắt đầu thực tập: " + ex.Message);
             }
         }
+        public ConfigFileET GetLastAddedConfigFile()
+        {
+            // Sử dụng LINQ để lấy đối tượng vừa thêm
+            var configFile = db.ConfigFiles
+                      .OrderByDescending(cf => cf.ConfigID)
+                      .FirstOrDefault(); // Lấy bản ghi đầu tiên
 
+            return new ConfigFileET()
+            {
+                ConfigID = configFile.ConfigID,
+                ProjectDirectory = configFile.ProjectDirectory,
+                InternshipDirectoryId = configFile.InternshipDirectoryId,
+                FirstCommitAuthor = configFile.FirstCommitAuthor,
+                InternshipStartDate = configFile.InternshipStartDate,
+                InternshipEndDate = configFile.InternshipEndDate,
+                Weeks = configFile.Weeks,
+                FirstCommitDate = configFile.FirstCommitDate,
+                CreatedAt = configFile.CreatedAt.Value,
+                UpdatedAt = configFile.UpdatedAt.Value
+            };
+        }
         public ConfigFileET GetByID(int configID)
         {
             try

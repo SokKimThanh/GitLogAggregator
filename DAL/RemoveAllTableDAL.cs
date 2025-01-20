@@ -40,15 +40,25 @@ namespace DAL
                     db.SubmitChanges();
                     Console.Write("Đã xóa dữ liệu từ bảng ProjectWeeks.\n");
 
-                    // Xóa dữ liệu từ bảng ConfigFiles
-                    //db.ConfigFiles.DeleteAllOnSubmit(db.ConfigFiles);
-                    //db.SubmitChanges();
-                    //Console.Write("Đã xóa dữ liệu từ bảng ConfigFiles.\n");
+                    //Xóa dữ liệu từ bảng ConfigFiles
+                    db.ConfigFiles.DeleteAllOnSubmit(db.ConfigFiles);
+                    db.SubmitChanges();
+                    Console.Write("Đã xóa dữ liệu từ bảng ConfigFiles.\n");
+
+                    // Xóa dữ liệu từ bảng Authors
+                    db.Authors.DeleteAllOnSubmit(db.Authors);
+                    db.SubmitChanges();
+                    Console.Write("Đã xóa dữ liệu từ bảng Authors.\n");
+
+                    // Xóa dữ liệu từ bảng ConfigAuthors
+                    db.ConfigAuthors.DeleteAllOnSubmit(db.ConfigAuthors);
+                    db.SubmitChanges();
+                    Console.Write("Đã xóa dữ liệu từ bảng ConfigAuthors.\n");
 
                     // Xóa dữ liệu từ bảng InternshipDirectories
-                    //db.InternshipDirectories.DeleteAllOnSubmit(db.InternshipDirectories);
-                    //db.SubmitChanges();
-                    //Console.Write("Đã xóa dữ liệu từ bảng InternshipDirectories.\n");
+                    db.InternshipDirectories.DeleteAllOnSubmit(db.InternshipDirectories);
+                    db.SubmitChanges();
+                    Console.Write("Đã xóa dữ liệu từ bảng InternshipDirectories.\n");
                 }
             }
             catch (Exception ex)

@@ -39,7 +39,7 @@
             this.weekListView = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label6 = new System.Windows.Forms.Label();
-            this.btnClearDataListView = new System.Windows.Forms.Button();
+            this.btnRefreshData = new System.Windows.Forms.Button();
             this.helpButton = new System.Windows.Forms.Button();
             this.fileListView = new System.Windows.Forms.ListView();
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -216,21 +216,21 @@
             this.label6.Text = "Hiển thị thông báo:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // btnClearDataListView
+            // btnRefreshData
             // 
-            this.btnClearDataListView.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.btnClearDataListView.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnClearDataListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClearDataListView.FlatAppearance.BorderSize = 0;
-            this.btnClearDataListView.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearDataListView.Location = new System.Drawing.Point(143, 33);
-            this.btnClearDataListView.Margin = new System.Windows.Forms.Padding(1);
-            this.btnClearDataListView.Name = "btnClearDataListView";
-            this.btnClearDataListView.Size = new System.Drawing.Size(140, 30);
-            this.btnClearDataListView.TabIndex = 14;
-            this.btnClearDataListView.Text = "Làm mới";
-            this.btnClearDataListView.UseVisualStyleBackColor = false;
-            this.btnClearDataListView.Click += new System.EventHandler(this.BtnRefreshData_Click);
+            this.btnRefreshData.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnRefreshData.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRefreshData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnRefreshData.FlatAppearance.BorderSize = 0;
+            this.btnRefreshData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefreshData.Location = new System.Drawing.Point(143, 33);
+            this.btnRefreshData.Margin = new System.Windows.Forms.Padding(1);
+            this.btnRefreshData.Name = "btnRefreshData";
+            this.btnRefreshData.Size = new System.Drawing.Size(140, 30);
+            this.btnRefreshData.TabIndex = 14;
+            this.btnRefreshData.Text = "Làm mới";
+            this.btnRefreshData.UseVisualStyleBackColor = false;
+            this.btnRefreshData.Click += new System.EventHandler(this.BtnRefreshData_Click);
             // 
             // helpButton
             // 
@@ -444,7 +444,7 @@
             this.tableLayoutPanel9.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.cboConfigFiles, 0, 2);
             this.tableLayoutPanel9.Controls.Add(this.cboInternshipFolder, 0, 1);
-            this.tableLayoutPanel9.Controls.Add(this.btnClearDataListView, 1, 1);
+            this.tableLayoutPanel9.Controls.Add(this.btnRefreshData, 1, 1);
             this.tableLayoutPanel9.Controls.Add(this.cboAuthorCommit, 1, 2);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(94, 3);
@@ -1031,7 +1031,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ListView weekListView;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button btnClearDataListView;
+        private System.Windows.Forms.Button btnRefreshData;
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.PictureBox btnSetupThuMucThucTap;
         private System.Windows.Forms.ListView fileListView;

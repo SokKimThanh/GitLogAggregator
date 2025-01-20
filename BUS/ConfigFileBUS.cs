@@ -20,7 +20,10 @@ namespace BUS
         {
             return dal.GetByID(id);
         }
-
+        public ConfigFileET GetLastAddedConfigFile()
+        {
+            return dal.GetLastAddedConfigFile();
+        }
         public DateTime GetInternshipStartDate(int configId)
         {
             return dal.GetInternshipStartDate(configId);

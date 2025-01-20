@@ -74,8 +74,8 @@ GO
 -- Tạo bảng Authors
 CREATE TABLE Authors (
     AuthorID INT IDENTITY(1,1), -- Khóa chính, tự động tăng
-    AuthorName NVARCHAR(255) NOT NULL UNIQUE, -- Tên tác giả (duy nhất)
-	AuthorEmail NVARCHAR(255) NOT NULL UNIQUE,
+    AuthorName NVARCHAR(255) NOT NULL, -- Tên tác giả 
+	AuthorEmail NVARCHAR(255) NOT NULL UNIQUE,-- Email (duy nhất)
     CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo bản ghi
     UpdatedAt DATETIME DEFAULT GETDATE() -- Ngày cập nhật bản ghi
 );

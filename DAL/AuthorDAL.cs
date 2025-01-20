@@ -65,6 +65,21 @@ namespace DAL
         // Thêm tác giả mới
         public void Add(AuthorET author)
         {
+            // Kiểm tra xem AuthorName hoặc AuthorEmail đã tồn tại trong bảng Authors chưa
+            var existingAuthorByName = db.Authors.FirstOrDefault(a => a.AuthorName == author.AuthorName);
+            var existingAuthorByEmail = db.Authors.FirstOrDefault(a => a.AuthorEmail == author.AuthorEmail);
+
+            if (existingAuthorByName != null)
+            {
+                throw new Exception($"Tác giả với tên '{author.AuthorName}' đã tồn tại trong cơ sở dữ liệu.");
+            }
+
+            if (existingAuthorByEmail != null)
+            {
+                throw new Exception($"Tác giả với email '{author.AuthorEmail}' đã tồn tại trong cơ sở dữ liệu.");
+            }
+
+            // Tạo đối tượng Author mới
             var newAuthor = new Author
             {
                 AuthorName = author.AuthorName,
@@ -73,6 +88,7 @@ namespace DAL
                 UpdatedAt = DateTime.Now
             };
 
+            // Thêm vào bảng Authors
             db.Authors.InsertOnSubmit(newAuthor);
             db.SubmitChanges();
         }
