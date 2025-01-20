@@ -72,7 +72,7 @@
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.label11 = new System.Windows.Forms.Label();
-            this.cboProjectWeek = new System.Windows.Forms.ComboBox();
+            this.cboSearchByWeek = new System.Windows.Forms.ComboBox();
             this.chkSearchAllWeeks = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.cboSearchByAuthor = new System.Windows.Forms.ComboBox();
@@ -361,7 +361,7 @@
             // 
             // btnExportExcel
             // 
-            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -432,6 +432,7 @@
             this.tableLayoutPanel9.ColumnCount = 2;
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel9.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel9.Controls.Add(this.btnCreateWeek, 1, 2);
             this.tableLayoutPanel9.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.cboConfigFiles, 0, 2);
             this.tableLayoutPanel9.Controls.Add(this.cboThuMucThucTap, 0, 1);
@@ -518,7 +519,6 @@
             // 
             // flowLayoutPanel2
             // 
-            this.flowLayoutPanel2.Controls.Add(this.btnCreateWeek);
             this.flowLayoutPanel2.Controls.Add(this.btnSaveGit);
             this.flowLayoutPanel2.Controls.Add(this.btnRemoveAll);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -532,13 +532,13 @@
             // btnCreateWeek
             // 
             this.btnCreateWeek.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.btnCreateWeek.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnCreateWeek.FlatAppearance.BorderSize = 0;
             this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateWeek.ImageKey = "plus.png";
-            this.btnCreateWeek.Location = new System.Drawing.Point(253, 1);
-            this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(1);
+            this.btnCreateWeek.Location = new System.Drawing.Point(145, 67);
             this.btnCreateWeek.Name = "btnCreateWeek";
-            this.btnCreateWeek.Size = new System.Drawing.Size(121, 39);
+            this.btnCreateWeek.Size = new System.Drawing.Size(136, 27);
             this.btnCreateWeek.TabIndex = 25;
             this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;
@@ -549,10 +549,10 @@
             this.btnSaveGit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.btnSaveGit.FlatAppearance.BorderSize = 0;
             this.btnSaveGit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSaveGit.Location = new System.Drawing.Point(124, 1);
+            this.btnSaveGit.Location = new System.Drawing.Point(188, 1);
             this.btnSaveGit.Margin = new System.Windows.Forms.Padding(1);
             this.btnSaveGit.Name = "btnSaveGit";
-            this.btnSaveGit.Size = new System.Drawing.Size(127, 39);
+            this.btnSaveGit.Size = new System.Drawing.Size(186, 39);
             this.btnSaveGit.TabIndex = 25;
             this.btnSaveGit.Text = "Tải Commit";
             this.btnSaveGit.UseVisualStyleBackColor = false;
@@ -563,10 +563,10 @@
             this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.btnRemoveAll.FlatAppearance.BorderSize = 0;
             this.btnRemoveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemoveAll.Location = new System.Drawing.Point(3, 1);
+            this.btnRemoveAll.Location = new System.Drawing.Point(6, 1);
             this.btnRemoveAll.Margin = new System.Windows.Forms.Padding(1);
             this.btnRemoveAll.Name = "btnRemoveAll";
-            this.btnRemoveAll.Size = new System.Drawing.Size(119, 36);
+            this.btnRemoveAll.Size = new System.Drawing.Size(180, 36);
             this.btnRemoveAll.TabIndex = 25;
             this.btnRemoveAll.Text = "Xóa tất cả";
             this.btnRemoveAll.UseVisualStyleBackColor = false;
@@ -615,7 +615,7 @@
             this.tableLayoutPanel4.Controls.Add(this.label9, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.txtFirstCommitDate, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label11, 0, 1);
-            this.tableLayoutPanel4.Controls.Add(this.cboProjectWeek, 1, 1);
+            this.tableLayoutPanel4.Controls.Add(this.cboSearchByWeek, 1, 1);
             this.tableLayoutPanel4.Controls.Add(this.chkSearchAllWeeks, 2, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 2);
             this.tableLayoutPanel4.Controls.Add(this.cboSearchByAuthor, 1, 2);
@@ -643,14 +643,14 @@
             this.label11.Text = "Lọc commit theo tuần";
             this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // cboProjectWeek
+            // cboSearchByWeek
             // 
-            this.cboProjectWeek.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cboProjectWeek.FormattingEnabled = true;
-            this.cboProjectWeek.Location = new System.Drawing.Point(163, 37);
-            this.cboProjectWeek.Name = "cboProjectWeek";
-            this.cboProjectWeek.Size = new System.Drawing.Size(121, 25);
-            this.cboProjectWeek.TabIndex = 9;
+            this.cboSearchByWeek.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboSearchByWeek.FormattingEnabled = true;
+            this.cboSearchByWeek.Location = new System.Drawing.Point(163, 37);
+            this.cboSearchByWeek.Name = "cboSearchByWeek";
+            this.cboSearchByWeek.Size = new System.Drawing.Size(121, 25);
+            this.cboSearchByWeek.TabIndex = 9;
             // 
             // chkSearchAllWeeks
             // 
@@ -780,7 +780,7 @@
             // 
             // btnExportTXT
             // 
-            this.btnExportTXT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnExportTXT.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
             this.btnExportTXT.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportTXT.FlatAppearance.BorderSize = 0;
             this.btnExportTXT.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -802,20 +802,19 @@
             this.searchPanel.Controls.Add(this.btnSearchReport, 1, 0);
             this.searchPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.searchPanel.Location = new System.Drawing.Point(0, 0);
-            this.searchPanel.Margin = new System.Windows.Forms.Padding(0);
+            this.searchPanel.Margin = new System.Windows.Forms.Padding(0, 0, 1, 0);
             this.searchPanel.Name = "searchPanel";
             this.searchPanel.RowCount = 1;
             this.searchPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.searchPanel.Size = new System.Drawing.Size(621, 30);
+            this.searchPanel.Size = new System.Drawing.Size(620, 30);
             this.searchPanel.TabIndex = 37;
             // 
             // txtSearchReport
             // 
             this.txtSearchReport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSearchReport.Location = new System.Drawing.Point(0, 0);
-            this.txtSearchReport.Margin = new System.Windows.Forms.Padding(0);
+            this.txtSearchReport.Location = new System.Drawing.Point(3, 3);
             this.txtSearchReport.Name = "txtSearchReport";
-            this.txtSearchReport.Size = new System.Drawing.Size(528, 25);
+            this.txtSearchReport.Size = new System.Drawing.Size(517, 25);
             this.txtSearchReport.TabIndex = 33;
             // 
             // btnSearchReport
@@ -825,10 +824,9 @@
             this.btnSearchReport.FlatAppearance.BorderSize = 0;
             this.btnSearchReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSearchReport.ImageKey = "magnifying-glass.png";
-            this.btnSearchReport.Location = new System.Drawing.Point(529, 1);
-            this.btnSearchReport.Margin = new System.Windows.Forms.Padding(1);
+            this.btnSearchReport.Location = new System.Drawing.Point(526, 3);
             this.btnSearchReport.Name = "btnSearchReport";
-            this.btnSearchReport.Size = new System.Drawing.Size(91, 28);
+            this.btnSearchReport.Size = new System.Drawing.Size(91, 24);
             this.btnSearchReport.TabIndex = 34;
             this.btnSearchReport.Text = "Tìm kiếm";
             this.btnSearchReport.UseVisualStyleBackColor = false;
@@ -1074,7 +1072,7 @@
         private System.Windows.Forms.ImageList crudImageList;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.ComboBox cboProjectWeek;
+        private System.Windows.Forms.ComboBox cboSearchByWeek;
         private System.Windows.Forms.CheckBox chkSearchAllWeeks;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Label label12;

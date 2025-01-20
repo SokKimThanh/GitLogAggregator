@@ -125,9 +125,9 @@ namespace GitLogAggregator
             }
 
             // Cập nhật danh sách tuần trên ComboBox
-            cboProjectWeek.DataSource = projectWeeksBUS.GetAll();
-            cboProjectWeek.ValueMember = "ProjectWeekId";
-            cboProjectWeek.DisplayMember = "ProjectWeekName";
+            cboSearchByWeek.DataSource = projectWeeksBUS.GetAll();
+            cboSearchByWeek.ValueMember = "ProjectWeekId";
+            cboSearchByWeek.DisplayMember = "ProjectWeekName";
 
             // Danh sách các nút crud và icon tương ứng
             var buttonsToConfigure = new Dictionary<Button, ButtonImage>
@@ -217,12 +217,12 @@ namespace GitLogAggregator
         {
             if (chkSearchAllWeeks.Checked)
             {
-                cboProjectWeek.Enabled = false; // Khóa ComboBox
+                cboSearchByWeek.Enabled = false; // Khóa ComboBox
                 chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Thay đổi text
             }
             else
             {
-                cboProjectWeek.Enabled = true; // Mở khóa ComboBox
+                cboSearchByWeek.Enabled = true; // Mở khóa ComboBox
                 chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Thay đổi text
             }
         }
@@ -1887,7 +1887,7 @@ git %*
                 // Nếu không tìm kiếm tất cả các tuần, lấy giá trị ProjectWeekId từ ComboBox
                 if (!searchAllWeeks)
                 {
-                    projectWeekId = Convert.ToInt32(cboProjectWeek.SelectedValue);
+                    projectWeekId = Convert.ToInt32(cboSearchByWeek.SelectedValue);
                 }
 
                 // Gọi hàm tìm kiếm
@@ -2095,9 +2095,9 @@ git %*
             AppendTextWithScroll("Tạo xong projectweek.\n");
 
             // Cập nhật lại danh sách tuần trên ComboBox
-            cboProjectWeek.DataSource = projectWeeksBUS.GetAll();
-            cboProjectWeek.ValueMember = "ProjectWeekId";
-            cboProjectWeek.DisplayMember = "ProjectWeekName";
+            cboSearchByWeek.DataSource = projectWeeksBUS.GetAll();
+            cboSearchByWeek.ValueMember = "ProjectWeekId";
+            cboSearchByWeek.DisplayMember = "ProjectWeekName";
         }
 
         private void chkUseDate_CheckedChanged(object sender, EventArgs e)
@@ -2116,12 +2116,12 @@ git %*
         {
             if (chkSearchAllWeeks.Checked)
             {
-                cboProjectWeek.Enabled = false; // Khóa ComboBox
+                cboSearchByWeek.Enabled = false; // Khóa ComboBox
                 chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Thay đổi text
             }
             else
             {
-                cboProjectWeek.Enabled = true; // Mở khóa ComboBox
+                cboSearchByWeek.Enabled = true; // Mở khóa ComboBox
                 chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Thay đổi text
             }
         }
