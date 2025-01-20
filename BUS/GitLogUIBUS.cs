@@ -34,9 +34,9 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.GetFirstCommitAuthor(folderPath);
         }
-        public List<string> GetGitAuthors(string projectDirectory)
+        public List<string> GetAuthorsFromRepository(string projectDirectory)
         {
-            return data.GetGitAuthors(projectDirectory);
+            return data.GetAuthorsFromRepository(projectDirectory);
         }
         /// <summary>
         /// Lệnh Git tìm ngày commit đầu tiên

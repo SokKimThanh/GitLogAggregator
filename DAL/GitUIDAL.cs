@@ -70,7 +70,7 @@ namespace GitLogAggregator.DataAccess
         }
 
 
-        public List<string> GetGitAuthors(string projectDirectory)
+        public List<string> GetAuthorsFromRepository(string projectDirectory)
         {
             // Kiểm tra thư mục dự án
             if (string.IsNullOrEmpty(projectDirectory) || !Directory.Exists(projectDirectory))
@@ -182,7 +182,7 @@ namespace GitLogAggregator.DataAccess
             List<string> authors;
             try
             {
-                authors = GetGitAuthors(projectDirectory);
+                authors = GetAuthorsFromRepository(projectDirectory);
             }
             catch (Exception ex)
             {

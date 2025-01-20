@@ -363,25 +363,29 @@ namespace GitLogAggregator
         /// <summary> 
         private void BtnAddProject_Click(object sender, EventArgs e)
         {
-            btnOpenGitFolder.Enabled = false; // close
+            btnOpenGitFolder.Enabled = false; // Tắt nút mở thư mục
+
+            // Hiển thị hộp thoại chọn thư mục
             if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
             {
-                btnOpenGitFolder.Enabled = true; // open
+                btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                 return;
             }
+
             projectDirectory = folderBrowserDialog.SelectedPath;
 
+            // Kiểm tra thư mục có phải là Git repository hợp lệ không
             if (!IsValidGitRepository(projectDirectory))
             {
-                btnOpenGitFolder.Enabled = true; // open
-
+                btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                 AppendTextWithScroll("Lỗi: Thư mục được chọn không chứa repository Git hợp lệ. Vui lòng chọn lại.\n");
                 return;
             }
 
+            // Kiểm tra repository có chứa commit nào không
             if (!HasCommitsInRepository(projectDirectory))
             {
-                btnOpenGitFolder.Enabled = true; // open
+                btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                 AppendTextWithScroll("Lỗi: Repository Git này không chứa bất kỳ commit nào. Vui lòng chọn một repository khác hoặc tạo commit đầu tiên.\n");
                 return;
             }
@@ -392,28 +396,33 @@ namespace GitLogAggregator
             if (configBus.GetAll().Any(cf => cf.ProjectDirectory == projectDirectory))
             {
                 AppendTextWithScroll("Lỗi: Dự án đã tồn tại trong cơ sở dữ liệu.\n");
+                btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                 return;
             }
 
-            // Lấy thông tin commit
+            // Lấy thông tin commit đầu tiên
             DateTime firstCommitDate = gitgui_bus.GetFirstCommitDate(projectDirectory);
 
-            // Kiểm tra xem ngày thực tập có hợp lệ không (ngày thực tập phải < ngày commit đầu tiên)
+            // Kiểm tra ngày bắt đầu thực tập có hợp lệ không
             if (txtInternshipStartDate.Value >= firstCommitDate)
             {
                 AppendTextWithScroll("Lỗi: Ngày bắt đầu thực tập phải nhỏ hơn ngày commit đầu tiên.\n");
+                btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                 return;
             }
 
+            // Thiết lập ngày tối đa cho DateTimePicker
             SetMaxDateForDateTimePicker(txtInternshipStartDate, firstCommitDate);
 
-            txtFolderInternshipPath = GetLatestInternshipFolderPath();
-
             // Xác định và tạo thư mục internship_week trên Desktop
+            txtFolderInternshipPath = GetLatestInternshipFolderPath();
             if (!Directory.Exists(txtFolderInternshipPath))
             {
                 Directory.CreateDirectory(txtFolderInternshipPath);
             }
+
+            // Lấy danh sách tác giả từ lịch sử commit của repository
+            List<string> authors = gitgui_bus.GetAuthorsFromRepository(projectDirectory);
 
             // Tạo đối tượng ConfigFileET và lưu vào cơ sở dữ liệu
             ConfigFileET configFile = new ConfigFileET
@@ -427,26 +436,49 @@ namespace GitLogAggregator
                 InternshipDirectoryId = (int)cboThuMucThucTap.SelectedValue
             };
 
-            InternshipDirectoryET internshipDirectory = internshipDirectoryBUS.GetByID(configFile.InternshipDirectoryId);
-            internshipDirectory.InternshipWeekFolder = txtFolderInternshipPath;
+            // Lưu thông tin cấu hình dự án vào database
+            configBus.Add(configFile);
+
+            // Lưu danh sách tác giả vào database và thiết lập mối quan hệ với dự án
+            AuthorBUS authorBUS = new AuthorBUS();
+            ConfigAuthorBUS configAuthorBUS = new ConfigAuthorBUS();
+
+            foreach (var authorName in authors)
+            {
+                // Kiểm tra xem tác giả đã tồn tại trong database chưa
+                AuthorET author = authorBUS.GetByName(authorName);
+                if (author == null)
+                {
+                    // Nếu chưa tồn tại, thêm tác giả mới vào database
+                    author = new AuthorET
+                    {
+                        AuthorName = authorName,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    authorBUS.Add(author);
+                }
+
+                // Thêm mối quan hệ giữa dự án và tác giả vào bảng ConfigAuthors
+                configAuthorBUS.Add(new ConfigAuthorET
+                {
+                    ConfigID = configFile.ConfigID,
+                    AuthorID = author.AuthorID
+                });
+            }
 
             // Cập nhật giao diện khi chọn thư mục dự án
             UpdateControls(configFile);
 
-            // Thêm tác giả vào commobbox
-            LoadAuthorsIntoComboBox(????);
-
-            // Thêm thông tin cấu hình dự án
-            configBus.Add(configFile);
-
+            // Tải danh sách tác giả của dự án mới vào ComboBox
+            LoadAuthorsIntoComboBox(configFile.ConfigID);
 
             // Load lại dữ liệu lên ListView
             LoadProjectListView();
 
-
             AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
 
-            btnOpenGitFolder.Enabled = true; // open
+            btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
         }
 
 
