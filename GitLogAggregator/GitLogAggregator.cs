@@ -86,7 +86,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void GitLogAggregator_Load(object sender, EventArgs e)
+        private void GitLogAggregator_Load(object sender, EventArgs e)
         {
             // Tải dữ liệu từ thư mục `internship_week` và hiển thị lên form
             desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -160,23 +160,7 @@ namespace GitLogAggregator
             }
 
             // Xây dựng danh sách các tuần và tệp
-            BuildWeekFileListView(txtFolderInternshipPath);
-
-            try
-            {
-                // Hiển thị thông báo đang tải dữ liệu
-                AppendTextWithScroll("Đang tải dữ liệu...\n");
-
-                // Tải dữ liệu trong nền
-                allSearchResults = await Task.Run(() => commitBUS.SearchCommits("", 0, 1));
-
-                // Hiển thị kết quả theo trang
-                DisplaySearchResults();
-            }
-            catch (Exception ex)
-            {
-                AppendTextWithScroll($"Lỗi khi tải dữ liệu ban đầu: {ex.Message}\n");
-            }
+            BuildWeekFileListView(txtFolderInternshipPath); 
 
             // Cập nhật danh sách tuần trên ComboBox
             cboProjectWeek.DataSource = projectWeeksBUS.GetAll();
@@ -217,16 +201,26 @@ namespace GitLogAggregator
         }
         private void SearchAllWeeks()
         {
-            // Gọi hàm tìm kiếm tất cả các tuần
-            var searchResult = commitBUS.SearchCommits("", projectWeekId: 0, searchAllWeeks: 1);
+            try
+            {
+                // Hiển thị thông báo đang tải dữ liệu
+                AppendTextWithScroll("Đang tải dữ liệu...\n");
 
-            // Hiển thị kết quả lên DataGridView
-            dgvReportCommits.DataSource = searchResult;
+                // Tải dữ liệu
+                allSearchResults = commitBUS.SearchCommits("", 0, 1);
+
+                // Hiển thị kết quả theo trang
+                DisplaySearchResults();
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi khi tải dữ liệu ban đầu: {ex.Message}\n");
+            }
 
             // Ghi thông báo kết quả
-            if (searchResult != null && searchResult.Any())
+            if (allSearchResults != null && allSearchResults.Any())
             {
-                AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {searchResult.Count} kết quả.\n");
+                AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {allSearchResults.Count} kết quả.\n");
             }
             else
             {
