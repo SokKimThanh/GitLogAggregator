@@ -12,7 +12,7 @@ namespace ET
     /// </summary>
     public class ConfigFileET
     {
-        public int ID { get; set; }
+        public int ConfigID { get; set; }
         public string ProjectDirectory { get; set; }
         public int InternshipDirectoryId { get; set; }
         public string Author { get; set; }

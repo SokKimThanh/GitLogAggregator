@@ -30,18 +30,24 @@ namespace DAL
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
-    partial void InsertCommitGroupMember(CommitGroupMember instance);
-    partial void UpdateCommitGroupMember(CommitGroupMember instance);
-    partial void DeleteCommitGroupMember(CommitGroupMember instance);
+    partial void InsertAuthor(Author instance);
+    partial void UpdateAuthor(Author instance);
+    partial void DeleteAuthor(Author instance);
     partial void InsertProjectWeek(ProjectWeek instance);
     partial void UpdateProjectWeek(ProjectWeek instance);
     partial void DeleteProjectWeek(ProjectWeek instance);
+    partial void InsertCommitGroupMember(CommitGroupMember instance);
+    partial void UpdateCommitGroupMember(CommitGroupMember instance);
+    partial void DeleteCommitGroupMember(CommitGroupMember instance);
     partial void InsertCommitPeriod(CommitPeriod instance);
     partial void UpdateCommitPeriod(CommitPeriod instance);
     partial void DeleteCommitPeriod(CommitPeriod instance);
     partial void InsertCommit(Commit instance);
     partial void UpdateCommit(Commit instance);
     partial void DeleteCommit(Commit instance);
+    partial void InsertConfigAuthor(ConfigAuthor instance);
+    partial void UpdateConfigAuthor(ConfigAuthor instance);
+    partial void DeleteConfigAuthor(ConfigAuthor instance);
     partial void InsertConfigFile(ConfigFile instance);
     partial void UpdateConfigFile(ConfigFile instance);
     partial void DeleteConfigFile(ConfigFile instance);
@@ -83,11 +89,11 @@ namespace DAL
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<CommitGroupMember> CommitGroupMembers
+		public System.Data.Linq.Table<Author> Authors
 		{
 			get
 			{
-				return this.GetTable<CommitGroupMember>();
+				return this.GetTable<Author>();
 			}
 		}
 		
@@ -96,6 +102,14 @@ namespace DAL
 			get
 			{
 				return this.GetTable<ProjectWeek>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CommitGroupMember> CommitGroupMembers
+		{
+			get
+			{
+				return this.GetTable<CommitGroupMember>();
 			}
 		}
 		
@@ -112,6 +126,14 @@ namespace DAL
 			get
 			{
 				return this.GetTable<Commit>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ConfigAuthor> ConfigAuthors
+		{
+			get
+			{
+				return this.GetTable<ConfigAuthor>();
 			}
 		}
 		
@@ -140,174 +162,156 @@ namespace DAL
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommitGroupMembers")]
-	public partial class CommitGroupMember : INotifyPropertyChanging, INotifyPropertyChanged
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Authors")]
+	public partial class Author : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _PeriodID;
+		private int _AuthorID;
 		
-		private int _CommitId;
+		private string _AuthorName;
 		
-		private System.Nullable<System.DateTime> _AddedAt;
+		private string _AuthorEmail;
 		
-		private EntityRef<CommitPeriod> _CommitPeriod;
+		private System.Nullable<System.DateTime> _CreatedAt;
 		
-		private EntityRef<Commit> _Commit;
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntitySet<ConfigAuthor> _ConfigAuthors;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnPeriodIDChanging(int value);
-    partial void OnPeriodIDChanged();
-    partial void OnCommitIdChanging(int value);
-    partial void OnCommitIdChanged();
-    partial void OnAddedAtChanging(System.Nullable<System.DateTime> value);
-    partial void OnAddedAtChanged();
+    partial void OnAuthorIDChanging(int value);
+    partial void OnAuthorIDChanged();
+    partial void OnAuthorNameChanging(string value);
+    partial void OnAuthorNameChanged();
+    partial void OnAuthorEmailChanging(string value);
+    partial void OnAuthorEmailChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
     #endregion
 		
-		public CommitGroupMember()
+		public Author()
 		{
-			this._CommitPeriod = default(EntityRef<CommitPeriod>);
-			this._Commit = default(EntityRef<Commit>);
+			this._ConfigAuthors = new EntitySet<ConfigAuthor>(new Action<ConfigAuthor>(this.attach_ConfigAuthors), new Action<ConfigAuthor>(this.detach_ConfigAuthors));
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int PeriodID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int AuthorID
 		{
 			get
 			{
-				return this._PeriodID;
+				return this._AuthorID;
 			}
 			set
 			{
-				if ((this._PeriodID != value))
+				if ((this._AuthorID != value))
 				{
-					if (this._CommitPeriod.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnPeriodIDChanging(value);
+					this.OnAuthorIDChanging(value);
 					this.SendPropertyChanging();
-					this._PeriodID = value;
-					this.SendPropertyChanged("PeriodID");
-					this.OnPeriodIDChanged();
+					this._AuthorID = value;
+					this.SendPropertyChanged("AuthorID");
+					this.OnAuthorIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", DbType="Int NOT NULL", IsPrimaryKey=true)]
-		public int CommitId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorName", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string AuthorName
 		{
 			get
 			{
-				return this._CommitId;
+				return this._AuthorName;
 			}
 			set
 			{
-				if ((this._CommitId != value))
+				if ((this._AuthorName != value))
 				{
-					if (this._Commit.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnCommitIdChanging(value);
+					this.OnAuthorNameChanging(value);
 					this.SendPropertyChanging();
-					this._CommitId = value;
-					this.SendPropertyChanged("CommitId");
-					this.OnCommitIdChanged();
+					this._AuthorName = value;
+					this.SendPropertyChanged("AuthorName");
+					this.OnAuthorNameChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AddedAt", DbType="DateTime")]
-		public System.Nullable<System.DateTime> AddedAt
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorEmail", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string AuthorEmail
 		{
 			get
 			{
-				return this._AddedAt;
+				return this._AuthorEmail;
 			}
 			set
 			{
-				if ((this._AddedAt != value))
+				if ((this._AuthorEmail != value))
 				{
-					this.OnAddedAtChanging(value);
+					this.OnAuthorEmailChanging(value);
 					this.SendPropertyChanging();
-					this._AddedAt = value;
-					this.SendPropertyChanged("AddedAt");
-					this.OnAddedAtChanged();
+					this._AuthorEmail = value;
+					this.SendPropertyChanged("AuthorEmail");
+					this.OnAuthorEmailChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_CommitGroupMember", Storage="_CommitPeriod", ThisKey="PeriodID", OtherKey="PeriodID", IsForeignKey=true)]
-		public CommitPeriod CommitPeriod
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
 		{
 			get
 			{
-				return this._CommitPeriod.Entity;
+				return this._CreatedAt;
 			}
 			set
 			{
-				CommitPeriod previousValue = this._CommitPeriod.Entity;
-				if (((previousValue != value) 
-							|| (this._CommitPeriod.HasLoadedOrAssignedValue == false)))
+				if ((this._CreatedAt != value))
 				{
+					this.OnCreatedAtChanging(value);
 					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CommitPeriod.Entity = null;
-						previousValue.CommitGroupMembers.Remove(this);
-					}
-					this._CommitPeriod.Entity = value;
-					if ((value != null))
-					{
-						value.CommitGroupMembers.Add(this);
-						this._PeriodID = value.PeriodID;
-					}
-					else
-					{
-						this._PeriodID = default(int);
-					}
-					this.SendPropertyChanged("CommitPeriod");
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_CommitGroupMember", Storage="_Commit", ThisKey="CommitId", OtherKey="CommitId", IsForeignKey=true)]
-		public Commit Commit
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
 		{
 			get
 			{
-				return this._Commit.Entity;
+				return this._UpdatedAt;
 			}
 			set
 			{
-				Commit previousValue = this._Commit.Entity;
-				if (((previousValue != value) 
-							|| (this._Commit.HasLoadedOrAssignedValue == false)))
+				if ((this._UpdatedAt != value))
 				{
+					this.OnUpdatedAtChanging(value);
 					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Commit.Entity = null;
-						previousValue.CommitGroupMembers.Remove(this);
-					}
-					this._Commit.Entity = value;
-					if ((value != null))
-					{
-						value.CommitGroupMembers.Add(this);
-						this._CommitId = value.CommitId;
-					}
-					else
-					{
-						this._CommitId = default(int);
-					}
-					this.SendPropertyChanged("Commit");
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
 				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Author_ConfigAuthor", Storage="_ConfigAuthors", ThisKey="AuthorID", OtherKey="AuthorID")]
+		public EntitySet<ConfigAuthor> ConfigAuthors
+		{
+			get
+			{
+				return this._ConfigAuthors;
+			}
+			set
+			{
+				this._ConfigAuthors.Assign(value);
 			}
 		}
 		
@@ -329,6 +333,18 @@ namespace DAL
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConfigAuthors(ConfigAuthor entity)
+		{
+			this.SendPropertyChanging();
+			entity.Author = this;
+		}
+		
+		private void detach_ConfigAuthors(ConfigAuthor entity)
+		{
+			this.SendPropertyChanging();
+			entity.Author = null;
 		}
 	}
 	
@@ -540,7 +556,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ConfigID", IsForeignKey=true)]
 		public InternshipDirectory InternshipDirectory
 		{
 			get
@@ -604,6 +620,198 @@ namespace DAL
 		{
 			this.SendPropertyChanging();
 			entity.ProjectWeek = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommitGroupMembers")]
+	public partial class CommitGroupMember : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PeriodID;
+		
+		private int _CommitId;
+		
+		private System.Nullable<System.DateTime> _AddedAt;
+		
+		private EntityRef<CommitPeriod> _CommitPeriod;
+		
+		private EntityRef<Commit> _Commit;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPeriodIDChanging(int value);
+    partial void OnPeriodIDChanged();
+    partial void OnCommitIdChanging(int value);
+    partial void OnCommitIdChanged();
+    partial void OnAddedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnAddedAtChanged();
+    #endregion
+		
+		public CommitGroupMember()
+		{
+			this._CommitPeriod = default(EntityRef<CommitPeriod>);
+			this._Commit = default(EntityRef<Commit>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int PeriodID
+		{
+			get
+			{
+				return this._PeriodID;
+			}
+			set
+			{
+				if ((this._PeriodID != value))
+				{
+					if (this._CommitPeriod.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPeriodIDChanging(value);
+					this.SendPropertyChanging();
+					this._PeriodID = value;
+					this.SendPropertyChanged("PeriodID");
+					this.OnPeriodIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommitId", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int CommitId
+		{
+			get
+			{
+				return this._CommitId;
+			}
+			set
+			{
+				if ((this._CommitId != value))
+				{
+					if (this._Commit.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCommitIdChanging(value);
+					this.SendPropertyChanging();
+					this._CommitId = value;
+					this.SendPropertyChanged("CommitId");
+					this.OnCommitIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AddedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> AddedAt
+		{
+			get
+			{
+				return this._AddedAt;
+			}
+			set
+			{
+				if ((this._AddedAt != value))
+				{
+					this.OnAddedAtChanging(value);
+					this.SendPropertyChanging();
+					this._AddedAt = value;
+					this.SendPropertyChanged("AddedAt");
+					this.OnAddedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_CommitGroupMember", Storage="_CommitPeriod", ThisKey="PeriodID", OtherKey="PeriodID", IsForeignKey=true)]
+		public CommitPeriod CommitPeriod
+		{
+			get
+			{
+				return this._CommitPeriod.Entity;
+			}
+			set
+			{
+				CommitPeriod previousValue = this._CommitPeriod.Entity;
+				if (((previousValue != value) 
+							|| (this._CommitPeriod.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CommitPeriod.Entity = null;
+						previousValue.CommitGroupMembers.Remove(this);
+					}
+					this._CommitPeriod.Entity = value;
+					if ((value != null))
+					{
+						value.CommitGroupMembers.Add(this);
+						this._PeriodID = value.PeriodID;
+					}
+					else
+					{
+						this._PeriodID = default(int);
+					}
+					this.SendPropertyChanged("CommitPeriod");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commit_CommitGroupMember", Storage="_Commit", ThisKey="CommitId", OtherKey="CommitId", IsForeignKey=true)]
+		public Commit Commit
+		{
+			get
+			{
+				return this._Commit.Entity;
+			}
+			set
+			{
+				Commit previousValue = this._Commit.Entity;
+				if (((previousValue != value) 
+							|| (this._Commit.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Commit.Entity = null;
+						previousValue.CommitGroupMembers.Remove(this);
+					}
+					this._Commit.Entity = value;
+					if ((value != null))
+					{
+						value.CommitGroupMembers.Add(this);
+						this._CommitId = value.CommitId;
+					}
+					else
+					{
+						this._CommitId = default(int);
+					}
+					this.SendPropertyChanged("Commit");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -1240,19 +1448,233 @@ namespace DAL
 		}
 	}
 	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConfigAuthors")]
+	public partial class ConfigAuthor : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ConfigID;
+		
+		private int _AuthorID;
+		
+		private System.Nullable<System.DateTime> _CreatedAt;
+		
+		private System.Nullable<System.DateTime> _UpdatedAt;
+		
+		private EntityRef<Author> _Author;
+		
+		private EntityRef<ConfigFile> _ConfigFile;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnConfigIDChanging(int value);
+    partial void OnConfigIDChanged();
+    partial void OnAuthorIDChanging(int value);
+    partial void OnAuthorIDChanged();
+    partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedAtChanged();
+    partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedAtChanged();
+    #endregion
+		
+		public ConfigAuthor()
+		{
+			this._Author = default(EntityRef<Author>);
+			this._ConfigFile = default(EntityRef<ConfigFile>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConfigID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int ConfigID
+		{
+			get
+			{
+				return this._ConfigID;
+			}
+			set
+			{
+				if ((this._ConfigID != value))
+				{
+					if (this._ConfigFile.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnConfigIDChanging(value);
+					this.SendPropertyChanging();
+					this._ConfigID = value;
+					this.SendPropertyChanged("ConfigID");
+					this.OnConfigIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int AuthorID
+		{
+			get
+			{
+				return this._AuthorID;
+			}
+			set
+			{
+				if ((this._AuthorID != value))
+				{
+					if (this._Author.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAuthorIDChanging(value);
+					this.SendPropertyChanging();
+					this._AuthorID = value;
+					this.SendPropertyChanged("AuthorID");
+					this.OnAuthorIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CreatedAt
+		{
+			get
+			{
+				return this._CreatedAt;
+			}
+			set
+			{
+				if ((this._CreatedAt != value))
+				{
+					this.OnCreatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAt = value;
+					this.SendPropertyChanged("CreatedAt");
+					this.OnCreatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpdatedAt", DbType="DateTime")]
+		public System.Nullable<System.DateTime> UpdatedAt
+		{
+			get
+			{
+				return this._UpdatedAt;
+			}
+			set
+			{
+				if ((this._UpdatedAt != value))
+				{
+					this.OnUpdatedAtChanging(value);
+					this.SendPropertyChanging();
+					this._UpdatedAt = value;
+					this.SendPropertyChanged("UpdatedAt");
+					this.OnUpdatedAtChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Author_ConfigAuthor", Storage="_Author", ThisKey="AuthorID", OtherKey="AuthorID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Author Author
+		{
+			get
+			{
+				return this._Author.Entity;
+			}
+			set
+			{
+				Author previousValue = this._Author.Entity;
+				if (((previousValue != value) 
+							|| (this._Author.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Author.Entity = null;
+						previousValue.ConfigAuthors.Remove(this);
+					}
+					this._Author.Entity = value;
+					if ((value != null))
+					{
+						value.ConfigAuthors.Add(this);
+						this._AuthorID = value.AuthorID;
+					}
+					else
+					{
+						this._AuthorID = default(int);
+					}
+					this.SendPropertyChanged("Author");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConfigFile_ConfigAuthor", Storage="_ConfigFile", ThisKey="ConfigID", OtherKey="ConfigID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public ConfigFile ConfigFile
+		{
+			get
+			{
+				return this._ConfigFile.Entity;
+			}
+			set
+			{
+				ConfigFile previousValue = this._ConfigFile.Entity;
+				if (((previousValue != value) 
+							|| (this._ConfigFile.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ConfigFile.Entity = null;
+						previousValue.ConfigAuthors.Remove(this);
+					}
+					this._ConfigFile.Entity = value;
+					if ((value != null))
+					{
+						value.ConfigAuthors.Add(this);
+						this._ConfigID = value.ConfigID;
+					}
+					else
+					{
+						this._ConfigID = default(int);
+					}
+					this.SendPropertyChanged("ConfigFile");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ConfigFiles")]
 	public partial class ConfigFile : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _ID;
+		private int _ConfigID;
 		
 		private string _ProjectDirectory;
 		
 		private int _InternshipDirectoryId;
-		
-		private string _Author;
 		
 		private System.DateTime _InternshipStartDate;
 		
@@ -1266,20 +1688,20 @@ namespace DAL
 		
 		private System.Nullable<System.DateTime> _UpdatedAt;
 		
+		private EntitySet<ConfigAuthor> _ConfigAuthors;
+		
 		private EntityRef<InternshipDirectory> _InternshipDirectory;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
+    partial void OnConfigIDChanging(int value);
+    partial void OnConfigIDChanged();
     partial void OnProjectDirectoryChanging(string value);
     partial void OnProjectDirectoryChanged();
     partial void OnInternshipDirectoryIdChanging(int value);
     partial void OnInternshipDirectoryIdChanged();
-    partial void OnAuthorChanging(string value);
-    partial void OnAuthorChanged();
     partial void OnInternshipStartDateChanging(System.DateTime value);
     partial void OnInternshipStartDateChanged();
     partial void OnInternshipEndDateChanging(System.DateTime value);
@@ -1296,26 +1718,27 @@ namespace DAL
 		
 		public ConfigFile()
 		{
+			this._ConfigAuthors = new EntitySet<ConfigAuthor>(new Action<ConfigAuthor>(this.attach_ConfigAuthors), new Action<ConfigAuthor>(this.detach_ConfigAuthors));
 			this._InternshipDirectory = default(EntityRef<InternshipDirectory>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConfigID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ConfigID
 		{
 			get
 			{
-				return this._ID;
+				return this._ConfigID;
 			}
 			set
 			{
-				if ((this._ID != value))
+				if ((this._ConfigID != value))
 				{
-					this.OnIDChanging(value);
+					this.OnConfigIDChanging(value);
 					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
+					this._ConfigID = value;
+					this.SendPropertyChanged("ConfigID");
+					this.OnConfigIDChanged();
 				}
 			}
 		}
@@ -1360,26 +1783,6 @@ namespace DAL
 					this._InternshipDirectoryId = value;
 					this.SendPropertyChanged("InternshipDirectoryId");
 					this.OnInternshipDirectoryIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Author", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Author
-		{
-			get
-			{
-				return this._Author;
-			}
-			set
-			{
-				if ((this._Author != value))
-				{
-					this.OnAuthorChanging(value);
-					this.SendPropertyChanging();
-					this._Author = value;
-					this.SendPropertyChanged("Author");
-					this.OnAuthorChanged();
 				}
 			}
 		}
@@ -1504,7 +1907,20 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ConfigFile_ConfigAuthor", Storage="_ConfigAuthors", ThisKey="ConfigID", OtherKey="ConfigID")]
+		public EntitySet<ConfigAuthor> ConfigAuthors
+		{
+			get
+			{
+				return this._ConfigAuthors;
+			}
+			set
+			{
+				this._ConfigAuthors.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_InternshipDirectory", ThisKey="InternshipDirectoryId", OtherKey="ConfigID", IsForeignKey=true)]
 		public InternshipDirectory InternshipDirectory
 		{
 			get
@@ -1556,6 +1972,18 @@ namespace DAL
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_ConfigAuthors(ConfigAuthor entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConfigFile = this;
+		}
+		
+		private void detach_ConfigAuthors(ConfigAuthor entity)
+		{
+			this.SendPropertyChanging();
+			entity.ConfigFile = null;
 		}
 	}
 	
@@ -1629,7 +2057,7 @@ namespace DAL
 					this.OnIDChanging(value);
 					this.SendPropertyChanging();
 					this._ID = value;
-					this.SendPropertyChanged("ID");
+					this.SendPropertyChanged("ConfigID");
 					this.OnIDChanged();
 				}
 			}
@@ -1911,7 +2339,7 @@ namespace DAL
 					this.OnIDChanging(value);
 					this.SendPropertyChanging();
 					this._ID = value;
-					this.SendPropertyChanged("ID");
+					this.SendPropertyChanged("ConfigID");
 					this.OnIDChanged();
 				}
 			}
@@ -1997,7 +2425,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_ProjectWeeks", ThisKey="ID", OtherKey="InternshipDirectoryId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ProjectWeek", Storage="_ProjectWeeks", ThisKey="ConfigID", OtherKey="InternshipDirectoryId")]
 		public EntitySet<ProjectWeek> ProjectWeeks
 		{
 			get
@@ -2010,7 +2438,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_ConfigFiles", ThisKey="ID", OtherKey="InternshipDirectoryId")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="InternshipDirectory_ConfigFile", Storage="_ConfigFiles", ThisKey="ConfigID", OtherKey="InternshipDirectoryId")]
 		public EntitySet<ConfigFile> ConfigFiles
 		{
 			get

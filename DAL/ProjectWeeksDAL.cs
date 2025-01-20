@@ -58,7 +58,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetByID: " + ex.Message);
+                throw new Exception("Error in GetAuthorByConfig: " + ex.Message);
             }
         }
 

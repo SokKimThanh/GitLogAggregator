@@ -105,7 +105,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetByID: " + ex.Message);
+                throw new Exception("Error in GetAuthorByConfig: " + ex.Message);
             }
         }
         public CommitET GetLastInserted()
@@ -159,7 +159,7 @@ namespace DAL
                         ProjectWeekName = $"Tuần {c.ProjectWeekId}", // Tên tuần mặc định
                         WeekStartDate = DateTime.Now, // Ngày bắt đầu mặc định
                         WeekEndDate = DateTime.Now.AddDays(6), // Ngày kết thúc mặc định
-                        InternshipDirectoryId = 1, // ID thư mục thực tập mặc định
+                        InternshipDirectoryId = 1, // ConfigID thư mục thực tập mặc định
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now
                     };

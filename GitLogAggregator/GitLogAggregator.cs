@@ -67,6 +67,11 @@ namespace GitLogAggregator
 
         private readonly ChatbotSummaryBUS chatbotSummariesBUS = new ChatbotSummaryBUS();
 
+        // Author BUS
+        private readonly AuthorBUS authorBUS = new AuthorBUS();
+
+        // ConfigAuthor BUS
+        private readonly ConfigAuthorBUS configAuthorBUS = new ConfigAuthorBUS();
 
         // Simplified collection initialization for weekDatas and invalidCommits
         List<WeekData> weekDatas = new();
@@ -92,20 +97,13 @@ namespace GitLogAggregator
             // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
             LoadConfigsIntoCombobox();
 
-            // Tải danh sách tác giả commit vào ComboBox
-            LoadAuthorsIntoComboBox();
-
+            // Tải danh sách tác giả 0: getall
+            LoadAuthorsIntoComboBox(0);
 
             // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
             txtFolderInternshipPath = GetLatestInternshipFolderPath();
             // Xây dựng danh sách các tuần và tệp
             BuildWeekFileListView(txtFolderInternshipPath);
-
-
-            // Cài đặt và hiển thị danh sách dự án listview project
-            cboConfigFiles.DataSource = configBus.GetAll();
-            cboConfigFiles.ValueMember = "ID";
-            cboConfigFiles.DisplayMember = "ProjectDirectory";
 
 
             // Tải ngày bắt đầu thực tập mặc định
@@ -173,7 +171,7 @@ namespace GitLogAggregator
             // Thêm một mục tùy chọn "Tất cả dự án" vào danh sách
             var allProjectsOption = new ConfigFileET
             {
-                ID = 0, // Sử dụng ID đặc biệt (ví dụ: 0) để phân biệt "Tất cả dự án"
+                ConfigID = 0, // Sử dụng ConfigID đặc biệt (ví dụ: 0) để phân biệt "Tất cả dự án"
                 ProjectDirectory = "Tất cả dự án" // Hiển thị "Tất cả dự án"
             };
 
@@ -182,34 +180,34 @@ namespace GitLogAggregator
 
             // Gán danh sách làm nguồn dữ liệu cho ComboBox
             cboConfigFiles.DataSource = configFiles;
-            cboConfigFiles.ValueMember = "ID";
+            cboConfigFiles.ValueMember = "ConfigID";
             cboConfigFiles.DisplayMember = "ProjectDirectory";
         }
-        private void LoadAuthorsIntoComboBox()
+        private void LoadAuthorsIntoComboBox(int configID)
         {
-            try
+            // Lấy danh sách tác giả theo ConfigID
+            List<AuthorET> authors;
+
+            if (configID == 0)
             {
-                // Lấy danh sách tác giả từ hàm GetAllAuthors
-                List<string> authors = configBus.GetAllAuthors();
-
-                // Gán danh sách tác giả vào ComboBox tìm theo tác giả
-                cboSearchByAuthor.DataSource = authors;
-
-                // Gán danh sách tác giả vào ComboBox
-                cboAuthorCommit.DataSource = authors;
-
-                // Thiết lập hiển thị tên tác giả
-                cboAuthorCommit.DisplayMember = "ToString"; // Hiển thị chuỗi tên tác giả
-                cboAuthorCommit.ValueMember = "ToString"; // Giá trị cũng là chuỗi tên tác giả
-
-                // Thông báo thành công
-                AppendTextWithScroll("Danh sách tác giả đã được tải vào ComboBox.\n");
+                // Lấy tất cả tác giả từ bảng Authors
+                authors = authorBUS.GetAll();
             }
-            catch (Exception ex)
+            else
             {
-                AppendTextWithScroll($"Lỗi khi tải danh sách tác giả: {ex.Message}\n");
+                // Lấy danh sách AuthorID theo ConfigID
+                List<int> authorIDs = configAuthorBUS.GetAuthorIDsByConfigID(configID);
+
+                // Lấy thông tin chi tiết của từng tác giả
+                authors = authorIDs
+                   .Select(authorID => authorBUS.GetByID(authorID)) // Lấy thông tin tác giả theo AuthorID
+                   .ToList();
             }
+
+            // Hiển thị danh sách tác giả lên ComboBox
+            UpdateAuthorList(authors);
         }
+
         private void SearchAllWeeks()
         {
             try
@@ -435,6 +433,9 @@ namespace GitLogAggregator
             // Cập nhật giao diện khi chọn thư mục dự án
             UpdateControls(configFile);
 
+            // Thêm tác giả vào commobbox
+            LoadAuthorsIntoComboBox(????);
+
             // Thêm thông tin cấu hình dự án
             configBus.Add(configFile);
 
@@ -457,55 +458,16 @@ namespace GitLogAggregator
         /// <param name="configInfo">Đối tượng ConfigFile chứa thông tin cấu hình</param>
         private void UpdateControls(ConfigFileET configInfo)
         {
-            // Thêm tác giả vào commobbox
-            LoadAuthorsIntoComboBox();
-
-            // hiển thị tác giả commit đầu tiên
-            cboAuthorCommit.SelectedItem = configInfo.Author;
-
-            txtInternshipStartDate.Value = (DateTime)configInfo.InternshipStartDate;
-            txtInternshipEndDate.Value = (DateTime)configInfo.InternshipEndDate;
+            txtInternshipStartDate.Value = configInfo.InternshipStartDate;
+            txtInternshipEndDate.Value = configInfo.InternshipEndDate;
             txtNumericsWeek.Value = configInfo.Weeks;
-
-            txtFirstCommitDate.Value = (DateTime)configInfo.FirstCommitDate;
+            txtFirstCommitDate.Value = configInfo.FirstCommitDate;
         }
-
-        private void ListViewProjects_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            if (e.IsSelected)
-            {
-                ConfigFileET config = configBus.GetByID(int.Parse(e.Item.Text));
-                UpdateControls(config);
-
-                // Kiểm tra nếu thư mục internship_week tồn tại thì hiển thị week folder thực tập
-                if (Directory.Exists(txtFolderInternshipPath))
-                {
-                    // Hiển thị dữ liệu thư mục và commit
-                    BuildWeekFileListView(txtDirectoryProjectPath);
-                    // Hiển thị ngày thực tập tối đa có thể chọn.
-                    SetMaxDateForDateTimePicker(txtInternshipStartDate, (DateTime)config.FirstCommitDate);
-                    UpdateControlState(isEnabled: true);
-                }
-                else
-                {
-                    DisableControls();
-                    cboAuthorCommit.Enabled = true;
-                    txtInternshipStartDate.Enabled = true;
-                    btnOpenGitFolder.Enabled = true;
-                    fileListView.Items.Clear();
-                    weekListView.Items.Clear();
-                    AppendTextWithScroll("Vui lòng tổng hợp commit mới.\n");
-                }
-            }
-        }
-
-
 
         private void SetMaxDateForDateTimePicker(DateTimePicker dateTimePicker, DateTime maxDate)
         {
             dateTimePicker.MaxDate = maxDate;
         }
-
 
         private bool IsValidGitRepository(string directory)
         {
@@ -528,7 +490,7 @@ namespace GitLogAggregator
         public void LoadProjectListView()
         {
             cboConfigFiles.DataSource = configBus.GetAll();
-            cboConfigFiles.ValueMember = "ID";
+            cboConfigFiles.ValueMember = "ConfigID";
             cboConfigFiles.DisplayMember = "ProjectDirectory";
         }
 
@@ -896,7 +858,7 @@ namespace GitLogAggregator
                 // Làm mới dữ liệu trong combobox cboConfigFiles
                 cboConfigFiles.DataSource = configBus.GetAll();
                 cboConfigFiles.DisplayMember = "ProjectName";
-                cboConfigFiles.ValueMember = "ID";
+                cboConfigFiles.ValueMember = "ConfigID";
                 AppendTextWithScroll("Danh sách config đã được làm mới.\n");
 
                 // Làm mới dữ liệu trong DataGridView
@@ -936,7 +898,7 @@ namespace GitLogAggregator
         private void LoadListViewProjects(List<ConfigFileET> configFiles)
         {
             cboConfigFiles.DataSource = configBus.GetAll();
-            cboConfigFiles.ValueMember = "ID";
+            cboConfigFiles.ValueMember = "ConfigID";
             cboConfigFiles.DisplayMember = "ProjectDirectory";
         }
 
@@ -1506,7 +1468,7 @@ namespace GitLogAggregator
 
                     // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
                     cboThuMucThucTap.DataSource = internshipDirectoryBUS.GetAll();
-                    cboThuMucThucTap.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
+                    cboThuMucThucTap.ValueMember = "ConfigID"; // Thiết lập trường sẽ làm giá trị
                     cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
 
                     // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
@@ -2151,66 +2113,32 @@ git %*
             }
         }
 
-        private void btnRemoveWeek_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void cboConfigFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cboConfigFiles.SelectedValue != null && cboConfigFiles.SelectedValue is int selectedId)
+            if (cboConfigFiles.SelectedValue != null && cboConfigFiles.SelectedValue is int selectedConfigID)
             {
-                UpdateAuthorsByProject(selectedId);
+                // Gọi hàm LoadAuthorsIntoComboBox để tải danh sách tác giả
+                LoadAuthorsIntoComboBox(selectedConfigID);
             }
         }
-        private void UpdateAuthorsByProject(int projectId)
+
+        private void UpdateAuthorList(List<AuthorET> authors)
         {
-            try
+            // Xóa dữ liệu cũ
+            cboSearchByAuthor.Items.Clear();
+            cboAuthorCommit.Items.Clear();
+
+            // Thêm dữ liệu mới
+            foreach (var author in authors)
             {
-                // Xóa dữ liệu cũ trong các ComboBox
-                cboSearchByAuthor.Items.Clear();
-                cboAuthorCommit.Items.Clear();
-
-                List<string> authors;
-
-                // Kiểm tra nếu người dùng chọn "Tất cả dự án"
-                if (projectId == 0)
-                {
-                    // Lấy danh sách tác giả của tất cả các dự án
-                    authors = configBus.GetAllAuthors();
-                }
-                else
-                {
-                    // Lấy danh sách tác giả của một dự án cụ thể
-                    authors = configBus.GetAuthorsByProjectId(projectId);
-                }
-
-                // Kiểm tra nếu có dữ liệu tác giả
-                if (authors != null && authors.Any())
-                {
-                    // Thêm danh sách tác giả vào các ComboBox
-                    foreach (var author in authors)
-                    {
-                        cboSearchByAuthor.Items.Add(author);
-                        cboAuthorCommit.Items.Add(author);
-                    }
-
-                    // Chọn mục đầu tiên trong ComboBox (nếu cần)
-                    if (cboAuthorCommit.Items.Count > 0)
-                    {
-                        cboAuthorCommit.SelectedIndex = 0;
-                    }
-                }
-                else
-                {
-                    // Thông báo nếu không có tác giả nào
-                    MessageBox.Show("Không có tác giả nào trong dự án này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                cboSearchByAuthor.Items.Add(author.AuthorName);
+                cboAuthorCommit.Items.Add(author.AuthorName);
             }
-            catch (Exception ex)
+
+            // Chọn mục đầu tiên (nếu có)
+            if (cboAuthorCommit.Items.Count > 0)
             {
-                // Xử lý ngoại lệ và thông báo lỗi
-                MessageBox.Show($"Lỗi khi cập nhật danh sách tác giả: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                cboAuthorCommit.SelectedIndex = 0;
             }
         }
     }

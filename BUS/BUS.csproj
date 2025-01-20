@@ -47,10 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorBUS.cs" />
     <Compile Include="ChatbotSummaryBUS.cs" />
     <Compile Include="CommitBUS.cs" />
     <Compile Include="CommitPeriodBUS.cs" />
     <Compile Include="CommitGroupMemberBUS.cs" />
+    <Compile Include="ConfigAuthorBUS.cs" />
     <Compile Include="ConfigFileBUS.cs" />
     <Compile Include="GitLogCheckCommitBUS.cs" />
     <Compile Include="GitLogFormatBUS.cs" />

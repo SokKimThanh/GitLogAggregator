@@ -18,7 +18,7 @@ namespace DAL
                             orderby c.FirstCommitDate ascending
                             select new ConfigFileET
                             {
-                                ID = c.ID,
+                                ConfigID = c.ID,
                                 ProjectDirectory = c.ProjectDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
                                 Author = c.Author,
@@ -78,7 +78,7 @@ namespace DAL
         {
             try
             {
-                // Truy vấn để lấy ngày bắt đầu thực tập dựa trên ID cấu hình
+                // Truy vấn để lấy ngày bắt đầu thực tập dựa trên ConfigID cấu hình
                 var startDate = (from config in db.ConfigFiles
                                  where config.ID == configId
                                  select config.InternshipStartDate).FirstOrDefault();
@@ -101,7 +101,7 @@ namespace DAL
                             where c.ID == id
                             select new ConfigFileET
                             {
-                                ID = c.ID,
+                                ConfigID = c.ID,
                                 ProjectDirectory = c.ProjectDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
                                 Author = c.Author,
@@ -117,7 +117,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetByID: " + ex.Message);
+                throw new Exception("Error in GetAuthorByConfig: " + ex.Message);
             }
         }
 
@@ -152,7 +152,7 @@ namespace DAL
             try
             {
                 var query = from c in db.ConfigFiles
-                            where c.ID == et.ID
+                            where c.ID == et.ConfigID
                             select c;
 
                 var entity = query.SingleOrDefault();

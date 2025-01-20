@@ -91,10 +91,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorDAL.cs" />
     <Compile Include="ChatbotSummaryDAL.cs" />
     <Compile Include="CommitDAL.cs" />
     <Compile Include="CommitPeriodDAL.cs" />
     <Compile Include="CommitGroupMemberDAL.cs" />
+    <Compile Include="ConfigAuthorDAL.cs" />
     <Compile Include="ConfigFileDAL.cs" />
     <Compile Include="GitLogAggregator.designer.cs">
       <AutoGen>True</AutoGen>
