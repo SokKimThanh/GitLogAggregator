@@ -441,24 +441,9 @@ namespace GitLogAggregator
             // Lấy danh sách tác giả và email từ lịch sử commit của repository
             var authors = gitgui_bus.GetAuthorsFromRepository(projectDirectory);
 
-            // Tạo đối tượng ConfigFileET và lưu vào cơ sở dữ liệu
-            ConfigFileET configFile = new ConfigFileET
-            {
-                ProjectDirectory = projectDirectory,
-                FirstCommitAuthor = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
-                InternshipStartDate = txtInternshipStartDate.Value,
-                InternshipEndDate = txtInternshipEndDate.Value,
-                Weeks = (int)txtNumericsWeek.Value,
-                FirstCommitDate = firstCommitDate,
-                InternshipDirectoryId = (int)cboInternshipFolder.SelectedValue
-            };
-
-            // Lưu thông tin cấu hình dự án vào database
-            configBus.Add(configFile);
-
-            // Lưu danh sách tác giả vào database và thiết lập mối quan hệ với dự án
+            // Bước 1: Thêm tác giả vào database
             AuthorBUS authorBUS = new AuthorBUS();
-            ConfigAuthorBUS configAuthorBUS = new ConfigAuthorBUS();
+            List<int> authorIDs = new List<int>();
 
             foreach (var (authorName, authorEmail) in authors)
             {
@@ -470,18 +455,40 @@ namespace GitLogAggregator
                     author = new AuthorET
                     {
                         AuthorName = authorName,
-                        AuthorEmail = authorEmail, // Thêm email vào đối tượng AuthorET
+                        AuthorEmail = authorEmail,
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now
                     };
                     authorBUS.Add(author);
                 }
 
-                // Thêm mối quan hệ giữa dự án và tác giả vào bảng ConfigAuthors
+                // Lưu lại AuthorID để sử dụng sau
+                authorIDs.Add(author.AuthorID);
+            }
+
+            // Bước 2: Thêm dự án vào database
+            ConfigFileET configFile = new ConfigFileET
+            {
+                ProjectDirectory = projectDirectory,
+                FirstCommitAuthor = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
+                InternshipStartDate = txtInternshipStartDate.Value,
+                InternshipEndDate = txtInternshipEndDate.Value,
+                Weeks = (int)txtNumericsWeek.Value,
+                FirstCommitDate = firstCommitDate,
+                InternshipDirectoryId = (int)cboInternshipFolder.SelectedValue
+            };
+
+            configBus.Add(configFile);
+
+            // Bước 3: Thêm mối quan hệ giữa dự án và tác giả vào bảng ConfigAuthors
+            ConfigAuthorBUS configAuthorBUS = new ConfigAuthorBUS();
+
+            foreach (var authorID in authorIDs)
+            {
                 configAuthorBUS.Add(new ConfigAuthorET
                 {
                     ConfigID = configFile.ConfigID,
-                    AuthorID = author.AuthorID
+                    AuthorID = authorID
                 });
             }
 
@@ -492,7 +499,7 @@ namespace GitLogAggregator
             LoadAuthorsIntoComboBox(configFile.ConfigID);
 
             // Load lại dữ liệu lên ListView
-            LoadProjectListView();
+            LoadConfigsIntoCombobox();
 
             AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
 
@@ -533,17 +540,6 @@ namespace GitLogAggregator
             // Kiểm tra nếu output rỗng
             return !string.IsNullOrEmpty(logOutput);
         }
-        /// <summary>
-        /// Load thông tin list view trống sau khi chọn thêm dự án
-        /// </summary>
-        /// <param name="internshipWeekFolder"></param>
-        public void LoadProjectListView()
-        {
-            cboConfigFiles.DataSource = configBus.GetAll();
-            cboConfigFiles.ValueMember = "ConfigID";
-            cboConfigFiles.DisplayMember = "ProjectDirectory";
-        }
-
         /// <summary>
         /// Xử lý trường hợp file config bị thiếu
         /// </summary> 
