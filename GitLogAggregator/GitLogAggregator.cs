@@ -28,6 +28,11 @@ namespace GitLogAggregator
         private string txtFolderInternshipPath = string.Empty;
         private string desktopPath = string.Empty;
 
+        // Phân trang
+        private int currentPage = 1; // Trang hiện tại
+        private const int pageSize = 20; // Số bản ghi mỗi trang
+        private List<CommitET> allSearchResults = new List<CommitET>(); // Lưu trữ tất cả kết quả tìm kiếm
+
         // Biến cờ để kiểm tra trạng thái chạy
         private bool isProcessing = false;
 
@@ -184,10 +189,11 @@ namespace GitLogAggregator
             //
             // Cấu hình trạng thái của CheckBox và ComboBox
             //
-            ConfigureSearchControls();
-
             // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
             chkSearchAllWeeks.Checked = true;
+
+            ConfigureSearchControls();
+
             if (chkSearchAllWeeks.Checked)
             {
                 SearchAllWeeks();
@@ -295,7 +301,7 @@ namespace GitLogAggregator
                 { btnNextReport, "Tiếp theo commit kế" },
                 { btnPreviousReport, "Lùi lại commit trước" },
                 { btnSearchReport, "Tìm kiếm commit" },
-                { btnExportReportExcelCommits, "Xuất excel commit" },
+                { btnExportExcel, "Xuất excel commit" },
                 { btnCreateWeek, "Tạo danh mục tuần thực tập và nhóm commit thực tập theo tuần" },
                 { btnOpenGitFolder, "Mở thư mục dự án git" },
                 { btnSetupThuMucThucTap, "Thêm thư mục dự án vào csdl" },
@@ -311,7 +317,9 @@ namespace GitLogAggregator
                 { txtResultMouseEvents, "Hiển thị thông báo khi rê chuột vào các control" },
                 { txtResult, "Hiển thị kết quả của các thao tác" },
                 { txtFirstCommitDate, "Hiển thị ngày commit đầu tiên" },
-                { chkSearchAllWeeks, "Tìm kiếm tất cả các tuần của commit trong datagridview" }
+                { chkSearchAllWeeks, "Tìm kiếm tất cả các tuần của commit trong datagridview" },
+                { btnExportTXT, "Xuất ra file combined_commits.txt cho các tuần thực tập" },
+
             };
 
             // Thiết lập sự kiện cho từng control
@@ -522,7 +530,7 @@ namespace GitLogAggregator
         private void UpdateControlState(bool isEnabled)
         {
             btnClearDataListView.Enabled = isEnabled;
-            btnExportReportExcelCommits.Enabled = isEnabled;
+            btnExportExcel.Enabled = isEnabled;
             txtInternshipEndDate.Enabled = !isEnabled;
             txtFirstCommitDate.Enabled = !isEnabled;
             txtNumericsWeek.Enabled = !isEnabled;
@@ -542,7 +550,7 @@ namespace GitLogAggregator
             txtFirstCommitDate.Enabled = true;
             btnClearDataListView.Enabled = true;
             btnOpenGitFolder.Enabled = true;
-            btnExportReportExcelCommits.Enabled = true;
+            btnExportExcel.Enabled = true;
 
             // Thêm các điều khiển khác nếu cần
         }
@@ -556,7 +564,7 @@ namespace GitLogAggregator
             txtFirstCommitDate.Enabled = false;
             btnClearDataListView.Enabled = false;
             btnOpenGitFolder.Enabled = false;
-            btnExportReportExcelCommits.Enabled = false;
+            btnExportExcel.Enabled = false;
             // Thêm các điều khiển khác nếu cần
         }
         /// <summary>
@@ -593,7 +601,7 @@ namespace GitLogAggregator
                 DateTime internshipEndDate = txtInternshipEndDate.Value;
 
                 // Tổng hợp commit
-                //AggregateCommitsFileAndFolder();
+                AggregateCommitsFileAndFolder();
 
                 // Kiểm tra nếu thư mục internship_week tồn tại thì hiển thị dữ liệu lên listview
                 if (Directory.Exists(txtFolderInternshipPath))
@@ -616,128 +624,167 @@ namespace GitLogAggregator
                 EnableControls();
             }
         }
+        private string GetPeriodAbbreviation(string period)
+        {
+            switch (period)
+            {
+                case "Sáng":
+                    return "S";
+                case "Chiều":
+                    return "C";
+                case "Tối":
+                    return "T";
+                default:
+                    throw new ArgumentException("Giá trị period không hợp lệ.");
+            }
+        }
+        private void DeleteEmptyFoldersAndFiles(string folderPath)
+        {
+            try
+            {
+                // Kiểm tra và xóa các file trống trong thư mục
+                foreach (var file in Directory.GetFiles(folderPath))
+                {
+                    if (new FileInfo(file).Length == 0) // File trống nếu kích thước = 0
+                    {
+                        File.Delete(file);
+                    }
+                }
 
-        //public void AggregateCommitsFileAndFolder()
-        //{
-        //    // Lấy thông tin dự án từ cơ sở dữ liệu
-        //    List<ConfigFileET> configFiles = configBus.GetAll();
+                // Kiểm tra và xóa các thư mục con trống
+                foreach (var subFolder in Directory.GetDirectories(folderPath))
+                {
+                    DeleteEmptyFoldersAndFiles(subFolder); // Đệ quy để xóa thư mục con trống
+                }
 
-        //    foreach (ConfigFileET configFile in configFiles)
-        //    {
-        //        if (configFile != null)
-        //        {
-        //            string projectDirectory = configFile.ProjectDirectory;
+                // Xóa thư mục cha nếu nó trống
+                if (!Directory.EnumerateFileSystemEntries(folderPath).Any())
+                {
+                    Directory.Delete(folderPath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ (ví dụ: ghi log hoặc hiển thị thông báo)
+                AppendTextWithScroll($"Lỗi khi xóa thư mục/file trống: {ex.Message}\n");
+            }
+        }
+        public void AggregateCommitsFileAndFolder()
+        {
+            // Lấy thông tin dự án từ cơ sở dữ liệu
+            List<ConfigFileET> configFiles = configBus.GetAll();
 
-        //            // Kiểm tra xem thư mục có phải Git repository hợp lệ không
-        //            if (!IsGitRepository(projectDirectory))
-        //            {
-        //                AppendTextWithScroll($"Thư mục {projectDirectory} không phải là Git repository hợp lệ.\n");
-        //                continue;
-        //            }
+            foreach (ConfigFileET configFile in configFiles)
+            {
+                if (configFile != null)
+                {
+                    string projectDirectory = configFile.ProjectDirectory;
 
-        //            // Tạo thư mục theo tuần > Thứ > Buổi
-        //            var iswf = internshipDirectoryBUS.GetByID(configFile.InternshipDirectoryId);
-        //            var internshipWeekFolder = iswf.InternshipWeekFolder;
-        //            var internshipStartDate = configFile.InternshipStartDate;
+                    // Tạo thư mục theo tuần > Thứ > Buổi
+                    var iswf = internshipDirectoryBUS.GetByID(configFile.InternshipDirectoryId);
+                    var internshipWeekFolder = iswf.InternshipWeekFolder;
+                    var internshipStartDate = configFile.InternshipStartDate;
 
-        //            try
-        //            {
-        //                // Tạo thư mục tổng hợp Combined nếu chưa tồn tại
-        //                string combinedFolder = Path.Combine(internshipWeekFolder, "Combined");
-        //                if (!Directory.Exists(combinedFolder))
-        //                {
-        //                    Directory.CreateDirectory(combinedFolder);
-        //                }
+                    try
+                    {
+                        // Tạo thư mục tổng hợp Combined nếu chưa tồn tại
+                        string combinedFolder = Path.Combine(internshipWeekFolder, "Combined");
+                        if (!Directory.Exists(combinedFolder))
+                        {
+                            Directory.CreateDirectory(combinedFolder);
+                        }
 
-        //                for (int weekOffset = 0; weekOffset < configFile.Weeks; weekOffset++)
-        //                {
-        //                    DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
-        //                    DateTime weekEndDate = weekStartDate.AddDays(6);
-        //                    int currentWeek = weekOffset + 1;
-        //                    string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{currentWeek}");
-        //                    string combinedFile = Path.Combine(combinedFolder, $"combined_week_{currentWeek}.txt");
-        //                    bool hasCommitsInWeek = false;
+                        // Lấy danh sách các tuần từ CSDL
+                        List<ProjectWeekET> weeks = projectWeeksBUS.GetAll()
+                            .Where(w => w.InternshipDirectoryId == configFile.InternshipDirectoryId)
+                            .ToList();
 
-        //                    for (int dayOffset = 0; dayOffset < 7; dayOffset++)
-        //                    {
-        //                        DateTime currentDate = weekStartDate.AddDays(dayOffset);
-        //                        string dayFolder = weekFolder;
-        //                        bool hasCommitsInDay = false;
+                        foreach (var week in weeks)
+                        {
+                            DateTime weekStartDate = week.WeekStartDate;
+                            DateTime weekEndDate = week.WeekEndDate;
+                            int currentWeek = weeks.IndexOf(week) + 1;
+                            string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{currentWeek}");
+                            string combinedFile = Path.Combine(combinedFolder, $"combined_week_{currentWeek}.txt");
+                            bool hasCommitsInWeek = false;
 
-        //                        foreach (var period in new[] { "Sáng", "Chiều", "Tối" })
-        //                        {
-        //                            string dailyFile = Path.Combine(dayFolder, $"{currentDate:yyyy-MM-dd}_{period}_commits.txt");
+                            // Tạo thư mục tuần nếu chưa tồn tại
+                            if (!Directory.Exists(weekFolder))
+                            {
+                                Directory.CreateDirectory(weekFolder);
+                            }
 
-        //                            // Xác định thời gian của buổi
-        //                            (string since, string until) = GetTimeRange(currentDate, period);
+                            // Lấy danh sách các commit trong tuần từ CSDL
+                            var weekCommits = commitBUS.GetAll()
+                                .Where(c => c.CommitDate >= weekStartDate && c.CommitDate <= weekEndDate)
+                                .ToList();
 
-        //                            // Lệnh git để lấy commit
-        //                            string gitLogCommand = $"log --pretty=format:\"%H|%s|%ci|%an\" --since=\"{since}\" --until=\"{until}\"";
-        //                            string logOutput = RunGitCommand(gitLogCommand, projectDirectory);
+                            for (int dayOffset = 0; dayOffset < 7; dayOffset++)
+                            {
+                                DateTime currentDate = weekStartDate.AddDays(dayOffset);
+                                string dayFolder = weekFolder;
+                                bool hasCommitsInDay = false;
 
-        //                            if (!string.IsNullOrEmpty(logOutput))
-        //                            {
-        //                                var commits = logOutput.Split('\n')
-        //                                                       .Where(line => !string.IsNullOrWhiteSpace(line))
-        //                                                       .Select(line =>
-        //                                                       {
-        //                                                           var parts = line.Split('|');
-        //                                                           return new
-        //                                                           {
-        //                                                               Hash = parts[0],
-        //                                                               Message = parts[1],
-        //                                                               CommitDate = DateTime.Parse(parts[2]),
-        //                                                               Author = parts[3]
-        //                                                           };
-        //                                                       });
+                                // Tạo thư mục ngày nếu chưa tồn tại
+                                if (!Directory.Exists(dayFolder))
+                                {
+                                    Directory.CreateDirectory(dayFolder);
+                                }
 
-        //                                foreach (var commit in commits)
-        //                                {
-        //                                    string commitInfo = $"[{commit.Hash}] {commit.Message} - {commit.CommitDate} - {commit.Author}\n";
-        //                                    AppendToFile(dailyFile, commitInfo);
-        //                                    AppendToFile(combinedFile, $"[{currentDate:yyyy-MM-dd} {period}] {commitInfo}");
+                                foreach (var period in new[] { "Sáng", "Chiều", "Tối" })
+                                {
+                                    // Chuyển đổi period sang dạng viết tắt
+                                    var periodAbb = GetPeriodAbbreviation(period);
 
-        //                                    hasCommitsInDay = true;
-        //                                    hasCommitsInWeek = true;
-        //                                }
-        //                            }
+                                    // Tạo đường dẫn file
+                                    string dailyFile = Path.Combine(dayFolder, $"{currentDate:yyyy-MM-dd}_{periodAbb}_commits.txt");
 
-        //                            if (!hasCommitsInDay && File.Exists(dailyFile))
-        //                            {
-        //                                File.Delete(dailyFile);
-        //                            }
-        //                        }
+                                    // Lấy danh sách các commit trong buổi từ CSDL
+                                    var periodCommits = weekCommits
+                                        .Where(c => c.Date == currentDate.Date && c.Period == periodAbb)
+                                        .ToList();
 
-        //                        if (!hasCommitsInDay && Directory.Exists(dayFolder))
-        //                        {
-        //                            Directory.Delete(dayFolder, true);
-        //                        }
-        //                    }
+                                    if (periodCommits.Any())
+                                    {
+                                        foreach (var commit in periodCommits)
+                                        {
+                                            string commitInfo = $"[{commit.CommitHash}] {commit.CommitMessage} - {commit.CommitDate} - {commit.Author}\n";
+                                            AppendToFile(dailyFile, commitInfo); // Ghi vào file hàng ngày
+                                            AppendToFile(combinedFile, $"[{currentDate:yyyy-MM-dd} {periodAbb}] {commitInfo}"); // Ghi vào file tổng hợp
 
-        //                    if (!hasCommitsInWeek && Directory.Exists(weekFolder))
-        //                    {
-        //                        Directory.Delete(weekFolder, true);
-        //                    }
-        //                    else if (hasCommitsInWeek)
-        //                    {
-        //                        AppendTextWithScroll($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}");
-        //                    }
-        //                }
+                                            hasCommitsInDay = true;
+                                            hasCommitsInWeek = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Tạo file trống nếu không có commit
+                                        File.WriteAllText(dailyFile, string.Empty);
+                                    }
+                                }
+                            }
 
-        //                if (!Directory.EnumerateFileSystemEntries(combinedFolder).Any())
-        //                {
-        //                    Directory.Delete(combinedFolder);
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                AppendTextWithScroll($"Lỗi: {ex.Message}\n");
-        //            }
+                            // Kiểm tra và xóa thư mục/file trống sau khi xử lý xong tuần
+                            DeleteEmptyFoldersAndFiles(weekFolder);
 
-        //            AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
-        //        }
-        //    }
-        //}
+                            if (hasCommitsInWeek)
+                            {
+                                AppendTextWithScroll($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}");
+                            }
+                        }
+
+                        // Kiểm tra và xóa thư mục Combined nếu trống
+                        DeleteEmptyFoldersAndFiles(combinedFolder);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendTextWithScroll($"Lỗi: {ex.Message}\n");
+                    }
+
+                    AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
+                }
+            }
+        }
 
         private bool IsGitRepository(string directory)
         {
@@ -792,7 +839,26 @@ namespace GitLogAggregator
         {
             File.AppendAllText(filePath, content + Environment.NewLine);
         }
+        private void WriteToFile(string filePath, string content)
+        {
+            try
+            {
+                // Tạo thư mục cha nếu chưa tồn tại
+                string directoryPath = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
 
+                // Ghi nội dung vào file (tạo mới hoặc ghi đè)
+                File.WriteAllText(filePath, content + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ (ví dụ: ghi log hoặc hiển thị thông báo)
+                AppendTextWithScroll($"Lỗi khi ghi file {filePath}: {ex.Message}\n");
+            }
+        }
 
         /// <summary>
         /// Xóa thư mục: Nút xóa sẽ chỉ xóa những thư mục hoặc file không cần thiết
@@ -873,7 +939,7 @@ namespace GitLogAggregator
                 btnClearDataListView.Enabled = false;  // Vô hiệu hóa nút xóa
                 AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
 
-                btnExportReportExcelCommits.Enabled = false;
+                btnExportExcel.Enabled = false;
                 txtInternshipEndDate.Enabled = false;
                 txtFirstCommitDate.Enabled = false;
                 txtNumericsWeek.Enabled = false;
@@ -1833,8 +1899,19 @@ git %*
                     AggregateCommits(config);
                 }
                 // Hiển thị dữ liệu đã thêm vào csdl lên dgv
-                dgvReportCommits.DataSource = commitBUS.GetAll();
-                
+                //
+                // Cấu hình trạng thái của CheckBox và ComboBox
+                //
+                // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
+                chkSearchAllWeeks.Checked = true;
+
+                ConfigureSearchControls();
+
+                if (chkSearchAllWeeks.Checked)
+                {
+                    SearchAllWeeks();
+                }
+
                 AppendTextWithScroll("Lưu thông tin cấu hình thành công.\n");
             }
             else
@@ -1869,39 +1946,13 @@ git %*
                 }
 
                 // Gọi hàm tìm kiếm
-                var searchResult = commitBUS.SearchCommits(txtSearchReport.Text, projectWeekId, searchAllWeeks ? 1 : 0);
+                allSearchResults = commitBUS.SearchCommits(txtSearchReport.Text, projectWeekId, searchAllWeeks ? 1 : 0);
 
-                // Kiểm tra kết quả tìm kiếm
-                if (searchResult != null && searchResult.Any())
-                {
-                    // Hiển thị kết quả lên DataGridView
-                    dgvReportCommits.DataSource = searchResult;
+                // Đặt lại trang hiện tại về 1
+                currentPage = 1;
 
-                    // Ghi thông báo tìm kiếm thành công
-                    if (string.IsNullOrEmpty(txtSearchReport.Text))
-                    {
-                        AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {searchResult.Count} kết quả.\n");
-                    }
-                    else
-                    {
-                        AppendTextWithScroll($"Tìm kiếm thành công. Tìm thấy {searchResult.Count} kết quả.\n");
-                    }
-                }
-                else
-                {
-                    // Xóa dữ liệu hiện tại trên DataGridView
-                    dgvReportCommits.DataSource = null;
-
-                    // Ghi thông báo không tìm thấy kết quả
-                    if (string.IsNullOrEmpty(txtSearchReport.Text))
-                    {
-                        AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
-                    }
-                    else
-                    {
-                        AppendTextWithScroll("Không tìm thấy kết quả phù hợp.\n");
-                    }
-                }
+                // Hiển thị kết quả theo trang
+                DisplaySearchResults();
 
                 // Xóa nội dung tìm kiếm (nếu cần)
                 txtSearchReport.Clear();
@@ -1913,8 +1964,58 @@ git %*
                 AppendTextWithScroll($"Lỗi: {ex.Message}\n");
             }
         }
+        private void DisplaySearchResults()
+        {
+            if (allSearchResults != null && allSearchResults.Any())
+            {
+                // Tính toán chỉ số bắt đầu và kết thúc của trang hiện tại
+                int startIndex = (currentPage - 1) * pageSize;
+                int endIndex = Math.Min(startIndex + pageSize, allSearchResults.Count);
 
+                // Lấy dữ liệu cho trang hiện tại
+                var pagedResults = allSearchResults.Skip(startIndex).Take(pageSize).ToList();
 
+                // Hiển thị kết quả lên DataGridView
+                dgvReportCommits.DataSource = pagedResults;
+
+                // Hiển thị thông báo
+                AppendTextWithScroll($"Trang {currentPage} của {Math.Ceiling((double)allSearchResults.Count / pageSize)}. Hiển thị {pagedResults.Count} kết quả.\n");
+            }
+            else
+            {
+                // Xóa dữ liệu hiện tại trên DataGridView
+                dgvReportCommits.DataSource = null;
+
+                // Ghi thông báo không tìm thấy kết quả
+                AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
+            }
+        }
+        private void BtnPreviousReport_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--; // Giảm số trang hiện tại
+                DisplaySearchResults(); // Hiển thị kết quả theo trang mới
+            }
+            else
+            {
+                AppendTextWithScroll("Bạn đang ở trang đầu tiên.\n");
+            }
+        }
+        private void BtnNextReport_Click(object sender, EventArgs e)
+        {
+            int totalPages = (int)Math.Ceiling((double)allSearchResults.Count / pageSize);
+
+            if (currentPage < totalPages)
+            {
+                currentPage++; // Tăng số trang hiện tại
+                DisplaySearchResults(); // Hiển thị kết quả theo trang mới
+            }
+            else
+            {
+                AppendTextWithScroll("Bạn đang ở trang cuối cùng.\n");
+            }
+        }
         private void btnRemoveAll_Click(object sender, EventArgs e)
         {
             // Hiển thị hộp thoại xác nhận
