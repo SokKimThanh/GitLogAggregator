@@ -90,13 +90,11 @@ namespace GitLogAggregator
         private void GitLogAggregator_Load(object sender, EventArgs e)
         {
             // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
-            cboThuMucThucTap.DataSource = internshipDirectoryBUS.GetAll();
-            cboThuMucThucTap.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
-            cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
-
+            LoadConfigsIntoCombobox();
 
             // Tải danh sách tác giả commit vào ComboBox
             LoadAuthorsIntoComboBox();
+
 
             // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
             txtFolderInternshipPath = GetLatestInternshipFolderPath();
@@ -168,13 +166,73 @@ namespace GitLogAggregator
             DisableControls();
         }
 
+        private void HandleProjectSelection(int selectedId)
+        {
+            listViewProjects.Items.Clear();
 
+            if (selectedId == 0)
+            {
+                // Xử lý khi chọn "Tất cả dự án"
+                var allProjects = configBus.GetAll();
+
+                foreach (var project in allProjects)
+                {
+                    var listItem = new ListViewItem(project.ID.ToString());
+                    listItem.SubItems.Add(project.ProjectDirectory);
+
+                    // Lấy danh sách tất cả tác giả trong dự án
+                    var authors = configBus.GetAuthorsByProjectId(project.ID);
+                    listItem.SubItems.Add(string.Join(", ", authors));
+
+                    listViewProjects.Items.Add(listItem);
+                }
+            }
+            else
+            {
+                // Xử lý khi chọn một dự án cụ thể
+                var project = configBus.GetByID(selectedId);
+                if (project != null)
+                {
+                    var listItem = new ListViewItem(project.ID.ToString());
+                    listItem.SubItems.Add(project.ProjectDirectory);
+
+                    // Lấy danh sách tác giả trong dự án cụ thể
+                    var authors = configBus.GetAuthorsByProjectId(selectedId);
+                    listItem.SubItems.Add(string.Join(", ", authors));
+
+                    listViewProjects.Items.Add(listItem);
+                }
+            }
+        }
+        private void LoadConfigsIntoCombobox()
+        {
+            // Lấy danh sách các dự án từ cơ sở dữ liệu
+            var configFiles = configBus.GetAll();
+
+            // Thêm một mục tùy chọn "Tất cả dự án" vào danh sách
+            var allProjectsOption = new ConfigFileET
+            {
+                ID = 0, // Sử dụng ID đặc biệt (ví dụ: 0) để phân biệt "Tất cả dự án"
+                ProjectDirectory = "Tất cả dự án" // Hiển thị "Tất cả dự án"
+            };
+
+            // Chèn "Tất cả dự án" vào đầu danh sách
+            configFiles.Insert(0, allProjectsOption);
+
+            // Gán danh sách làm nguồn dữ liệu cho ComboBox
+            cboConfigFiles.DataSource = configFiles;
+            cboConfigFiles.ValueMember = "ID";
+            cboConfigFiles.DisplayMember = "ProjectDirectory";
+        }
         private void LoadAuthorsIntoComboBox()
         {
             try
             {
-                // Lấy danh sách tác giả từ hàm GetAuthor
-                List<string> authors = configBus.GetAuthor();
+                // Lấy danh sách tác giả từ hàm GetAllAuthors
+                List<string> authors = configBus.GetAllAuthors();
+
+                // Gán danh sách tác giả vào ComboBox tìm theo tác giả
+                cboSearchByAuthor.DataSource = authors;
 
                 // Gán danh sách tác giả vào ComboBox
                 cboAuthorCommit.DataSource = authors;
@@ -885,7 +943,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Danh sách công việc đã được làm mới.\n");
 
                 // Làm mới combobox tác giả commit
-                cboAuthorCommit.DataSource = configBus.GetAuthor();
+                cboAuthorCommit.DataSource = configBus.GetAllAuthors();
                 cboAuthorCommit.DisplayMember = "ToString";
                 cboAuthorCommit.ValueMember = "ToString";
 
@@ -2135,6 +2193,64 @@ git %*
         private void btnRemoveWeek_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void cboConfigFiles_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboConfigFiles.SelectedValue != null && cboConfigFiles.SelectedValue is int selectedId)
+            {
+                UpdateAuthorsByProject(selectedId);
+            }
+        }
+        private void UpdateAuthorsByProject(int projectId)
+        {
+            try
+            {
+                // Xóa dữ liệu cũ trong các ComboBox
+                cboSearchByAuthor.Items.Clear();
+                cboAuthorCommit.Items.Clear();
+
+                List<string> authors;
+
+                // Kiểm tra nếu người dùng chọn "Tất cả dự án"
+                if (projectId == 0)
+                {
+                    // Lấy danh sách tác giả của tất cả các dự án
+                    authors = configBus.GetAllAuthors();
+                }
+                else
+                {
+                    // Lấy danh sách tác giả của một dự án cụ thể
+                    authors = configBus.GetAuthorsByProjectId(projectId);
+                }
+
+                // Kiểm tra nếu có dữ liệu tác giả
+                if (authors != null && authors.Any())
+                {
+                    // Thêm danh sách tác giả vào các ComboBox
+                    foreach (var author in authors)
+                    {
+                        cboSearchByAuthor.Items.Add(author);
+                        cboAuthorCommit.Items.Add(author);
+                    }
+
+                    // Chọn mục đầu tiên trong ComboBox (nếu cần)
+                    if (cboAuthorCommit.Items.Count > 0)
+                    {
+                        cboAuthorCommit.SelectedIndex = 0;
+                    }
+                }
+                else
+                {
+                    // Thông báo nếu không có tác giả nào
+                    MessageBox.Show("Không có tác giả nào trong dự án này.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ và thông báo lỗi
+                MessageBox.Show($"Lỗi khi cập nhật danh sách tác giả: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

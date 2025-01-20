@@ -37,8 +37,25 @@ namespace DAL
                 throw new Exception("Error in GetAll: " + ex.Message);
             }
         }
+        /// <summary>
+        /// Lấy danh sách tác giả từ bảng ConfigFiles theo id dự án
+        /// </summary> 
+        public List<string> GetAuthorsByProjectId(int projectId)
+        {
+            try
+            {
+                var authors = (from config in db.ConfigFiles
+                               where config.ID == projectId
+                               select config.Author).Distinct().ToList();
 
-        public List<string> GetAuthor()
+                return authors;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Lỗi khi lấy danh sách tác giả: " + ex.Message);
+            }
+        }
+        public List<string> GetAllAuthors()
         {
             try
             {
@@ -51,7 +68,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetAuthor: " + ex.Message);
+                throw new Exception("Error in GetAllAuthors: " + ex.Message);
             }
         }
         /// <summary>

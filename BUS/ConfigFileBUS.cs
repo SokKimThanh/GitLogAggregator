@@ -16,15 +16,27 @@ namespace BUS
         {
             return dal.GetAll();
         }
-
         public ConfigFileET GetByID(int id)
         {
             return dal.GetByID(id);
         }
-        public List<string> GetAuthor()
+        public List<string> GetAllAuthors()
         {
-            return dal.GetAuthor();
+            return dal.GetAllAuthors();
         }
+        /// <summary>
+        /// Lấy danh sách tác giả từ bảng ConfigFiles theo id dự án
+        /// </summary> 
+        public List<string> GetAuthorsByProjectId(int projectId)
+        {
+            return dal.GetAuthorsByProjectId(projectId);
+        }
+
+        public DateTime GetInternshipStartDate(int configId)
+        {
+            return dal.GetInternshipStartDate(configId).Value;
+        }
+
         public void Add(ConfigFileET entity)
         {
             dal.Add(entity);
@@ -38,11 +50,6 @@ namespace BUS
         public void Delete(int id)
         {
             dal.Delete(id);
-        }
-
-        public DateTime GetInternshipStartDate(int configId)
-        {
-            return dal.GetInternshipStartDate(configId).Value;
         }
     }
 }

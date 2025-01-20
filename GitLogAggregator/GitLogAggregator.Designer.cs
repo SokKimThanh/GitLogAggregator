@@ -223,10 +223,10 @@
             this.btnClearDataListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnClearDataListView.FlatAppearance.BorderSize = 0;
             this.btnClearDataListView.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearDataListView.Location = new System.Drawing.Point(143, 65);
+            this.btnClearDataListView.Location = new System.Drawing.Point(143, 33);
             this.btnClearDataListView.Margin = new System.Windows.Forms.Padding(1);
             this.btnClearDataListView.Name = "btnClearDataListView";
-            this.btnClearDataListView.Size = new System.Drawing.Size(140, 31);
+            this.btnClearDataListView.Size = new System.Drawing.Size(140, 30);
             this.btnClearDataListView.TabIndex = 14;
             this.btnClearDataListView.Text = "Làm mới";
             this.btnClearDataListView.UseVisualStyleBackColor = false;
@@ -444,8 +444,8 @@
             this.tableLayoutPanel9.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel9.Controls.Add(this.cboConfigFiles, 0, 2);
             this.tableLayoutPanel9.Controls.Add(this.cboThuMucThucTap, 0, 1);
-            this.tableLayoutPanel9.Controls.Add(this.btnClearDataListView, 1, 2);
-            this.tableLayoutPanel9.Controls.Add(this.cboAuthorCommit, 1, 1);
+            this.tableLayoutPanel9.Controls.Add(this.btnClearDataListView, 1, 1);
+            this.tableLayoutPanel9.Controls.Add(this.cboAuthorCommit, 1, 2);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel9.Location = new System.Drawing.Point(94, 3);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
@@ -517,11 +517,13 @@
             this.cboConfigFiles.Name = "cboConfigFiles";
             this.cboConfigFiles.Size = new System.Drawing.Size(136, 25);
             this.cboConfigFiles.TabIndex = 26;
+            this.cboConfigFiles.SelectedIndexChanged += new System.EventHandler(this.cboConfigFiles_SelectedIndexChanged);
             // 
             // cboAuthorCommit
             // 
+            this.cboAuthorCommit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboAuthorCommit.FormattingEnabled = true;
-            this.cboAuthorCommit.Location = new System.Drawing.Point(145, 35);
+            this.cboAuthorCommit.Location = new System.Drawing.Point(145, 67);
             this.cboAuthorCommit.Name = "cboAuthorCommit";
             this.cboAuthorCommit.Size = new System.Drawing.Size(136, 25);
             this.cboAuthorCommit.TabIndex = 26;
