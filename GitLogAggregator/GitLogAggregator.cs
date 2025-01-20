@@ -88,11 +88,6 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void GitLogAggregator_Load(object sender, EventArgs e)
         {
-            // Tải dữ liệu từ thư mục `internship_week` và hiển thị lên form
-            desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-
-            txtDirectoryProjectPath = Path.Combine(desktopPath, "GitAggregator");
-
             // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
             cboThuMucThucTap.DataSource = internshipDirectoryBUS.GetAll();
             cboThuMucThucTap.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
@@ -100,29 +95,17 @@ namespace GitLogAggregator
 
             // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
             txtFolderInternshipPath = GetLatestInternshipFolderPath();
-            if (string.IsNullOrEmpty(txtFolderInternshipPath))
-            {
-                txtFolderInternshipPath = Path.Combine(txtDirectoryProjectPath, "internship_week");
-            }
+            // Xây dựng danh sách các tuần và tệp
+            BuildWeekFileListView(txtFolderInternshipPath);
+
 
             // Cài đặt và hiển thị danh sách dự án listview project
-            listViewProjects.Columns.Clear();
-            listViewProjects.View = View.Details;
-            listViewProjects.FullRowSelect = true; // Đảm bảo chọn toàn bộ hàng
-            listViewProjects.MultiSelect = false; // Đảm bảo chỉ chọn một hàng tại một thời điểm
+            cboConfigFiles.DataSource = configBus.GetAll();
+            cboConfigFiles.ValueMember = "ID";
+            cboConfigFiles.DisplayMember = "ProjectDirectory";
 
-            // Thiết lập các cột cho listViewProjects (nếu chưa thêm trước đó)
-            if (listViewProjects.Columns.Count == 0)
-            {
-                listViewProjects.Columns.Add("STT", 50); // Cột số thứ tự 
-                listViewProjects.Columns.Add("Đường dẫn dự án", 200); // Đường dẫn dự án
-                listViewProjects.Columns.Add("Tác giả", 150); // Tác giả
-                listViewProjects.Columns.Add("Ngày bắt đầu", 100); // Ngày bắt đầu
-                listViewProjects.Columns.Add("Ngày kết thúc", 100); // Ngày kết thúc
-                listViewProjects.Columns.Add("Số tuần", 70); // Số tuần thực tập
-                listViewProjects.Columns.Add("Ngày commit đầu tiên", 150); // Ngày commit đầu tiên
-                listViewProjects.Columns.Add("Thư mục thực tập", 200); // Thư mục thực tập
-            }
+
+            cboAuthorCommit.DataSource = gitgui_bus.GetGitAuthors(cboConfigFiles.SelectedText);
 
             // Tự động điều chỉnh kích thước cột
             fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -139,28 +122,6 @@ namespace GitLogAggregator
                 fileListView.Columns.Add("Tên File", 120); // Tên file
                 fileListView.Columns.Add("Ngày Tạo", 100); // Ngày tạo
             }
-
-            // Tự động điều chỉnh kích thước cột
-            fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-
-            var configFiles = configBus.GetAll();
-            listViewProjects.Items.Clear(); // Xóa dữ liệu cũ trước khi bắt đầu thêm mới 
-            foreach (var config in configFiles)
-            {
-                // Hiển thị thông tin đường dẫn dự án
-                ListViewItem item = new ListViewItem(config.ID.ToString());         // ID
-                item.SubItems.Add(config.ProjectDirectory);                         // Đường dẫn dự án
-                item.SubItems.Add(config.Author);                                   // Tác giả thực hiện commit đầu tiên
-                item.SubItems.Add(((DateTime)config.InternshipStartDate).ToString("yyyy-MM-dd"));         // Ngày bắt đầu thực tập
-                item.SubItems.Add(((DateTime)config.InternshipEndDate).ToString("yyyy-MM-dd"));           // Ngày kết thúc thực tập
-                item.SubItems.Add(config.Weeks.ToString());                         // Số tuần thực tập
-                item.SubItems.Add(((DateTime)config.FirstCommitDate).ToString("yyyy-MM-dd"));   // Ngày commit đầu tiên
-                item.SubItems.Add(config.InternshipDirectoryId.ToString());                     // Thư mục thực tập
-                listViewProjects.Items.Add(item);
-            }
-
-            // Xây dựng danh sách các tuần và tệp
-            BuildWeekFileListView(txtFolderInternshipPath); 
 
             // Cập nhật danh sách tuần trên ComboBox
             cboProjectWeek.DataSource = projectWeeksBUS.GetAll();
@@ -316,10 +277,9 @@ namespace GitLogAggregator
                 { btnClearDataListView, "Xóa dữ liệu hiển thị trong ListView" },
                 { chkUseDate, "Bật/tắt chức năng sử dụng ngày tháng" },
                 { txtInternshipStartDate, "Nhập ngày bắt đầu thực tập" },
-                { cboAuthorCommit, "Chọn tác giả commit" },
                 { cboThuMucThucTap, "Chọn thư mục thực tập" },
                 { helpButton, "Hiển thị hướng dẫn sử dụng" },
-                { listViewProjects, "Hiển thị danh sách các dự án" },
+                { cboConfigFiles, "Hiển thị danh sách các dự án" },
                 { dgvReportCommits, "Hiển thị báo cáo các commit" },
                 { txtSearchReport, "Nhập từ khóa tìm kiếm commit" },
                 { txtResultMouseEvents, "Hiển thị thông báo khi rê chuột vào các control" },
@@ -515,21 +475,9 @@ namespace GitLogAggregator
         /// <param name="internshipWeekFolder"></param>
         public void LoadProjectListView()
         {
-            var configFiles = configBus.GetAll();
-            listViewProjects.Items.Clear(); // Xóa dữ liệu cũ trước khi bắt đầu thêm mới 
-            foreach (var config in configFiles)
-            {
-                // Hiển thị thông tin đường dẫn dự án
-                ListViewItem item = new ListViewItem(config.ID.ToString());         // ID
-                item.SubItems.Add(config.ProjectDirectory);                         // Đường dẫn dự án
-                item.SubItems.Add(config.Author);                                   // Tác giả thực hiện commit đầu tiên
-                item.SubItems.Add(((DateTime)config.InternshipStartDate).ToString("yyyy-MM-dd"));         // Ngày bắt đầu thực tập
-                item.SubItems.Add(((DateTime)config.InternshipEndDate).ToString("yyyy-MM-dd"));           // Ngày kết thúc thực tập
-                item.SubItems.Add(config.Weeks.ToString());                         // Số tuần thực tập
-                item.SubItems.Add(((DateTime)config.FirstCommitDate).ToString("yyyy-MM-dd"));   // Ngày commit đầu tiên
-                item.SubItems.Add(config.InternshipDirectoryId.ToString());                     // Thư mục thực tập
-                listViewProjects.Items.Add(item);
-            }
+            cboConfigFiles.DataSource = configBus.GetAll();
+            cboConfigFiles.ValueMember = "ID";
+            cboConfigFiles.DisplayMember = "ProjectDirectory";
         }
 
         /// <summary>
@@ -585,7 +533,7 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnAggregateCommits_Click(object sender, EventArgs e)
         {
-            if (listViewProjects.Items.Count == 0)
+            if (configBus.GetAll().Count == 0)
             {
                 AppendTextWithScroll("Vui lòng thêm ít nhất một dự án vào danh sách trước khi tổng hợp commit.\n");
                 return;
@@ -916,17 +864,17 @@ namespace GitLogAggregator
                 fileListView.Items.Clear();
                 AppendTextWithScroll("Danh sách file đã được làm trống.\n");
 
-                listViewProjects.Items.Clear();
+                // Xóa dữ liệu trong combobox
+                cboConfigFiles.DataSource = null;
                 AppendTextWithScroll("Danh sách config đã được làm trống.\n");
 
-
-
+                // Xóa dữ liệu trong datagridview
                 dgvReportCommits.DataSource = null;
                 AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
 
-                //cboAuthorCommit.DataSource = null;
+                cboAuthorCommit.DataSource = null;
 
-                //cboThuMucThucTap.DataSource = null;
+                cboThuMucThucTap.DataSource = null;
 
                 // Xóa dữ liệu trong các bảng
                 //removeBUS.ClearAllTables(); 
@@ -960,22 +908,9 @@ namespace GitLogAggregator
         // Hàm để tải lại danh sách listViewProjects từ cơ sở dữ liệu
         private void LoadListViewProjects(List<ConfigFileET> configFiles)
         {
-            listViewProjects.Items.Clear();
-            foreach (var configFile in configFiles)
-            {
-
-                var internshipWeekFolder = internshipDirectoryBUS.GetByID(configFile.InternshipDirectoryId).InternshipWeekFolder;
-
-                ListViewItem item = new ListViewItem(configFile.ID.ToString());
-                item.SubItems.Add(configFile.ProjectDirectory);
-                item.SubItems.Add(configFile.Author);
-                item.SubItems.Add(((DateTime)configFile.InternshipStartDate).ToShortDateString());
-                item.SubItems.Add(((DateTime)configFile.InternshipEndDate).ToShortDateString());
-                item.SubItems.Add(configFile.Weeks.ToString());
-                item.SubItems.Add(((DateTime)configFile.FirstCommitDate).ToShortDateString());
-                item.SubItems.Add(internshipWeekFolder);
-                listViewProjects.Items.Add(item);
-            }
+            cboConfigFiles.DataSource = configBus.GetAll();
+            cboConfigFiles.ValueMember = "ID";
+            cboConfigFiles.DisplayMember = "ProjectDirectory";
         }
 
 
