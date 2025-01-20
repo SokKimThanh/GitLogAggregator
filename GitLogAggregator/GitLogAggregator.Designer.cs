@@ -59,13 +59,13 @@
             this.cboThuMucThucTap = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.chkUseDate = new System.Windows.Forms.CheckBox();
             this.cboConfigFiles = new System.Windows.Forms.ComboBox();
             this.cboAuthorCommit = new System.Windows.Forms.ComboBox();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnCreateWeek = new System.Windows.Forms.Button();
+            this.chkUseDate = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnSaveGit = new System.Windows.Forms.Button();
             this.btnRemoveAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
@@ -317,7 +317,7 @@
             // 
             this.txtFirstCommitDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtFirstCommitDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.txtFirstCommitDate.Location = new System.Drawing.Point(158, 3);
+            this.txtFirstCommitDate.Location = new System.Drawing.Point(157, 3);
             this.txtFirstCommitDate.Name = "txtFirstCommitDate";
             this.txtFirstCommitDate.Size = new System.Drawing.Size(247, 25);
             this.txtFirstCommitDate.TabIndex = 3;
@@ -456,6 +456,25 @@
             this.tableLayoutPanel9.Size = new System.Drawing.Size(284, 97);
             this.tableLayoutPanel9.TabIndex = 17;
             // 
+            // cboConfigFiles
+            // 
+            this.cboConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboConfigFiles.FormattingEnabled = true;
+            this.cboConfigFiles.Location = new System.Drawing.Point(3, 67);
+            this.cboConfigFiles.Name = "cboConfigFiles";
+            this.cboConfigFiles.Size = new System.Drawing.Size(136, 25);
+            this.cboConfigFiles.TabIndex = 26;
+            this.cboConfigFiles.SelectedIndexChanged += new System.EventHandler(this.cboConfigFiles_SelectedIndexChanged);
+            // 
+            // cboAuthorCommit
+            // 
+            this.cboAuthorCommit.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cboAuthorCommit.FormattingEnabled = true;
+            this.cboAuthorCommit.Location = new System.Drawing.Point(145, 67);
+            this.cboAuthorCommit.Name = "cboAuthorCommit";
+            this.cboAuthorCommit.Size = new System.Drawing.Size(136, 25);
+            this.cboAuthorCommit.TabIndex = 26;
+            // 
             // btnSetupThuMucThucTap
             // 
             this.btnSetupThuMucThucTap.BackColor = System.Drawing.Color.Transparent;
@@ -496,50 +515,6 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(381, 107);
             this.tableLayoutPanel2.TabIndex = 27;
             // 
-            // chkUseDate
-            // 
-            this.chkUseDate.AutoSize = true;
-            this.chkUseDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkUseDate.Location = new System.Drawing.Point(3, 70);
-            this.chkUseDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.chkUseDate.Name = "chkUseDate";
-            this.chkUseDate.Size = new System.Drawing.Size(123, 37);
-            this.chkUseDate.TabIndex = 26;
-            this.chkUseDate.Text = "Chọn ngày TT";
-            this.chkUseDate.UseVisualStyleBackColor = true;
-            this.chkUseDate.CheckedChanged += new System.EventHandler(this.chkUseDate_CheckedChanged);
-            // 
-            // cboConfigFiles
-            // 
-            this.cboConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cboConfigFiles.FormattingEnabled = true;
-            this.cboConfigFiles.Location = new System.Drawing.Point(3, 67);
-            this.cboConfigFiles.Name = "cboConfigFiles";
-            this.cboConfigFiles.Size = new System.Drawing.Size(136, 25);
-            this.cboConfigFiles.TabIndex = 26;
-            this.cboConfigFiles.SelectedIndexChanged += new System.EventHandler(this.cboConfigFiles_SelectedIndexChanged);
-            // 
-            // cboAuthorCommit
-            // 
-            this.cboAuthorCommit.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cboAuthorCommit.FormattingEnabled = true;
-            this.cboAuthorCommit.Location = new System.Drawing.Point(145, 67);
-            this.cboAuthorCommit.Name = "cboAuthorCommit";
-            this.cboAuthorCommit.Size = new System.Drawing.Size(136, 25);
-            this.cboAuthorCommit.TabIndex = 26;
-            // 
-            // flowLayoutPanel2
-            // 
-            this.flowLayoutPanel2.Controls.Add(this.btnSaveGit);
-            this.flowLayoutPanel2.Controls.Add(this.btnRemoveAll);
-            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(375, 38);
-            this.flowLayoutPanel2.TabIndex = 27;
-            // 
             // btnCreateWeek
             // 
             this.btnCreateWeek.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
@@ -554,6 +529,31 @@
             this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;
             this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
+            // 
+            // chkUseDate
+            // 
+            this.chkUseDate.AutoSize = true;
+            this.chkUseDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkUseDate.Location = new System.Drawing.Point(3, 70);
+            this.chkUseDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.chkUseDate.Name = "chkUseDate";
+            this.chkUseDate.Size = new System.Drawing.Size(123, 37);
+            this.chkUseDate.TabIndex = 26;
+            this.chkUseDate.Text = "Chọn ngày TT";
+            this.chkUseDate.UseVisualStyleBackColor = true;
+            this.chkUseDate.CheckedChanged += new System.EventHandler(this.chkUseDate_CheckedChanged);
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.Controls.Add(this.btnSaveGit);
+            this.flowLayoutPanel2.Controls.Add(this.btnRemoveAll);
+            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(375, 38);
+            this.flowLayoutPanel2.TabIndex = 27;
             // 
             // btnSaveGit
             // 
@@ -657,7 +657,7 @@
             // 
             this.cboSearchByWeek.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboSearchByWeek.FormattingEnabled = true;
-            this.cboSearchByWeek.Location = new System.Drawing.Point(158, 37);
+            this.cboSearchByWeek.Location = new System.Drawing.Point(157, 37);
             this.cboSearchByWeek.Name = "cboSearchByWeek";
             this.cboSearchByWeek.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByWeek.TabIndex = 9;
@@ -665,7 +665,7 @@
             // chkSearchAllWeeks
             // 
             this.chkSearchAllWeeks.AutoSize = true;
-            this.chkSearchAllWeeks.Location = new System.Drawing.Point(411, 37);
+            this.chkSearchAllWeeks.Location = new System.Drawing.Point(410, 37);
             this.chkSearchAllWeeks.Name = "chkSearchAllWeeks";
             this.chkSearchAllWeeks.Size = new System.Drawing.Size(167, 21);
             this.chkSearchAllWeeks.TabIndex = 10;
@@ -690,7 +690,7 @@
             this.cboSearchByAuthor.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cboSearchByAuthor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboSearchByAuthor.FormattingEnabled = true;
-            this.cboSearchByAuthor.Location = new System.Drawing.Point(158, 71);
+            this.cboSearchByAuthor.Location = new System.Drawing.Point(157, 71);
             this.cboSearchByAuthor.Name = "cboSearchByAuthor";
             this.cboSearchByAuthor.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByAuthor.TabIndex = 11;
@@ -698,7 +698,7 @@
             // chkPhanTrang
             // 
             this.chkPhanTrang.AutoSize = true;
-            this.chkPhanTrang.Location = new System.Drawing.Point(411, 71);
+            this.chkPhanTrang.Location = new System.Drawing.Point(410, 71);
             this.chkPhanTrang.Name = "chkPhanTrang";
             this.chkPhanTrang.Size = new System.Drawing.Size(90, 21);
             this.chkPhanTrang.TabIndex = 10;
