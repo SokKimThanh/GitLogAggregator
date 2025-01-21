@@ -153,5 +153,12 @@ namespace DAL
             }
         }
 
+        /// <summary>
+        /// Kiểm tra xem có dữ liệu tuần thực tập trong database hay không
+        /// </summary> 
+        public bool IsInternshipWeekListCreated()
+        {
+            return db.ProjectWeeks.Any(); // Trả về true nếu có ít nhất một tuần thực tập
+        }
     }
 }

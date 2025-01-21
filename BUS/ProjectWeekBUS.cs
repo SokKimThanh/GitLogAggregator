@@ -44,5 +44,9 @@ namespace BUS
 
             return dal.GetLastInserted();
         }
+        public bool IsInternshipWeekListCreated()
+        {
+            return dal.IsInternshipWeekListCreated();
+        }
     }
 }

@@ -1768,6 +1768,30 @@ git %*
         {
             try
             {
+                // Kiểm tra xem danh sách tuần thực tập đã được tạo chưa
+                if (!projectWeeksBUS.IsInternshipWeekListCreated())
+                {
+                    MessageBox.Show(
+                        "Vui lòng tạo danh sách tuần thực tập trước khi lưu thông tin cấu hình.", // Nội dung thông báo
+                        "Lỗi",                                                                     // Tiêu đề hộp thoại
+                        MessageBoxButtons.OK,                                                      // Nút OK
+                        MessageBoxIcon.Error                                                       // Biểu tượng lỗi
+                    );
+                    return; // Dừng hàm nếu danh sách tuần thực tập chưa được tạo
+                }
+
+                // Kiểm tra xem ngày thực tập đã được xác nhận chưa
+                if (!chkConfirmInternshipDate.Checked)
+                {
+                    MessageBox.Show(
+                        "Vui lòng xác nhận ngày thực tập trước khi lưu thông tin cấu hình.", // Nội dung thông báo
+                        "Lỗi",                                                               // Tiêu đề hộp thoại
+                        MessageBoxButtons.OK,                                                // Nút OK
+                        MessageBoxIcon.Error                                                 // Biểu tượng lỗi
+                    );
+                    return; // Dừng hàm nếu ngày thực tập chưa được xác nhận
+                }
+
                 // Hiển thị hộp thoại xác nhận
                 DialogResult result = MessageBox.Show(
                     "Bạn có chắc chắn muốn lưu thông tin cấu hình không?", // Nội dung thông báo
@@ -1791,15 +1815,13 @@ git %*
                     // Lưu thông tin cấu hình vào cơ sở dữ liệu
                     foreach (ConfigFileET config in configs)
                     {
-                        AggregateCommits(config);
+                        AggregateCommits(config); // Hàm này xử lý việc lưu thông tin commit vào cơ sở dữ liệu
                     }
-                    // Hiển thị dữ liệu đã thêm vào csdl lên dgv
-                    //
-                    // Cấu hình trạng thái của CheckBox và ComboBox
-                    //
-                    // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
-                    SearchCommitsAndUpdateUI();
 
+                    // Cập nhật giao diện người dùng (UI)
+                    UpdateUIAfterSave();
+
+                    // Hiển thị thông báo thành công
                     AppendTextWithScroll("Lưu thông tin cấu hình thành công.\n");
                 }
                 else
@@ -1810,7 +1832,28 @@ git %*
             }
             catch (Exception ex)
             {
-                AppendTextWithScroll($"Lỗi: {ex.Message}");
+                // Xử lý ngoại lệ và hiển thị thông báo lỗi
+                AppendTextWithScroll($"Lỗi: {ex.Message}\n");
+            }
+        }
+
+
+
+        private void UpdateUIAfterSave()
+        {
+            // Cập nhật DataGridView với dữ liệu mới từ cơ sở dữ liệu
+            dgvReportCommits.DataSource = commitBUS.GetAll();
+
+            // Cập nhật trạng thái của CheckBox và ComboBox
+            chkConfirmInternshipDate.Checked = false; // Đặt lại trạng thái của CheckBox
+            cboInternshipFolder.SelectedIndex = -1;  // Đặt lại ComboBox về trạng thái không chọn
+
+            // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
+            if (chkSearchAllWeeks.Checked)
+            {
+                // Logic tìm kiếm commit và cập nhật UI
+                SearchCommitsAndUpdateUI();
+                AppendTextWithScroll("Đã tìm kiếm và cập nhật dữ liệu từ tất cả các tuần.\n");
             }
         }
         private void SearchCommitsAndUpdateUI()
