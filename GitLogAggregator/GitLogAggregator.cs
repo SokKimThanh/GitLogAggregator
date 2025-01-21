@@ -1357,8 +1357,40 @@ namespace GitLogAggregator
                         }
                         else
                         {
-                            MessageBox.Show("Vui lòng làm trống thư mục thực tập trước khi xử lý dữ liệu.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
+                            // Hiển thị thông báo yêu cầu làm trống thư mục
+                            DialogResult resultDeleteFolderInternship = MessageBox.Show(
+                                "Thư mục thực tập đã tồn tại. Bạn có muốn xóa thư mục này không?", // Nội dung thông báo
+                                "Xác nhận xóa thư mục",                                           // Tiêu đề hộp thoại
+                                MessageBoxButtons.OKCancel,                                        // Nút OK và Cancel
+                                MessageBoxIcon.Warning                                             // Biểu tượng cảnh báo
+                            );
+
+                            // Kiểm tra kết quả từ hộp thoại
+                            if (resultDeleteFolderInternship == DialogResult.OK)
+                            {
+                                try
+                                {
+                                    // Xóa thư mục nếu người dùng chọn OK
+                                    Directory.Delete(txtFolderInternshipPath, true); // true để xóa cả thư mục con và file bên trong
+                                    AppendTextWithScroll($"Thư mục {txtFolderInternshipPath} đã được xóa thành công.\n");
+
+                                    // Tạo lại thư mục trống
+                                    Directory.CreateDirectory(txtFolderInternshipPath);
+                                    AppendTextWithScroll($"Thư mục {txtFolderInternshipPath} đã được tạo lại.\n");
+                                }
+                                catch (Exception ex)
+                                {
+                                    // Xử lý lỗi nếu có
+                                    AppendTextWithScroll($"Lỗi khi xóa thư mục: {ex.Message}\n");
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                // Nếu người dùng chọn Cancel, không làm gì cả và thoát hàm
+                                AppendTextWithScroll("Thư mục không được xóa. Vui lòng làm trống thư mục thực tập trước khi xử lý dữ liệu.\n");
+                                return;
+                            }
                         }
                     }
                     else
@@ -1860,9 +1892,20 @@ git %*
             // Kiểm tra kết quả từ hộp thoại
             if (result == DialogResult.Yes)
             {
-                // Nếu người dùng chọn "Yes", thực hiện xóa
-                removeBUS.ClearAllTables();
-                AppendTextWithScroll("CSDL Trống!");
+                try
+                {
+                    // Nếu người dùng chọn "Yes", thực hiện xóa tất cả dữ liệu từ database
+                    removeBUS.ClearAllTables();
+
+                    // Làm mới giao diện sau khi xóa
+                    BtnRefreshData_Click(sender, e); // Gọi hàm làm mới để cập nhật giao diện
+
+                    AppendTextWithScroll("Tất cả dữ liệu đã được xóa và giao diện đã được làm mới.\n");
+                }
+                catch (Exception ex)
+                {
+                    AppendTextWithScroll($"Lỗi khi xóa dữ liệu: {ex.Message}\n");
+                }
             }
             // Nếu người dùng chọn "No", không làm gì cả
         }
