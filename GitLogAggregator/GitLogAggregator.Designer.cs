@@ -64,7 +64,7 @@
             this.btnSetupThuMucThucTap = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnCreateWeek = new System.Windows.Forms.Button();
-            this.chkUseDate = new System.Windows.Forms.CheckBox();
+            this.chkConfirmInternshipDate = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnSaveGit = new System.Windows.Forms.Button();
             this.btnRemoveAll = new System.Windows.Forms.Button();
@@ -503,7 +503,7 @@
             this.tableLayoutPanel2.Controls.Add(this.btnCreateWeek, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.txtInternshipEndDate, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.txtNumericsWeek, 2, 1);
-            this.tableLayoutPanel2.Controls.Add(this.chkUseDate, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.chkConfirmInternshipDate, 0, 2);
             this.tableLayoutPanel2.Controls.Add(this.btnOpenGitFolder, 2, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 103);
@@ -531,18 +531,18 @@
             this.btnCreateWeek.UseVisualStyleBackColor = false;
             this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
             // 
-            // chkUseDate
+            // chkConfirmInternshipDate
             // 
-            this.chkUseDate.AutoSize = true;
-            this.chkUseDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkUseDate.Location = new System.Drawing.Point(3, 70);
-            this.chkUseDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.chkUseDate.Name = "chkUseDate";
-            this.chkUseDate.Size = new System.Drawing.Size(123, 37);
-            this.chkUseDate.TabIndex = 26;
-            this.chkUseDate.Text = "Chọn ngày TT";
-            this.chkUseDate.UseVisualStyleBackColor = true;
-            this.chkUseDate.CheckedChanged += new System.EventHandler(this.chkUseDate_CheckedChanged);
+            this.chkConfirmInternshipDate.AutoSize = true;
+            this.chkConfirmInternshipDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkConfirmInternshipDate.Location = new System.Drawing.Point(3, 70);
+            this.chkConfirmInternshipDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.chkConfirmInternshipDate.Name = "chkConfirmInternshipDate";
+            this.chkConfirmInternshipDate.Size = new System.Drawing.Size(123, 37);
+            this.chkConfirmInternshipDate.TabIndex = 26;
+            this.chkConfirmInternshipDate.Text = "Xác nhậnDateTT";
+            this.chkConfirmInternshipDate.UseVisualStyleBackColor = true;
+            this.chkConfirmInternshipDate.CheckedChanged += new System.EventHandler(this.chkConfirmInternshipDate_CheckedChanged);
             // 
             // flowLayoutPanel2
             // 
@@ -1092,7 +1092,7 @@
         private System.Windows.Forms.Button btnSaveGit;
         private System.Windows.Forms.Button btnRemoveAll;
         private System.Windows.Forms.Button btnCreateWeek;
-        private System.Windows.Forms.CheckBox chkUseDate;
+        private System.Windows.Forms.CheckBox chkConfirmInternshipDate;
         private System.Windows.Forms.ImageList crudImageList;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label11;

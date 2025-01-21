@@ -346,7 +346,7 @@ namespace GitLogAggregator
                 { btnOpenGitFolder, "Mở thư mục dự án git" },
                 { btnSetupThuMucThucTap, "Thêm thư mục dự án vào csdl" },
                 { btnRefreshData, "Làm mới dữ liệu hiển thị của các control" },
-                { chkUseDate, "Bật/tắt chức năng sử dụng ngày tháng" },
+                { chkConfirmInternshipDate, "Bật/tắt chức năng sử dụng ngày tháng" },
                 { txtInternshipStartDate, "Nhập ngày bắt đầu thực tập" },
                 { cboInternshipFolder, "Chọn thư mục thực tập" },
                 { helpButton, "Hiển thị hướng dẫn sử dụng" },
@@ -1308,13 +1308,21 @@ namespace GitLogAggregator
         }
         private void NumericWeeks_ValueChanged(object sender, EventArgs e)
         {
-            DateTime startDate = txtInternshipStartDate.Value;
-            int weeks = (int)txtNumericsWeek.Value;
-            DateTime endDate = gitgui_bus.CalculateEndDate(startDate, weeks);
+            // Khi ngày thực tập thay đổi, kiểm tra lại tính hợp lệ của ngày
+            if (chkConfirmInternshipDate.Checked)
+            {
+                ValidateInternshipDate();
+            }
+            else
+            {
+                DateTime startDate = txtInternshipStartDate.Value;
+                int weeks = (int)txtNumericsWeek.Value;
+                DateTime endDate = gitgui_bus.CalculateEndDate(startDate, weeks);
 
-            // Hiển thị ngày kết thúc
-            txtInternshipEndDate.Value = endDate;
-            btnOpenGitFolder.Enabled = true;// chọn tuần thực tập xong mới được thêm dự án
+                // Hiển thị ngày kết thúc
+                txtInternshipEndDate.Value = endDate;
+                btnOpenGitFolder.Enabled = true;// chọn tuần thực tập xong mới được thêm dự án
+            }
         }
 
 
@@ -2031,15 +2039,42 @@ git %*
             cboSearchByWeek.DisplayMember = "ProjectWeekName";
         }
 
-        private void chkUseDate_CheckedChanged(object sender, EventArgs e)
+        private void chkConfirmInternshipDate_CheckedChanged(object sender, EventArgs e)
         {
             // Khi CheckBox được chọn, kích hoạt DateTimePicker
-            txtInternshipStartDate.Enabled = chkUseDate.Checked;
+            txtInternshipStartDate.Enabled = chkConfirmInternshipDate.Checked;
 
-            // Khi CheckBox không được chọn, vô hiệu hóa DateTimePicker
-            if (!chkUseDate.Checked)
+            // Khi CheckBox không được chọn, vô hiệu hóa DateTimePicker và các nút liên quan
+            if (!chkConfirmInternshipDate.Checked)
             {
                 txtInternshipStartDate.Value = DateTime.Now; // Đặt lại giá trị mặc định (tùy chọn)
+                btnCreateWeek.Enabled = false; // Vô hiệu hóa nút Tạo tuần thực tập
+                btnOpenGitFolder.Enabled = false; // Vô hiệu hóa nút Thêm dự án
+                txtInternshipStartDate.Enabled = true;// reset cho nhập lại.
+            }
+            else
+            {
+                // Khi CheckBox được chọn, kiểm tra ngày thực tập hợp lệ
+                ValidateInternshipDate();
+            }
+        }
+        private void ValidateInternshipDate()
+        {
+            // Kiểm tra ngày thực tập hợp lệ (ví dụ: ngày bắt đầu không được lớn hơn ngày hiện tại)
+            if (txtInternshipStartDate.Value > DateTime.Now)
+            {
+                ShowError("Ngày bắt đầu thực tập không được lớn hơn ngày hiện tại.");
+                btnCreateWeek.Enabled = false; // Vô hiệu hóa nút Tạo tuần thực tập
+                btnOpenGitFolder.Enabled = false; // Vô hiệu hóa nút Thêm dự án 
+                chkConfirmInternshipDate.Checked = false;
+            }
+            else
+            // xác nhận thành công
+            {
+                btnCreateWeek.Enabled = true; // Kích hoạt nút Tạo tuần thực tập
+                btnOpenGitFolder.Enabled = true; // Kích hoạt nút Thêm dự án
+                txtInternshipEndDate.Enabled = false; // khóa ngày kết thúc
+                txtNumericsWeek.Enabled = false; // khóa số tuần
             }
         }
 
