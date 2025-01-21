@@ -39,41 +39,6 @@ namespace DAL
                 throw new Exception("Error in GetAll: " + ex.Message);
             }
         }
-        // Tìm kiếm commit theo tên và projectWeekId
-        public List<CommitET> SearchCommits(string searchValue, int projectWeekId, int searchAllWeeks = 0)
-        {
-            try
-            {
-                // Truy vấn dữ liệu bằng LINQ
-                var result = (from c in db.Commits
-                                  // Tìm kiếm theo CommitMessage
-                              where (c.CommitMessage != null && (string.IsNullOrEmpty(searchValue) || c.CommitMessage.Contains(searchValue)))
-                              // Lọc theo ProjectWeekId (nếu không tìm kiếm tất cả các tuần)
-                              && (searchAllWeeks == 1 || c.ProjectWeekId == projectWeekId)
-                              // Sắp xếp theo ngày commit
-                              orderby c.CommitDate ascending
-                              select new CommitET
-                              {
-                                  CommitId = c.CommitId,
-                                  CommitHash = c.CommitHash,
-                                  CommitMessage = c.CommitMessage,
-                                  CommitDate = c.CommitDate, // ngày giờ commit
-                                  Author = c.Author,
-                                  AuthorEmail = c.AuthorEmail,
-                                  ProjectWeekId = c.ProjectWeekId,
-                                  Date = c.Date, // ngày commit
-                                  Period = c.Period,
-                                  CreatedAt = c.CreatedAt.Value,
-                                  UpdatedAt = c.UpdatedAt.Value
-                              }).ToList();
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error in SearchCommits: " + ex.Message);
-            }
-        }
 
         // Giải phóng tài nguyên khi đối tượng CommitDAL bị hủy
         public void Dispose()

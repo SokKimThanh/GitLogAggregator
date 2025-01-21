@@ -41,14 +41,7 @@ namespace BUS
         {
             return dal.GetLastInserted();
         }
-        /// <summary>
-        /// Bạn có thể sửa lại hàm SearchCommits để nhận một tham số int thay vì bool để đại diện cho việc tìm kiếm tất cả các tuần (1 là tìm kiếm tất cả, 0 là tìm kiếm theo tuần cụ thể).
-        /// </summary>
-        public List<CommitET> SearchCommits(string searchValue, int projectWeekId, int searchAllWeeks = 0)
-        {
-            return dal.SearchCommits(searchValue, projectWeekId, searchAllWeeks);
-        }
-
+         
         public void Dispose()
         {
             dal.Dispose();
