@@ -504,12 +504,24 @@ namespace GitLogAggregator
 
                     try
                     {
-                        // Thêm mối quan hệ giữa dự án và tác giả
-                        configAuthorBUS.Add(new ConfigAuthorET
+                        // Kiểm tra xem mối quan hệ giữa dự án và tác giả đã tồn tại chưa
+                        bool relationshipExists = configAuthorBUS.Exists(lastAddedConfigFile.ConfigID, author.AuthorID);
+
+                        if (!relationshipExists)
                         {
-                            ConfigID = lastAddedConfigFile.ConfigID,
-                            AuthorID = author.AuthorID
-                        });
+                            // Thêm mối quan hệ giữa dự án và tác giả nếu chưa tồn tại
+                            configAuthorBUS.Add(new ConfigAuthorET
+                            {
+                                ConfigID = lastAddedConfigFile.ConfigID,
+                                AuthorID = author.AuthorID
+                            });
+
+                            AppendTextWithScroll($"Đã thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ID: {author.AuthorID}).\n");
+                        }
+                        else
+                        {
+                            AppendTextWithScroll($"Mối quan hệ giữa dự án và tác giả {author.AuthorName} (ID: {author.AuthorID}) đã tồn tại.\n");
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -592,6 +604,7 @@ namespace GitLogAggregator
             txtInternshipStartDate.Enabled = false;
             txtInternshipEndDate.Enabled = false;
             txtFirstCommitDate.Enabled = false;
+            btnCreateWeek.Enabled = false;
             // Thêm các điều khiển khác nếu cần
         }
         /// <summary>

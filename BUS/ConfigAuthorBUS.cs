@@ -10,42 +10,47 @@ namespace BUS
 {
     public class ConfigAuthorBUS
     {
-        private ConfigAuthorDAL configAuthorDAL = new ConfigAuthorDAL();
+        private ConfigAuthorDAL dal = new ConfigAuthorDAL();
 
         // Lấy tất cả mối quan hệ ConfigAuthor
         public List<ConfigAuthorET> GetAll()
         {
-            return configAuthorDAL.GetAll();
+            return dal.GetAll();
         }
 
         // Lấy mối quan hệ ConfigAuthor theo ConfigID và AuthorID
         public ConfigAuthorET GetByID(int configID, int authorID)
         {
-            return configAuthorDAL.GetByID(configID, authorID);
+            return dal.GetByID(configID, authorID);
         }
 
         // Thêm mối quan hệ ConfigAuthor
         public void Add(ConfigAuthorET configAuthor)
         {
-            configAuthorDAL.Add(configAuthor);
+            dal.Add(configAuthor);
         }
 
         // Xóa mối quan hệ ConfigAuthor
         public void Delete(int configID, int authorID)
         {
-            configAuthorDAL.Delete(configID, authorID);
+            dal.Delete(configID, authorID);
         }
 
         // Lấy danh sách AuthorID theo ConfigID (phương thức bổ sung)
         public List<int> GetAuthorIDsByConfigID(int configID)
         {
-            return configAuthorDAL.GetAuthorIDsByConfigID(configID);
+            return dal.GetAuthorIDsByConfigID(configID);
         }
 
         // Lấy danh sách ConfigID theo AuthorID (phương thức bổ sung)
         public List<int> GetConfigIDsByAuthorID(int authorID)
         {
-            return configAuthorDAL.GetConfigIDsByAuthorID(authorID);
+            return dal.GetConfigIDsByAuthorID(authorID);
+        }
+
+        public bool Exists(int configID, int authorID)
+        {
+            return dal.Exists(configID, authorID);
         }
     }
 }
