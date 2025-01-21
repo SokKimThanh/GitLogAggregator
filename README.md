@@ -1,353 +1,493 @@
+![image](https://github.com/user-attachments/assets/c4e787bd-a8d2-4bb3-a658-0620f2ef3022)
+# **Hướng Dẫn Sử Dụng Công Cụ Quản Lý GitLogAggregator**
 
-![Screenshot 2025-01-17 174355](https://github.com/user-attachments/assets/376f9ec7-21c3-44c9-8689-93a00014c94e)
-![image](https://github.com/user-attachments/assets/2ae0acb8-aa50-4eb9-abc4-996474fb97bf)
+## **1. Giới Thiệu**
 
-### Hướng Dẫn Sử Dụng Công Cụ Quản Lý Commit Git
+Công cụ **GitLogAggregator** được thiết kế để quản lý và tổng hợp thông tin lịch sử commit từ các dự án Git. Mục tiêu chính của công cụ là giúp người dùng dễ dàng theo dõi tiến độ dự án, quản lý thông tin commit theo từng tuần, và chuẩn bị dữ liệu để tương tác với AI trong tương lai. Công cụ cung cấp các tính năng chính:
 
-#### 1\. Giới Thiệu
+- Quản lý danh sách dự án Git.
 
-Công cụ này hỗ trợ quản lý và tổng hợp commit từ Git theo từng tuần, giúp người dùng dễ dàng theo dõi tiến độ dự án. Ngoài ra, công cụ cho phép xem danh sách thư mục và xóa dữ liệu khi cần.
+- Tổng hợp commit theo tuần và lưu vào thư mục tương ứng.
 
-#### 2\. Cài Đặt
+- Xem danh sách thư mục và file commit.
 
-1. Đảm bảo máy tính đã cài đặt Git.
+- Xóa dữ liệu khi cần.
 
-2. Tải công cụ và mở file chạy ứng dụng.
+- Xuất báo cáo commit dưới dạng Excel.
 
-3. Chuẩn bị dự án Git chứa dữ liệu commit.
+---
 
-#### 3\. Hướng Dẫn Sử Dụng
+## **2. Cài Đặt**
 
-**Bước 1: Danh Mục Dự Án Git**
+### **Yêu Cầu Hệ Thống**
 
-1. Khi chương trình khởi động, danh mục các dự án sẽ được hiển thị đầu tiên.
+- Hệ điều hành: Windows 10 trở lên.
 
-2. Nếu muốn chọn thêm dự án mới, nhấn nút "Thêm Dự Án".
+- .NET Framework 4.7.2 hoặc .NET Core 3.1 trở lên.
 
-3. Chọn thư mục chứa dự án Git của bạn.
+- Git được cài đặt và cấu hình trên máy tính.
 
-4. Chương trình sẽ kiểm tra xem thư mục có chứa repository Git hợp lệ và có commit nào không:
+### **Các Bước Cài Đặt**
 
-o **Lỗi 1: Thư mục không chứa repository Git hợp lệ:**
+1\. Tải file cài đặt phần mềm từ đường dẫn được cung cấp.
 
-§ Thông báo lỗi: "Thư mục được chọn không chứa repository Git hợp lệ. Vui lòng chọn lại."
+2\. Chạy file cài đặt và làm theo hướng dẫn trên màn hình.
 
-o **Lỗi 2: Repository Git không chứa commit nào:**
+3\. Sau khi cài đặt hoàn tất, khởi động phần mềm từ shortcut trên màn hình.
 
-§ Thông báo lỗi: "Repository Git này không chứa bất kỳ commit nào. Vui lòng chọn một repository khác hoặc tạo commit đầu tiên."
+---
 
-5. Nếu hợp lệ, chương trình sẽ:
+## **3. Hướng Dẫn Sử Dụng**
 
-o Tạo thư mục `internship_week` nếu chưa có.
+### **3.1. Giao Diện Chính**
 
-o Lưu thư mục dự án vào danh mục các dự án.
+Khi khởi động phần mềm, bạn sẽ thấy giao diện chính bao gồm các thành phần sau:
 
-o Hiển thị ngay tác giả đầu tiên commit và ngày commit đầu tiên.
+- **Menu chức năng**: Chứa các tùy chọn như "Thêm Dự Án", "Quản lý tác giả", "Xuất báo cáo".
 
-**Bước 2: Xem Thông Tin Chi Tiết Dự Án**
+- **Danh sách dự án**: Hiển thị các dự án đã được thêm vào phần mềm.
 
-1. Chọn dự án từ danh mục các dự án.
+- **Thông tin chi tiết**: Hiển thị thông tin chi tiết về dự án và tác giả được chọn.
 
-2. Chương trình sẽ hiển thị thông tin chi tiết về dự án, bao gồm:
+---
 
-o Tác giả đầu tiên commit.
+### **3.2. Thêm Dự Án**
 
-o Ngày commit đầu tiên.
+#### **Bước 1: Chọn Thư Mục Git**
 
-3. Có hai trường hợp xảy ra:
+1\. Trên giao diện chính, nhấn nút **"Thêm Dự Án"**.
 
-o **Trường hợp 1: Dự án đã tồn tại danh sách các tuần đã tổng hợp:**
+2\. Chọn thư mục chứa repository Git bằng cách nhấn nút **"Chọn Thư Mục"**.
 
-§ Danh sách thư mục tuần và danh sách file commit theo tuần đã tổng hợp trong dự án đó sẽ được hiển thị.
+3\. Phần mềm sẽ kiểm tra xem thư mục có phải là repository Git hợp lệ không. Nếu không, thông báo lỗi sẽ hiển thị.
 
-o **Trường hợp 2: Dự án chưa có danh sách tổng hợp:**
+#### **Bước 2: Nhập Thông Tin Dự Án**
 
-§ Chương trình sẽ yêu cầu người dùng bấm nút "Tổng Hợp".
+1\. Nhập các thông tin sau:
 
-**Bước 3: Tổng Hợp Commit**
+   - **Ngày bắt đầu thực tập**: Chọn ngày từ DatePicker.
 
-1. Nhấn nút "Tổng Hợp" để bắt đầu tổng hợp commit.
+   - **Ngày kết thúc thực tập**: Chọn ngày từ DatePicker.
 
-2. Quá trình tổng hợp sẽ:
+   - **Số tuần thực tập**: Nhập số tuần từ NumericUpDown.
 
-o Tạo thư mục tuần bên trong `internship_week`.
+2\. Nhấn nút **"Xác Nhận"** để thêm dự án.
 
-o Lấy dữ liệu commit cho từng ngày trong tuần.
+#### **Bước 3: Kiểm Tra Kết Quả**
 
-o Lưu dữ liệu vào các file riêng theo từng tuần.
+- Nếu thêm thành công, dự án sẽ xuất hiện trong danh sách dự án.
 
-3. Sau khi hoàn tất, danh sách tuần sẽ hiển thị trong "Danh Sách Thư Mục".
+- Nếu có lỗi, thông báo lỗi sẽ hiển thị trên màn hình.
 
-4. **Lưu ý:** Trong khi quá trình tổng hợp đang chạy, nút tổng hợp sẽ bị vô hiệu hóa cho đến khi hoàn thành.
+---
 
-**Bước 4: Xem Danh Sách Thư Mục**
+### **3.3. Quản Lý Tác Giả**
 
-1. Danh sách các thư mục trong `internship_week` sẽ được hiển thị ở bảng "Danh Sách Thư Mục".
+#### **Xem Danh Sách Tác Giả**
 
-2. Mỗi thư mục đại diện cho một tuần trong dự án.
+1\. Trên giao diện chính, nhấn nút **"Quản Lý Tác Giả"**.
 
-3. Khi click vào một thư mục trong "Danh Sách Thư Mục", danh sách file trong thư mục đó sẽ hiển thị ở bảng "Danh Sách File".
+2\. Danh sách tác giả sẽ hiển thị, bao gồm các thông tin như:
 
-**Bước 5: Xóa Dữ Liệu**
+   - **Tên tác giả**.
 
-1. Nhấn nút "Xóa" để xóa thư mục `internship_week` cùng tất cả dữ liệu bên trong.
+   - **Email tác giả**.
 
-2. Sau khi xóa, nút xóa sẽ bị vô hiệu hóa cho đến khi thực hiện tổng hợp lại dữ liệu.
+   - **Ngày tạo**.
 
-3. Danh sách trong "Danh Sách Thư Mục" và "Danh Sách File" sẽ được làm trống.
+#### **Thêm Tác Giả Mới**
 
-#### 4\. Tính Năng Chính
+1\. Nhấn nút **"Thêm Tác Giả"**.
 
-1. **Tổng Hợp Commit:**
+2\. Nhập các thông tin:
 
-o Tự động lấy dữ liệu commit theo ngày và lưu vào thư mục tuần.
+   - **Tên tác giả**.
 
-2. **Quản Lý Trạng Thái Nút:**
+   - **Email tác giả**.
 
-o Nút tổng hợp bị vô hiệu hóa khi đang chạy và bật lại sau khi hoàn thành.
+3\. Nhấn nút **"Lưu"** để thêm tác giả mới.
 
-o Nút xóa chỉ xuất hiện sau khi đã tổng hợp thành công.
+#### **Cập Nhật Thông Tin Tác Giả**
 
-3. **Hiển Thị Danh Sách Thư Mục:**
+1\. Chọn tác giả từ danh sách.
 
-o Xem nhanh danh sách thư mục trong `internship_week`.
+2\. Nhấn nút **"Sửa"** để cập nhật thông tin.
 
-4. **Xóa Dữ Liệu:**
+3\. Nhập thông tin mới và nhấn nút **"Lưu"**.
 
-o Xóa toàn bộ dữ liệu để khởi động lại quá trình quản lý.
+---
 
-5. **Phân Loại Commit:**
+### **3.4. Xuất Báo Cáo**
 
-o Tự động lọc và hiển thị các commit không hợp lệ để dễ dàng kiểm tra.
+#### **Xuất Báo Cáo Dự Án**
 
-6. **Xuất Báo Cáo:**
+1\. Trên giao diện chính, nhấn nút **"Xuất Báo Cáo"**.
 
-o Có thể thêm tính năng xuất dữ liệu commit thành file Excel hoặc CSV để báo cáo.
+2\. Chọn loại báo cáo:
 
-#### 5\. Lưu Ý Quan Trọng
+   - **Báo cáo dự án**: Xuất thông tin chi tiết về dự án.
 
-1. Phải chọn thư mục dự án Git trước khi thực hiện bất kỳ thao tác nào.
+   - **Báo cáo tác giả**: Xuất thông tin về các tác giả liên quan đến dự án.
 
-2. Không thể tổng hợp commit nếu chưa chọn tác giả và ngày bắt đầu.
+3\. Chọn định dạng xuất (PDF, Excel, CSV).
 
-3. Xóa dữ liệu sẽ không thể khôi phục được, nên kiểm tra kỹ trước khi thực hiện.
+4\. Nhấn nút **"Xuất"** để tạo báo cáo.
 
-4. Nếu dự án Git chứa quá nhiều commit, quá trình tổng hợp có thể mất thời gian. Vui lòng kiên nhẫn chờ đợi.
+---
 
-#### 6\. Hỗ Trợ
+### **3.5. Quản Lý Mối Quan Hệ Dự Án - Tác Giả**
 
-Nếu gặp sự cố khi sử dụng công cụ, vui lòng liên hệ với bộ phận hỗ trợ qua email: 22211tt0063@mail.tdc.edu.vn hoặc truy cập trang web chính thức để biết thêm chi tiết.
+#### **Thêm Mối Quan Hệ**
 
-![image](https://github.com/user-attachments/assets/2367ba4c-ba4d-48ef-b71f-0025164ed26b)
+1\. Chọn dự án từ danh sách dự án.
 
-### 1\. **Tổng Quan Database**
+2\. Nhấn nút **"Quản Lý Tác Giả"**.
 
--   **Tên database:** `GitLogAggregatorDB`
+3\. Chọn tác giả từ danh sách tác giả.
 
--   **Mục đích:** Database này được thiết kế để lưu trữ thông tin về các commit trong quá trình thực tập, phân loại commit theo buổi/ngày/tuần, và lưu trữ đánh giá từ chatbot AI về các nhóm commit.
+4\. Nhấn nút **"Thêm Mối Quan Hệ"** để liên kết tác giả với dự án.
 
-* * * * *
+#### **Xóa Mối Quan Hệ**
 
-### 2\. **Mô Tả Các Bảng**
+1\. Chọn dự án từ danh sách dự án.
 
-#### a. **Bảng InternshipDirectories**
+2\. Chọn tác giả từ danh sách tác giả liên quan.
 
--   **Mục đích:** Lưu trữ thông tin về các thư mục thực tập.
+3\. Nhấn nút **"Xóa Mối Quan Hệ"** để hủy liên kết.
 
--   **Các cột:**
+---
 
-    -   `ID`: Khóa chính, tự động tăng.
+## **4. Xử Lý Lỗi**
 
-    -   `InternshipWeekFolder`: Tên thư mục thực tập.
+### **4.1. Lỗi Không Tìm Thấy Repository Git**
 
-    -   `DateModified`: Ngày và giờ thư mục được chỉnh sửa.
+- **Nguyên nhân**: Thư mục được chọn không phải là repository Git hợp lệ.
 
-    -   `CreatedAt`: Thời gian tạo bản ghi.
+- **Giải pháp**: Kiểm tra lại thư mục và đảm bảo rằng nó chứa thư mục `.git`.
 
-    -   `UpdatedAt`: Thời gian cập nhật bản ghi.
+### **4.2. Lỗi Không Thêm Được Dự Án**
 
-#### b. **Bảng ConfigFiles**
+- **Nguyên nhân**: Dự án đã tồn tại trong cơ sở dữ liệu.
 
--   **Mục đích:** Lưu trữ thông tin cấu hình của các dự án thực tập.
+- **Giải pháp**: Kiểm tra lại danh sách dự án và chọn thư mục khác.
 
--   **Các cột:**
+### **4.3. Lỗi Không Thêm Được Tác Giả**
 
-    -   `ID`: Khóa chính, tự động tăng.
+- **Nguyên nhân**: Email tác giả đã tồn tại trong cơ sở dữ liệu.
 
-    -   `ProjectDirectory`: Đường dẫn thư mục dự án.
+- **Giải pháp**: Kiểm tra lại danh sách tác giả và sử dụng email khác.
 
-    -   `InternshipDirectoryId`: Khóa ngoại liên kết đến `InternshipDirectories`.
+---
 
-    -   `Author`: Tác giả của dự án.
+## **5. Hỗ Trợ**
 
-    -   `StartDate`: Ngày bắt đầu thực tập.
+Nếu bạn gặp bất kỳ vấn đề nào khi sử dụng phần mềm, vui lòng liên hệ:
 
-    -   `EndDate`: Ngày kết thúc thực tập.
+- **Email hỗ trợ**: support@yoursoftware.com
 
-    -   `Weeks`: Số tuần thực tập.
+- **Số điện thoại**: +84 123 456 789
 
-    -   `FirstCommitDate`: Ngày commit đầu tiên.
+- **Website**: https://yoursoftware.com
 
-    -   `CreatedAt`: Thời gian tạo bản ghi.
+---
 
-    -   `UpdatedAt`: Thời gian cập nhật bản ghi.
+## **6. Kết Luận**
 
-#### c. **Bảng ProjectWeeks**
+Phần mềm được thiết kế để giúp bạn quản lý dự án và tác giả một cách hiệu quả. Hãy làm theo hướng dẫn trên để sử dụng phần mềm một cách tối ưu nhất. Cảm ơn bạn đã sử dụng sản phẩm của chúng tôi!
 
--   **Mục đích:** Lưu trữ thông tin về các tuần trong dự án thực tập.
+---
 
--   **Các cột:**
+**Lưu ý**: Hướng dẫn này có thể được cập nhật theo phiên bản mới của phần mềm. Vui lòng kiểm tra trang chủ để tải về phiên bản mới nhất.
+![image](https://github.com/user-attachments/assets/d90fd672-968c-4a0f-b601-d1d14f78d358)
+![image](https://github.com/user-attachments/assets/69f3704d-224e-4d32-8dcf-691a07577584)
+# **Giới Thiệu Chi Tiết Về Cơ Sở Dữ Liệu Của Phần Mềm GitLogAggregator**
 
-    -   `ProjectWeekId`: Khóa chính, tự động tăng.
+Cơ sở dữ liệu (CSDL) của phần mềm **GitLogAggregator** được thiết kế để quản lý và lưu trữ thông tin liên quan đến các dự án Git, lịch sử commit, tác giả, và các thông tin khác trong quá trình thực tập. CSDL được xây dựng với mục tiêu hỗ trợ việc tổng hợp, phân tích và quản lý dữ liệu commit một cách hiệu quả, đồng thời chuẩn bị cho việc tích hợp với AI trong tương lai.
 
-    -   `WeekStartDate`: Ngày bắt đầu tuần.
+Dưới đây là mô tả chi tiết về các bảng và mối quan hệ trong CSDL:
 
-    -   `WeekEndDate`: Ngày kết thúc tuần.
+---
 
-    -   `InternshipDirectoryId`: Khóa ngoại liên kết đến `InternshipDirectories`.
+## **1. Bảng `InternshipDirectories`**
 
-    -   `CreatedAt`: Thời gian tạo bản ghi.
+- **Mục đích**: Lưu trữ thông tin về các thư mục thực tập.
 
-    -   `UpdatedAt`: Thời gian cập nhật bản ghi.
+- **Các trường**:
 
-#### d. **Bảng Commits**
+  - `ID`: Khóa chính, tự động tăng.
 
--   **Mục đích:** Lưu trữ thông tin về các commit.
+  - `InternshipWeekFolder`: Đường dẫn thư mục thực tập.
 
--   **Các cột:**
+  - `DateModified`: Ngày sửa đổi thư mục.
 
-    -   `CommitId`: Khóa chính, tự động tăng.
+  - `CreatedAt`: Ngày tạo bản ghi.
 
-    -   `CommitHash`: Mã hash của commit.
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
 
-    -   `CommitMessage`: Nội dung commit.
+- **Ràng buộc**:
 
-    -   `CommitDate`: Ngày và giờ commit.
+  - Khóa chính: `ID`.
 
-    -   `Author`: Tác giả của commit.
+  - Giá trị mặc định cho `CreatedAt`, `UpdatedAt`, và `DateModified` là thời gian hiện tại.
 
-    -   `ProjectWeekId`: Khóa ngoại liên kết đến `ProjectWeeks`.
+---
 
-    -   `Date`: Ngày commit.
+## **2. Bảng `ConfigFiles`**
 
-    -   `Period`: Phạm vi thời gian (buổi/ngày/tuần).
+- **Mục đích**: Lưu trữ thông tin cấu hình của các dự án Git.
 
-    -   `CreatedAt`: Thời gian tạo bản ghi.
+- **Các trường**:
 
-    -   `UpdatedAt`: Thời gian cập nhật bản ghi.
+  - `ConfigID`: Khóa chính, tự động tăng.
 
-#### e. **Bảng CommitGroups**
+  - `ProjectDirectory`: Đường dẫn thư mục dự án.
 
--   **Mục đích:** Lưu trữ thông tin về các nhóm commit (theo buổi/ngày/tuần).
+  - `InternshipDirectoryId`: Khóa ngoại tham chiếu đến bảng `InternshipDirectories`.
 
--   **Các cột:**
+  - `InternshipStartDate`: Ngày bắt đầu thực tập.
 
-    -   `GroupId`: Khóa chính, tự động tăng.
+  - `InternshipEndDate`: Ngày kết thúc thực tập.
 
-    -   `GroupName`: Tên nhóm commit.
+  - `Weeks`: Số tuần thực tập.
 
-    -   `TimeRange`: Phạm vi thời gian (buổi/ngày/tuần).
+  - `FirstCommitDate`: Ngày commit đầu tiên.
 
-    -   `StartDate`: Ngày và giờ bắt đầu nhóm.
+  - `FirstCommitAuthor`: Tác giả đầu tiên commit.
 
-    -   `EndDate`: Ngày và giờ kết thúc nhóm.
+  - `CreatedAt`: Ngày tạo bản ghi.
 
-    -   `CreatedAt`: Thời gian tạo bản ghi.
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
 
-    -   `UpdatedAt`: Thời gian cập nhật bản ghi.
+- **Ràng buộc**:
 
-#### f. **Bảng CommitGroupMembers**
+  - Khóa chính: `ConfigID`.
 
--   **Mục đích:** Liên kết các commit với nhóm commit.
+  - Khóa ngoại: `InternshipDirectoryId` tham chiếu đến `InternshipDirectories`.
 
--   **Các cột:**
+  - Giá trị mặc định cho `CreatedAt` và `UpdatedAt`.
 
-    -   `GroupId`: Khóa ngoại liên kết đến `CommitGroups`.
+  - Ràng buộc kiểm tra `Weeks > 0`.
 
-    -   `CommitId`: Khóa ngoại liên kết đến `Commits`.
+---
 
-    -   `AddedAt`: Thời gian commit được thêm vào nhóm.
+## **3. Bảng `Authors`**
 
-#### g. **Bảng ChatbotSummary**
+- **Mục đích**: Lưu trữ thông tin về các tác giả commit.
 
--   **Mục đích:** Lưu trữ đánh giá từ chatbot AI cho từng nhóm commit.
+- **Các trường**:
 
--   **Các cột:**
+  - `AuthorID`: Khóa chính, tự động tăng.
 
-    -   `ID`: Khóa chính, tự động tăng.
+  - `AuthorName`: Tên tác giả.
 
-    -   `GroupId`: Khóa ngoại liên kết đến `CommitGroups`.
+  - `AuthorEmail`: Email tác giả (duy nhất).
 
-    -   `Attendance`: Thông tin điểm danh.
+  - `CreatedAt`: Ngày tạo bản ghi.
 
-    -   `AssignedTasks`: Nhiệm vụ được giao.
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
 
-    -   `ContentResults`: Kết quả nội dung.
+- **Ràng buộc**:
 
-    -   `SupervisorComments`: Nhận xét từ người hướng dẫn.
+  - Khóa chính: `AuthorID`.
 
-    -   `Notes`: Ghi chú.
+  - Giá trị mặc định cho `CreatedAt` và `UpdatedAt`.
 
-    -   `CreatedAt`: Thời gian tạo bản ghi.
+---
 
-    -   `UpdatedAt`: Thời gian cập nhật bản ghi.
+## **4. Bảng `ConfigAuthors`**
 
-* * * * *
+- **Mục đích**: Lưu trữ mối quan hệ nhiều-nhiều giữa các dự án (`ConfigFiles`) và tác giả (`Authors`).
 
-### 3\. **Mối Quan Hệ Giữa Các Bảng**
+- **Các trường**:
 
--   **InternshipDirectories** ↔ **ConfigFiles**: Một thư mục thực tập (`InternshipDirectories`) có thể có nhiều cấu hình dự án (`ConfigFiles`).
+  - `ConfigID`: Khóa ngoại tham chiếu đến `ConfigFiles`.
 
--   **InternshipDirectories** ↔ **ProjectWeeks**: Một thư mục thực tập (`InternshipDirectories`) có thể có nhiều tuần dự án (`ProjectWeeks`).
+  - `AuthorID`: Khóa ngoại tham chiếu đến `Authors`.
 
--   **ProjectWeeks** ↔ **Commits**: Một tuần dự án (`ProjectWeeks`) có thể có nhiều commit (`Commits`).
+  - `CreatedAt`: Ngày tạo bản ghi.
 
--   **CommitGroups** ↔ **CommitGroupMembers**: Một nhóm commit (`CommitGroups`) có thể chứa nhiều commit (`CommitGroupMembers`).
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
 
--   **CommitGroups** ↔ **ChatbotSummary**: Mỗi nhóm commit (`CommitGroups`) có một đánh giá từ chatbot AI (`ChatbotSummary`).
+- **Ràng buộc**:
 
-* * * * *
+  - Khóa chính phức hợp: (`ConfigID`, `AuthorID`).
 
-### 4\. **Ví Dụ Về Dữ Liệu**
+  - Khóa ngoại tham chiếu đến `ConfigFiles` và `Authors`.
 
-#### a. **InternshipDirectories**
+  - Giá trị mặc định cho `CreatedAt` và `UpdatedAt`.
 
-| ID | InternshipWeekFolder | DateModified | CreatedAt | UpdatedAt |
-| --- | --- | --- | --- | --- |
-| 1 | Week1_16_01_2025 | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 |
+---
 
-#### b. **ConfigFiles**
+## **5. Bảng `ProjectWeeks`**
 
-| ID | ProjectDirectory | InternshipDirectoryId | Author | StartDate | EndDate | Weeks | FirstCommitDate | CreatedAt | UpdatedAt |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | E:\Project1 | 1 | Thanh Sok | 2025-01-16 00:00:00 | 2025-01-22 23:59:59 | 1 | 2025-01-16 06:00:00 | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 |
+- **Mục đích**: Lưu trữ thông tin về các tuần thực tập trong dự án.
 
-#### c. **ProjectWeeks**
+- **Các trường**:
 
-| ProjectWeekId | WeekStartDate | WeekEndDate | InternshipDirectoryId | CreatedAt | UpdatedAt |
-| --- | --- | --- | --- | --- | --- |
-| 1 | 2025-01-16 00:00:00 | 2025-01-22 23:59:59 | 1 | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 |
+  - `ProjectWeekId`: Khóa chính, tự động tăng.
 
-#### d. **Commits**
+  - `ProjectWeekName`: Tên tuần thực tập.
 
-| CommitId | CommitHash | CommitMessage | CommitDate | Author | ProjectWeekId | Date | Period | CreatedAt | UpdatedAt |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 101 | 416a1033a81b... | Cập nhật giao diện người dùng | 2025-01-16 06:00:00 | Thanh Sok | 1 | 2025-01-16 06:00:00 | morning | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 |
+  - `WeekStartDate`: Ngày bắt đầu tuần.
 
-#### e. **CommitGroups**
+  - `WeekEndDate`: Ngày kết thúc tuần.
 
-| GroupId | GroupName | TimeRange | StartDate | EndDate | CreatedAt | UpdatedAt |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 | Buổi sáng 16/01/2025 | morning | 2025-01-16 06:00:00 | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 |
+  - `InternshipDirectoryId`: Khóa ngoại tham chiếu đến `InternshipDirectories`.
 
-#### f. **CommitGroupMembers**
+  - `CreatedAt`: Ngày tạo bản ghi.
 
-| GroupId | CommitId | AddedAt |
-| --- | --- | --- |
-| 1 | 101 | 2025-01-16 12:00:00 |
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
 
-#### g. **ChatbotSummary**
+- **Ràng buộc**:
 
-| ID | GroupId | Attendance | AssignedTasks | ContentResults | SupervisorComments | Notes | CreatedAt | UpdatedAt |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 1 | Có mặt đầy đủ | Cập nhật giao diện người dùng | Cải thiện trải nghiệm người dùng | Hoàn thành tốt | Không có ghi chú | 2025-01-16 12:00:00 | 2025-01-16 12:00:00 |
+  - Khóa chính: `ProjectWeekId`.
+
+  - Khóa ngoại: `InternshipDirectoryId` tham chiếu đến `InternshipDirectories`.
+
+  - Giá trị mặc định cho `CreatedAt`, `UpdatedAt`, `WeekStartDate`, và `WeekEndDate`.
+
+---
+
+## **6. Bảng `Commits`**
+
+- **Mục đích**: Lưu trữ thông tin về các commit trong dự án.
+
+- **Các trường**:
+
+  - `CommitId`: Khóa chính, tự động tăng.
+
+  - `CommitHash`: Hash của commit (duy nhất).
+
+  - `CommitMessage`: Nội dung commit.
+
+  - `CommitDate`: Ngày commit.
+
+  - `Author`: Tên tác giả commit.
+
+  - `AuthorEmail`: Email tác giả commit.
+
+  - `ProjectWeekId`: Khóa ngoại tham chiếu đến `ProjectWeeks`.
+
+  - `Date`: Ngày của commit.
+
+  - `Period`: Buổi trong ngày (sáng, chiều, tối).
+
+  - `CreatedAt`: Ngày tạo bản ghi.
+
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
+
+- **Ràng buộc**:
+
+  - Khóa chính: `CommitId`.
+
+  - Khóa ngoại: `ProjectWeekId` tham chiếu đến `ProjectWeeks`.
+
+  - Giá trị mặc định cho `CreatedAt` và `UpdatedAt`.
+
+  - Ràng buộc kiểm tra `CommitDate <= GETDATE()`.
+
+  - Ràng buộc duy nhất cho `CommitHash`.
+
+---
+
+## **7. Bảng `CommitPeriods`**
+
+- **Mục đích**: Lưu trữ thông tin về các buổi (sáng, chiều, tối) trong từng ngày của tuần thực tập.
+
+- **Các trường**:
+
+  - `PeriodID`: Khóa chính, tự động tăng.
+
+  - `PeriodName`: Tên buổi (ví dụ: "Buổi sáng 16/01/2025").
+
+  - `PeriodDuration`: Thời gian buổi (ví dụ: "morning").
+
+  - `PeriodStartDate`: Thời gian bắt đầu buổi.
+
+  - `PeriodEndDate`: Thời gian kết thúc buổi.
+
+  - `CreatedAt`: Ngày tạo bản ghi.
+
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
+
+- **Ràng buộc**:
+
+  - Khóa chính: `PeriodID`.
+
+  - Giá trị mặc định cho `CreatedAt` và `UpdatedAt`.
+
+---
+
+## **8. Bảng `CommitGroupMembers`**
+
+- **Mục đích**: Lưu trữ mối quan hệ nhiều-nhiều giữa các buổi (`CommitPeriods`) và commit (`Commits`).
+
+- **Các trường**:
+
+  - `PeriodID`: Khóa ngoại tham chiếu đến `CommitPeriods`.
+
+  - `CommitId`: Khóa ngoại tham chiếu đến `Commits`.
+
+  - `AddedAt`: Ngày thêm commit vào buổi.
+
+- **Ràng buộc**:
+
+  - Khóa chính phức hợp: (`PeriodID`, `CommitId`).
+
+  - Khóa ngoại tham chiếu đến `CommitPeriods` và `Commits`.
+
+  - Giá trị mặc định cho `AddedAt`.
+
+---
+
+## **9. Bảng `ChatbotSummary`**
+
+- **Mục đích**: Lưu trữ thông tin tóm tắt từ chatbot, bao gồm các nhận xét, ghi chú, và kết quả công việc.
+
+- **Các trường**:
+
+  - `ID`: Khóa chính, tự động tăng.
+
+  - `PeriodID`: Khóa ngoại tham chiếu đến `CommitPeriods`.
+
+  - `Attendance`: Thông tin điểm danh.
+
+  - `AssignedTasks`: Nhiệm vụ được giao.
+
+  - `ContentResults`: Kết quả nội dung.
+
+  - `SupervisorComments`: Nhận xét từ người giám sát.
+
+  - `Notes`: Ghi chú.
+
+  - `CreatedAt`: Ngày tạo bản ghi.
+
+  - `UpdatedAt`: Ngày cập nhật bản ghi.
+
+- **Ràng buộc**:
+
+  - Khóa chính: `ID`.
+
+  - Khóa ngoại: `PeriodID` tham chiếu đến `CommitPeriods`.
+
+  - Giá trị mặc định cho `CreatedAt` và `UpdatedAt`.
+
+---
+
+## **10. Mối Quan Hệ Giữa Các Bảng**
+
+- **`ConfigFiles`** và **`Authors`** có mối quan hệ nhiều-nhiều thông qua bảng **`ConfigAuthors`**.
+
+- **`ProjectWeeks`** liên kết với **`InternshipDirectories`** thông qua khóa ngoại `InternshipDirectoryId`.
+
+- **`Commits`** liên kết với **`ProjectWeeks`** thông qua khóa ngoại `ProjectWeekId`.
+
+- **`CommitPeriods`** và **`Commits`** có mối quan hệ nhiều-nhiều thông qua bảng **`CommitGroupMembers`**.
+
+- **`ChatbotSummary`** liên kết với **`CommitPeriods`** thông qua khóa ngoại `PeriodID`.
+
+---
+
+## **11. Tổng Kết**
+
+Cơ sở dữ liệu của **GitLogAggregator** được thiết kế để hỗ trợ quản lý thông tin commit, tác giả, và các tuần thực tập một cách hiệu quả. Các bảng và mối quan hệ được xây dựng để đảm bảo tính nhất quán, toàn vẹn dữ liệu, và dễ dàng mở rộng trong tương lai. CSDL này là nền tảng quan trọng để phần mềm có thể tổng hợp, phân tích và xuất báo cáo dữ liệu commit một cách chính xác và hiệu quả.
