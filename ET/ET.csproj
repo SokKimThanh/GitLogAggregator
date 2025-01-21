@@ -57,6 +57,7 @@
     <Compile Include="InternshipDirectoryET.cs" />
     <Compile Include="ProjectWeekET.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchResult.cs" />
     <Compile Include="SessionData.cs" />
     <Compile Include="WeekData.cs" />
   </ItemGroup>

@@ -61,6 +61,7 @@
     <Compile Include="ProjectWeekBUS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoveBUS.cs" />
+    <Compile Include="SearchBUS.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">
