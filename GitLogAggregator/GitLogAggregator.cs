@@ -33,7 +33,7 @@ namespace GitLogAggregator
         // Phân trang
         private int currentPage = 1; // Trang hiện tại
         private const int pageSize = 20; // Số bản ghi mỗi trang
-        private List<CommitET> allSearchResults = new List<CommitET>(); // Lưu trữ tất cả kết quả tìm kiếm
+        private List<SearchResult> allSearchResults = new List<SearchResult>(); // Lưu trữ tất cả kết quả tìm kiếm
 
         // Biến cờ để kiểm tra trạng thái chạy
         private bool isProcessing = false;
@@ -73,13 +73,7 @@ namespace GitLogAggregator
         // ConfigAuthor BUS
         private readonly ConfigAuthorBUS configAuthorBUS = new ConfigAuthorBUS();
 
-        // Simplified collection initialization for weekDatas and invalidCommits
-        List<WeekData> weekDatas = new();
-        /// <summary>
-        /// DS commit không hợp lệ
-        /// </summary>
-        List<string> invalidCommits = new();
-
+        private readonly SearchBUS searchBUS = new SearchBUS();
 
         public GitLogAggregator()
         {
@@ -248,10 +242,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Đang tải dữ liệu...\n");
 
                 // Tải dữ liệu
-                allSearchResults = commitBUS.SearchCommits("", 0, 1);
-
-                // Hiển thị kết quả theo trang
-                DisplaySearchResults();
+                SearchCommitsAndUpdateUI();
             }
             catch (Exception ex)
             {
@@ -536,7 +527,7 @@ namespace GitLogAggregator
                 // Tải danh sách tác giả của dự án mới vào ComboBox
                 LoadAuthorsIntoComboBox(configFile.ConfigID);
 
-                // Load lại dữ liệu lên ListView
+                // Load lại dữ liệu lên combobox
                 LoadConfigsIntoCombobox();
 
                 AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
@@ -1333,132 +1324,7 @@ namespace GitLogAggregator
             txtInternshipEndDate.Value = endDate;
             btnOpenGitFolder.Enabled = true;// chọn tuần thực tập xong mới được thêm dự án
         }
-        /// <summary>
-        /// Kiểm tra commit lỗi được hiển thị lên listcheckbox, commit hợp lệ hiển thị lên datagridview theo mẫu
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnReviewCommits_Click(object sender, EventArgs e)
-        {
 
-            txtResult.Clear();
-            string internshipWeekFolder = Path.Combine(txtDirectoryProjectPath, "internship_week");
-
-
-
-            DateTime internshipStartDate = txtInternshipStartDate.Value;
-            DateTime internshipEndDate = txtInternshipEndDate.Value;
-            int totalWeeks = (int)txtNumericsWeek.Value;
-
-            weekDatas = new List<WeekData>();
-            invalidCommits = new List<string>();
-
-            for (int week = 1; week <= totalWeeks; week++)
-            {
-                AppendTextWithScroll($"Đang xử lý tuần {week}...\n");
-                string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{week}");
-                string combinedFilePath = Path.Combine(weekFolder, "combined_commits.txt");
-
-                if (!CheckDirectoriesAndFiles(weekFolder, combinedFilePath, week))
-                    continue;
-
-                gitlogcheckcommit_bus.ProcessCommitsInWeek(combinedFilePath, week, internshipStartDate, internshipEndDate, weekDatas, invalidCommits);
-            }
-
-
-            DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
-            dgvReportCommits.DataSource = dataTable;
-
-            int invalidCommitCount = invalidCommits.Count;
-            if (invalidCommitCount == 0)
-            {
-                AppendTextWithScroll("Không có commit không hợp lệ.\n");
-            }
-            else
-            {
-                AppendTextWithScroll($"Kiểm tra thành công. CommitET không hợp lệ: {invalidCommitCount}\n");
-            }
-
-        }
-
-        private void BtnDeleteCommits_Click(object sender, EventArgs e)
-        {
-            if (invalidCommits.Count == 0)
-            {
-                AppendTextWithScroll("Không thể thực hiện. Danh sách commit lỗi đang trống.\n");
-                return;
-            }
-
-            // Step 1: Confirm deletion with the user
-            DialogResult result = MessageBox.Show("Bạn có chắc là muốn xóa trực tiếp các commit trong các file combined_commits.txt?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (result != DialogResult.Yes)
-                return;
-
-            // Step 2: Remove invalid commits from files
-            int totalWeeks = (int)txtNumericsWeek.Value;
-
-            List<string> invalidLines = invalidCommits;
-            string internshipWeekFolder = Path.Combine(txtDirectoryProjectPath, "internship_week");
-
-            for (int week = 1; week <= totalWeeks; week++)
-            {
-                AppendTextWithScroll($"Đang xử lý tuần {week}...\n");
-                string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{week}");
-                string combinedFilePath = Path.Combine(weekFolder, "combined_commits.txt");
-
-                if (!CheckDirectoriesAndFiles(weekFolder, combinedFilePath, week))
-                    continue;
-
-                try
-                {
-                    List<string> lines = File.ReadAllLines(combinedFilePath).ToList();
-                    lines = lines.Where(line => !invalidLines.Contains(line)).ToList();
-                    File.WriteAllLines(combinedFilePath, lines);
-                    AppendTextWithScroll($"Deleted invalid commits from {combinedFilePath}\n");
-                }
-                catch (Exception ex)
-                {
-                    AppendTextWithScroll($"Error deleting invalid commits from {combinedFilePath}: {ex.Message}\n");
-                }
-            }
-
-            // Step 4: Update the UI
-            // Refresh the DataGridView
-            DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
-            dgvReportCommits.DataSource = dataTable;
-
-
-        }
-        /// <summary>
-        /// Kiểm tra sự tồn tại của thư mục tuần và file combined_commits.txt
-        /// </summary>
-        private bool CheckDirectoriesAndFiles(string weekFolder, string combinedFilePath, int week)
-        {
-            if (!Directory.Exists(weekFolder))
-            {
-                AppendTextWithScroll($"Thư mục {weekFolder} không tồn tại.\n");
-                return false;
-            }
-
-            if (!File.Exists(combinedFilePath))
-            {
-                AppendTextWithScroll($"Tuần {week} không có commit nào.\n");
-                return false;
-            }
-
-            return true;
-        }
-
-        private void BtnReviewCommits_MouseEnter(object sender, EventArgs e)
-        {
-            AppendEventsWithScroll("Kiểm tra commits lỗi.\n");
-        }
-
-
-        private void BtnExcelCommits_MouseEnter(object sender, EventArgs e)
-        {
-            AppendEventsWithScroll("Xuất Excel CommitET trong datagridview.\n");
-        }
 
         /// <summary>
         /// xu ly giao dien chuc nang cap nhat duong dan
@@ -1909,74 +1775,65 @@ git %*
                 AppendTextWithScroll($"Lỗi: {ex.Message}");
             }
         }
-        private bool IsSearchingAllWeeks()
-        {
-            // Kiểm tra nếu CheckBox được chọn và DataGridView đang hiển thị dữ liệu
-            return chkSearchAllWeeks.Checked && dgvReportCommits.DataSource != null;
-        }
-        private void BtnSearchReport_Click(object sender, EventArgs e)
+        private void SearchCommitsAndUpdateUI()
         {
             try
             {
-                // Kiểm tra nếu đang ở trạng thái "tất cả"
-                if (IsSearchingAllWeeks())
-                {
-                    AppendTextWithScroll("Bạn đang xem tất cả các tuần. Vui lòng bỏ chọn 'Tìm kiếm tất cả các tuần' để tìm kiếm theo tuần cụ thể.\n");
-                    return;
-                }
-
-                int projectWeekId = 0;
+                // Lấy các tiêu chí từ giao diện
+                string keyword = txtSearchReport.Text;
                 bool searchAllWeeks = chkSearchAllWeeks.Checked;
+                int projectWeekId = searchAllWeeks ? 0 : Convert.ToInt32(cboSearchByWeek.SelectedValue);
+                DateTime? minDate = DateTime.TryParse(txtFirstCommitDate.Text, out var parsedDate) ? parsedDate : (DateTime?)null;
+                DateTime maxDate = DateTime.Now;
+                string author = chkSearchAllAuthors.Checked ? null : cboSearchByAuthor.SelectedValue?.ToString();
 
-                // Nếu không tìm kiếm tất cả các tuần, lấy giá trị ProjectWeekId từ ComboBox
-                if (!searchAllWeeks)
-                {
-                    projectWeekId = Convert.ToInt32(cboSearchByWeek.SelectedValue);
-                }
+                // Gọi phương thức tìm kiếm từ lớp BUS/DAL
+                allSearchResults = searchBUS.SearchCommits(
+                    keyword: keyword,
+                    projectWeekId: projectWeekId,
+                    searchAllWeeks: searchAllWeeks,
+                    minDate: minDate,
+                    maxDate: maxDate,
+                    author: author
+                );
 
-                // Gọi hàm tìm kiếm
-                allSearchResults = commitBUS.SearchCommits(txtSearchReport.Text, projectWeekId, searchAllWeeks ? 1 : 0);
-
-                // Đặt lại trang hiện tại về 1
-                currentPage = 1;
-
-                // Hiển thị kết quả theo trang
-                DisplaySearchResults();
-
-                // Xóa nội dung tìm kiếm (nếu cần)
+                // Cập nhật giao diện
+                currentPage = 1; // Reset về trang đầu tiên
+                DisplaySearchResults(); // Hiển thị kết quả
                 txtSearchReport.Clear();
             }
             catch (Exception ex)
             {
-                // Xóa nội dung tìm kiếm và hiển thị thông báo lỗi
                 txtSearchReport.Clear();
                 AppendTextWithScroll($"Lỗi: {ex.Message}\n");
             }
         }
+        private void BtnSearchReport_Click(object sender, EventArgs e)
+        {
+            SearchCommitsAndUpdateUI();
+        }
+
         private void DisplaySearchResults()
         {
             if (allSearchResults != null && allSearchResults.Any())
             {
-                // Tính toán chỉ số bắt đầu và kết thúc của trang hiện tại
-                int startIndex = (currentPage - 1) * pageSize;
-                int endIndex = Math.Min(startIndex + pageSize, allSearchResults.Count);
+                // Tính toán phân trang
+                int pageSize = 10;
+                var pagedResults = allSearchResults
+                    .Skip((currentPage - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
 
-                // Lấy dữ liệu cho trang hiện tại
-                var pagedResults = allSearchResults.Skip(startIndex).Take(pageSize).ToList();
-
-                // Hiển thị kết quả lên DataGridView
+                // Hiển thị lên DataGridView
                 dgvReportCommits.DataSource = pagedResults;
 
-                // Hiển thị thông báo
-                AppendTextWithScroll($"Trang {currentPage} của {Math.Ceiling((double)allSearchResults.Count / pageSize)}. Hiển thị {pagedResults.Count} kết quả.\n");
+                // Thông báo trạng thái
+                AppendTextWithScroll($"Trang {currentPage}/{Math.Ceiling((double)allSearchResults.Count / pageSize)} | Hiển thị {pagedResults.Count} kết quả.\n");
             }
             else
             {
-                // Xóa dữ liệu hiện tại trên DataGridView
                 dgvReportCommits.DataSource = null;
-
-                // Ghi thông báo không tìm thấy kết quả
-                AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
+                AppendTextWithScroll("Không tìm thấy kết quả phù hợp.\n");
             }
         }
         private void BtnPreviousReport_Click(object sender, EventArgs e)
@@ -2160,46 +2017,97 @@ git %*
 
         private void chkSearchAllWeeks_CheckedChanged(object sender, EventArgs e)
         {
+            // Cập nhật text trên checkbox dựa vào trạng thái checked
             if (chkSearchAllWeeks.Checked)
             {
+                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Text khi check
                 cboSearchByWeek.Enabled = false; // Khóa ComboBox
-                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Thay đổi text
+                cboSearchByWeek.SelectedIndex = 0; // Đặt giá trị mặc định (ví dụ: "Tất cả")
             }
             else
             {
+                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Text khi uncheck
                 cboSearchByWeek.Enabled = true; // Mở khóa ComboBox
-                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Thay đổi text
             }
+
+            // Tùy chọn: Tự động cập nhật kết quả tìm kiếm
+            SearchCommitsAndUpdateUI();
+        }
+
+        private void chkSearchAllAuthors_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSearchAllAuthors.Checked)
+            {
+                chkSearchAllAuthors.Text = "Tìm kiếm tất cả tác giả";
+                cboSearchByAuthor.Enabled = false;
+                cboSearchByAuthor.SelectedIndex = 0;
+            }
+            else
+            {
+                chkSearchAllAuthors.Text = "Tìm kiếm theo tác giả cụ thể";
+                cboSearchByAuthor.Enabled = true;
+            }
+            SearchCommitsAndUpdateUI();
         }
 
         private void cboConfigFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cboConfigFiles.SelectedValue != null && cboConfigFiles.SelectedValue is int selectedConfigID)
+            try
             {
-                // Gọi hàm LoadAuthorsIntoComboBox để tải danh sách tác giả
-                LoadAuthorsIntoComboBox(selectedConfigID);
+                // Xác định configID từ ComboBox
+                int configID = (cboConfigFiles.SelectedValue is int selectedID) ? selectedID : 0;
+
+                // Cập nhật ngày commit đầu tiên và danh sách tác giả
+                UpdateFirstCommitDateAndAuthors(configID);
+
+                // Tải lại kết quả tìm kiếm
+                SearchCommitsAndUpdateUI();
             }
+            catch (Exception ex)
+            {
+                ShowError($"Lỗi khi xử lý chọn dự án: {ex.Message}");
+            }
+        }
+
+        // Phương thức phụ trợ: Cập nhật ngày commit và danh sách tác giả
+        private void UpdateFirstCommitDateAndAuthors(int configID)
+        {
+            DateTime? firstCommitDate = (configID != 0)
+                ? searchBUS.GetFirstCommitDateByProject(configID)
+                : null;
+
+            txtFirstCommitDate.Text = firstCommitDate?.ToString("dd/MM/yyyy") ?? string.Empty;
+            LoadAuthorsIntoComboBox(configID);
+        }
+
+        // Phương thức phụ trợ: Hiển thị lỗi
+        private void ShowError(string message)
+        {
+            MessageBox.Show(message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void UpdateAuthorList(List<AuthorET> authors)
         {
-            // Xóa dữ liệu cũ
-            cboSearchByAuthor.Items.Clear();
-            cboAuthorCommit.Items.Clear();
+            // Thêm mục "Tất cả" vào đầu danh sách
+            authors.Insert(0, new AuthorET { AuthorID = 0, AuthorName = "Tất cả" });
 
-            // Thêm dữ liệu mới
-            foreach (var author in authors)
-            {
-                cboSearchByAuthor.Items.Add(author.AuthorName);
-                cboAuthorCommit.Items.Add(author.AuthorName);
-            }
+            // Gán danh sách tác giả vào ComboBox (sử dụng DataSource)
+            cboSearchByAuthor.DataSource = authors; // <-- Sửa ở đây
+            cboSearchByAuthor.DisplayMember = "AuthorName"; // Hiển thị tên
+            cboSearchByAuthor.ValueMember = "AuthorID"; // Giá trị thực là ID
 
-            // Chọn mục đầu tiên (nếu có)
-            if (cboAuthorCommit.Items.Count > 0)
-            {
-                cboAuthorCommit.SelectedIndex = 0;
-            }
+            // Đồng bộ với cboAuthorCommit (nếu cần)
+            cboAuthorCommit.DataSource = authors;
+            cboAuthorCommit.DisplayMember = "AuthorName";
+            cboAuthorCommit.ValueMember = "AuthorID";
+
+            // Mặc định chọn "Tất cả"
+            cboSearchByAuthor.SelectedIndex = 0;
+            cboAuthorCommit.SelectedIndex = 0;
         }
+
+
+
     }
 }
 

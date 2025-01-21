@@ -77,6 +77,7 @@
             this.label12 = new System.Windows.Forms.Label();
             this.cboSearchByAuthor = new System.Windows.Forms.ComboBox();
             this.chkPhanTrang = new System.Windows.Forms.CheckBox();
+            this.chkSearchAllAuthors = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.btnNextReport = new System.Windows.Forms.Button();
@@ -382,7 +383,6 @@
             this.btnExportExcel.Text = "Xuất excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
             this.btnExportExcel.Click += new System.EventHandler(this.BtnExportExcel_Click);
-            this.btnExportExcel.MouseEnter += new System.EventHandler(this.BtnExcelCommits_MouseEnter);
             // 
             // txtResultMouseEvents
             // 
@@ -629,7 +629,8 @@
             this.tableLayoutPanel4.Controls.Add(this.chkSearchAllWeeks, 2, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 2);
             this.tableLayoutPanel4.Controls.Add(this.cboSearchByAuthor, 1, 2);
-            this.tableLayoutPanel4.Controls.Add(this.chkPhanTrang, 2, 2);
+            this.tableLayoutPanel4.Controls.Add(this.chkPhanTrang, 2, 0);
+            this.tableLayoutPanel4.Controls.Add(this.chkSearchAllAuthors, 2, 2);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -698,13 +699,24 @@
             // chkPhanTrang
             // 
             this.chkPhanTrang.AutoSize = true;
-            this.chkPhanTrang.Location = new System.Drawing.Point(410, 71);
+            this.chkPhanTrang.Location = new System.Drawing.Point(410, 3);
             this.chkPhanTrang.Name = "chkPhanTrang";
             this.chkPhanTrang.Size = new System.Drawing.Size(90, 21);
             this.chkPhanTrang.TabIndex = 10;
             this.chkPhanTrang.Text = "Phân trang";
             this.chkPhanTrang.UseVisualStyleBackColor = true;
             this.chkPhanTrang.CheckedChanged += new System.EventHandler(this.chkSearchAllWeeks_CheckedChanged);
+            // 
+            // chkSearchAllAuthors
+            // 
+            this.chkSearchAllAuthors.AutoSize = true;
+            this.chkSearchAllAuthors.Location = new System.Drawing.Point(410, 71);
+            this.chkSearchAllAuthors.Name = "chkSearchAllAuthors";
+            this.chkSearchAllAuthors.Size = new System.Drawing.Size(181, 21);
+            this.chkSearchAllAuthors.TabIndex = 10;
+            this.chkSearchAllAuthors.Text = "Tìm kiếm tất cả các tác giả";
+            this.chkSearchAllAuthors.UseVisualStyleBackColor = true;
+            this.chkSearchAllAuthors.CheckedChanged += new System.EventHandler(this.chkSearchAllAuthors_CheckedChanged);
             // 
             // tableLayoutPanel5
             // 
@@ -1092,5 +1104,6 @@
         private System.Windows.Forms.ComboBox cboConfigFiles;
         private System.Windows.Forms.ComboBox cboAuthorCommit;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
+        private System.Windows.Forms.CheckBox chkSearchAllAuthors;
     }
 }

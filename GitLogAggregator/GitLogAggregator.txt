@@ -1,19 +1,20 @@
 ﻿using System;
+using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing;
 using GitLogAggregator.BusinessLogic;
 using ET;
 using BUS;
 using System.Data;
-using ClosedXML.Excel;
 using GitLogAggregator.Utilities;
 using System.Globalization;
-using System.Data.SqlClient;
-
+using System.Text;
+using System.Threading.Tasks;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Control = System.Windows.Forms.Control;
 
 namespace GitLogAggregator
 {
@@ -28,11 +29,17 @@ namespace GitLogAggregator
         private string txtDirectoryProjectPath = string.Empty;
         private string txtFolderInternshipPath = string.Empty;
         private string desktopPath = string.Empty;
+
+        // Phân trang
+        private int currentPage = 1; // Trang hiện tại
+        private const int pageSize = 20; // Số bản ghi mỗi trang
+        private List<CommitET> allSearchResults = new List<CommitET>(); // Lưu trữ tất cả kết quả tìm kiếm
+
         // Biến cờ để kiểm tra trạng thái chạy
         private bool isProcessing = false;
 
         // Git log BUS
-        private readonly GitlogBUS gitgui_bus = new GitlogBUS();
+        private readonly GitLogUIBUS gitgui_bus = new GitLogUIBUS();
 
         // Git commit BUS
         private readonly GitLogFormatBUS gitformat_bus = new GitLogFormatBUS();
@@ -41,18 +48,37 @@ namespace GitLogAggregator
         private readonly GitLogCheckCommitBUS gitlogcheckcommit_bus = new GitLogCheckCommitBUS();
 
         // git load config file
-        private readonly ConfigFileBUS gitconfig_bus = new ConfigFileBUS();
+        private readonly ConfigFileBUS configBus = new ConfigFileBUS();
 
         private readonly InternshipDirectoryBUS internshipDirectoryBUS = new InternshipDirectoryBUS();
-        // danh sách tổng hợp commit hợp lệ và không hợp lệ
-        /// <summary>
-        /// DS commit hợp lệ
-        /// </summary>
-        List<WeekData> weekDatas = new List<WeekData>();
+
+        // save week and commit to db
+        private readonly ProjectWeekBUS projectWeeksBUS = new ProjectWeekBUS();
+
+        // thong tin commit theo tuan
+        private readonly CommitBUS commitBUS = new CommitBUS();
+
+        private readonly RemoveBUS removeBUS = new RemoveBUS();
+
+        // commit group member
+        private readonly CommitGroupMemberBUS commitGroupMembersBUS = new CommitGroupMemberBUS();
+
+        private readonly CommitPeriodBUS commitPeriodBUS = new CommitPeriodBUS();
+
+        private readonly ChatbotSummaryBUS chatbotSummariesBUS = new ChatbotSummaryBUS();
+
+        // FirstCommitAuthor BUS
+        private readonly AuthorBUS authorBUS = new AuthorBUS();
+
+        // ConfigAuthor BUS
+        private readonly ConfigAuthorBUS configAuthorBUS = new ConfigAuthorBUS();
+
+        // Simplified collection initialization for weekDatas and invalidCommits
+        List<WeekData> weekDatas = new();
         /// <summary>
         /// DS commit không hợp lệ
         /// </summary>
-        List<string> invalidCommits = new List<string>();
+        List<string> invalidCommits = new();
 
 
         public GitLogAggregator()
@@ -68,50 +94,291 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void GitLogAggregator_Load(object sender, EventArgs e)
         {
-            // Tải dữ liệu từ thư mục `internship_week` và hiển thị lên form
-            desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            txtDirectoryProjectPath = Path.Combine(desktopPath, "GitAggregator");
-
-            // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
-            LoadInternshipDirectoriesIntoComboBox();
-
-            // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
-            txtFolderInternshipPath = GetLatestInternshipFolderPath();
-            if (string.IsNullOrEmpty(txtFolderInternshipPath))
+            try
             {
-                txtFolderInternshipPath = Path.Combine(txtDirectoryProjectPath, "internship_week");
+                // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
+                LoadConfigsIntoCombobox();
+
+                // Tải danh sách tác giả 0: getall
+                LoadAuthorsIntoComboBox(0);
+
+                // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
+                txtFolderInternshipPath = GetLatestInternshipFolderPath();
+                // tải danh sách thư mục thực tập vào combobox
+                cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
+                cboInternshipFolder.ValueMember = "ID";
+                cboInternshipFolder.DisplayMember = "InternshipWeekFolder";
+
+                // Xây dựng danh sách các tuần và tệp
+                BuildWeekFileListView(txtFolderInternshipPath);
+
+                // Tải ngày bắt đầu thực tập mặc định
+                int configID = (int)cboConfigFiles.SelectedValue;
+                LoadProjectDetails(0);
+
+                // Tự động điều chỉnh kích thước cột
+                fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
+                fileListView.View = View.Details;// Hiển thị chế độ chi tiết
+                fileListView.FullRowSelect = true; // Đảm bảo chọn toàn bộ hàng
+                fileListView.MultiSelect = false; // Đảm bảo chỉ chọn một hàng tại một thời điểm
+
+                // Thiết lập các cột cho listViewProjects (nếu chưa thêm trước đó)
+                if (fileListView.Columns.Count == 0)
+                {
+                    // Thêm các cột cho ListView
+                    fileListView.Columns.Add("STT", 40); // Số thứ tự
+                    fileListView.Columns.Add("Tên File", 120); // Tên file
+                    fileListView.Columns.Add("Ngày Tạo", 100); // Ngày tạo
+                }
+
+                // Cập nhật danh sách tuần trên ComboBox
+                cboSearchByWeek.DataSource = projectWeeksBUS.GetAll();
+                cboSearchByWeek.ValueMember = "ProjectWeekId";
+                cboSearchByWeek.DisplayMember = "ProjectWeekName";
+
+                // Danh sách các nút crud và icon tương ứng
+                var buttonsToConfigure = new Dictionary<Button, ButtonImage>
+            {
+                { btnSaveGit, ButtonImage.AddIcon },
+                { btnRemoveAll, ButtonImage.DeleteIcon },
+                { btnCreateWeek, ButtonImage.AddIcon },
+                { btnSearchReport, ButtonImage.SearchIcon } // Ví dụ thêm nút chỉnh sửa
+            };
+
+                // Cấu hình các nút icon crud
+                ConfigureButtons(buttonsToConfigure);
+
+                // biến tất cả combobox về dạng dropdownlist
+                SetAllComboBoxesToDropDownList(this);
+
+                // Hiển thị hint cho các control
+                SetupHoverEventsForControls(txtResultMouseEvents);
+                //
+                // Cấu hình trạng thái của CheckBox và ComboBox
+                //
+                // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
+                chkSearchAllWeeks.Checked = true;
+
+                ConfigureSearchControls();
+
+                if (chkSearchAllWeeks.Checked)
+                {
+                    SearchAllWeeks();
+                }
+
+                DisableControls();
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi: {ex.Message}");
+            }
+        }
+
+        private void LoadProjectDetails(int configId)
+        {
+            // Lấy ngày bắt đầu thực tập
+            DateTime? startDate = configBus.GetInternshipStartDate(configId);
+
+            if (startDate == null)
+            {
+                // Hiển thị thông báo nếu không có ngày bắt đầu thực tập
+                MessageBox.Show("Vui lòng chọn ngày bắt đầu thực tập.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                // Thiết lập giá trị cho DateTimePicker
+                txtInternshipStartDate.Value = startDate.Value;
+            }
+        }
+        private void LoadConfigsIntoCombobox()
+        {
+
+            // Lấy danh sách các dự án từ cơ sở dữ liệu
+            var configFiles = configBus.GetAll();
+
+            // Thêm một mục tùy chọn "Tất cả dự án" vào danh sách
+            var allProjectsOption = new ConfigFileET
+            {
+                ConfigID = 0, // Sử dụng ConfigID đặc biệt (ví dụ: 0) để phân biệt "Tất cả dự án"
+                ProjectDirectory = "Tất cả dự án" // Hiển thị "Tất cả dự án"
+            };
+
+            // làm trống danh sách trước khi thêm
+            cboConfigFiles.DataSource = null;
+
+            // Chèn "Tất cả dự án" vào đầu danh sách
+            configFiles.Insert(0, allProjectsOption);
+
+            // Gán danh sách làm nguồn dữ liệu cho ComboBox
+            cboConfigFiles.DataSource = configFiles;
+            cboConfigFiles.ValueMember = "ConfigID";
+            cboConfigFiles.DisplayMember = "ProjectDirectory";
+        }
+        private void LoadAuthorsIntoComboBox(int configID)
+        {
+            // Lấy danh sách tác giả theo ConfigID
+            List<AuthorET> authors;
+
+            if (configID == 0)
+            {
+                // Lấy tất cả tác giả từ bảng Authors
+                authors = authorBUS.GetAll();
+            }
+            else
+            {
+                // Lấy danh sách AuthorID theo ConfigID
+                List<int> authorIDs = configAuthorBUS.GetAuthorIDsByConfigID(configID);
+
+                // Lấy thông tin chi tiết của từng tác giả
+                authors = authorIDs
+                   .Select(authorID => authorBUS.GetByID(authorID)) // Lấy thông tin tác giả theo AuthorID
+                   .ToList();
             }
 
-            DisableControls();
-
-            txtInternshipStartDate.Enabled = true;// open
-
-            // Cài đặt và hiển thị danh sách dự án listview project
-            InitializeProjectListView(listViewProjects);
-
-            SetupFileListView();
-
-            LoadProjectListView();
-
-            // Xây dựng danh sách các tuần và tệp
-            BuildWeekFileListView(txtFolderInternshipPath);
+            // Hiển thị danh sách tác giả lên ComboBox
+            UpdateAuthorList(authors);
         }
 
-        // Gọi hàm này để nạp danh sách thư mục thực tập vào ComboBox khi form load
-        private void LoadInternshipDirectoriesIntoComboBox()
+        private void SearchAllWeeks()
         {
+            try
+            {
+                // Hiển thị thông báo đang tải dữ liệu
+                AppendTextWithScroll("Đang tải dữ liệu...\n");
 
-            List<InternshipDirectoryET> directories = internshipDirectoryBUS.GetAllInternshipDirectories();
+                // Tải dữ liệu
+                allSearchResults = commitBUS.SearchCommits("", 0, 1);
 
-            cboThuMucThucTap.DataSource = directories;
-            cboThuMucThucTap.DisplayMember = "InternshipWeekFolder"; // Hiển thị đường dẫn thư mục trong ComboBox
-            cboThuMucThucTap.ValueMember = "Id"; // Giá trị ẩn là Id của thư mục
+                // Hiển thị kết quả theo trang
+                DisplaySearchResults();
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi khi tải dữ liệu ban đầu: {ex.Message}\n");
+            }
+
+            // Ghi thông báo kết quả
+            if (allSearchResults != null && allSearchResults.Any())
+            {
+                AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {allSearchResults.Count} kết quả.\n");
+            }
+            else
+            {
+                AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
+            }
+        }
+        private void ConfigureSearchControls()
+        {
+            if (chkSearchAllWeeks.Checked)
+            {
+                cboSearchByWeek.Enabled = false; // Khóa ComboBox
+                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Thay đổi text
+            }
+            else
+            {
+                cboSearchByWeek.Enabled = true; // Mở khóa ComboBox
+                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Thay đổi text
+            }
         }
 
+        private void SetAllComboBoxesToDropDownList(Control parentControl)
+        {
+            // Duyệt qua tất cả các control trên form
+            foreach (Control control in parentControl.Controls)
+            {
+                // Nếu control là ComboBox, thiết lập DropDownStyle thành DropDownList
+                if (control is ComboBox comboBox)
+                {
+                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                }
 
+                // Nếu control có chứa các control con (ví dụ: Panel, GroupBox), đệ quy vào các control con
+                if (control.HasChildren)
+                {
+                    SetAllComboBoxesToDropDownList(control);
+                }
+            }
+        }
+        private void ConfigureButtons(Dictionary<Button, ButtonImage> buttonsToConfigure)
+        {
+            foreach (var item in buttonsToConfigure)
+            {
+                Button button = item.Key;
+                ButtonImage buttonImage = item.Value;
+
+                // Lấy imageKey từ từ điển dựa trên giá trị ButtonImage
+                if (ButtonImageMap.ImageKeys.TryGetValue(buttonImage, out string imageKey))
+                {
+                    button.ImageKey = imageKey;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid button image value", nameof(buttonImage));
+                }
+
+                // Đặt các thuộc tính mặc định
+                button.ImageAlign = ContentAlignment.MiddleLeft;
+                button.TextAlign = ContentAlignment.MiddleCenter;
+                button.TextImageRelation = TextImageRelation.ImageBeforeText;
+            }
+        }
+
+        private void SetupMouseHoverEvents(Control control, string message, RichTextBox textBox)
+        {
+            // Sự kiện khi rê chuột vào control
+            control.MouseEnter += (sender, e) =>
+            {
+                textBox.Clear();
+                textBox.AppendText(message);
+                textBox.ScrollToCaret();
+            };
+
+            // Sự kiện khi rê chuột ra khỏi control
+            control.MouseLeave += (sender, e) =>
+            {
+                textBox.Clear();
+            };
+        }
+        private void SetupHoverEventsForControls(RichTextBox textBox)
+        {
+            // Danh sách các control và thông báo tương ứng
+            var controlsAndMessages = new Dictionary<Control, string>
+            {
+                { btnRemoveAll, "Xóa tất cả bảng trong csdl" },
+                { btnSaveGit, "Lưu các commit git log dự án vào csdl" },
+                { btnNextReport, "Tiếp theo commit kế" },
+                { btnPreviousReport, "Lùi lại commit trước" },
+                { btnSearchReport, "Tìm kiếm commit" },
+                { btnExportExcel, "Xuất excel commit" },
+                { btnCreateWeek, "Tạo danh mục tuần thực tập và nhóm commit thực tập theo tuần" },
+                { btnOpenGitFolder, "Mở thư mục dự án git" },
+                { btnSetupThuMucThucTap, "Thêm thư mục dự án vào csdl" },
+                { btnRefreshData, "Làm mới dữ liệu hiển thị của các control" },
+                { chkUseDate, "Bật/tắt chức năng sử dụng ngày tháng" },
+                { txtInternshipStartDate, "Nhập ngày bắt đầu thực tập" },
+                { cboInternshipFolder, "Chọn thư mục thực tập" },
+                { helpButton, "Hiển thị hướng dẫn sử dụng" },
+                { cboConfigFiles, "Hiển thị danh sách các dự án" },
+                { dgvReportCommits, "Hiển thị báo cáo các commit" },
+                { txtSearchReport, "Nhập từ khóa tìm kiếm commit" },
+                { txtResultMouseEvents, "Hiển thị thông báo khi rê chuột vào các control" },
+                { txtResult, "Hiển thị kết quả của các thao tác" },
+                { txtFirstCommitDate, "Hiển thị ngày commit đầu tiên" },
+                { chkSearchAllWeeks, "Tìm kiếm tất cả các tuần của commit trong datagridview" },
+                { btnExportTXT, "Xuất ra file combined_commits.txt cho các tuần thực tập" },
+
+            };
+
+            // Thiết lập sự kiện cho từng control
+            foreach (var item in controlsAndMessages)
+            {
+                SetupMouseHoverEvents(item.Key, item.Value, textBox);
+            }
+        }
         private string GetLatestInternshipFolderPath()
         {
-            var directories = internshipDirectoryBUS.GetAllInternshipDirectories();
+            var directories = internshipDirectoryBUS.GetAll();
             if (directories.Count > 0)
             {
                 return directories.First().InternshipWeekFolder;
@@ -128,87 +395,159 @@ namespace GitLogAggregator
         /// <summary> 
         private void BtnAddProject_Click(object sender, EventArgs e)
         {
-            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            try
             {
+                // Hiển thị hộp thoại chọn thư mục
+                if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                {
+                    btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
+                    return;
+                }
+
                 projectDirectory = folderBrowserDialog.SelectedPath;
 
+                // Kiểm tra thư mục có phải là Git repository hợp lệ không
                 if (!IsValidGitRepository(projectDirectory))
                 {
+                    btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                     AppendTextWithScroll("Lỗi: Thư mục được chọn không chứa repository Git hợp lệ. Vui lòng chọn lại.\n");
                     return;
                 }
 
+                // Kiểm tra repository có chứa commit nào không
                 if (!HasCommitsInRepository(projectDirectory))
                 {
+                    btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                     AppendTextWithScroll("Lỗi: Repository Git này không chứa bất kỳ commit nào. Vui lòng chọn một repository khác hoặc tạo commit đầu tiên.\n");
                     return;
                 }
 
-                AppendTextWithScroll("File hướng dẫn đã có trong thư mục cài đặt tên là ManualUsage.docx.\n");
-
                 // Kiểm tra xem dự án đã tồn tại trong cơ sở dữ liệu chưa
-                if (gitconfig_bus.GetAllConfigFiles().Any(cf => cf.ProjectDirectory == projectDirectory))
+                if (configBus.GetAll().Any(cf => cf.ProjectDirectory == projectDirectory))
                 {
                     AppendTextWithScroll("Lỗi: Dự án đã tồn tại trong cơ sở dữ liệu.\n");
+                    btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                     return;
                 }
 
-                // Lấy thông tin commit
+                // Lấy thông tin commit đầu tiên
                 DateTime firstCommitDate = gitgui_bus.GetFirstCommitDate(projectDirectory);
 
-                // Kiểm tra xem ngày thực tập có hợp lệ không (ngày thực tập phải < ngày commit đầu tiên)
+                // Kiểm tra ngày bắt đầu thực tập có hợp lệ không
                 if (txtInternshipStartDate.Value >= firstCommitDate)
                 {
                     AppendTextWithScroll("Lỗi: Ngày bắt đầu thực tập phải nhỏ hơn ngày commit đầu tiên.\n");
+                    btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
                     return;
                 }
 
-                SetMaxDateForDateTimePicker(txtInternshipStartDate, firstCommitDate);
+                // Lấy danh sách tác giả và email từ lịch sử commit của repository
+                var authors = gitgui_bus.GetAuthorsFromRepository(projectDirectory);
 
-                txtFolderInternshipPath = GetLatestInternshipFolderPath();
+                // Bước 1: Thêm tác giả vào database
 
-                // Xác định và tạo thư mục internship_week trên Desktop
-                if (!Directory.Exists(txtFolderInternshipPath))
+                foreach (var (authorName, authorEmail) in authors)
                 {
-                    Directory.CreateDirectory(txtFolderInternshipPath);
+                    // Kiểm tra xem tác giả đã tồn tại trong database chưa dựa trên AuthorEmail
+                    AuthorET author = authorBUS.GetByEmail(authorEmail);
+
+                    if (author == null)
+                    {
+                        // Nếu chưa tồn tại, thêm tác giả mới vào database
+                        author = new AuthorET
+                        {
+                            AuthorName = authorName,
+                            AuthorEmail = authorEmail,
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now
+                        };
+
+                        try
+                        {
+                            authorBUS.Add(author);
+                        }
+                        catch (Exception ex)
+                        {
+                            // Xử lý ngoại lệ nếu có lỗi khi thêm tác giả
+                            AppendTextWithScroll($"Lỗi khi thêm tác giả {authorName} ({authorEmail}): {ex.Message}\n");
+                            continue; // Bỏ qua tác giả này và tiếp tục vòng lặp
+                        }
+                    }
                 }
 
-                // Tạo đối tượng ConfigFileET và lưu vào cơ sở dữ liệu
+                // Bước 2: Thêm dự án vào database
                 ConfigFileET configFile = new ConfigFileET
                 {
                     ProjectDirectory = projectDirectory,
-                    InternshipWeekFolder = txtFolderInternshipPath,
-                    Author = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
-                    StartDate = txtInternshipStartDate.Value,
-                    EndDate = txtInternshipEndDate.Value,
+                    FirstCommitAuthor = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
+                    InternshipStartDate = txtInternshipStartDate.Value,
+                    InternshipEndDate = txtInternshipEndDate.Value,
                     Weeks = (int)txtNumericsWeek.Value,
                     FirstCommitDate = firstCommitDate,
-                    InternshipDirectoryId = (int)cboThuMucThucTap.SelectedValue
+                    InternshipDirectoryId = (int)cboInternshipFolder.SelectedValue
                 };
+
+                configBus.Add(configFile);
+
+                // Bước 3: Thêm mối quan hệ giữa dự án và tác giả vào bảng ConfigAuthors
+                ConfigFileET lastAddedConfigFile = configBus.GetLastAddedConfigFile();
+
+                if (lastAddedConfigFile == null)
+                {
+                    AppendTextWithScroll("Lỗi: Không thể lấy thông tin dự án vừa thêm.\n");
+                    return;
+                }
+
+                List<AuthorET> authorIDs = authorBUS.GetAll();
+
+                if (authorIDs == null || !authorIDs.Any())
+                {
+                    AppendTextWithScroll("Lỗi: Danh sách tác giả trống.\n");
+                    return;
+                }
+
+                foreach (var author in authorIDs)
+                {
+                    if (author == null)
+                    {
+                        AppendTextWithScroll("Lỗi: Tác giả không tồn tại.\n");
+                        continue;
+                    }
+
+                    try
+                    {
+                        configAuthorBUS.Add(new ConfigAuthorET
+                        {
+                            ConfigID = lastAddedConfigFile.ConfigID,
+                            AuthorID = author.AuthorID
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendTextWithScroll($"Lỗi khi thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ID: {author.AuthorID}): {ex.Message}\n");
+                    }
+                }
+
+                AppendTextWithScroll("Thêm mối quan hệ giữa dự án và tác giả hoàn tất.\n");
 
                 // Cập nhật giao diện khi chọn thư mục dự án
                 UpdateControls(configFile);
 
-                // Thêm thông tin cấu hình dự án
-                gitconfig_bus.AddConfigFile(configFile);
+                // Tải danh sách tác giả của dự án mới vào ComboBox
+                LoadAuthorsIntoComboBox(configFile.ConfigID);
 
-                // Load lại dữ liệu lên ListView
-                LoadProjectListView();
-
-                // Sau mỗi lần chọn thêm thì tổng hợp thêm thư mục tuần và commit trong dự án
-                List<string> directories = new List<string>();
-
-                foreach (var cf in gitconfig_bus.GetAllConfigFiles())
-                {
-                    directories.Add(cf.ProjectDirectory);
-                }
-
-                DisplayWeekAndCommitInListView(directories);
+                // Load lại dữ liệu lên combobox
+                LoadConfigsIntoCombobox();
 
                 AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
+
+                btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi: {ex.Message}\n");
             }
         }
-
 
 
 
@@ -218,102 +557,17 @@ namespace GitLogAggregator
         /// <param name="configInfo">Đối tượng ConfigFile chứa thông tin cấu hình</param>
         private void UpdateControls(ConfigFileET configInfo)
         {
-            // load danh sách tác giả
-            cboAuthorCommit.DataSource = gitgui_bus.LoadAuthorsCombobox(configInfo.ProjectDirectory);
-            // hiển thị tác giả commit đầu tiên
-            cboAuthorCommit.SelectedItem = configInfo.Author;
-
-            txtInternshipStartDate.Value = (DateTime)configInfo.StartDate;
-            txtInternshipEndDate.Value = (DateTime)configInfo.EndDate;
+            txtInternshipStartDate.Value = configInfo.InternshipStartDate;
+            txtInternshipEndDate.Value = configInfo.InternshipEndDate;
             txtNumericsWeek.Value = configInfo.Weeks;
-
-            txtFirstCommitDate.Value = (DateTime)configInfo.FirstCommitDate;
+            txtFirstCommitDate.Value = configInfo.FirstCommitDate;
         }
-
-        private void ListViewProjects_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            if (e.IsSelected)
-            {
-                ConfigFileET config = gitconfig_bus.GetConfigFileById(int.Parse(e.Item.Text));
-                UpdateControls(config);
-
-                // Kiểm tra nếu thư mục internship_week tồn tại thì hiển thị week folder thực tập
-                if (Directory.Exists(txtFolderInternshipPath))
-                {
-                    // Hiển thị dữ liệu thư mục và commit
-                    BuildWeekFileListView(txtDirectoryProjectPath);
-                    // Hiển thị ngày thực tập tối đa có thể chọn.
-                    SetMaxDateForDateTimePicker(txtInternshipStartDate, (DateTime)config.FirstCommitDate);
-                    UpdateControlState(isEnabled: true);
-                }
-                else
-                {
-                    DisableControls();
-                    cboAuthorCommit.Enabled = true;
-                    txtInternshipStartDate.Enabled = true;
-                    btnOpenGitFolder.Enabled = true;
-                    btnAggregator.Enabled = true;
-                    fileListView.Items.Clear();
-                    weekListView.Items.Clear();
-                    AppendTextWithScroll("Vui lòng tổng hợp commit mới.\n");
-                }
-            }
-        }
-
-
 
         private void SetMaxDateForDateTimePicker(DateTimePicker dateTimePicker, DateTime maxDate)
         {
             dateTimePicker.MaxDate = maxDate;
         }
 
-        private void InitializeProjectListView(ListView listViewProjects)
-        {
-            listViewProjects.Columns.Clear();
-            listViewProjects.View = View.Details;
-            listViewProjects.FullRowSelect = true; // Đảm bảo chọn toàn bộ hàng
-            listViewProjects.MultiSelect = false; // Đảm bảo chỉ chọn một hàng tại một thời điểm
-
-            // Thiết lập các cột cho listViewProjects (nếu chưa thêm trước đó)
-            if (listViewProjects.Columns.Count == 0)
-            {
-                listViewProjects.Columns.Add("STT", 50); // Cột số thứ tự 
-                listViewProjects.Columns.Add("Đường dẫn dự án", 200); // Đường dẫn dự án
-                listViewProjects.Columns.Add("Tác giả", 150); // Tác giả
-                listViewProjects.Columns.Add("Ngày bắt đầu", 100); // Ngày bắt đầu
-                listViewProjects.Columns.Add("Ngày kết thúc", 100); // Ngày kết thúc
-                listViewProjects.Columns.Add("Số tuần", 70); // Số tuần thực tập
-                listViewProjects.Columns.Add("Ngày commit đầu tiên", 150); // Ngày commit đầu tiên
-                listViewProjects.Columns.Add("Thư mục thực tập", 200); // Thư mục thực tập
-            }
-
-            // Tự động điều chỉnh kích thước cột
-            fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-        }
-
-
-        private void LoadCommitDatagridview()
-        {
-            // Xóa dữ liệu cũ trên DataGridView trước khi thêm dữ liệu mới
-            dataGridViewCommits.DataSource = null;
-
-            // thông tin giao diện thời gian thực tập
-            DateTime internshipStartDate = txtInternshipStartDate.Value;
-            int weeks = (int)txtNumericsWeek.Value;
-            DateTime internshipEndDate = gitgui_bus.CalculateEndDate(internshipStartDate, weeks);
-
-            // Lấy tất cả commit
-            var allCommits = gitgui_bus.GetCommits(projectDirectory, cboAuthorCommit.SelectedItem.ToString(), internshipStartDate, internshipEndDate);
-
-            // Chuyển đổi danh sách `DayData` thành `DataTable`
-            DataTable dataTable = gitgui_bus.ConvertDayDataListToDataTable(allCommits);
-
-            // Hiển thị dữ liệu lên DataGridView
-            dataGridViewCommits.DataSource = dataTable;
-
-            // Đặt chế độ tự động điều chỉnh cột để chiếm 100% không gian
-            dataGridViewCommits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        }
         private bool IsValidGitRepository(string directory)
         {
             string gitFolder = Path.Combine(directory, ".git");
@@ -329,79 +583,26 @@ namespace GitLogAggregator
             return !string.IsNullOrEmpty(logOutput);
         }
         /// <summary>
-        /// Load thông tin list view trống sau khi chọn thêm dự án
-        /// </summary>
-        /// <param name="internshipWeekFolder"></param>
-        public void LoadProjectListView()
-        {
-            var configFiles = gitconfig_bus.GetAllConfigFiles();
-            listViewProjects.Items.Clear(); // Xóa dữ liệu cũ trước khi bắt đầu thêm mới 
-            foreach (var config in configFiles)
-            {
-                // Hiển thị thông tin đường dẫn dự án
-                ListViewItem item = new ListViewItem(config.Id.ToString());         // ID
-                item.SubItems.Add(config.ProjectDirectory);                         // Đường dẫn dự án
-                item.SubItems.Add(config.Author);                                   // Tác giả thực hiện commit đầu tiên
-                item.SubItems.Add(((DateTime)config.StartDate).ToString("yyyy-MM-dd"));         // Ngày bắt đầu thực tập
-                item.SubItems.Add(((DateTime)config.EndDate).ToString("yyyy-MM-dd"));           // Ngày kết thúc thực tập
-                item.SubItems.Add(config.Weeks.ToString());                         // Số tuần thực tập
-                item.SubItems.Add(((DateTime)config.FirstCommitDate).ToString("yyyy-MM-dd"));   // Ngày commit đầu tiên
-                item.SubItems.Add(config.InternshipWeekFolder);                     // Thư mục thực tập
-                listViewProjects.Items.Add(item);
-            }
-        }
-
-        /// <summary>
-        /// Cập nhật trạng thái giao diện (các nút và control)
-        /// </summary>
-        private void UpdateControlState(bool isEnabled)
-        {
-            btnClearDataListView.Enabled = isEnabled;
-            btnExcelCommits.Enabled = isEnabled;
-            btnReviewCommits.Enabled = isEnabled;
-            btnDeleteCommits.Enabled = !isEnabled;
-            btnExpanDataGridview.Enabled = !isEnabled;
-            txtInternshipEndDate.Enabled = !isEnabled;
-            txtFirstCommitDate.Enabled = !isEnabled;
-            txtNumericsWeek.Enabled = !isEnabled;
-        }
-
-        /// <summary>
         /// Xử lý trường hợp file config bị thiếu
-        /// </summary>
-
+        /// </summary> 
         private void EnableControls()
         {
             cboAuthorCommit.Enabled = true;
-            cboThuMucThucTap.Enabled = true;
+            cboInternshipFolder.Enabled = true;
             txtNumericsWeek.Enabled = true;
             txtInternshipStartDate.Enabled = true;
             txtInternshipEndDate.Enabled = true;
             txtFirstCommitDate.Enabled = true;
-            btnAggregator.Enabled = true;
-            btnClearDataListView.Enabled = true;
-            btnOpenGitFolder.Enabled = true;
-            btnExcelCommits.Enabled = true;
-            btnReviewCommits.Enabled = true;
-            btnDeleteCommits.Enabled = true;
-            btnExpanDataGridview.Enabled = true;
             // Thêm các điều khiển khác nếu cần
         }
         private void DisableControls()
         {
             cboAuthorCommit.Enabled = false;
-            cboThuMucThucTap.Enabled = false;
+            cboInternshipFolder.Enabled = false;
             txtNumericsWeek.Enabled = false;
             txtInternshipStartDate.Enabled = false;
             txtInternshipEndDate.Enabled = false;
             txtFirstCommitDate.Enabled = false;
-            btnAggregator.Enabled = false;
-            btnClearDataListView.Enabled = false;
-            btnOpenGitFolder.Enabled = false;
-            btnExcelCommits.Enabled = false;
-            btnReviewCommits.Enabled = false;
-            btnDeleteCommits.Enabled = false;
-            btnExpanDataGridview.Enabled = false;
             // Thêm các điều khiển khác nếu cần
         }
         /// <summary>
@@ -414,23 +615,22 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnAggregateCommits_Click(object sender, EventArgs e)
         {
-            if (listViewProjects.Items.Count == 0)
-            {
-                AppendTextWithScroll("Vui lòng thêm ít nhất một dự án vào danh sách trước khi tổng hợp commit.\n");
-                return;
-            }
-
-            if (isProcessing)
-            {
-                AppendTextWithScroll("Chương trình đang xử lý, vui lòng chờ...\n");
-                return;
-            }
-
-            isProcessing = true;
-            DisableControls();
-
             try
             {
+                if (configBus.GetAll().Count == 0)
+                {
+                    AppendTextWithScroll("Vui lòng thêm ít nhất một dự án vào danh sách trước khi tổng hợp commit.\n");
+                    return;
+                }
+
+                if (isProcessing)
+                {
+                    AppendTextWithScroll("Chương trình đang xử lý, vui lòng chờ...\n");
+                    return;
+                }
+
+                isProcessing = true;
+                DisableControls();
 
                 // Lấy thông tin từ UI
                 string author = cboAuthorCommit.SelectedItem?.ToString();
@@ -438,7 +638,7 @@ namespace GitLogAggregator
                 DateTime internshipEndDate = txtInternshipEndDate.Value;
 
                 // Tổng hợp commit
-                AggregateCommitsForProjects();
+                AggregateCommitsFileAndFolder();
 
                 // Kiểm tra nếu thư mục internship_week tồn tại thì hiển thị dữ liệu lên listview
                 if (Directory.Exists(txtFolderInternshipPath))
@@ -461,99 +661,287 @@ namespace GitLogAggregator
                 EnableControls();
             }
         }
-        private void AggregateCommitsForProjects()
+        private string GetPeriodAbbreviation(string period)
         {
-            foreach (ListViewItem item in listViewProjects.Items)
+            switch (period)
             {
-                if (int.TryParse(item.Text, out int configFileId))
+                case "Sáng":
+                    return "S";
+                case "Chiều":
+                    return "C";
+                case "Tối":
+                    return "T";
+                default:
+                    throw new ArgumentException("Giá trị period không hợp lệ.");
+            }
+        }
+        private void DeleteEmptyFoldersAndFiles(string folderPath)
+        {
+            try
+            {
+                // Kiểm tra và xóa các file trống trong thư mục
+                foreach (var file in Directory.GetFiles(folderPath))
                 {
-                    // Lấy thông tin dự án từ cơ sở dữ liệu
-                    ConfigFileET configFile = gitconfig_bus.GetConfigFileById(configFileId);
-
-                    if (configFile != null)
+                    if (new FileInfo(file).Length == 0) // File trống nếu kích thước = 0
                     {
-                        string author = cboAuthorCommit.SelectedValue.ToString();
-                        DateTime internshipStartDate = txtInternshipStartDate.Value;
-                        string projectDirectory = configFile.ProjectDirectory;
-                        string internshipWeekFolder = configFile.InternshipWeekFolder;
-                        int totalWeeks = (int)txtNumericsWeek.Value;
-                        // Gọi hàm AggregateCommits để tổng hợp commit
-                        gitgui_bus.AggregateCommits(projectDirectory, author, internshipStartDate, totalWeeks, internshipWeekFolder);
-
-                        AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
+                        File.Delete(file);
                     }
+                }
+
+                // Kiểm tra và xóa các thư mục con trống
+                foreach (var subFolder in Directory.GetDirectories(folderPath))
+                {
+                    DeleteEmptyFoldersAndFiles(subFolder); // Đệ quy để xóa thư mục con trống
+                }
+
+                // Xóa thư mục cha nếu nó trống
+                if (!Directory.EnumerateFileSystemEntries(folderPath).Any())
+                {
+                    Directory.Delete(folderPath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ (ví dụ: ghi log hoặc hiển thị thông báo)
+                AppendTextWithScroll($"Lỗi khi xóa thư mục/file trống: {ex.Message}\n");
+            }
+        }
+        public void AggregateCommitsFileAndFolder()
+        {
+            // Lấy thông tin dự án từ cơ sở dữ liệu
+            List<ConfigFileET> configFiles = configBus.GetAll();
+
+            foreach (ConfigFileET configFile in configFiles)
+            {
+                if (configFile != null)
+                {
+                    string projectDirectory = configFile.ProjectDirectory;
+
+                    // Tạo thư mục theo tuần > Thứ > Buổi
+                    var iswf = internshipDirectoryBUS.GetByID(configFile.InternshipDirectoryId);
+                    var internshipWeekFolder = iswf.InternshipWeekFolder;
+                    var internshipStartDate = configFile.InternshipStartDate;
+
+                    try
+                    {
+                        // Tạo thư mục tổng hợp Combined nếu chưa tồn tại
+                        string combinedFolder = Path.Combine(internshipWeekFolder, "Combined");
+                        if (!Directory.Exists(combinedFolder))
+                        {
+                            Directory.CreateDirectory(combinedFolder);
+                        }
+
+                        // Lấy danh sách các tuần từ CSDL
+                        List<ProjectWeekET> weeks = projectWeeksBUS.GetAll()
+                            .Where(w => w.InternshipDirectoryId == configFile.InternshipDirectoryId)
+                            .ToList();
+
+                        foreach (var week in weeks)
+                        {
+                            DateTime weekStartDate = week.WeekStartDate;
+                            DateTime weekEndDate = week.WeekEndDate;
+                            int currentWeek = weeks.IndexOf(week) + 1;
+                            string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{currentWeek}");
+                            string combinedFile = Path.Combine(combinedFolder, $"combined_week_{currentWeek}.txt");
+                            bool hasCommitsInWeek = false;
+
+                            // Tạo thư mục tuần nếu chưa tồn tại
+                            if (!Directory.Exists(weekFolder))
+                            {
+                                Directory.CreateDirectory(weekFolder);
+                            }
+
+                            // Lấy danh sách các commit trong tuần từ CSDL
+                            var weekCommits = commitBUS.GetAll()
+                                .Where(c => c.CommitDate >= weekStartDate && c.CommitDate <= weekEndDate)
+                                .ToList();
+
+                            for (int dayOffset = 0; dayOffset < 7; dayOffset++)
+                            {
+                                DateTime currentDate = weekStartDate.AddDays(dayOffset);
+                                string dayFolder = weekFolder;
+                                //bool hasCommitsInDay = false;
+
+                                // Tạo thư mục ngày nếu chưa tồn tại
+                                if (!Directory.Exists(dayFolder))
+                                {
+                                    Directory.CreateDirectory(dayFolder);
+                                }
+
+                                foreach (var period in new[] { "Sáng", "Chiều", "Tối" })
+                                {
+                                    // Chuyển đổi period sang dạng viết tắt
+                                    var periodAbb = GetPeriodAbbreviation(period);
+
+                                    // Tạo đường dẫn file
+                                    string dailyFile = Path.Combine(dayFolder, $"{currentDate:yyyy-MM-dd}_{periodAbb}_commits.txt");
+
+                                    // Lấy danh sách các commit trong buổi từ CSDL
+                                    var periodCommits = weekCommits
+                                        .Where(c => c.Date == currentDate.Date && c.Period == periodAbb)
+                                        .ToList();
+
+                                    if (periodCommits.Any())
+                                    {
+                                        foreach (var commit in periodCommits)
+                                        {
+                                            string commitInfo = $"[{commit.CommitHash}] {commit.CommitMessage} - {commit.CommitDate} - {commit.Author}\n";
+                                            AppendToFile(dailyFile, commitInfo); // Ghi vào file hàng ngày
+                                            AppendToFile(combinedFile, $"[{currentDate:yyyy-MM-dd} {periodAbb}] {commitInfo}"); // Ghi vào file tổng hợp
+
+                                            //hasCommitsInDay = true;
+                                            hasCommitsInWeek = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // Tạo file trống nếu không có commit
+                                        File.WriteAllText(dailyFile, string.Empty);
+                                    }
+                                }
+                            }
+
+                            // Kiểm tra và xóa thư mục/file trống sau khi xử lý xong tuần
+                            DeleteEmptyFoldersAndFiles(weekFolder);
+
+                            if (hasCommitsInWeek)
+                            {
+                                AppendTextWithScroll($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}");
+                            }
+                        }
+
+                        // Kiểm tra và xóa thư mục Combined nếu trống
+                        DeleteEmptyFoldersAndFiles(combinedFolder);
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendTextWithScroll($"Lỗi: {ex.Message}\n");
+                    }
+
+                    AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
                 }
             }
         }
 
+        private bool IsGitRepository(string directory)
+        {
+            string gitFolder = Path.Combine(directory, ".git");
+            return Directory.Exists(gitFolder);
+        }
 
+        private (string since, string until, string periodName) GetTimeRange(DateTime date, string period)
+        {
+            string since, until, periodName;
+            switch (period)
+            {
+                case "Sáng":
+                    since = $"{date:yyyy-MM-dd} 06:00:00"; // Buổi sáng bắt đầu từ 6:00
+                    until = $"{date:yyyy-MM-dd} 12:00:00"; // Buổi sáng kết thúc lúc 12:00
+                    periodName = "morning";
+                    break;
+                case "Chiều":
+                    since = $"{date:yyyy-MM-dd} 12:00:00"; // Buổi chiều bắt đầu từ 12:00
+                    until = $"{date:yyyy-MM-dd} 18:00:00"; // Buổi chiều kết thúc lúc 18:00
+                    periodName = "afternoon";
+                    break;
+                case "Tối":
+                    since = $"{date:yyyy-MM-dd} 18:00:00"; // Buổi tối bắt đầu từ 18:00
+                    until = $"{date:yyyy-MM-dd} 23:59:59"; // Buổi tối kết thúc lúc 23:59
+                    periodName = "evening";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid timePeriod");
+            }
+            return (since, until, periodName);
+        }
+        /// <summary>
+        /// Chuyển đổi từ DayOfWeek sang tên tiếng Việt
+        /// </summary>
+        private string GetDayOfWeekName(DayOfWeek dayOfWeek)
+        {
+            return dayOfWeek switch
+            {
+                DayOfWeek.Monday => "Thứ Hai",
+                DayOfWeek.Tuesday => "Thứ Ba",
+                DayOfWeek.Wednesday => "Thứ Tư",
+                DayOfWeek.Thursday => "Thứ Năm",
+                DayOfWeek.Friday => "Thứ Sáu",
+                DayOfWeek.Saturday => "Thứ Bảy",
+                DayOfWeek.Sunday => "Chủ Nhật",
+                _ => throw new ArgumentException("Invalid day of week")
+            };
+        }
+
+        private void AppendToFile(string filePath, string content)
+        {
+            File.AppendAllText(filePath, content + Environment.NewLine);
+        }
+        private void WriteToFile(string filePath, string content)
+        {
+            try
+            {
+                // Tạo thư mục cha nếu chưa tồn tại
+                string directoryPath = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                // Ghi nội dung vào file (tạo mới hoặc ghi đè)
+                File.WriteAllText(filePath, content + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ (ví dụ: ghi log hoặc hiển thị thông báo)
+                AppendTextWithScroll($"Lỗi khi ghi file {filePath}: {ex.Message}\n");
+            }
+        }
 
         /// <summary>
-        /// Xóa thư mục: Nút xóa sẽ chỉ xóa những thư mục hoặc file không cần thiết
-        /// mà không cần phải tạo lại những thư mục con như internship_week hoặc các thư mục tuần.
+        /// Làm mới dữ liệu: Tải lại dữ liệu từ nguồn và cập nhật các control trên giao diện.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BtnClearDataListView_Click(object sender, EventArgs e)
+        private void BtnRefreshData_Click(object sender, EventArgs e)
         {
-            txtFolderInternshipPath = GetLatestInternshipFolderPath();
-
-            // Kiểm tra sự tồn tại của thư mục internship_week
-            if (!Directory.Exists(txtFolderInternshipPath))
-            {
-                AppendTextWithScroll("Thư mục thực tập không tồn tại.\n");
-                return; // Dừng nếu thư mục internship_week không tồn tại
-            }
-
-            // Hộp thoại xác nhận xóa
-            var result = MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result != DialogResult.Yes)
-            {
-                return; // Dừng nếu người dùng không xác nhận xóa
-            }
-
             try
             {
-                DisableControls();
+                DisableControls(); // Vô hiệu hóa các control trong quá trình làm mới
 
-                // Cài đặt quyền truy cập mạnh nhất cho thư mục internship_week
-                SetPermissions(txtFolderInternshipPath);
+                // Làm mới đường dẫn thư mục thực tập
+                txtFolderInternshipPath = GetLatestInternshipFolderPath();
 
-                // Xóa toàn bộ thư mục internship_week
-                try
+                // Kiểm tra sự tồn tại của thư mục internship_week
+                if (!Directory.Exists(txtFolderInternshipPath))
                 {
-                    Directory.Delete(txtFolderInternshipPath, true); // Xóa tất cả các file và thư mục con
-                    AppendTextWithScroll($"Đã xóa toàn bộ thư mục thực tập: {txtFolderInternshipPath}\n");
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    AppendTextWithScroll($"Lỗi: Không có quyền truy cập để xóa thư mục '{txtFolderInternshipPath}'. Chi tiết: {ex.Message}\n");
-                    return; // Dừng nếu không thể xóa thư mục do quyền truy cập
+                    AppendTextWithScroll("Thư mục thực tập không tồn tại. Vui lòng kiểm tra lại.\n");
+                    return; // Dừng nếu thư mục không tồn tại
                 }
 
-                // Xóa tất cả các mục trong bảng listview project
-                RemoveSelectedProjects();
+                // Làm mới combobox thư mục thực tập
+                cboInternshipFolder.DataSource = null;
+                cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
+                cboInternshipFolder.ValueMember = "ID";
+                cboInternshipFolder.DisplayMember = "InternshipWeekFolder";
+                AppendTextWithScroll("Danh sách thư mục thực tập đã được làm mới.\n");
 
-                // Xóa tất cả các mục trong ListView
-                weekListView.Items.Clear();
-                AppendTextWithScroll("Danh sách thư mục đã được làm trống.\n");
+                // Làm mới dữ liệu trong combobox cboConfigFiles danh sách dự án thực tập
+                LoadConfigsIntoCombobox();
+                AppendTextWithScroll("Danh sách dự án thực tập đã được làm mới.\n");
 
-                fileListView.Items.Clear();
-                AppendTextWithScroll("Danh sách file đã được làm trống.\n");
+                // Làm mới combobox tác giả commit
+                LoadAuthorsIntoComboBox(0);
+                AppendTextWithScroll("Danh sách tác giả đã được làm mới.\n");
 
-                listViewProjects.Items.Clear();
-                AppendTextWithScroll("Danh sách config đã được làm trống.\n");
+                // Làm mới danh sách thư mục và file trong ListView
+                BuildWeekFileListView(txtDirectoryProjectPath);
+                AppendTextWithScroll("Danh sách commit file text đã được làm mới.\n");
 
-                checkedListBoxCommits.Items.Clear();
-                AppendTextWithScroll("Danh sách commit đã được làm trống.\n");
+                // Làm mới dữ liệu trong DataGridView
+                dgvReportCommits.DataSource = commitBUS.GetAll();
+                AppendTextWithScroll("Danh sách công việc đã được làm mới.\n");
 
-                dataGridViewCommits.DataSource = null;
-                AppendTextWithScroll("Danh sách công việc đã được làm trống.\n");
-
-                // Tải lại danh sách listViewProjects
-                LoadListViewProjects(gitconfig_bus.GetAllConfigFiles());
-
-                AppendTextWithScroll("Xóa thư mục internship_week và các mục trong bảng ConfigFile hoàn tất.\n");
+                AppendTextWithScroll("Làm mới dữ liệu hoàn tất.\n");
             }
             catch (Exception ex)
             {
@@ -561,222 +949,10 @@ namespace GitLogAggregator
             }
             finally
             {
-                EnableControls();
-                btnClearDataListView.Enabled = false;  // Vô hiệu hóa nút xóa
-                AppendTextWithScroll("Nút xóa đã bị vô hiệu hóa sau khi xóa thư mục.\n");
-                btnDeleteCommits.Enabled = false;
-                btnReviewCommits.Enabled = false;
-                AppendTextWithScroll("Nút Kiểm tra đã bị vô hiệu hóa sau khi xóa thư mục.\n");
-                btnExcelCommits.Enabled = false;
-                txtInternshipEndDate.Enabled = false;
-                txtFirstCommitDate.Enabled = false;
-                txtNumericsWeek.Enabled = false;
-                txtFolderInternshipPath = string.Empty;
-                txtDirectoryProjectPath = string.Empty;
+                //EnableControls(); // Kích hoạt lại các control sau khi hoàn tất                
+                AppendTextWithScroll("Các control đã được kích hoạt lại.\n");
             }
         }
-
-        private void RemoveSelectedProjects()
-        {
-            // Xóa các mục được chọn trong ListViewProjects
-            foreach (ListViewItem item in listViewProjects.Items)
-            {
-                if (int.TryParse(item.Text, out int configFileId))
-                {
-                    // Xóa mục khỏi cơ sở dữ liệu
-                    gitconfig_bus.DeleteConfigFile(configFileId);
-
-                    // Xóa các mục liên quan trong ListView
-                    item.Remove();
-                }
-            }
-            AppendTextWithScroll("Đã xóa các mục được chọn trong bảng ConfigFile.\n");
-        }
-        private void SetPermissions(string folderPath)
-        {
-            try
-            {
-                // Lệnh để thiết lập quyền sở hữu
-                string takeOwnershipCommand = $"takeown /f \"{folderPath}\" /r /d y";
-                RunCommand(takeOwnershipCommand);
-
-                // Lệnh để cấp quyền đầy đủ cho admin
-                string grantPermissionCommand = $"icacls \"{folderPath}\" /grant administrators:F /t";
-                RunCommand(grantPermissionCommand);
-
-                AppendTextWithScroll($"Đã thiết lập quyền truy cập mạnh nhất cho thư mục: {folderPath}\n");
-            }
-            catch (Exception ex)
-            {
-                AppendTextWithScroll($"Lỗi khi thiết lập quyền truy cập: {ex.Message}\n");
-            }
-        }
-
-        private void RunCommand(string command)
-        {
-            ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
-            {
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using (Process process = Process.Start(processStartInfo))
-            {
-                process.WaitForExit();
-                if (process.ExitCode != 0)
-                {
-                    throw new Exception($"Lệnh không thành công, mã thoát: {process.ExitCode}");
-                }
-            }
-        }
-
-
-        // Hàm để tải lại danh sách listViewProjects từ cơ sở dữ liệu
-        private void LoadListViewProjects(List<ConfigFileET> configFiles)
-        {
-            listViewProjects.Items.Clear();
-            foreach (var configFile in configFiles)
-            {
-                ListViewItem item = new ListViewItem(configFile.Id.ToString());
-                item.SubItems.Add(configFile.ProjectDirectory);
-                item.SubItems.Add(configFile.Author);
-                item.SubItems.Add(((DateTime)configFile.StartDate).ToShortDateString());
-                item.SubItems.Add(((DateTime)configFile.EndDate).ToShortDateString());
-                item.SubItems.Add(configFile.Weeks.ToString());
-                item.SubItems.Add(((DateTime)configFile.FirstCommitDate).ToShortDateString());
-                item.SubItems.Add(configFile.InternshipWeekFolder);
-                listViewProjects.Items.Add(item);
-            }
-        }
-
-        /// <summary>
-        /// Hiển thị thư mục khi load thư mục project
-        /// </summary>
-        /// <param name="directories"></param>
-        private void DisplayWeekAndCommitInListView(List<string> directories)
-        {
-            weekListView.Items.Clear();
-            fileListView.Items.Clear();
-            txtFolderInternshipPath = GetLatestInternshipFolderPath();
-            // Tạo thư mục internship_week nếu chưa tồn tại
-            if (!Directory.Exists(txtFolderInternshipPath))
-            {
-                Directory.CreateDirectory(txtFolderInternshipPath);
-            }
-
-            int totalFiles = 0;
-            int emptyDirectories = 0;
-            int directoriesWithCommits = 0;
-
-            // Danh sách file để tổng hợp từ tất cả các thư mục
-            List<(string FilePath, DateTime CreationTime)> allFiles = new List<(string, DateTime)>();
-            Dictionary<int, List<string>> weeklyCommits = new Dictionary<int, List<string>>();
-
-            foreach (string projectDirectory in directories)
-            {
-                // Lấy thông tin dự án từ cơ sở dữ liệu
-                ConfigFileET configFile = gitconfig_bus.GetAllConfigFiles().FirstOrDefault(cf => cf.ProjectDirectory == projectDirectory);
-
-                if (configFile != null)
-                {
-                    DateTime internshipStartDate = (DateTime)configFile.StartDate;
-                    int weeks = configFile.Weeks;
-
-                    for (int week = 1; week <= weeks; week++)
-                    {
-                        DateTime weekStartDate = internshipStartDate.AddDays((week - 1) * 7);
-                        DateTime weekEndDate = weekStartDate.AddDays(6);
-
-                        // Lấy lịch sử git trong khoảng thời gian tuần đó
-                        string gitLogCommand = $"log --since=\"{weekStartDate:yyyy-MM-dd}\" --until=\"{weekEndDate:yyyy-MM-dd}\" --author=\"{configFile.Author}\"";
-                        string logOutput = gitformat_bus.RunGitCommand(gitLogCommand, projectDirectory);
-
-                        if (!string.IsNullOrEmpty(logOutput))
-                        {
-                            if (!weeklyCommits.ContainsKey(week))
-                            {
-                                weeklyCommits[week] = new List<string>();
-                            }
-                            weeklyCommits[week].Add(logOutput);
-                        }
-                    }
-                }
-            }
-
-            // Lưu lịch sử git theo tuần vào các thư mục tuần trong internship_week
-            foreach (var weekCommit in weeklyCommits)
-            {
-                string weekFolder = Path.Combine(txtFolderInternshipPath, $"Week_{weekCommit.Key}");
-                if (!Directory.Exists(weekFolder))
-                {
-                    Directory.CreateDirectory(weekFolder);
-                }
-
-                string combinedFile = Path.Combine(weekFolder, "combined_commits.txt");
-                foreach (string commit in weekCommit.Value)
-                {
-                    File.AppendAllText(combinedFile, commit + Environment.NewLine);
-                }
-
-                // Thêm thư mục có file commit vào weekListView
-                ListViewItem item = new ListViewItem($"Week_{weekCommit.Key}")
-                {
-                    ImageKey = "folder", // Sử dụng icon thư mục
-                    Tag = weekFolder     // Lưu đường dẫn đầy đủ của thư mục vào thuộc tính Tag của ListViewItem
-                };
-                weekListView.Items.Add(item);
-
-                totalFiles += weekCommit.Value.Count;
-                directoriesWithCommits++;
-                AppendTextWithScroll($"Tuần {weekCommit.Key} - Số lượng commit: {weekCommit.Value.Count}\n");
-            }
-
-            // Hiển thị thông báo nếu không có thư mục nào trong internship_week
-            if (directories.Count == 0)
-            {
-                AppendTextWithScroll("Không có thư mục nào trong internship_week.\n");
-            }
-            else
-            {
-                AppendTextWithScroll($"Tổng số thư mục: {directories.Count}\n");
-                AppendTextWithScroll($"Số thư mục trống: {emptyDirectories}\n");
-                AppendTextWithScroll($"Số thư mục có commit: {directoriesWithCommits}\n");
-                AppendTextWithScroll($"Tổng số file: {totalFiles}\n");
-            }
-
-            // Hiển thị tất cả các file từ danh sách tổng hợp lên fileListView, sắp xếp theo ngày tạo
-            var sortedFiles = allFiles.OrderBy(f => f.CreationTime).ToList();
-            int fileOrder = 1;
-            foreach (var (filePath, creationTime) in sortedFiles)
-            {
-                string fileName = Path.GetFileName(filePath);
-                var fileItem = new ListViewItem(fileOrder++.ToString());
-                fileItem.SubItems.Add(fileName);
-                fileItem.SubItems.Add(creationTime.ToString("dd/MM/yyyy HH:mm:ss")); // Thêm ngày tạo
-                fileItem.Tag = filePath; // Lưu đường dẫn đầy đủ của file vào thuộc tính Tag của ListViewItem
-                fileListView.Items.Add(fileItem);
-            }
-        }
-        private void SetupFileListView()
-        {
-            fileListView.View = View.Details;// Hiển thị chế độ chi tiết
-            fileListView.FullRowSelect = true; // Đảm bảo chọn toàn bộ hàng
-            fileListView.MultiSelect = false; // Đảm bảo chỉ chọn một hàng tại một thời điểm
-
-            // Thiết lập các cột cho listViewProjects (nếu chưa thêm trước đó)
-            if (fileListView.Columns.Count == 0)
-            {
-                // Thêm các cột cho ListView
-                fileListView.Columns.Add("STT", 40); // Số thứ tự
-                fileListView.Columns.Add("Tên File", 120); // Tên file
-                fileListView.Columns.Add("Ngày Tạo", 100); // Ngày tạo
-            }
-
-            // Tự động điều chỉnh kích thước cột
-            fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-        }
-
 
 
         /// <summary>
@@ -864,12 +1040,8 @@ namespace GitLogAggregator
                 AppendTextWithScroll($"Thư mục: {Path.GetFileName(folder)} - Số lượng file: {files.Length} - Số lượng commit: {commitsCount}\n");
             }
 
-            // Hiển thị thông báo nếu không có thư mục nào trong internship_week
-            if (weekFoldersPath.Length == 0)
-            {
-                AppendTextWithScroll("Không có thư mục nào trong internship_week.\n");
-            }
-            else
+            // Hiển thị thông báo nếu có thư mục
+            if (weekFoldersPath.Length != 0)
             {
                 AppendTextWithScroll($"Tổng số thư mục: {weekFoldersPath.Length}\n");
                 AppendTextWithScroll($"Số thư mục trống: {emptyDirectories}\n");
@@ -916,7 +1088,17 @@ namespace GitLogAggregator
         /// <param name="text"></param>
         private void AppendTextWithScroll(string text)
         {
+            // Kiểm tra nếu text không chứa bất kỳ ký tự xuống dòng nào
+            if (!text.Contains("\n"))
+            {
+                // Thêm ký tự xuống dòng vào cuối text
+                text += "\n";
+            }
+
+            // Thêm text vào txtResult
             txtResult.AppendText(text);
+
+            // Cuộn xuống dòng mới nhất
             txtResult.ScrollToCaret();
         }
         private void AppendEventsWithScroll(string text)
@@ -940,7 +1122,7 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void HelpButton_Click(object sender, EventArgs e)
         {
-            string helpText = "Hướng Dẫn Sử Dụng Công Cụ Quản Lý Commit Git:\n\n" +
+            string helpText = "Hướng Dẫn Sử Dụng Công Cụ Quản Lý CommitET Git:\n\n" +
                               "1. Chọn Thư Mục Dự Án Git:\n" +
                               "   - Nhấn nút 'Chọn Dự Án'.\n" +
                               "   - Chọn thư mục chứa dự án Git của bạn.\n" +
@@ -954,7 +1136,7 @@ namespace GitLogAggregator
                               "2. Chọn Tác Giả và Ngày Bắt Đầu:\n" +
                               "   - Chọn tác giả từ danh sách 'Tác Giả'.\n" +
                               "   - Chọn ngày bắt đầu thực tập từ 'Ngày Bắt Đầu'.\n\n" +
-                              "3. Tổng Hợp Commit:\n" +
+                              "3. Tổng Hợp CommitET:\n" +
                               "   - Nhấn nút 'Tổng Hợp' để bắt đầu tổng hợp commit.\n" +
                               "   - Quá trình tổng hợp sẽ:\n" +
                               "     + Tạo thư mục tuần bên trong internship_week.\n" +
@@ -1112,28 +1294,21 @@ namespace GitLogAggregator
             // Đọc danh sách commit từ file
             List<string> commits = gitgui_bus.ReadCommitsFromFile(filePath);
 
-            // Hiển thị danh sách commit trong checkedListBox1
-            checkedListBoxCommits.Items.Clear();
-            foreach (var commit in commits)
-            {
-                checkedListBoxCommits.Items.Add(commit);
-            }
+
         }
 
         private void BtnExportExcel_Click(object sender, EventArgs e)
         {
             try
             {
-                //LoadCommitDatagridview();
-
-                if (dataGridViewCommits.DataSource == null)
+                if (dgvReportCommits.DataSource == null)
                 {
                     AppendTextWithScroll("Không có dữ liệu để xuất.\n");
                     return;
                 }
                 string filePath = Path.Combine(desktopPath, "commits.xlsx");
 
-                DataTable dataTable = (DataTable)dataGridViewCommits.DataSource;
+                DataTable dataTable = (System.Data.DataTable)dgvReportCommits.DataSource;
                 List<DayData> dayDataList = gitformat_bus.ConvertDataTableToDayDataList(dataTable);
 
                 // Chuyển đổi `List<DayData>` thành `List<WeekData>`
@@ -1165,16 +1340,11 @@ namespace GitLogAggregator
         /// <param name="e"></param>
         private void BtnReviewCommits_Click(object sender, EventArgs e)
         {
-            btnReviewCommits.Enabled = false;
+
             txtResult.Clear();
             string internshipWeekFolder = Path.Combine(txtDirectoryProjectPath, "internship_week");
 
-            if (!Directory.Exists(internshipWeekFolder))
-            {
-                AppendTextWithScroll("Thư mục internship_week không tồn tại.\n");
-                btnReviewCommits.Enabled = true;
-                return;
-            }
+
 
             DateTime internshipStartDate = txtInternshipStartDate.Value;
             DateTime internshipEndDate = txtInternshipEndDate.Value;
@@ -1195,14 +1365,9 @@ namespace GitLogAggregator
                 gitlogcheckcommit_bus.ProcessCommitsInWeek(combinedFilePath, week, internshipStartDate, internshipEndDate, weekDatas, invalidCommits);
             }
 
-            checkedListBoxCommits.Items.Clear();
-            foreach (var commit in invalidCommits)
-            {
-                checkedListBoxCommits.Items.Add(commit);
-            }
 
             DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
-            dataGridViewCommits.DataSource = dataTable;
+            dgvReportCommits.DataSource = dataTable;
 
             int invalidCommitCount = invalidCommits.Count;
             if (invalidCommitCount == 0)
@@ -1211,11 +1376,9 @@ namespace GitLogAggregator
             }
             else
             {
-                AppendTextWithScroll($"Kiểm tra thành công. Commit không hợp lệ: {invalidCommitCount}\n");
+                AppendTextWithScroll($"Kiểm tra thành công. CommitET không hợp lệ: {invalidCommitCount}\n");
             }
-            btnReviewCommits.Enabled = false;
-            btnDeleteCommits.Enabled = false;
-            btnExpanDataGridview.Enabled = true;
+
         }
 
         private void BtnDeleteCommits_Click(object sender, EventArgs e)
@@ -1262,16 +1425,9 @@ namespace GitLogAggregator
             // Step 4: Update the UI
             // Refresh the DataGridView
             DataTable dataTable = gitlogcheckcommit_bus.ConvertToDataTable(weekDatas);
-            dataGridViewCommits.DataSource = dataTable;
+            dgvReportCommits.DataSource = dataTable;
 
-            // Clear the data source of the CheckedListBox
-            checkedListBoxCommits.Items.Clear();
 
-            // Inform the user that the process is complete
-            btnDeleteCommits.Enabled = false;
-            AppendTextWithScroll("Xóa thành công danh sách commits lỗi.\n");
-            btnReviewCommits.Enabled = false; // khóa nút kiểm tra sau khi xóa commit
-            AppendTextWithScroll("Khóa nút kiểm tra commits lỗi sau khi xóa thành công danh sách commit lỗi.\n");
         }
         /// <summary>
         /// Kiểm tra sự tồn tại của thư mục tuần và file combined_commits.txt
@@ -1292,36 +1448,16 @@ namespace GitLogAggregator
 
             return true;
         }
-        private void OnMouseEnter(object sender, EventArgs e)
-        {
-            btnDeleteCommits.BackColor = Color.FromArgb(255, 128, 128);
-            AppendEventsWithScroll("Xóa commits lỗi.\n");
-        }
-        private void OnMouseLeave(object sender, EventArgs e)
-        {
-            btnDeleteCommits.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
-        }
 
-        private void btnExpanDataGridview_MouseEnter(object sender, EventArgs e)
-        {
-            btnDeleteCommits.BackColor = Color.FromArgb(255, 128, 128);
-            AppendEventsWithScroll("Mở rộng datagridview ở Form khác.\n");
-        }
-
-        private void btnExpanDataGridview_MouseLeave(object sender, EventArgs e)
-        {
-            btnDeleteCommits.BackColor = Color.FromArgb(255, 192, 192); // Trở về màu nền mặc định 
-        }
-
-        private void btnReviewCommits_MouseEnter(object sender, EventArgs e)
+        private void BtnReviewCommits_MouseEnter(object sender, EventArgs e)
         {
             AppendEventsWithScroll("Kiểm tra commits lỗi.\n");
         }
 
 
-        private void btnExcelCommits_MouseEnter(object sender, EventArgs e)
+        private void BtnExcelCommits_MouseEnter(object sender, EventArgs e)
         {
-            AppendEventsWithScroll("Xuất Excel Commit trong datagridview.\n");
+            AppendEventsWithScroll("Xuất Excel CommitET trong datagridview.\n");
         }
 
         /// <summary>
@@ -1329,7 +1465,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SetupThuMucThucTap_Click(object sender, EventArgs e)
+        private void BtnSetupThuMucThucTap_Click(object sender, EventArgs e)
         {
             // Mở hộp thoại chọn thư mục
             using (var folderBrowserDialog = new FolderBrowserDialog())
@@ -1343,10 +1479,50 @@ namespace GitLogAggregator
                     // Lấy đường dẫn thư mục
                     txtFolderInternshipPath = folderBrowserDialog.SelectedPath;
 
-                    // Lưu đường dẫn vào cơ sở dữ liệu
-                    // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
-                    internshipDirectoryBUS.InsertInternshipDirectory(txtFolderInternshipPath);
+                    // Kiểm tra nếu là thư mục git
+                    if (Directory.Exists(Path.Combine(txtFolderInternshipPath, ".git")))
+                    {
+                        MessageBox.Show("Thư mục đã chọn là thư mục git. Vui lòng chọn thư mục khác.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
 
+                    // Kiểm tra nếu là thư mục thông thường đã có dữ liệu
+                    if (Directory.EnumerateFileSystemEntries(txtFolderInternshipPath).Any())
+                    {
+                        // Kiểm tra nếu là thư mục đã lưu trong cơ sở dữ liệu
+                        var existingDirectory = internshipDirectoryBUS.GetByPath(txtFolderInternshipPath);
+                        if (existingDirectory != null)
+                        {
+                            // Tải lại các thiết lập từ thư mục đã lưu
+                            // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
+                            txtFolderInternshipPath = existingDirectory.InternshipWeekFolder;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Vui lòng làm trống thư mục thực tập trước khi xử lý dữ liệu.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // Thư mục rỗng, thiết lập thao tác cài đặt mới
+                        InternshipDirectoryET internshipDirectory = new InternshipDirectoryET
+                        {
+                            InternshipWeekFolder = txtFolderInternshipPath,
+                            DateModified = DateTime.Now
+                        };
+
+                        // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
+                        internshipDirectoryBUS.Add(internshipDirectory);
+                    }
+
+                    // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
+                    cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
+                    cboInternshipFolder.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
+                    cboInternshipFolder.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
+
+                    // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
+                    txtFolderInternshipPath = GetLatestInternshipFolderPath();
 
                     // Cập nhật đường dẫn thư mục thực tập trên giao diện
                     AppendTextWithScroll($"Đã cập nhật đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
@@ -1354,7 +1530,8 @@ namespace GitLogAggregator
             }
         }
 
-        private void cboThuMucThucTap_SelectedIndexChanged(object sender, EventArgs e)
+
+        private void CboThuMucThucTap_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Lấy đối tượng ComboBox
             ComboBox comboBox = (ComboBox)sender;
@@ -1371,6 +1548,658 @@ namespace GitLogAggregator
         }
 
 
+        public string RunGitCommand(string command, string workingDirectory)
+        {
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = command,
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true, // Đọc cả lỗi từ quá trình
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8
+            };
+
+            using var process = new Process
+            {
+                StartInfo = processStartInfo
+            };
+
+            StringBuilder outputBuilder = new StringBuilder();
+            StringBuilder errorBuilder = new StringBuilder();
+
+            process.OutputDataReceived += (sender, args) => outputBuilder.AppendLine(args.Data);
+            process.ErrorDataReceived += (sender, args) => errorBuilder.AppendLine(args.Data);
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception($"Git command failed with exit code {process.ExitCode}. Error: {errorBuilder.ToString()}");
+            }
+
+            return outputBuilder.ToString();
+        }
+
+        // Hàm chạy lệnh Git thông qua file batch
+        private string RunGitCommandViaBatch(string batchFilePath, string gitCommand, string workingDirectory)
+        {
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = batchFilePath, // Đường dẫn đến file batch
+                Arguments = gitCommand,   // Lệnh Git sẽ được truyền vào file batch
+                WorkingDirectory = workingDirectory, // Thư mục làm việc
+                RedirectStandardOutput = true,
+                RedirectStandardError = true, // Đọc cả lỗi từ quá trình
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8
+            };
+
+            using var process = new Process
+            {
+                StartInfo = processStartInfo
+            };
+
+            StringBuilder outputBuilder = new StringBuilder();
+            StringBuilder errorBuilder = new StringBuilder();
+
+            process.OutputDataReceived += (sender, args) => outputBuilder.AppendLine(args.Data);
+            process.ErrorDataReceived += (sender, args) => errorBuilder.AppendLine(args.Data);
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+            process.WaitForExit();
+
+            if (process.ExitCode != 0)
+            {
+                throw new Exception($"Git command failed with exit code {process.ExitCode}. Error: {errorBuilder.ToString()}");
+            }
+
+            return outputBuilder.ToString();
+        }
+        private void CreateBatchFile(string batchFilePath)
+        {
+            // Nội dung của file batch
+            string batchContent = @"
+@echo off
+REM Đảm bảo rằng Git đã được cài đặt và có trong PATH
+git %*
+";
+
+            // Ghi nội dung vào file batch
+            File.WriteAllText(batchFilePath, batchContent);
+        }
+        /// <summary>
+        /// Phân tích đầu ra từ lệnh git log thành danh sách các commit với các trường thông tin cần thiết (hash, message, date, author)
+        /// </summary>
+        /// <param name="config"></param>
+        private void AggregateCommits(ConfigFileET config)
+        {
+            var internshipWeekFolder = internshipDirectoryBUS.GetByID(config.InternshipDirectoryId).InternshipWeekFolder;
+            try
+            {
+                // Kiểm tra và tạo thư mục internshipWeekFolder nếu nó không tồn tại
+                if (!Directory.Exists(internshipWeekFolder))
+                {
+                    Directory.CreateDirectory(internshipWeekFolder); // Tạo thư mục
+                    AppendTextWithScroll($"Thư mục đã được tạo tại: {internshipWeekFolder}\n");
+                }
+
+                // Đường dẫn đến file batch
+                string batchFilePath = Path.Combine(internshipWeekFolder, "run_git_command.bat");
+
+                // Kiểm tra và tạo file batch nếu nó không tồn tại
+                if (!File.Exists(batchFilePath))
+                {
+                    CreateBatchFile(batchFilePath); // Tạo file batch
+                    AppendTextWithScroll($"File batch đã được tạo tại: {batchFilePath}\n");
+                }
+
+                // Kiểm tra thư mục dự án có tồn tại không
+                if (!Directory.Exists(config.ProjectDirectory))
+                {
+                    throw new DirectoryNotFoundException($"Thư mục dự án không tồn tại: {config.ProjectDirectory}");
+                }
+
+                // Xác định thư mục dự án Git và chạy lệnh git thông qua file batch để lấy thông tin commit
+                string gitLogCommand = $"log --reverse --pretty=format:\"%H|%s|%ci|%an|%ae\"";
+                string logOutput = RunGitCommandViaBatch(batchFilePath, gitLogCommand, config.ProjectDirectory); // Hàm chạy lệnh git qua batch
+                var commits = ParseGitLog(logOutput); // Process the log output
+
+                // Lấy danh sách các tuần từ database
+                List<ProjectWeekET> weeks = projectWeeksBUS.GetAll();
+
+                // Danh sách tạm để lưu các commit đã thêm vào
+                List<CommitET> insertedCommits = new List<CommitET>();
+
+                // Bước 1: Thêm tất cả các commit vào database
+                foreach (var commit in commits)
+                {
+                    try
+                    {
+                        // Kiểm tra xem commit đã tồn tại chưa
+                        var existingCommit = commitBUS.GetAll().FirstOrDefault(c => c.CommitHash == commit.CommitHash);
+
+                        if (existingCommit == null)
+                        {
+                            // Xác định period từ giờ commit
+                            string period = DeterminePeriod(commit.CommitDate.Hour);
+
+                            // Tìm ProjectWeekId tương ứng với ngày của commit
+                            var projectWeek = weeks.FirstOrDefault(w =>
+                                commit.CommitDate >= w.WeekStartDate && commit.CommitDate <= w.WeekEndDate);
+
+                            if (projectWeek == null)
+                            {
+                                AppendTextWithScroll($"Không tìm thấy tuần phù hợp cho commit {commit.CommitHash}.\n");
+                                continue;
+                            }
+
+                            // Tạo thông tin commit để lưu vào DB
+                            var commitInfo = new CommitET
+                            {
+                                CommitHash = commit.CommitHash,
+                                CommitMessage = commit.CommitMessage,
+                                CommitDate = commit.CommitDate,
+                                Author = commit.Author,
+                                AuthorEmail = commit.AuthorEmail,
+                                ProjectWeekId = projectWeek.ProjectWeekId, // Gán ProjectWeekId chính xác
+                                Date = commit.CommitDate.Date, // Ngày của commit
+                                Period = period, // Period được tính từ CommitDate
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now
+                            };
+
+                            // Thêm commit vào DB
+                            commitBUS.Add(commitInfo);
+
+                            // Lấy commit vừa thêm vào và lưu vào danh sách tạm
+                            var lastInsertedCommit = commitBUS.GetLastInserted();
+                            insertedCommits.Add(lastInsertedCommit);
+                        }
+                        else
+                        {
+                            AppendTextWithScroll($"Commit {commit.CommitHash} đã tồn tại.\n");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        AppendTextWithScroll($"Lỗi khi thêm commit {commit.CommitHash}: {ex.Message}\n");
+                    }
+                }
+
+                // Bước 2: Tạo CommitGroupMembers sau khi đã thêm tất cả các commit
+                foreach (var week in weeks)
+                {
+                    // Lấy nhóm commit tương ứng với tuần hiện tại
+                    var commitPeriod = commitPeriodBUS.GetAll()
+                        .FirstOrDefault(g => g.PeriodName == week.ProjectWeekName);
+
+                    if (commitPeriod == null)
+                    {
+                        AppendTextWithScroll($"Không tìm thấy nhóm commit cho tuần {week.ProjectWeekName}.\n");
+                        continue;
+                    }
+
+                    // Lấy các commit thuộc tuần hiện tại từ danh sách đã thêm vào
+                    var weekCommits = insertedCommits
+                        .Where(c => c.CommitDate >= week.WeekStartDate && c.CommitDate <= week.WeekEndDate)
+                        .ToList();
+
+                    foreach (var commit in weekCommits)
+                    {
+                        try
+                        {
+                            // Thêm commit vào nhóm commit của tuần hiện tại
+                            var commitGroupMember = new CommitGroupMemberET
+                            {
+                                PeriodID = commitPeriod.PeriodID,
+                                CommitId = commit.CommitId,
+                                AddedAt = DateTime.Now
+                            };
+
+                            // Thêm commit vào nhóm
+                            commitGroupMembersBUS.Add(commitGroupMember);
+                        }
+                        catch (Exception ex)
+                        {
+                            AppendTextWithScroll($"Lỗi khi thêm commit {commit.CommitHash} vào nhóm: {ex.Message}\n");
+                        }
+                    }
+
+                    AppendTextWithScroll($"Week {week.ProjectWeekName} commits đã tổng hợp vào db.\n");
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                AppendTextWithScroll($"Lỗi: File batch không tồn tại. Chi tiết: {ex.Message}\n");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                AppendTextWithScroll($"Lỗi: Không có quyền truy cập vào đường dẫn '{internshipWeekFolder}'. Chi tiết: {ex.Message}\n");
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi: Đã xảy ra lỗi khi tổng hợp commits. Chi tiết: {ex.Message}\n");
+            }
+        }
+
+        // Helper method to determine the timePeriod of the day
+        private string DeterminePeriod(int hour)
+        {
+            if (hour >= 6 && hour < 12)
+            {
+                return "S"; // Sáng: 6 giờ đến trước 12 giờ
+            }
+            else if (hour >= 12 && hour < 18)
+            {
+                return "C"; // Chiều: 12 giờ đến trước 18 giờ
+            }
+            else
+            {
+                return "T"; // Tối: 18 giờ đến trước 6 giờ sáng hôm sau
+            }
+        }
+
+        // Helper method to parse git log output with encoding handling
+        private List<CommitET> ParseGitLog(string logOutput)
+        {
+            var commits = new List<CommitET>();
+            var lines = logOutput.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries); // Loại bỏ các dòng trống
+
+            foreach (var line in lines)
+            {
+                var parts = line.Split('|');
+                if (parts.Length == 5) // Đảm bảo có đủ 5 phần: CommitHash, CommitMessage, CommitDate, FirstCommitAuthor, FirstCommitAuthor Email
+                {
+                    try
+                    {
+                        // Phân tích thời gian commit từ định dạng ISO 8601 kèm theo múi giờ
+                        var commitDate = DateTime.ParseExact(
+                            parts[2].Trim(), // Loại bỏ khoảng trắng thừa
+                            "yyyy-MM-dd HH:mm:ss zzz", // Định dạng thời gian từ Git
+                            CultureInfo.InvariantCulture // Sử dụng CultureInfo mặc định
+                        );
+
+                        // Thêm commit vào danh sách
+                        commits.Add(new CommitET
+                        {
+                            CommitHash = parts[0].Trim(),
+                            CommitMessage = parts[1].Trim(), // Không cần chuyển đổi encoding nếu đầu vào đã là UTF-8
+                            CommitDate = commitDate,
+                            Author = parts[3].Trim(),
+                            AuthorEmail = parts[4].Trim(),
+                        });
+                    }
+                    catch (FormatException ex)
+                    {
+                        Console.WriteLine($"Error parsing date: {ex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Unexpected error: {ex.Message}");
+                    }
+                }
+            }
+
+            return commits;
+        }
+        private void BtnSaveGit_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Hiển thị hộp thoại xác nhận
+                DialogResult result = MessageBox.Show(
+                    "Bạn có chắc chắn muốn lưu thông tin cấu hình không?", // Nội dung thông báo
+                    "Xác nhận lưu",                                        // Tiêu đề hộp thoại
+                    MessageBoxButtons.YesNo,                               // Nút Yes và No
+                    MessageBoxIcon.Question                                // Biểu tượng câu hỏi
+                );
+
+                // Kiểm tra kết quả từ hộp thoại
+                if (result == DialogResult.Yes)
+                {
+                    // Nếu người dùng chọn "Yes", thực hiện lưu
+                    List<ConfigFileET> configs = configBus.GetAll();
+
+                    if (configs == null || configs.Count == 0)
+                    {
+                        AppendTextWithScroll("Không có cấu hình nào được tìm thấy.\n");
+                        return;
+                    }
+
+                    // Lưu thông tin cấu hình vào cơ sở dữ liệu
+                    foreach (ConfigFileET config in configs)
+                    {
+                        AggregateCommits(config);
+                    }
+                    // Hiển thị dữ liệu đã thêm vào csdl lên dgv
+                    //
+                    // Cấu hình trạng thái của CheckBox và ComboBox
+                    //
+                    // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
+                    chkSearchAllWeeks.Checked = true;
+
+                    ConfigureSearchControls();
+
+                    if (chkSearchAllWeeks.Checked)
+                    {
+                        SearchAllWeeks();
+                    }
+
+                    AppendTextWithScroll("Lưu thông tin cấu hình thành công.\n");
+                }
+                else
+                {
+                    // Nếu người dùng chọn "No", hiển thị thông báo hủy
+                    AppendTextWithScroll("Đã hủy lưu thông tin cấu hình.\n");
+                }
+            }
+            catch (Exception ex)
+            {
+                AppendTextWithScroll($"Lỗi: {ex.Message}");
+            }
+        }
+        private bool IsSearchingAllWeeks()
+        {
+            // Kiểm tra nếu CheckBox được chọn và DataGridView đang hiển thị dữ liệu
+            return chkSearchAllWeeks.Checked && dgvReportCommits.DataSource != null;
+        }
+        private void BtnSearchReport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Kiểm tra nếu đang ở trạng thái "tất cả"
+                if (IsSearchingAllWeeks())
+                {
+                    AppendTextWithScroll("Bạn đang xem tất cả các tuần. Vui lòng bỏ chọn 'Tìm kiếm tất cả các tuần' để tìm kiếm theo tuần cụ thể.\n");
+                    return;
+                }
+
+                int projectWeekId = 0;
+                bool searchAllWeeks = chkSearchAllWeeks.Checked;
+
+                // Nếu không tìm kiếm tất cả các tuần, lấy giá trị ProjectWeekId từ ComboBox
+                if (!searchAllWeeks)
+                {
+                    projectWeekId = Convert.ToInt32(cboSearchByWeek.SelectedValue);
+                }
+
+                // Gọi hàm tìm kiếm
+                allSearchResults = commitBUS.SearchCommits(txtSearchReport.Text, projectWeekId, searchAllWeeks ? 1 : 0);
+
+                // Đặt lại trang hiện tại về 1
+                currentPage = 1;
+
+                // Hiển thị kết quả theo trang
+                DisplaySearchResults();
+
+                // Xóa nội dung tìm kiếm (nếu cần)
+                txtSearchReport.Clear();
+            }
+            catch (Exception ex)
+            {
+                // Xóa nội dung tìm kiếm và hiển thị thông báo lỗi
+                txtSearchReport.Clear();
+                AppendTextWithScroll($"Lỗi: {ex.Message}\n");
+            }
+        }
+        private void DisplaySearchResults()
+        {
+            if (allSearchResults != null && allSearchResults.Any())
+            {
+                // Tính toán chỉ số bắt đầu và kết thúc của trang hiện tại
+                int startIndex = (currentPage - 1) * pageSize;
+                int endIndex = Math.Min(startIndex + pageSize, allSearchResults.Count);
+
+                // Lấy dữ liệu cho trang hiện tại
+                var pagedResults = allSearchResults.Skip(startIndex).Take(pageSize).ToList();
+
+                // Hiển thị kết quả lên DataGridView
+                dgvReportCommits.DataSource = pagedResults;
+
+                // Hiển thị thông báo
+                AppendTextWithScroll($"Trang {currentPage} của {Math.Ceiling((double)allSearchResults.Count / pageSize)}. Hiển thị {pagedResults.Count} kết quả.\n");
+            }
+            else
+            {
+                // Xóa dữ liệu hiện tại trên DataGridView
+                dgvReportCommits.DataSource = null;
+
+                // Ghi thông báo không tìm thấy kết quả
+                AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
+            }
+        }
+        private void BtnPreviousReport_Click(object sender, EventArgs e)
+        {
+            if (currentPage > 1)
+            {
+                currentPage--; // Giảm số trang hiện tại
+                DisplaySearchResults(); // Hiển thị kết quả theo trang mới
+            }
+            else
+            {
+                AppendTextWithScroll("Bạn đang ở trang đầu tiên.\n");
+            }
+        }
+        private void BtnNextReport_Click(object sender, EventArgs e)
+        {
+            int totalPages = (int)Math.Ceiling((double)allSearchResults.Count / pageSize);
+
+            if (currentPage < totalPages)
+            {
+                currentPage++; // Tăng số trang hiện tại
+                DisplaySearchResults(); // Hiển thị kết quả theo trang mới
+            }
+            else
+            {
+                AppendTextWithScroll("Bạn đang ở trang cuối cùng.\n");
+            }
+        }
+        private void btnRemoveAll_Click(object sender, EventArgs e)
+        {
+            // Hiển thị hộp thoại xác nhận
+            DialogResult result = MessageBox.Show(
+                "Bạn có chắc chắn muốn xóa tất cả dữ liệu không?", // Nội dung thông báo
+                "Xác nhận xóa",                                    // Tiêu đề hộp thoại
+                MessageBoxButtons.YesNo,                           // Nút Yes và No
+                MessageBoxIcon.Warning                             // Biểu tượng cảnh báo
+            );
+
+            // Kiểm tra kết quả từ hộp thoại
+            if (result == DialogResult.Yes)
+            {
+                // Nếu người dùng chọn "Yes", thực hiện xóa
+                removeBUS.ClearAllTables();
+                AppendTextWithScroll("CSDL Trống!");
+            }
+            // Nếu người dùng chọn "No", không làm gì cả
+        }
+        /// <summary>
+        /// kiểm tra ngày commit đầu tiên của các project xem nó có nằm trong tuần thực tập thì mới được tạo tuần và commit group
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnCreateWeek_Click(object sender, EventArgs e)
+        {
+
+
+            if (cboInternshipFolder.SelectedValue == null)
+            {
+                AppendTextWithScroll("Vui lòng chọn thư mục thực tập trước khi tạo tuần thực tập.\n");
+                return;
+            }
+            int internshipDirectoryId = int.Parse(cboInternshipFolder.SelectedValue.ToString());
+
+            DateTime internshipStartDate = txtInternshipStartDate.Value.Date;
+            if (internshipStartDate == null)
+            {
+                AppendTextWithScroll("Vui lòng chọn ngày bắt đầu thực tập.\n");
+                return;
+            }
+            DateTime internshipEndDate = txtInternshipEndDate.Value.Date;
+
+            int weeks = (int)txtNumericsWeek.Value;
+            if (weeks <= 0)
+            {
+                AppendTextWithScroll("Số tuần phải lớn hơn 0.\n");
+                return;
+            }
+
+            var configs = configBus.GetAll();
+            if (configs.Count == 0)
+            {
+                AppendTextWithScroll("Vui lòng chọn dự án trước khi tạo tuần thực tập.\n");
+                return;
+            }
+
+            // Kiểm tra ngày commit đầu tiên của các project xem nó có nằm trong tuần thực tập không
+            var check = false;
+            foreach (var c in configs)
+            {
+                if (internshipStartDate <= c.FirstCommitDate.Date && c.FirstCommitDate.Date <= internshipEndDate)
+                {
+                    check = true;
+                }
+            }
+            if (!check)
+            {
+                AppendTextWithScroll("Không thể tạo tuần thực tập vì dự án không nằm trong kỳ thực tập.\n");
+                check = false;
+                return;
+            }
+
+            // Kiểm tra xem đã có dữ liệu CommitPeriod và ProjectWeek trong khoảng thời gian thực tập chưa
+            var existingCommitGroups = commitPeriodBUS.GetAll()
+                .Where(g => g.PeriodStartDate >= internshipStartDate && g.PeriodEndDate <= internshipEndDate)
+                .ToList();
+
+            var existingProjectWeeks = projectWeeksBUS.GetAll()
+                .Where(w => w.WeekStartDate >= internshipStartDate && w.WeekEndDate <= internshipEndDate)
+                .ToList();
+
+            if (existingCommitGroups.Count > 0 || existingProjectWeeks.Count > 0)
+            {
+                AppendTextWithScroll("Đã có dữ liệu CommitPeriod và ProjectWeek trong khoảng thời gian thực tập, không cần tạo thêm.\n");
+                return;
+            }
+
+            // Tạo các tuần và CommitGroup mới
+            for (int weekOffset = 0; weekOffset < weeks; weekOffset++)
+            {
+                DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
+                DateTime weekEndDate = weekStartDate.AddDays(6);
+                string projectWeekName = $"Tuần {weekOffset + 1}"; // Bắt đầu từ Tuần 1
+
+                // Tạo ProjectWeek
+                var projectWeek = new ProjectWeekET
+                {
+                    InternshipDirectoryId = internshipDirectoryId,
+                    ProjectWeekName = projectWeekName,
+                    WeekStartDate = weekStartDate.Date,
+                    WeekEndDate = weekEndDate.Date,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now,
+                };
+                projectWeeksBUS.Add(projectWeek);
+
+                // Tạo các CommitGroup (buổi) cho từng ngày trong tuần
+                for (int dayOffset = 0; dayOffset < 7; dayOffset++) // 7 ngày trong tuần
+                {
+                    DateTime currentDate = weekStartDate.AddDays(dayOffset);
+
+                    // Tạo CommitGroup cho từng buổi (sáng, chiều, tối)
+                    string[] periods = { "Sáng", "Chiều", "Tối" };
+                    foreach (var period in periods)
+                    {
+                        var (since, until, periodName) = GetTimeRange(currentDate, period);
+
+                        var commitGroup = new CommitPeriodET
+                        {
+                            PeriodName = $"Buổi {period.ToLower()} {currentDate:dd/MM/yyyy}", // Ví dụ: "Buổi sáng 16/01/2025"
+                            PeriodDuration = periodName, // Ví dụ: "morning"
+                            PeriodStartDate = DateTime.Parse(since), // Ví dụ: "2025-01-16 06:00:00"
+                            PeriodEndDate = DateTime.Parse(until),   // Ví dụ: "2025-01-16 12:00:00"
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now
+                        };
+                        commitPeriodBUS.Add(commitGroup);
+                    }
+                }
+            }
+
+            AppendTextWithScroll("Tạo xong commitgroup.\n");
+            AppendTextWithScroll("Tạo xong projectweek.\n");
+
+            // Cập nhật lại danh sách tuần trên ComboBox
+            cboSearchByWeek.DataSource = projectWeeksBUS.GetAll();
+            cboSearchByWeek.ValueMember = "ProjectWeekId";
+            cboSearchByWeek.DisplayMember = "ProjectWeekName";
+        }
+
+        private void chkUseDate_CheckedChanged(object sender, EventArgs e)
+        {
+            // Khi CheckBox được chọn, kích hoạt DateTimePicker
+            txtInternshipStartDate.Enabled = chkUseDate.Checked;
+
+            // Khi CheckBox không được chọn, vô hiệu hóa DateTimePicker
+            if (!chkUseDate.Checked)
+            {
+                txtInternshipStartDate.Value = DateTime.Now; // Đặt lại giá trị mặc định (tùy chọn)
+            }
+        }
+
+        private void chkSearchAllWeeks_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkSearchAllWeeks.Checked)
+            {
+                cboSearchByWeek.Enabled = false; // Khóa ComboBox
+                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Thay đổi text
+            }
+            else
+            {
+                cboSearchByWeek.Enabled = true; // Mở khóa ComboBox
+                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Thay đổi text
+            }
+        }
+
+        private void cboConfigFiles_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboConfigFiles.SelectedValue != null && cboConfigFiles.SelectedValue is int selectedConfigID)
+            {
+                // Gọi hàm LoadAuthorsIntoComboBox để tải danh sách tác giả
+                LoadAuthorsIntoComboBox(selectedConfigID);
+            }
+        }
+
+        private void UpdateAuthorList(List<AuthorET> authors)
+        {
+            // Xóa dữ liệu cũ
+            cboSearchByAuthor.Items.Clear();
+            cboAuthorCommit.Items.Clear();
+
+            // Thêm dữ liệu mới
+            foreach (var author in authors)
+            {
+                cboSearchByAuthor.Items.Add(author.AuthorName);
+                cboAuthorCommit.Items.Add(author.AuthorName);
+            }
+
+            // Chọn mục đầu tiên (nếu có)
+            if (cboAuthorCommit.Items.Count > 0)
+            {
+                cboAuthorCommit.SelectedIndex = 0;
+            }
+        }
     }
 }
 
