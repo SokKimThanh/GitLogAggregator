@@ -158,7 +158,7 @@ namespace GitLogAggregator
 
                 if (chkSearchAllWeeks.Checked)
                 {
-                    SearchAllWeeks();
+                    SearchCommitWhenLoadForm();
                 }
 
                 DisableControls();
@@ -234,7 +234,7 @@ namespace GitLogAggregator
             UpdateAuthorList(authors);
         }
 
-        private void SearchAllWeeks()
+        private void SearchCommitWhenLoadForm()
         {
             try
             {
@@ -470,12 +470,12 @@ namespace GitLogAggregator
                 ConfigFileET configFile = new ConfigFileET
                 {
                     ProjectDirectory = projectDirectory,
-                    FirstCommitAuthor = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
+                    Weeks = (int)txtNumericsWeek.Value,
+                    InternshipDirectoryId = (int)cboInternshipFolder.SelectedValue,
                     InternshipStartDate = txtInternshipStartDate.Value,
                     InternshipEndDate = txtInternshipEndDate.Value,
-                    Weeks = (int)txtNumericsWeek.Value,
                     FirstCommitDate = firstCommitDate,
-                    InternshipDirectoryId = (int)cboInternshipFolder.SelectedValue
+                    FirstCommitAuthor = gitgui_bus.GetFirstCommitAuthor(projectDirectory),
                 };
 
                 configBus.Add(configFile);
@@ -489,24 +489,22 @@ namespace GitLogAggregator
                     return;
                 }
 
-                List<AuthorET> authorIDs = authorBUS.GetAll();
+                // Chú ý: authors là danh sach tác giả tham gia dự án thực tập mà hàm này đang chọn projectDirectory
 
-                if (authorIDs == null || !authorIDs.Any())
+                foreach (var (authorName, authorEmail) in authors)
                 {
-                    AppendTextWithScroll("Lỗi: Danh sách tác giả trống.\n");
-                    return;
-                }
+                    // Lấy thông tin tác giả từ cơ sở dữ liệu dựa trên email
+                    AuthorET author = authorBUS.GetByEmail(authorEmail);
 
-                foreach (var author in authorIDs)
-                {
                     if (author == null)
                     {
-                        AppendTextWithScroll("Lỗi: Tác giả không tồn tại.\n");
+                        AppendTextWithScroll($"Lỗi: Không tìm thấy tác giả với email {authorEmail} trong cơ sở dữ liệu.\n");
                         continue;
                     }
 
                     try
                     {
+                        // Thêm mối quan hệ giữa dự án và tác giả
                         configAuthorBUS.Add(new ConfigAuthorET
                         {
                             ConfigID = lastAddedConfigFile.ConfigID,
@@ -1091,12 +1089,6 @@ namespace GitLogAggregator
 
             // Cuộn xuống dòng mới nhất
             txtResult.ScrollToCaret();
-        }
-        private void AppendEventsWithScroll(string text)
-        {
-            txtResultMouseEvents.Clear();
-            txtResultMouseEvents.AppendText(text);
-            txtResultMouseEvents.ScrollToCaret();
         }
 
         private void AppendLogMessages()
@@ -1753,14 +1745,7 @@ git %*
                     // Cấu hình trạng thái của CheckBox và ComboBox
                     //
                     // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
-                    chkSearchAllWeeks.Checked = true;
-
-                    ConfigureSearchControls();
-
-                    if (chkSearchAllWeeks.Checked)
-                    {
-                        SearchAllWeeks();
-                    }
+                    SearchCommitsAndUpdateUI();
 
                     AppendTextWithScroll("Lưu thông tin cấu hình thành công.\n");
                 }
@@ -2106,8 +2091,15 @@ git %*
             cboAuthorCommit.SelectedIndex = 0;
         }
 
+        private void cboSearchByAuthor_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
+        }
 
+        private void cboAuthorCommit_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

@@ -474,6 +474,7 @@
             this.cboAuthorCommit.Name = "cboAuthorCommit";
             this.cboAuthorCommit.Size = new System.Drawing.Size(136, 25);
             this.cboAuthorCommit.TabIndex = 26;
+            this.cboAuthorCommit.SelectedIndexChanged += new System.EventHandler(this.cboAuthorCommit_SelectedIndexChanged);
             // 
             // btnSetupThuMucThucTap
             // 
@@ -695,6 +696,7 @@
             this.cboSearchByAuthor.Name = "cboSearchByAuthor";
             this.cboSearchByAuthor.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByAuthor.TabIndex = 11;
+            this.cboSearchByAuthor.SelectedIndexChanged += new System.EventHandler(this.cboSearchByAuthor_SelectedIndexChanged);
             // 
             // chkPhanTrang
             // 
