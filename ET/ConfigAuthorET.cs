@@ -10,5 +10,8 @@ namespace ET
     {
         public int ConfigID { get; set; } // Khóa ngoại tham chiếu đến ConfigFiles
         public int AuthorID { get; set; } // Khóa ngoại tham chiếu đến Authors
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

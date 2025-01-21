@@ -18,6 +18,7 @@ namespace DAL
             {
                 ConfigID = ca.ConfigID,
                 AuthorID = ca.AuthorID
+
             }).ToList();
         }
 
@@ -38,7 +39,9 @@ namespace DAL
             var newConfigAuthor = new ConfigAuthor
             {
                 ConfigID = configAuthor.ConfigID,
-                AuthorID = configAuthor.AuthorID
+                AuthorID = configAuthor.AuthorID,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
             db.ConfigAuthors.InsertOnSubmit(newConfigAuthor);
