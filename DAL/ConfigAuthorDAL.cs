@@ -73,5 +73,10 @@ namespace DAL
                                    .Select(ca => ca.ConfigID)
                                    .ToList();
         }
+
+        public bool Exists(int configID, int authorID)
+        {
+            return db.ConfigAuthors.Any(ca => ca.ConfigID == configID && ca.AuthorID == authorID);
+        }
     }
 }

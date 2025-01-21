@@ -100,6 +100,7 @@
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crudImageList = new System.Windows.Forms.ImageList(this.components);
+            this.chkDeleteAllProject = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -553,7 +554,7 @@
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(375, 38);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(254, 38);
             this.flowLayoutPanel2.TabIndex = 27;
             // 
             // btnSaveGit
@@ -561,10 +562,10 @@
             this.btnSaveGit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.btnSaveGit.FlatAppearance.BorderSize = 0;
             this.btnSaveGit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSaveGit.Location = new System.Drawing.Point(188, 1);
+            this.btnSaveGit.Location = new System.Drawing.Point(129, 1);
             this.btnSaveGit.Margin = new System.Windows.Forms.Padding(1);
             this.btnSaveGit.Name = "btnSaveGit";
-            this.btnSaveGit.Size = new System.Drawing.Size(186, 39);
+            this.btnSaveGit.Size = new System.Drawing.Size(124, 39);
             this.btnSaveGit.TabIndex = 25;
             this.btnSaveGit.Text = "Tải Commit";
             this.btnSaveGit.UseVisualStyleBackColor = false;
@@ -573,12 +574,13 @@
             // btnRemoveAll
             // 
             this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnRemoveAll.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnRemoveAll.FlatAppearance.BorderSize = 0;
             this.btnRemoveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemoveAll.Location = new System.Drawing.Point(6, 1);
+            this.btnRemoveAll.Location = new System.Drawing.Point(9, 1);
             this.btnRemoveAll.Margin = new System.Windows.Forms.Padding(1);
             this.btnRemoveAll.Name = "btnRemoveAll";
-            this.btnRemoveAll.Size = new System.Drawing.Size(180, 36);
+            this.btnRemoveAll.Size = new System.Drawing.Size(118, 39);
             this.btnRemoveAll.TabIndex = 25;
             this.btnRemoveAll.Text = "Xóa tất cả";
             this.btnRemoveAll.UseVisualStyleBackColor = false;
@@ -591,7 +593,8 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.10811F));
             this.tableLayoutPanel3.Controls.Add(this.weekListView, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.fileListView, 1, 1);
-            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel8, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel8, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.chkDeleteAllProject, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 210);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
@@ -600,21 +603,21 @@
             this.mainGitPanel.SetRowSpan(this.tableLayoutPanel3, 2);
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 44F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(381, 360);
             this.tableLayoutPanel3.TabIndex = 28;
             // 
             // tableLayoutPanel8
             // 
             this.tableLayoutPanel8.ColumnCount = 1;
-            this.tableLayoutPanel3.SetColumnSpan(this.tableLayoutPanel8, 2);
             this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 5.333333F));
             this.tableLayoutPanel8.Controls.Add(this.flowLayoutPanel2, 0, 0);
-            this.tableLayoutPanel8.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(124, 3);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(375, 38);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(254, 38);
             this.tableLayoutPanel8.TabIndex = 13;
             // 
             // tableLayoutPanel4
@@ -986,6 +989,18 @@
             this.crudImageList.Images.SetKeyName(1, "add_icon.png");
             this.crudImageList.Images.SetKeyName(2, "delete_icon.png");
             // 
+            // chkDeleteAllProject
+            // 
+            this.chkDeleteAllProject.AutoSize = true;
+            this.chkDeleteAllProject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkDeleteAllProject.Location = new System.Drawing.Point(3, 3);
+            this.chkDeleteAllProject.Name = "chkDeleteAllProject";
+            this.chkDeleteAllProject.Size = new System.Drawing.Size(115, 38);
+            this.chkDeleteAllProject.TabIndex = 14;
+            this.chkDeleteAllProject.Text = "Xóa All dự án";
+            this.chkDeleteAllProject.UseVisualStyleBackColor = true;
+            this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.chkDeleteAllProject_CheckedChanged);
+            // 
             // GitLogAggregator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -1016,6 +1031,7 @@
             this.tableLayoutPanel2.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel8.ResumeLayout(false);
             this.tableLayoutPanel4.ResumeLayout(false);
             this.tableLayoutPanel4.PerformLayout();
@@ -1107,5 +1123,6 @@
         private System.Windows.Forms.ComboBox cboAuthorCommit;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.CheckBox chkSearchAllAuthors;
+        private System.Windows.Forms.CheckBox chkDeleteAllProject;
     }
 }

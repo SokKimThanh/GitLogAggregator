@@ -1915,13 +1915,22 @@ git %*
             {
                 try
                 {
-                    // Nếu người dùng chọn "Yes", thực hiện xóa tất cả dữ liệu từ database
-                    removeBUS.ClearAllTables();
+                    // Kiểm tra xem CheckBox "Xóa tất cả dự án" có được chọn hay không
+                    if (chkDeleteAllProject.Checked)
+                    {
+                        // Nếu được chọn, xóa tất cả dự án
+                        removeBUS.ClearAllProjects();
+                        AppendTextWithScroll("Tất cả dự án đã được xóa.\n");
+                    }
+                    else
+                    {
+                        // Nếu không được chọn, xóa toàn bộ dữ liệu
+                        removeBUS.ClearAllTables();
+                        AppendTextWithScroll("Tất cả dữ liệu đã được xóa.\n");
+                    }
 
                     // Làm mới giao diện sau khi xóa
                     BtnRefreshData_Click(sender, e); // Gọi hàm làm mới để cập nhật giao diện
-
-                    AppendTextWithScroll("Tất cả dữ liệu đã được xóa và giao diện đã được làm mới.\n");
                 }
                 catch (Exception ex)
                 {
@@ -2190,6 +2199,21 @@ git %*
         private void cboAuthorCommit_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void chkDeleteAllProject_CheckedChanged(object sender, EventArgs e)
+        {
+            // Kiểm tra xem CheckBox có được chọn hay không
+            if (chkDeleteAllProject.Checked)
+            {
+                // Nếu được chọn, đổi tên nút xóa thành "Xóa tất cả dự án"
+                btnRemoveAll.Text = "Xóa tất cả dự án";
+            }
+            else
+            {
+                // Nếu không được chọn, đổi tên nút xóa về giá trị mặc định (ví dụ: "Xóa")
+                btnRemoveAll.Text = "Xóa tất cả";
+            }
         }
     }
 }

@@ -14,5 +14,9 @@ namespace BUS
         {
             removeDAL.ClearAllTables();
         }
+        public void ClearAllProjects()
+        {
+            removeDAL.ClearAllProjects();
+        }
     }
 }

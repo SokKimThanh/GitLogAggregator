@@ -8,6 +8,26 @@ namespace DAL
 {
     public class RemoveDAL
     {
+        public void ClearAllProjects()
+        {
+            try
+            {
+                // Tạo một DataContext (thay thế bằng DataContext của bạn)
+                using (var db = new GitLogAggregatorDataContext())
+                {
+
+                    //Xóa dữ liệu từ bảng ConfigFiles
+                    db.ConfigFiles.DeleteAllOnSubmit(db.ConfigFiles);
+                    db.SubmitChanges();
+                    Console.Write("Đã xóa dữ liệu từ bảng ConfigFiles.\n");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Write($"Lỗi khi xóa dữ liệu: {ex.Message}\n");
+            }
+        }
+
         public void ClearAllTables()
         {
             try
