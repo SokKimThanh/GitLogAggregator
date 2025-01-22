@@ -100,8 +100,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ButtonImageMap.cs" />
     <Compile Include="Utilities\CheckedListBoxHelper.cs" />
+    <Compile Include="Utilities\DataGridViewHelper.cs" />
     <Compile Include="Utilities\FileHelper.cs" />
     <Compile Include="Utilities\LogHelper.cs" />
+    <Compile Include="Utilities\PaginationHelper.cs" />
     <EmbeddedResource Include="GitLogAggregator.resx">
       <DependentUpon>GitLogAggregator.cs</DependentUpon>
     </EmbeddedResource>

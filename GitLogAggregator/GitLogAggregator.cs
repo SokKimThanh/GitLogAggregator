@@ -15,6 +15,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Control = System.Windows.Forms.Control;
+using DocumentFormat.OpenXml.Wordprocessing;
+using View = System.Windows.Forms.View;
 
 namespace GitLogAggregator
 {
@@ -34,6 +36,9 @@ namespace GitLogAggregator
         private int currentPage = 1; // Trang hiện tại
         private const int pageSize = 20; // Số bản ghi mỗi trang
         private List<SearchResult> allSearchResults = new List<SearchResult>(); // Lưu trữ tất cả kết quả tìm kiếm
+        private PaginationHelper<SearchResult> paginationHelper;
+        private DataGridViewHelper dataGridViewHelper;
+
 
         // Biến cờ để kiểm tra trạng thái chạy
         private bool isProcessing = false;
@@ -154,6 +159,11 @@ namespace GitLogAggregator
                 chkSearchCriteria.AddItem(SearchCriteria.chkSearchAllWeeks, "Tìm kiếm tất cả tuần", true);
                 chkSearchCriteria.AddItem(SearchCriteria.chkSearchAllAuthors, "Tìm kiếm tất cả tác giả", true);
                 chkSearchCriteria.AddItem(SearchCriteria.chkIsSimpleView, "Hiển thị đơn giản", true);
+
+
+                // Cấu hình DataGridView
+                this.dataGridViewHelper = new DataGridViewHelper(dgvReportCommits);
+                this.dataGridViewHelper.ConfigureDataGridView();
 
                 // Load dữ liệu ban đầu
                 SearchCommitsAndUpdateUI();
@@ -829,10 +839,7 @@ namespace GitLogAggregator
                 }
 
                 // Làm mới combobox thư mục thực tập
-                cboInternshipFolder.DataSource = null;
                 cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
-                cboInternshipFolder.ValueMember = "ChatbotSummaryID";
-                cboInternshipFolder.DisplayMember = "InternshipWeekFolder";
                 AppendTextWithScroll("Danh sách thư mục thực tập đã được làm mới.\n");
 
                 // Làm mới dữ liệu trong combobox cboConfigFiles danh sách dự án thực tập
@@ -848,7 +855,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Danh sách commit file text đã được làm mới.\n");
 
                 // Làm mới dữ liệu trong DataGridView
-                dgvReportCommits.DataSource = commitBUS.GetAll();
+                SearchCommitsAndUpdateUI();
                 AppendTextWithScroll("Danh sách công việc đã được làm mới.\n");
 
                 AppendTextWithScroll("Làm mới dữ liệu hoàn tất.\n");
@@ -1815,41 +1822,37 @@ git %*
             try
             {
                 if (allSearchResults != null && allSearchResults.Any())
-                {    // Tạo một danh sách mới để hiển thị
-                    var displayResults = allSearchResults;
-
-
-                    // Nếu là hiển thị đơn giản, chỉ lấy CommitMessage
-                    if (isSimpleView)
-                    {
-                        displayResults = allSearchResults
-                            .Select(c => new SearchResult
-                            {
-                                CommitMessage = c.CommitMessage // Chỉ giữ lại CommitMessage
-                            })
-                            .ToList();
-                    }
-
-
+                {
                     if (enablePagination)
                     {
-                        // Tính toán phân trang
-                        int totalPages = (int)Math.Ceiling((double)allSearchResults.Count / pageSize);
-                        var pagedResults = allSearchResults
-                            .Skip((currentPage - 1) * pageSize)
-                            .Take(pageSize)
-                            .ToList();
+                        // Khởi tạo hoặc cập nhật PaginationHelper
+                        paginationHelper = new PaginationHelper<SearchResult>(allSearchResults, pageSize);
 
+                        // Lấy dữ liệu cho trang hiện tại
+                        var pagedResults = paginationHelper.GetCurrentPageData();
                         dgvReportCommits.DataSource = pagedResults;
-                        AppendTextWithScroll($"Trang {currentPage}/{totalPages} | Hiển thị {pagedResults.Count} kết quả.\n");
-                        UpdatePaginationControls(totalPages);
+
+                        // Hiển thị thông tin phân trang
+                        AppendTextWithScroll($"Trang {paginationHelper.GetCurrentPage()}/{paginationHelper.GetTotalPages()} | Hiển thị {pagedResults.Count} kết quả.\n");
+                        UpdatePaginationControls(paginationHelper.GetTotalPages());
                     }
                     else
                     {
+                        // Hiển thị tất cả kết quả
                         dgvReportCommits.DataSource = allSearchResults;
                         AppendTextWithScroll($"Hiển thị tất cả {allSearchResults.Count} kết quả.\n");
                         btnPreviousReport.Enabled = false;
                         btnNextReport.Enabled = false;
+                    }
+
+                    // Cấu hình hiển thị đơn giản hoặc đầy đủ
+                    if (isSimpleView)
+                    {
+                        dataGridViewHelper.ConfigureSimpleView();
+                    }
+                    else
+                    {
+                        dataGridViewHelper.ConfigureFullView();
                     }
                 }
                 else
@@ -1865,39 +1868,25 @@ git %*
                 AppendTextWithScroll($"Lỗi khi hiển thị kết quả: {ex.Message}\n");
             }
         }
-        private void BtnPreviousReport_Click(object sender, EventArgs e)
-        {
-            if (currentPage > 1)
-            {
-                currentPage--; // Giảm số trang hiện tại
-                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang"), CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView)); // Hiển thị kết quả theo trang mới
-            }
-            else
-            {
-                AppendTextWithScroll("Bạn đang ở trang đầu tiên.\n");
-            }
-        }
-        private void BtnNextReport_Click(object sender, EventArgs e)
-        {
-            int totalPages = (int)Math.Ceiling((double)allSearchResults.Count / pageSize);
 
-            if (currentPage < totalPages)
-            {
-                currentPage++; // Tăng số trang hiện tại
-                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang"), CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView)); // Hiển thị kết quả theo trang mới
-            }
-            else
-            {
-                AppendTextWithScroll("Bạn đang ở trang cuối cùng.\n");
-            }
-        }
         private void UpdatePaginationControls(int totalPages)
         {
-            // Vô hiệu hóa nút "Trang trước" nếu đang ở trang đầu tiên
-            btnPreviousReport.Enabled = (currentPage > 1);
+            btnPreviousReport.Enabled = paginationHelper.GetCurrentPage() > 1;
+            btnNextReport.Enabled = paginationHelper.GetCurrentPage() < totalPages;
+        }
 
-            // Vô hiệu hóa nút "Trang sau" nếu đang ở trang cuối cùng
-            btnNextReport.Enabled = (currentPage < totalPages);
+        private void BtnPreviousReport_Click(object sender, EventArgs e)
+        {
+            paginationHelper.PreviousPage();
+            var chkSimpleView = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView);
+            DisplaySearchResults(true, chkSimpleView);
+        }
+
+        private void BtnNextReport_Click(object sender, EventArgs e)
+        {
+            paginationHelper.NextPage();
+            var chkSimpleView = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView);
+            DisplaySearchResults(true, chkSimpleView);
         }
         private void EnablePagination(bool enable)
         {
@@ -1908,7 +1897,6 @@ git %*
             // Reset về trang đầu nếu tắt phân trang
             if (!enable)
             {
-                currentPage = 1;
                 DisplaySearchResults(false, CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView)); // Hiển thị kết quả theo trang mới
             }
         }
@@ -2204,27 +2192,39 @@ git %*
             this.BeginInvoke((MethodInvoker)delegate
             {
                 // Lấy trạng thái mới của item (Checked/Unchecked)
-                bool isChecked = chkSearchCriteria.GetItemChecked(e.Index);
-                string itemText = chkSearchCriteria.Items[e.Index].ToString();
+                bool isChecked = (e.NewValue == CheckState.Checked);
+                SearchCriteria criteria = (SearchCriteria)e.Index;
+
+                // Lấy index của item được check/uncheck
+                int itemIndex = e.Index;
+
 
                 // Xử lý logic dựa trên item được check
-                switch (itemText)
+                switch (criteria)
                 {
-                    case "Bật phân trang":
+                    case SearchCriteria.chkEnablePagination:
                         // Cập nhật trạng thái phân trang
                         EnablePagination(isChecked);
+                        UpdateCheckedItemText(criteria, isChecked);
                         break;
-                    case "Tìm kiếm tất cả tuần":
+                    case SearchCriteria.chkSearchAllWeeks:
                         // Khóa/Mở khóa ComboBox chọn tuần
                         cboSearchByWeek.Enabled = !isChecked;
                         cboSearchByWeek.SelectedIndex = 0;
+                        UpdateCheckedItemText(criteria, isChecked);
+
                         break;
-                    case "Tìm kiếm tất cả tác giả":
+                    case SearchCriteria.chkSearchAllAuthors:
                         // Khóa/Mở khóa ComboBox chọn tác giả
                         cboAuthorCommit.Enabled = !isChecked;
                         cboAuthorCommit.SelectedIndex = 0;
                         cboSearchByAuthor.Enabled = !isChecked;
                         cboSearchByAuthor.SelectedIndex = 0;
+                        UpdateCheckedItemText(criteria, isChecked);
+                        break;
+                    case SearchCriteria.chkIsSimpleView:
+                        // Cập nhật trạng thái hiển thị
+                        UpdateCheckedItemText(criteria, isChecked);
                         break;
                 }
 
@@ -2232,7 +2232,23 @@ git %*
                 SearchCommitsAndUpdateUI();
             });
         }
-
+        // Cập nhật text của item dựa trên trạng thái
+        private void UpdateCheckedItemText(SearchCriteria criteria, bool isChecked)
+        {
+            string newText = GetDisplayText(criteria, isChecked);
+            chkSearchCriteria.Items[(int)criteria] = newText;
+        } // Ánh xạ Enum sang text tương ứng
+        private string GetDisplayText(SearchCriteria criteria, bool isChecked)
+        {
+            return criteria switch
+            {
+                SearchCriteria.chkEnablePagination => isChecked ? "Đã bật phân trang" : "Bật phân trang",
+                SearchCriteria.chkSearchAllWeeks => isChecked ? "Đã bật tìm tất cả tuần" : "Tìm kiếm tất cả tuần",
+                SearchCriteria.chkSearchAllAuthors => isChecked ? "Đã bật tìm tất cả tác giả" : "Tìm kiếm tất cả tác giả",
+                SearchCriteria.chkIsSimpleView => isChecked ? "Đã bật hiển thị đơn giản" : "Hiển thị đơn giản",
+                _ => throw new ArgumentOutOfRangeException(nameof(criteria), "Tiêu chí không hợp lệ")
+            };
+        }
         private void cboSearchByWeek_SelectedIndexChanged(object sender, EventArgs e)
         {
             SearchCommitsAndUpdateUI();
