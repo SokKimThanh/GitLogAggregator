@@ -70,6 +70,7 @@
             this.btnRemoveAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
+            this.chkDeleteAllProject = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.label11 = new System.Windows.Forms.Label();
             this.cboSearchByWeek = new System.Windows.Forms.ComboBox();
@@ -100,7 +101,7 @@
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crudImageList = new System.Windows.Forms.ImageList(this.components);
-            this.chkDeleteAllProject = new System.Windows.Forms.CheckBox();
+            this.clbSearchCriteria = new System.Windows.Forms.CheckedListBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -294,7 +295,7 @@
             this.dgvReportCommits.Margin = new System.Windows.Forms.Padding(0);
             this.dgvReportCommits.Name = "dgvReportCommits";
             this.dgvReportCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dgvReportCommits.Size = new System.Drawing.Size(599, 401);
+            this.dgvReportCommits.Size = new System.Drawing.Size(599, 318);
             this.dgvReportCommits.TabIndex = 18;
             // 
             // label8
@@ -376,7 +377,7 @@
             this.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportExcel.Location = new System.Drawing.Point(449, 0);
+            this.btnExportExcel.Location = new System.Drawing.Point(392, 0);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(169, 37);
@@ -620,6 +621,18 @@
             this.tableLayoutPanel8.Size = new System.Drawing.Size(254, 38);
             this.tableLayoutPanel8.TabIndex = 13;
             // 
+            // chkDeleteAllProject
+            // 
+            this.chkDeleteAllProject.AutoSize = true;
+            this.chkDeleteAllProject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkDeleteAllProject.Location = new System.Drawing.Point(3, 3);
+            this.chkDeleteAllProject.Name = "chkDeleteAllProject";
+            this.chkDeleteAllProject.Size = new System.Drawing.Size(115, 38);
+            this.chkDeleteAllProject.TabIndex = 14;
+            this.chkDeleteAllProject.Text = "Xóa All dự án";
+            this.chkDeleteAllProject.UseVisualStyleBackColor = true;
+            this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.chkDeleteAllProject_CheckedChanged);
+            // 
             // tableLayoutPanel4
             // 
             this.tableLayoutPanel4.ColumnCount = 3;
@@ -630,11 +643,9 @@
             this.tableLayoutPanel4.Controls.Add(this.txtFirstCommitDate, 1, 0);
             this.tableLayoutPanel4.Controls.Add(this.label11, 0, 1);
             this.tableLayoutPanel4.Controls.Add(this.cboSearchByWeek, 1, 1);
-            this.tableLayoutPanel4.Controls.Add(this.chkSearchAllWeeks, 2, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 2);
             this.tableLayoutPanel4.Controls.Add(this.cboSearchByAuthor, 1, 2);
-            this.tableLayoutPanel4.Controls.Add(this.chkPhanTrang, 2, 0);
-            this.tableLayoutPanel4.Controls.Add(this.chkSearchAllAuthors, 2, 2);
+            this.tableLayoutPanel4.Controls.Add(this.clbSearchCriteria, 2, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -670,7 +681,7 @@
             // chkSearchAllWeeks
             // 
             this.chkSearchAllWeeks.AutoSize = true;
-            this.chkSearchAllWeeks.Location = new System.Drawing.Point(410, 37);
+            this.chkSearchAllWeeks.Location = new System.Drawing.Point(298, 40);
             this.chkSearchAllWeeks.Name = "chkSearchAllWeeks";
             this.chkSearchAllWeeks.Size = new System.Drawing.Size(167, 21);
             this.chkSearchAllWeeks.TabIndex = 10;
@@ -704,7 +715,7 @@
             // chkPhanTrang
             // 
             this.chkPhanTrang.AutoSize = true;
-            this.chkPhanTrang.Location = new System.Drawing.Point(410, 3);
+            this.chkPhanTrang.Location = new System.Drawing.Point(471, 40);
             this.chkPhanTrang.Name = "chkPhanTrang";
             this.chkPhanTrang.Size = new System.Drawing.Size(90, 21);
             this.chkPhanTrang.TabIndex = 10;
@@ -715,7 +726,7 @@
             // chkSearchAllAuthors
             // 
             this.chkSearchAllAuthors.AutoSize = true;
-            this.chkSearchAllAuthors.Location = new System.Drawing.Point(410, 71);
+            this.chkSearchAllAuthors.Location = new System.Drawing.Point(28, 3);
             this.chkSearchAllAuthors.Name = "chkSearchAllAuthors";
             this.chkSearchAllAuthors.Size = new System.Drawing.Size(181, 21);
             this.chkSearchAllAuthors.TabIndex = 10;
@@ -749,7 +760,7 @@
             this.tableLayoutPanel7.Controls.Add(this.dgvReportCommits, 1, 1);
             this.tableLayoutPanel7.Controls.Add(this.btnNextReport, 2, 1);
             this.tableLayoutPanel7.Controls.Add(this.btnPreviousReport, 0, 1);
-            this.tableLayoutPanel7.Controls.Add(this.flowLayoutPanel1, 0, 2);
+            this.tableLayoutPanel7.Controls.Add(this.flowLayoutPanel1, 1, 2);
             this.tableLayoutPanel7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel7.Location = new System.Drawing.Point(0, 30);
             this.tableLayoutPanel7.Margin = new System.Windows.Forms.Padding(0);
@@ -758,6 +769,7 @@
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 119F));
             this.tableLayoutPanel7.Size = new System.Drawing.Size(621, 437);
             this.tableLayoutPanel7.TabIndex = 37;
             // 
@@ -771,7 +783,7 @@
             this.btnNextReport.Location = new System.Drawing.Point(610, 0);
             this.btnNextReport.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.btnNextReport.Name = "btnNextReport";
-            this.btnNextReport.Size = new System.Drawing.Size(8, 401);
+            this.btnNextReport.Size = new System.Drawing.Size(8, 318);
             this.btnNextReport.TabIndex = 38;
             this.btnNextReport.UseVisualStyleBackColor = false;
             this.btnNextReport.Click += new System.EventHandler(this.BtnNextReport_Click);
@@ -786,7 +798,7 @@
             this.btnPreviousReport.Location = new System.Drawing.Point(3, 0);
             this.btnPreviousReport.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.btnPreviousReport.Name = "btnPreviousReport";
-            this.btnPreviousReport.Size = new System.Drawing.Size(8, 401);
+            this.btnPreviousReport.Size = new System.Drawing.Size(8, 318);
             this.btnPreviousReport.TabIndex = 38;
             this.btnPreviousReport.UseVisualStyleBackColor = false;
             this.btnPreviousReport.Click += new System.EventHandler(this.BtnPreviousReport_Click);
@@ -797,12 +809,14 @@
             this.tableLayoutPanel7.SetColumnSpan(this.flowLayoutPanel1, 3);
             this.flowLayoutPanel1.Controls.Add(this.btnExportExcel);
             this.flowLayoutPanel1.Controls.Add(this.btnExportTXT);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Controls.Add(this.chkSearchAllAuthors);
+            this.flowLayoutPanel1.Controls.Add(this.chkPhanTrang);
+            this.flowLayoutPanel1.Controls.Add(this.chkSearchAllWeeks);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 401);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 318);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(621, 36);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(564, 94);
             this.flowLayoutPanel1.TabIndex = 37;
             // 
             // btnExportTXT
@@ -811,7 +825,7 @@
             this.btnExportTXT.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportTXT.FlatAppearance.BorderSize = 0;
             this.btnExportTXT.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportTXT.Location = new System.Drawing.Point(269, 0);
+            this.btnExportTXT.Location = new System.Drawing.Point(212, 0);
             this.btnExportTXT.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.btnExportTXT.Name = "btnExportTXT";
             this.btnExportTXT.Size = new System.Drawing.Size(177, 37);
@@ -989,17 +1003,15 @@
             this.crudImageList.Images.SetKeyName(1, "add_icon.png");
             this.crudImageList.Images.SetKeyName(2, "delete_icon.png");
             // 
-            // chkDeleteAllProject
+            // clbSearchCriteria
             // 
-            this.chkDeleteAllProject.AutoSize = true;
-            this.chkDeleteAllProject.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkDeleteAllProject.Location = new System.Drawing.Point(3, 3);
-            this.chkDeleteAllProject.Name = "chkDeleteAllProject";
-            this.chkDeleteAllProject.Size = new System.Drawing.Size(115, 38);
-            this.chkDeleteAllProject.TabIndex = 14;
-            this.chkDeleteAllProject.Text = "Xóa All dự án";
-            this.chkDeleteAllProject.UseVisualStyleBackColor = true;
-            this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.chkDeleteAllProject_CheckedChanged);
+            this.clbSearchCriteria.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clbSearchCriteria.FormattingEnabled = true;
+            this.clbSearchCriteria.Location = new System.Drawing.Point(410, 3);
+            this.clbSearchCriteria.Name = "clbSearchCriteria";
+            this.tableLayoutPanel4.SetRowSpan(this.clbSearchCriteria, 3);
+            this.clbSearchCriteria.Size = new System.Drawing.Size(208, 97);
+            this.clbSearchCriteria.TabIndex = 12;
             // 
             // GitLogAggregator
             // 
@@ -1038,6 +1050,7 @@
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel7.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.searchPanel.ResumeLayout(false);
             this.searchPanel.PerformLayout();
             this.tableLayoutPanel6.ResumeLayout(false);
@@ -1124,5 +1137,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
         private System.Windows.Forms.CheckBox chkSearchAllAuthors;
         private System.Windows.Forms.CheckBox chkDeleteAllProject;
+        private System.Windows.Forms.CheckedListBox clbSearchCriteria;
     }
 }

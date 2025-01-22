@@ -161,6 +161,27 @@ namespace GitLogAggregator
                     SearchCommitWhenLoadForm();
                 }
 
+                // Danh sách các tiêu chí cần check sẵn
+                var defaultCheckedItems = new List<string>
+                {
+                    "Bật phân trang",
+                    "Tìm kiếm theo ngày commit đầu tiên đến hiện tại",
+                    "Tìm kiếm tất cả tuần",
+                    "Tìm kiếm tất cả tác giả"
+                };
+
+                // Duyệt qua tất cả các mục trong CheckedListBox
+                for (int i = 0; i < clbSearchCriteria.Items.Count; i++)
+                {
+                    string itemText = clbSearchCriteria.Items[i].ToString();
+
+                    // Nếu mục nằm trong danh sách cần check, set trạng thái checked
+                    if (defaultCheckedItems.Contains(itemText))
+                    {
+                        clbSearchCriteria.SetItemChecked(i, true);
+                    }
+                }
+
                 DisableControls();
             }
             catch (Exception ex)
@@ -1860,61 +1881,146 @@ git %*
         {
             try
             {
-                // Lấy các tiêu chí từ giao diện
-                string keyword = txtSearchReport.Text;
-                bool searchAllWeeks = chkSearchAllWeeks.Checked;
-                int projectWeekId = searchAllWeeks ? 0 : Convert.ToInt32(cboSearchByWeek.SelectedValue);
-                DateTime? minDate = DateTime.TryParse(txtFirstCommitDate.Text, out var parsedDate) ? parsedDate : (DateTime?)null;
-                DateTime maxDate = DateTime.Now;
-                string author = chkSearchAllAuthors.Checked ? null : cboSearchByAuthor.SelectedValue?.ToString();
+                // Lấy các tiêu chí từ CheckedListBox
+                bool enablePagination = clbSearchCriteria.CheckedItems.Contains("Bật phân trang"); 
+                bool searchAllWeeks = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
+                bool searchAllAuthors = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
+                bool searchByFirstCommitDate = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm theo ngày commit đầu tiên");
 
-                // Gọi phương thức tìm kiếm từ lớp BUS/DAL
-                allSearchResults = searchBUS.SearchCommits(
-                    keyword: keyword,
-                    projectWeekId: projectWeekId,
+                // Lấy projectWeekId (ví dụ từ ComboBox)
+                int? selectedWeekId = (cboSearchByWeek.SelectedItem as ProjectWeekET)?.ProjectWeekId;
+
+                // Lấy minDate và maxDate
+                DateTime? minDate = GetMinDateFromInput(searchByFirstCommitDate, txtFirstCommitDate.Text);
+                DateTime? maxDate = null;
+
+                // Gọi phương thức BUS
+                bool requireUserConfirmation;
+                DateTime? internshipEndDate;
+                var results = searchBUS.SearchCommits(
+                    keyword: txtSearchReport.Text,
+                    projectWeekId: searchAllWeeks ? null : selectedWeekId,
                     searchAllWeeks: searchAllWeeks,
+                    searchAllAuthors: searchAllAuthors,
                     minDate: minDate,
                     maxDate: maxDate,
-                    author: author
+                    out requireUserConfirmation,
+                    out internshipEndDate
                 );
 
-                // Cập nhật giao diện
+                // Xử lý xác nhận người dùng nếu cần
+                if (requireUserConfirmation && internshipEndDate.HasValue)
+                {
+                    DialogResult dialogResult = MessageBox.Show(
+                        "Đã qua ngày kết thúc thực tập. Bạn có muốn hiển thị commit đến hôm nay?",
+                        "Xác nhận",
+                        MessageBoxButtons.YesNo
+                    );
+
+                    maxDate = (dialogResult == DialogResult.Yes) ? DateTime.Now : internshipEndDate.Value;
+
+                    // Gọi lại phương thức BUS với maxDate đã xác định
+                    results = searchBUS.SearchCommits(
+                        keyword: txtSearchReport.Text,
+                        projectWeekId: searchAllWeeks ? null : selectedWeekId,
+                        searchAllWeeks: searchAllWeeks,
+                        searchAllAuthors: searchAllAuthors,
+                        minDate: minDate,
+                        maxDate: maxDate,
+                        out requireUserConfirmation,
+                        out internshipEndDate
+                    );
+
+                   
+                }
+                // Cập nhật giao diện và phân trang
                 currentPage = 1; // Reset về trang đầu tiên
-                DisplaySearchResults(); // Hiển thị kết quả
+                DisplaySearchResults(enablePagination); // Truyền tham số phân trang
                 txtSearchReport.Clear();
             }
             catch (Exception ex)
             {
-                txtSearchReport.Clear();
                 AppendTextWithScroll($"Lỗi: {ex.Message}\n");
             }
+        }
+        private DateTime? GetMinDateFromInput(bool searchByFirstCommitDate, string dateText)
+        {
+            // Khởi tạo minDate là null
+            DateTime? minDate = null;
+
+            // Kiểm tra xem người dùng có chọn tìm kiếm theo ngày commit đầu tiên không
+            if (searchByFirstCommitDate)
+            {
+                DateTime parsedDate; // Biến để lưu giá trị ngày sau khi chuyển đổi
+
+                // Thử chuyển đổi dateText thành DateTime
+                if (DateTime.TryParse(dateText, out parsedDate))
+                {
+                    // Nếu chuyển đổi thành công, gán minDate bằng parsedDate
+                    minDate = parsedDate;
+                }
+                // Nếu chuyển đổi thất bại, minDate vẫn là null
+            }
+
+            // Trả về giá trị minDate
+            return minDate;
         }
         private void BtnSearchReport_Click(object sender, EventArgs e)
         {
             SearchCommitsAndUpdateUI();
         }
 
-        private void DisplaySearchResults()
+        private void DisplaySearchResults(bool enablePagination)
         {
-            if (allSearchResults != null && allSearchResults.Any())
+            try
             {
-                // Tính toán phân trang
-                int pageSize = 10;
-                var pagedResults = allSearchResults
-                    .Skip((currentPage - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToList();
+                if (allSearchResults != null && allSearchResults.Any())
+                {
+                    if (enablePagination)
+                    {
+                        // Tính toán phân trang
+                        int totalPages = (int)Math.Ceiling((double)allSearchResults.Count / pageSize);
 
-                // Hiển thị lên DataGridView
-                dgvReportCommits.DataSource = pagedResults;
+                        // Lấy kết quả phân trang
+                        var pagedResults = allSearchResults
+                            .Skip((currentPage - 1) * pageSize)
+                            .Take(pageSize)
+                            .ToList();
 
-                // Thông báo trạng thái
-                AppendTextWithScroll($"Trang {currentPage}/{Math.Ceiling((double)allSearchResults.Count / pageSize)} | Hiển thị {pagedResults.Count} kết quả.\n");
+                        // Hiển thị lên DataGridView
+                        dgvReportCommits.DataSource = pagedResults;
+
+                        // Thông báo trạng thái
+                        AppendTextWithScroll($"Trang {currentPage}/{totalPages} | Hiển thị {pagedResults.Count} kết quả.\n");
+
+                        // Cập nhật trạng thái các nút điều khiển phân trang
+                        UpdatePaginationControls(totalPages);
+                    }
+                    else
+                    {
+                        // Hiển thị tất cả kết quả nếu không bật phân trang
+                        dgvReportCommits.DataSource = allSearchResults;
+                        AppendTextWithScroll($"Hiển thị tất cả {allSearchResults.Count} kết quả.\n");
+
+                        // Vô hiệu hóa các nút điều khiển phân trang
+                        btnPreviousReport.Enabled = false;
+                        btnNextReport.Enabled = false;
+                    }
+                }
+                else
+                {
+                    // Nếu không có kết quả, xóa DataGridView và hiển thị thông báo
+                    dgvReportCommits.DataSource = null;
+                    AppendTextWithScroll("Không tìm thấy kết quả phù hợp.\n");
+
+                    // Vô hiệu hóa các nút điều khiển phân trang
+                    btnPreviousReport.Enabled = false;
+                    btnNextReport.Enabled = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                dgvReportCommits.DataSource = null;
-                AppendTextWithScroll("Không tìm thấy kết quả phù hợp.\n");
+                AppendTextWithScroll($"Lỗi khi hiển thị kết quả: {ex.Message}\n");
             }
         }
         private void BtnPreviousReport_Click(object sender, EventArgs e)
@@ -1922,7 +2028,7 @@ git %*
             if (currentPage > 1)
             {
                 currentPage--; // Giảm số trang hiện tại
-                DisplaySearchResults(); // Hiển thị kết quả theo trang mới
+                DisplaySearchResults(clbSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
             }
             else
             {
@@ -1936,12 +2042,20 @@ git %*
             if (currentPage < totalPages)
             {
                 currentPage++; // Tăng số trang hiện tại
-                DisplaySearchResults(); // Hiển thị kết quả theo trang mới
+                DisplaySearchResults(clbSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
             }
             else
             {
                 AppendTextWithScroll("Bạn đang ở trang cuối cùng.\n");
             }
+        }
+        private void UpdatePaginationControls(int totalPages)
+        {
+            // Vô hiệu hóa nút "Trang trước" nếu đang ở trang đầu tiên
+            btnPreviousReport.Enabled = (currentPage > 1);
+
+            // Vô hiệu hóa nút "Trang sau" nếu đang ở trang cuối cùng
+            btnNextReport.Enabled = (currentPage < totalPages);
         }
         private void btnRemoveAll_Click(object sender, EventArgs e)
         {

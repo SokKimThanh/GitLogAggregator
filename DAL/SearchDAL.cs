@@ -5,21 +5,22 @@ using System.Data.Linq;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DAL
 {
     public class SearchDAL
     {
         private readonly GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
-
         public List<SearchResult> SearchCommits(
     string keyword,
-    int projectWeekId,
+    int? projectWeekId,
     bool searchAllWeeks,
+    bool searchAllAuthors,
     DateTime? minDate,
-    DateTime? maxDate,
+    DateTime effectiveMaxDate, // Nhận giá trị từ BUS
     string author = null)
-        {
+        { 
             var query = from pw in db.ProjectWeeks
                         join c in db.Commits on pw.ProjectWeekId equals c.ProjectWeekId
                         join cp in db.CommitPeriods on pw.ProjectWeekId equals cp.PeriodID
@@ -29,18 +30,21 @@ namespace DAL
                         join cf in db.ConfigFiles on pw.InternshipDirectoryId equals cf.InternshipDirectoryId
                         join id in db.InternshipDirectories on cf.InternshipDirectoryId equals id.ID
                         where
-                            // Tìm kiếm theo tuần
-                            (searchAllWeeks || pw.ProjectWeekId == projectWeekId) &&
+                            // Điều kiện tìm kiếm theo TUẦN
+                            (searchAllWeeks || (projectWeekId.HasValue && pw.ProjectWeekId == projectWeekId.Value)) &&
 
-                            // Tìm kiếm theo từ khóa trong CommitMessage
+                            // Điều kiện tìm kiếm theo TỪ KHÓA
                             (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword)) &&
 
-                            // Lọc theo ngày commit đầu tiên và ngày hiện tại
+                            // Lọc theo NGÀY COMMIT
                             (!minDate.HasValue || c.CommitDate >= minDate.Value) &&
-                            (!maxDate.HasValue || c.CommitDate <= maxDate.Value) &&
+                            (c.CommitDate <= effectiveMaxDate) &&// Áp dụng maxDate
+ 
+                            // Điều kiện tìm kiếm theo TÁC GIẢ
+                            (searchAllAuthors || string.IsNullOrEmpty(author) || c.Author == author)
 
-                            // Lọc theo tác giả
-                            (string.IsNullOrEmpty(author) || c.Author == author)
+
+
                         select new SearchResult
                         {
                             // Mapping các trường dữ liệu
@@ -79,6 +83,7 @@ namespace DAL
 
             return query.ToList();
         }
+
         public DateTime? GetFirstCommitDateByProject(int projectId)
         {
             var firstCommit = db.Commits
@@ -87,6 +92,16 @@ namespace DAL
                                 .FirstOrDefault();
 
             return firstCommit?.CommitDate; // Trả về ngày commit đầu tiên hoặc null nếu không có commit nào
+        }
+        public DateTime? GetInternshipEndDate(int? projectWeekId)
+        {
+            if (!projectWeekId.HasValue) return null;
+
+            var config = db.ConfigFiles
+                         .FirstOrDefault(cf => db.ProjectWeeks
+                                                 .Any(pw => pw.ProjectWeekId == projectWeekId &&
+                                                            pw.InternshipDirectoryId == cf.InternshipDirectoryId));
+            return config?.InternshipEndDate;
         }
     }
 }

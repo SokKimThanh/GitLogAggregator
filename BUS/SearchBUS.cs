@@ -12,18 +12,40 @@ namespace BUS
     {
         private readonly SearchDAL _searchDAL = new SearchDAL();
 
-        public List<SearchResult> SearchCommits(string keyword, int projectWeekId, bool searchAllWeeks, DateTime? minDate, DateTime? maxDate, string author = null)
+        public List<SearchResult> SearchCommits(
+        string keyword,
+        int? projectWeekId,
+        bool searchAllWeeks,
+        bool searchAllAuthors,
+        DateTime? minDate,
+        DateTime? maxDate,
+        out bool requireUserConfirmation, // Thêm tham số để thông báo cần xác nhận
+        out DateTime? internshipEndDate, // Trả về ngày kết thúc thực tập
+        string author = null)
         {
-            try
+            requireUserConfirmation = false;
+            internshipEndDate = _searchDAL.GetInternshipEndDate(projectWeekId);
+            DateTime effectiveMaxDate = maxDate ?? DateTime.Now;
+
+            if (internshipEndDate.HasValue)
             {
-                // Gọi DAL để truy xuất dữ liệu
-                return _searchDAL.SearchCommits(keyword, projectWeekId, searchAllWeeks, minDate, maxDate, author);
+                if (DateTime.Now > internshipEndDate.Value && !maxDate.HasValue)
+                {
+                    // Đánh dấu cần hỏi người dùng
+                    requireUserConfirmation = true;
+                    return new List<SearchResult>(); // Trả về danh sách rỗng tạm thời
+                }
+                else if (DateTime.Now <= internshipEndDate.Value)
+                {
+                    effectiveMaxDate = DateTime.Now;
+                }
             }
-            catch (Exception ex)
-            {
-                // Xử lý ngoại lệ và ghi log nếu cần
-                throw new ApplicationException("Đã xảy ra lỗi khi tìm kiếm dữ liệu.", ex);
-            }
+
+            requireUserConfirmation = false;
+            return _searchDAL.SearchCommits(
+                keyword, projectWeekId, searchAllWeeks, searchAllAuthors,
+                minDate, effectiveMaxDate, author
+            );
         }
         public DateTime? GetFirstCommitDateByProject(int projectId)
         {
