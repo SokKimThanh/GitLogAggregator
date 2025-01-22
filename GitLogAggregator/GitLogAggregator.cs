@@ -1815,7 +1815,22 @@ git %*
             try
             {
                 if (allSearchResults != null && allSearchResults.Any())
-                {
+                {    // Tạo một danh sách mới để hiển thị
+                    var displayResults = allSearchResults;
+
+
+                    // Nếu là hiển thị đơn giản, chỉ lấy CommitMessage
+                    if (isSimpleView)
+                    {
+                        displayResults = allSearchResults
+                            .Select(c => new SearchResult
+                            {
+                                CommitMessage = c.CommitMessage // Chỉ giữ lại CommitMessage
+                            })
+                            .ToList();
+                    }
+
+
                     if (enablePagination)
                     {
                         // Tính toán phân trang
