@@ -148,24 +148,10 @@ namespace GitLogAggregator
 
                 // Hiển thị hint cho các control
                 SetupHoverEventsForControls(txtResultMouseEvents);
-                //
-                // Cấu hình trạng thái của CheckBox và ComboBox
-                //
-                // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
-                chkSearchAllWeeks.Checked = true;
-
-                ConfigureSearchControls();
-
-                if (chkSearchAllWeeks.Checked)
-                {
-                    SearchCommitWhenLoadForm();
-                }
-
                 // Thêm các mục vào CheckedListBox trước
                 clbSearchCriteria.Items.AddRange(new object[]
                 {
                     "Bật phân trang",
-                    "Tìm kiếm theo ngày commit đầu tiên đến hiện tại",
                     "Tìm kiếm tất cả tuần",
                     "Tìm kiếm tất cả tác giả"
                 });
@@ -174,7 +160,6 @@ namespace GitLogAggregator
                 var defaultCheckedItems = new List<string>
                 {
                     "Bật phân trang",
-                    "Tìm kiếm theo ngày commit đầu tiên đến hiện tại",
                     "Tìm kiếm tất cả tuần",
                     "Tìm kiếm tất cả tác giả"
                 };
@@ -183,13 +168,13 @@ namespace GitLogAggregator
                 for (int i = 0; i < clbSearchCriteria.Items.Count; i++)
                 {
                     string itemText = clbSearchCriteria.Items[i].ToString();
-
-                    // Nếu mục nằm trong danh sách cần check, set trạng thái checked
-                    if (defaultCheckedItems.Contains(itemText))
-                    {
-                        clbSearchCriteria.SetItemChecked(i, true);
-                    }
+                    // Check các mục mặc định
+                    clbSearchCriteria.SetItemChecked(i, defaultCheckedItems.Contains(itemText));
                 }
+
+                // Thực hiện tìm kiếm tự động khi load form
+                SearchCommitWhenLoadForm();
+
                 DisableControls();
             }
             catch (Exception ex)
@@ -263,42 +248,58 @@ namespace GitLogAggregator
             UpdateAuthorList(authors);
         }
 
-        private void SearchCommitWhenLoadForm()
+        private async void SearchCommitWhenLoadForm()
         {
             try
             {
+                if (clbSearchCriteria.Items.Count == 0)
+                {
+                    AppendTextWithScroll("Vui lòng cấu hình tiêu chí tìm kiếm trước.\n");
+                    return;
+                }
+
                 // Hiển thị thông báo đang tải dữ liệu
                 AppendTextWithScroll("Đang tải dữ liệu...\n");
 
-                // Tải dữ liệu
-                SearchCommitsAndUpdateUI();
+                // Thiết lập tiêu chí mặc định
+                bool enablePagination = clbSearchCriteria.CheckedItems.Contains("Bật phân trang");
+                bool searchAllWeeks = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
+                bool searchAllAuthors = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
+
+                // Tải dữ liệu bất đồng bộ để không block UI
+                await Task.Run(() =>
+                {
+                    allSearchResults = searchBUS.SearchCommits(
+                        keyword: "",
+                        projectWeekId: null, // Mặc định tìm tất cả tuần
+                        searchAllWeeks: searchAllWeeks,
+                        searchAllAuthors: searchAllAuthors,
+                        authorId: null // Mặc định tìm tất cả tác giả
+                    );
+                });
+
+                // Cập nhật UI sau khi tải xong
+                currentPage = 1;
+                DisplaySearchResults(enablePagination);
+
+                // Thông báo kết quả
+                if (allSearchResults != null && allSearchResults.Any())
+                {
+                    AppendTextWithScroll($"Đã tìm thấy {allSearchResults.Count} kết quả.\n");
+                }
+                else
+                {
+                    AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
+                }
             }
             catch (Exception ex)
             {
                 AppendTextWithScroll($"Lỗi khi tải dữ liệu ban đầu: {ex.Message}\n");
             }
-
-            // Ghi thông báo kết quả
-            if (allSearchResults != null && allSearchResults.Any())
+            finally
             {
-                AppendTextWithScroll($"Hiển thị tất cả dữ liệu. Tìm thấy {allSearchResults.Count} kết quả.\n");
-            }
-            else
-            {
-                AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
-            }
-        }
-        private void ConfigureSearchControls()
-        {
-            if (chkSearchAllWeeks.Checked)
-            {
-                cboSearchByWeek.Enabled = false; // Khóa ComboBox
-                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Thay đổi text
-            }
-            else
-            {
-                cboSearchByWeek.Enabled = true; // Mở khóa ComboBox
-                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Thay đổi text
+                // Ẩn indicator loading nếu có
+                //loadingIndicator.Visible = false;
             }
         }
 
@@ -1849,63 +1850,27 @@ git %*
         {
             try
             {
-                // Lấy các tiêu chí từ CheckedListBox
+                // Lấy các tiêu chí từ UI
                 bool enablePagination = clbSearchCriteria.CheckedItems.Contains("Bật phân trang");
                 bool searchAllWeeks = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
                 bool searchAllAuthors = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
-                bool searchByFirstCommitDate = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm theo ngày commit đầu tiên");
 
-                // Lấy projectWeekId (ví dụ từ ComboBox)
+                // Lấy giá trị từ ComboBox
                 int? selectedWeekId = (cboSearchByWeek.SelectedItem as ProjectWeekET)?.ProjectWeekId;
-                var author = (cboAuthorCommit.SelectedItem as AuthorET)?.AuthorID;
-                // Lấy minDate và maxDate
-                DateTime? minDate = GetMinDateFromInput(searchByFirstCommitDate, txtFirstCommitDate.Text);
-                DateTime? maxDate = null;
+                int? selectedAuthorId = (cboAuthorCommit.SelectedItem as AuthorET)?.AuthorID;
 
-                // Gọi phương thức BUS
-                bool requireUserConfirmation;
-                DateTime? internshipEndDate;
-                var results = searchBUS.SearchCommits(
-                    keyword: txtSearchReport.Text,
+                // Gọi phương thức tìm kiếm
+                allSearchResults = searchBUS.SearchCommits(
+                    keyword: txtSearchReport.Text.Trim(),
                     projectWeekId: searchAllWeeks ? null : selectedWeekId,
                     searchAllWeeks: searchAllWeeks,
                     searchAllAuthors: searchAllAuthors,
-                    //minDate: minDate,
-                    //maxDate: maxDate,
-                    //out requireUserConfirmation,
-                    //out internshipEndDate
-                    author: author
+                    authorId: searchAllAuthors ? null : selectedAuthorId
                 );
 
-                // Xử lý xác nhận người dùng nếu cần
-                //if (requireUserConfirmation && internshipEndDate.HasValue)
-                //{
-                //    DialogResult dialogResult = MessageBox.Show(
-                //        "Đã qua ngày kết thúc thực tập. Bạn có muốn hiển thị commit đến hôm nay?",
-                //        "Xác nhận",
-                //        MessageBoxButtons.YesNo
-                //    );
-
-                //    maxDate = (dialogResult == DialogResult.Yes) ? DateTime.Now : internshipEndDate.Value;
-
-                //    // Gọi lại phương thức BUS với maxDate đã xác định
-                //    results = searchBUS.SearchCommits(
-                //        keyword: txtSearchReport.Text,
-                //        projectWeekId: searchAllWeeks ? null : selectedWeekId,
-                //        searchAllWeeks: searchAllWeeks,
-                //        searchAllAuthors: searchAllAuthors,
-                //        //minDate: minDate,
-                //        //maxDate: maxDate,
-                //        //out requireUserConfirmation,
-                //        //out internshipEndDate
-                //        author: author
-                //    );
-
-
-                //}
-                // Cập nhật giao diện và phân trang
-                currentPage = 1; // Reset về trang đầu tiên
-                DisplaySearchResults(enablePagination); // Truyền tham số phân trang
+                // Hiển thị kết quả
+                currentPage = 1;
+                DisplaySearchResults(enablePagination);
                 txtSearchReport.Clear();
             }
             catch (Exception ex)
@@ -1913,28 +1878,7 @@ git %*
                 AppendTextWithScroll($"Lỗi: {ex.Message}\n");
             }
         }
-        private DateTime? GetMinDateFromInput(bool searchByFirstCommitDate, string dateText)
-        {
-            // Khởi tạo minDate là null
-            DateTime? minDate = null;
 
-            // Kiểm tra xem người dùng có chọn tìm kiếm theo ngày commit đầu tiên không
-            if (searchByFirstCommitDate)
-            {
-                DateTime parsedDate; // Biến để lưu giá trị ngày sau khi chuyển đổi
-
-                // Thử chuyển đổi dateText thành DateTime
-                if (DateTime.TryParse(dateText, out parsedDate))
-                {
-                    // Nếu chuyển đổi thành công, gán minDate bằng parsedDate
-                    minDate = parsedDate;
-                }
-                // Nếu chuyển đổi thất bại, minDate vẫn là null
-            }
-
-            // Trả về giá trị minDate
-            return minDate;
-        }
         private void BtnSearchReport_Click(object sender, EventArgs e)
         {
             SearchCommitsAndUpdateUI();
@@ -2356,6 +2300,29 @@ git %*
                 // Nếu không được chọn, đổi tên nút xóa về giá trị mặc định (ví dụ: "Xóa")
                 btnRemoveAll.Text = "Xóa tất cả";
             }
+        }
+
+        private Dictionary<int, (string CheckedText, string UncheckedText)> itemTexts = new Dictionary<int, (string, string)>
+{
+    { 0, ("Đã bật phân trang", "Bật phân trang") },
+    { 1, ("Đang tìm tất cả tuần", "Tìm kiếm tất cả tuần") },
+    { 2, ("Đang tìm tất cả tác giả", "Tìm kiếm tất cả tác giả") }
+};
+
+        private void clbSearchCriteria_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            this.BeginInvoke((MethodInvoker)delegate
+            {
+                int itemIndex = e.Index;
+                bool isChecked = clbSearchCriteria.GetItemChecked(itemIndex);
+
+                if (itemTexts.TryGetValue(itemIndex, out var texts))
+                {
+                    clbSearchCriteria.Items[itemIndex] = isChecked
+                        ? texts.CheckedText
+                        : texts.UncheckedText;
+                }
+            });
         }
     }
 }

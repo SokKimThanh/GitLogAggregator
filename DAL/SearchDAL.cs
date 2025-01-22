@@ -13,50 +13,37 @@ namespace DAL
     {
         private readonly GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
         public List<SearchResult> SearchCommits(
-    )
+         string keyword,
+         int? projectWeekId,
+         bool searchAllWeeks,
+         bool searchAllAuthors,
+         int? authorId = null)
         {
-            var query = from pw in db.ProjectWeeks
-                        join c in db.Commits on pw.ProjectWeekId equals c.ProjectWeekId
-                        join cp in db.CommitPeriods on pw.ProjectWeekId equals cp.PeriodID
-                        join a in db.Authors on c.Author equals a.AuthorName
-                        join cf in db.ConfigFiles on pw.InternshipDirectoryId equals cf.InternshipDirectoryId
-                        join id in db.InternshipDirectories on cf.InternshipDirectoryId equals id.ID
-
-
-
+            var query = from c in db.Commits
+                        join pw in db.ProjectWeeks on c.ProjectWeekId equals pw.ProjectWeekId
+                        join a in db.Authors on c.Author equals a.AuthorName // Giả sử Commits.Author là AuthorName
+                        join cp in db.CommitPeriods on c.Period equals cp.PeriodName // Giả sử Commits.Period lưu tên period
+                        where
+                            (searchAllWeeks || (projectWeekId == null || c.ProjectWeekId == projectWeekId)) &&
+                            (searchAllAuthors || (authorId == null || a.AuthorID == authorId)) &&
+                            (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword))
                         select new SearchResult
                         {
-                            // Mapping các trường dữ liệu
-                            ProjectWeekName = pw.ProjectWeekName,
-                            WeekStartDate = pw.WeekStartDate.Value,
-                            WeekEndDate = pw.WeekEndDate.Value,
-                            InternshipDirectoryId = pw.InternshipDirectoryId,
                             CommitHash = c.CommitHash,
                             CommitMessage = c.CommitMessage,
                             CommitDate = c.CommitDate,
-                            Author = c.Author,
-                            AuthorEmail = c.AuthorEmail,
+                            Author = a.AuthorName,
+                            AuthorEmail = a.AuthorEmail,
                             ProjectWeekId = c.ProjectWeekId,
                             Date = c.Date,
-                            Period = c.Period,
-                            PeriodName = cp.PeriodName,
-                            PeriodDuration = cp.PeriodDuration,
-
-                            PeriodID = cp.PeriodID,
-
-                            AuthorName = a.AuthorName,
-                            ProjectDirectory = cf.ProjectDirectory,
-                            InternshipStartDate = cf.InternshipStartDate,
-                            InternshipEndDate = cf.InternshipEndDate,
-                            Weeks = cf.Weeks,
-                            FirstCommitDate = cf.FirstCommitDate,
-                            FirstCommitAuthor = cf.FirstCommitAuthor,
-                            InternshipWeekFolder = id.InternshipWeekFolder,
-                            DateModified = id.DateModified
+                            Period = cp.PeriodName,
+                            CreatedAt = c.CreatedAt.Value,
+                            UpdatedAt = c.UpdatedAt.Value
                         };
 
             return query.ToList();
         }
+
 
         public DateTime? GetFirstCommitDateByProject(int projectId)
         {

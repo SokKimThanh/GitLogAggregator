@@ -68,8 +68,8 @@
             this.btnSaveGit = new System.Windows.Forms.Button();
             this.btnRemoveAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.chkDeleteAllProject = new System.Windows.Forms.CheckBox();
+            this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.label11 = new System.Windows.Forms.Label();
             this.cboSearchByWeek = new System.Windows.Forms.ComboBox();
@@ -127,10 +127,10 @@
             this.btnOpenGitFolder.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnOpenGitFolder.FlatAppearance.BorderSize = 0;
             this.btnOpenGitFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOpenGitFolder.Location = new System.Drawing.Point(253, 71);
+            this.btnOpenGitFolder.Location = new System.Drawing.Point(253, 65);
             this.btnOpenGitFolder.Margin = new System.Windows.Forms.Padding(1);
             this.btnOpenGitFolder.Name = "btnOpenGitFolder";
-            this.btnOpenGitFolder.Size = new System.Drawing.Size(127, 35);
+            this.btnOpenGitFolder.Size = new System.Drawing.Size(127, 41);
             this.btnOpenGitFolder.TabIndex = 1;
             this.btnOpenGitFolder.Text = "Thêm dự án";
             this.btnOpenGitFolder.UseVisualStyleBackColor = false;
@@ -168,10 +168,10 @@
             this.label1.Location = new System.Drawing.Point(4, 0);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(276, 32);
+            this.label1.Size = new System.Drawing.Size(246, 34);
             this.label1.TabIndex = 6;
             this.label1.Text = "GitLogAggregator";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label3
             // 
@@ -224,10 +224,10 @@
             this.btnRefreshData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnRefreshData.FlatAppearance.BorderSize = 0;
             this.btnRefreshData.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefreshData.Location = new System.Drawing.Point(143, 33);
+            this.btnRefreshData.Location = new System.Drawing.Point(128, 35);
             this.btnRefreshData.Margin = new System.Windows.Forms.Padding(1);
             this.btnRefreshData.Name = "btnRefreshData";
-            this.btnRefreshData.Size = new System.Drawing.Size(140, 30);
+            this.btnRefreshData.Size = new System.Drawing.Size(125, 32);
             this.btnRefreshData.TabIndex = 14;
             this.btnRefreshData.Text = "Làm mới";
             this.btnRefreshData.UseVisualStyleBackColor = false;
@@ -412,9 +412,9 @@
             // 
             this.cboInternshipFolder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cboInternshipFolder.FormattingEnabled = true;
-            this.cboInternshipFolder.Location = new System.Drawing.Point(3, 35);
+            this.cboInternshipFolder.Location = new System.Drawing.Point(3, 37);
             this.cboInternshipFolder.Name = "cboInternshipFolder";
-            this.cboInternshipFolder.Size = new System.Drawing.Size(136, 25);
+            this.cboInternshipFolder.Size = new System.Drawing.Size(121, 25);
             this.cboInternshipFolder.TabIndex = 0;
             this.cboInternshipFolder.SelectedIndexChanged += new System.EventHandler(this.CboThuMucThucTap_SelectedIndexChanged);
             // 
@@ -422,8 +422,8 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.78221F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.21779F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.63989F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70.36011F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel9, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.helpButton, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.btnSetupThuMucThucTap, 1, 0);
@@ -447,22 +447,23 @@
             this.tableLayoutPanel9.Controls.Add(this.btnRefreshData, 1, 1);
             this.tableLayoutPanel9.Controls.Add(this.cboAuthorCommit, 1, 2);
             this.tableLayoutPanel9.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel9.Location = new System.Drawing.Point(94, 3);
+            this.tableLayoutPanel9.Location = new System.Drawing.Point(127, 0);
+            this.tableLayoutPanel9.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel9.Name = "tableLayoutPanel9";
             this.tableLayoutPanel9.RowCount = 3;
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(284, 97);
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(254, 103);
             this.tableLayoutPanel9.TabIndex = 17;
             // 
             // cboConfigFiles
             // 
             this.cboConfigFiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboConfigFiles.FormattingEnabled = true;
-            this.cboConfigFiles.Location = new System.Drawing.Point(3, 67);
+            this.cboConfigFiles.Location = new System.Drawing.Point(3, 71);
             this.cboConfigFiles.Name = "cboConfigFiles";
-            this.cboConfigFiles.Size = new System.Drawing.Size(136, 25);
+            this.cboConfigFiles.Size = new System.Drawing.Size(121, 25);
             this.cboConfigFiles.TabIndex = 26;
             this.cboConfigFiles.SelectedIndexChanged += new System.EventHandler(this.cboConfigFiles_SelectedIndexChanged);
             // 
@@ -470,9 +471,9 @@
             // 
             this.cboAuthorCommit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboAuthorCommit.FormattingEnabled = true;
-            this.cboAuthorCommit.Location = new System.Drawing.Point(145, 67);
+            this.cboAuthorCommit.Location = new System.Drawing.Point(130, 71);
             this.cboAuthorCommit.Name = "cboAuthorCommit";
-            this.cboAuthorCommit.Size = new System.Drawing.Size(136, 25);
+            this.cboAuthorCommit.Size = new System.Drawing.Size(121, 25);
             this.cboAuthorCommit.TabIndex = 26;
             this.cboAuthorCommit.SelectedIndexChanged += new System.EventHandler(this.cboAuthorCommit_SelectedIndexChanged);
             // 
@@ -482,9 +483,10 @@
             this.btnSetupThuMucThucTap.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnSetupThuMucThucTap.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnSetupThuMucThucTap.Image = ((System.Drawing.Image)(resources.GetObject("btnSetupThuMucThucTap.Image")));
-            this.btnSetupThuMucThucTap.Location = new System.Drawing.Point(23, 3);
+            this.btnSetupThuMucThucTap.Location = new System.Drawing.Point(20, 0);
+            this.btnSetupThuMucThucTap.Margin = new System.Windows.Forms.Padding(0);
             this.btnSetupThuMucThucTap.Name = "btnSetupThuMucThucTap";
-            this.btnSetupThuMucThucTap.Size = new System.Drawing.Size(65, 97);
+            this.btnSetupThuMucThucTap.Size = new System.Drawing.Size(107, 103);
             this.btnSetupThuMucThucTap.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.btnSetupThuMucThucTap.TabIndex = 16;
             this.btnSetupThuMucThucTap.TabStop = false;
@@ -511,8 +513,8 @@
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 28.03738F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 39.25233F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(381, 107);
             this.tableLayoutPanel2.TabIndex = 27;
             // 
@@ -524,10 +526,10 @@
             this.btnCreateWeek.FlatAppearance.BorderSize = 0;
             this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateWeek.ImageKey = "plus.png";
-            this.btnCreateWeek.Location = new System.Drawing.Point(127, 71);
+            this.btnCreateWeek.Location = new System.Drawing.Point(127, 65);
             this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(1);
             this.btnCreateWeek.Name = "btnCreateWeek";
-            this.btnCreateWeek.Size = new System.Drawing.Size(124, 35);
+            this.btnCreateWeek.Size = new System.Drawing.Size(124, 41);
             this.btnCreateWeek.TabIndex = 25;
             this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;
@@ -537,10 +539,10 @@
             // 
             this.chkConfirmInternshipDate.AutoSize = true;
             this.chkConfirmInternshipDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkConfirmInternshipDate.Location = new System.Drawing.Point(3, 70);
+            this.chkConfirmInternshipDate.Location = new System.Drawing.Point(3, 64);
             this.chkConfirmInternshipDate.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.chkConfirmInternshipDate.Name = "chkConfirmInternshipDate";
-            this.chkConfirmInternshipDate.Size = new System.Drawing.Size(123, 37);
+            this.chkConfirmInternshipDate.Size = new System.Drawing.Size(123, 43);
             this.chkConfirmInternshipDate.TabIndex = 26;
             this.chkConfirmInternshipDate.Text = "Xác nhậnDateTT";
             this.chkConfirmInternshipDate.UseVisualStyleBackColor = true;
@@ -599,6 +601,18 @@
             this.tableLayoutPanel3.Size = new System.Drawing.Size(381, 360);
             this.tableLayoutPanel3.TabIndex = 28;
             // 
+            // chkDeleteAllProject
+            // 
+            this.chkDeleteAllProject.AutoSize = true;
+            this.chkDeleteAllProject.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkDeleteAllProject.Location = new System.Drawing.Point(3, 3);
+            this.chkDeleteAllProject.Name = "chkDeleteAllProject";
+            this.chkDeleteAllProject.Size = new System.Drawing.Size(120, 41);
+            this.chkDeleteAllProject.TabIndex = 14;
+            this.chkDeleteAllProject.Text = "Xóa All dự án";
+            this.chkDeleteAllProject.UseVisualStyleBackColor = true;
+            this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.chkDeleteAllProject_CheckedChanged);
+            // 
             // tableLayoutPanel8
             // 
             this.tableLayoutPanel8.ColumnCount = 2;
@@ -612,21 +626,9 @@
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 47F));
             this.tableLayoutPanel8.Size = new System.Drawing.Size(255, 47);
             this.tableLayoutPanel8.TabIndex = 13;
-            // 
-            // chkDeleteAllProject
-            // 
-            this.chkDeleteAllProject.AutoSize = true;
-            this.chkDeleteAllProject.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.chkDeleteAllProject.Location = new System.Drawing.Point(3, 3);
-            this.chkDeleteAllProject.Name = "chkDeleteAllProject";
-            this.chkDeleteAllProject.Size = new System.Drawing.Size(120, 41);
-            this.chkDeleteAllProject.TabIndex = 14;
-            this.chkDeleteAllProject.Text = "Xóa All dự án";
-            this.chkDeleteAllProject.UseVisualStyleBackColor = true;
-            this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.chkDeleteAllProject_CheckedChanged);
             // 
             // tableLayoutPanel4
             // 
@@ -705,6 +707,7 @@
             this.tableLayoutPanel4.SetRowSpan(this.clbSearchCriteria, 3);
             this.clbSearchCriteria.Size = new System.Drawing.Size(208, 97);
             this.clbSearchCriteria.TabIndex = 12;
+            this.clbSearchCriteria.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbSearchCriteria_ItemCheck);
             // 
             // chkSearchAllWeeks
             // 

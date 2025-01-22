@@ -12,41 +12,9 @@ namespace BUS
     {
         private readonly SearchDAL _searchDAL = new SearchDAL();
 
-        public List<SearchResult> SearchCommits(
-        string keyword,
-        int? projectWeekId,
-        bool searchAllWeeks,
-        bool searchAllAuthors,
-        //DateTime? minDate,
-        //DateTime? maxDate,
-        //out bool requireUserConfirmation, // Thêm tham số để thông báo cần xác nhận
-        //out DateTime? internshipEndDate, // Trả về ngày kết thúc thực tập
-        int? author = 0)
+        public List<SearchResult> SearchCommits(string keyword, int? projectWeekId, bool searchAllWeeks, bool searchAllAuthors, int? authorId = null)
         {
-            //requireUserConfirmation = false;
-            //internshipEndDate = _searchDAL.GetInternshipEndDate(projectWeekId);
-            //DateTime effectiveMaxDate = maxDate ?? DateTime.Now;
-
-            //if (internshipEndDate.HasValue)
-            //{
-            //    if (DateTime.Now > internshipEndDate.Value && !maxDate.HasValue)
-            //    {
-            //        // Đánh dấu cần hỏi người dùng
-            //        requireUserConfirmation = true;
-            //        return new List<SearchResult>(); // Trả về danh sách rỗng tạm thời
-            //    }
-            //    else if (DateTime.Now <= internshipEndDate.Value)
-            //    {
-            //        effectiveMaxDate = DateTime.Now;
-            //    }
-            //}
-
-            //requireUserConfirmation = false;
-            return _searchDAL.SearchCommits(
-                //keyword, projectWeekId, searchAllWeeks, searchAllAuthors,
-                //minDate, effectiveMaxDate, 
-                //author
-            );
+            return _searchDAL.SearchCommits(keyword, projectWeekId, searchAllWeeks, searchAllAuthors, authorId = null);
         }
         public DateTime? GetFirstCommitDateByProject(int projectId)
         {
