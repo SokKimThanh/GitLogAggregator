@@ -1353,9 +1353,7 @@ namespace GitLogAggregator
 
                     // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
                     cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
-                    cboInternshipFolder.ValueMember = "ChatbotSummaryID"; // Thiết lập trường sẽ làm giá trị
-                    cboInternshipFolder.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
-
+                    
                     // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
                     txtFolderInternshipPath = GetLatestInternshipFolderPath();
 
