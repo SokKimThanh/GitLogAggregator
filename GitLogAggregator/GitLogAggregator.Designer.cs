@@ -472,7 +472,6 @@
             this.cboAuthorCommit.Name = "cboAuthorCommit";
             this.cboAuthorCommit.Size = new System.Drawing.Size(121, 25);
             this.cboAuthorCommit.TabIndex = 26;
-            this.cboAuthorCommit.SelectedIndexChanged += new System.EventHandler(this.cboAuthorCommit_SelectedIndexChanged);
             // 
             // btnSetupThuMucThucTap
             // 
@@ -671,6 +670,7 @@
             this.cboSearchByWeek.Name = "cboSearchByWeek";
             this.cboSearchByWeek.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByWeek.TabIndex = 9;
+            this.cboSearchByWeek.SelectedIndexChanged += new System.EventHandler(this.cboSearchByWeek_SelectedIndexChanged);
             // 
             // label12
             // 

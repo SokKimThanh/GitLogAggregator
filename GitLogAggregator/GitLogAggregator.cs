@@ -153,6 +153,7 @@ namespace GitLogAggregator
                 chkSearchCriteria.AddItem(SearchCriteria.chkEnablePagination, "Bật phân trang", true);
                 chkSearchCriteria.AddItem(SearchCriteria.chkSearchAllWeeks, "Tìm kiếm tất cả tuần", true);
                 chkSearchCriteria.AddItem(SearchCriteria.chkSearchAllAuthors, "Tìm kiếm tất cả tác giả", true);
+                chkSearchCriteria.AddItem(SearchCriteria.chkIsSimpleView, "Hiển thị đơn giản", true);
 
                 // Load dữ liệu ban đầu
                 SearchCommitsAndUpdateUI();
@@ -544,7 +545,7 @@ namespace GitLogAggregator
         /// </summary> 
         private void EnableControls()
         {
-            cboAuthorCommit.Enabled = true;
+
             cboInternshipFolder.Enabled = true;
             txtNumericsWeek.Enabled = true;
             txtInternshipStartDate.Enabled = true;
@@ -554,7 +555,6 @@ namespace GitLogAggregator
         }
         private void DisableControls()
         {
-            cboAuthorCommit.Enabled = false;
             cboInternshipFolder.Enabled = false;
             txtNumericsWeek.Enabled = false;
             txtInternshipStartDate.Enabled = false;
@@ -1777,9 +1777,10 @@ git %*
             try
             {
                 // Lấy các tiêu chí từ CheckedListBox
-                bool enablePagination = chkSearchCriteria.CheckedItems.Contains("Bật phân trang");
-                bool searchAllWeeks = chkSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
-                bool searchAllAuthors = chkSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
+                bool enablePagination = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkEnablePagination);
+                bool searchAllWeeks = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkSearchAllWeeks);
+                bool searchAllAuthors = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkSearchAllAuthors);
+                bool isSimpleView = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView);
 
                 // Lấy giá trị từ ComboBox (nếu không chọn "Tất cả")
                 int? selectedWeekId = searchAllWeeks ? null : (int?)cboSearchByWeek.SelectedValue;
@@ -1796,7 +1797,7 @@ git %*
 
                 // Hiển thị kết quả
                 currentPage = 1;
-                DisplaySearchResults(enablePagination);
+                DisplaySearchResults(enablePagination, isSimpleView);
             }
             catch (Exception ex)
             {
@@ -1809,7 +1810,7 @@ git %*
             SearchCommitsAndUpdateUI();
         }
 
-        private void DisplaySearchResults(bool enablePagination)
+        private void DisplaySearchResults(bool enablePagination, bool isSimpleView)
         {
             try
             {
@@ -1854,7 +1855,7 @@ git %*
             if (currentPage > 1)
             {
                 currentPage--; // Giảm số trang hiện tại
-                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
+                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang"), CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView)); // Hiển thị kết quả theo trang mới
             }
             else
             {
@@ -1868,7 +1869,7 @@ git %*
             if (currentPage < totalPages)
             {
                 currentPage++; // Tăng số trang hiện tại
-                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
+                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang"), CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView)); // Hiển thị kết quả theo trang mới
             }
             else
             {
@@ -1893,7 +1894,7 @@ git %*
             if (!enable)
             {
                 currentPage = 1;
-                DisplaySearchResults(false);
+                DisplaySearchResults(false, CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView)); // Hiển thị kết quả theo trang mới
             }
         }
         private void btnRemoveAll_Click(object sender, EventArgs e)
@@ -2167,17 +2168,6 @@ git %*
             cboSearchByAuthor.SelectedIndex = 0;
             cboAuthorCommit.SelectedIndex = 0;
         }
-
-        private void cboSearchByAuthor_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cboAuthorCommit_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void chkDeleteAllProject_CheckedChanged(object sender, EventArgs e)
         {
             // Kiểm tra xem CheckBox có được chọn hay không
@@ -2212,16 +2202,30 @@ git %*
                     case "Tìm kiếm tất cả tuần":
                         // Khóa/Mở khóa ComboBox chọn tuần
                         cboSearchByWeek.Enabled = !isChecked;
+                        cboSearchByWeek.SelectedIndex = 0;
                         break;
                     case "Tìm kiếm tất cả tác giả":
                         // Khóa/Mở khóa ComboBox chọn tác giả
                         cboAuthorCommit.Enabled = !isChecked;
+                        cboAuthorCommit.SelectedIndex = 0;
+                        cboSearchByAuthor.Enabled = !isChecked;
+                        cboSearchByAuthor.SelectedIndex = 0;
                         break;
                 }
 
                 // Thực hiện tìm kiếm ngay lập tức
                 SearchCommitsAndUpdateUI();
             });
+        }
+
+        private void cboSearchByWeek_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SearchCommitsAndUpdateUI();
+        }
+
+        private void cboSearchByAuthor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SearchCommitsAndUpdateUI();
         }
     }
 }

@@ -14,6 +14,7 @@ namespace DAL
         private readonly GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
         public List<SearchResult> SearchCommits(bool searchAllWeeks, int? projectWeekId, bool searchAllAuthors, int? authorId, string keyword)
         {
+
             var query = from c in db.Commits
                         join pw in db.ProjectWeeks on c.ProjectWeekId equals pw.ProjectWeekId
                         join a in db.Authors on c.Author equals a.AuthorName
@@ -24,16 +25,14 @@ namespace DAL
                               && (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword))
                         select new SearchResult
                         {
-                            CommitHash = c.CommitHash,
-                            CommitMessage = c.CommitMessage,
-                            CommitDate = c.CommitDate,
+                            ProjectWeekName = pw.ProjectWeekName,
+                            WeekStartDate = pw.WeekStartDate.Value,
+                            WeekEndDate = pw.WeekEndDate.Value,
+                            Period = cp.PeriodName,
+                            PeriodDuration = cp.PeriodDuration,
                             Author = a.AuthorName,
                             AuthorEmail = a.AuthorEmail,
-                            ProjectWeekId = c.ProjectWeekId,
-                            Date = c.Date,
-                            Period = cp.PeriodName,
-                            CreatedAt = c.CreatedAt.Value,
-                            UpdatedAt = c.UpdatedAt.Value
+                            CommitMessage = c.CommitMessage
                         };
             return query.ToList();
 

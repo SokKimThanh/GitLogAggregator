@@ -7,7 +7,7 @@ public enum SearchCriteria
     chkEnablePagination,    // "Bật phân trang"
     chkSearchAllWeeks,      // "Tìm kiếm tất cả tuần"
     chkSearchAllAuthors,    // "Tìm kiếm tất cả tác giả"
-    chkCustomOption           // Mục tùy chỉnh (ví dụ)
+    chkIsSimpleView
 }
 
 // Class helper để kiểm tra trạng thái của các mục
