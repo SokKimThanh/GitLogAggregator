@@ -13,13 +13,7 @@ namespace DAL
     {
         private readonly GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
         public List<SearchResult> SearchCommits(
-    string keyword,
-    int? projectWeekId,
-    bool searchAllWeeks,
-    bool searchAllAuthors,
-    DateTime? minDate,
-    DateTime effectiveMaxDate, // Nhận giá trị từ BUS
-    string author = null)
+    )
         { 
             var query = from pw in db.ProjectWeeks
                         join c in db.Commits on pw.ProjectWeekId equals c.ProjectWeekId
@@ -29,20 +23,7 @@ namespace DAL
                         join a in db.Authors on c.Author equals a.AuthorName
                         join cf in db.ConfigFiles on pw.InternshipDirectoryId equals cf.InternshipDirectoryId
                         join id in db.InternshipDirectories on cf.InternshipDirectoryId equals id.ID
-                        where
-                            // Điều kiện tìm kiếm theo TUẦN
-                            (searchAllWeeks || (projectWeekId.HasValue && pw.ProjectWeekId == projectWeekId.Value)) &&
-
-                            // Điều kiện tìm kiếm theo TỪ KHÓA
-                            (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword)) &&
-
-                            // Lọc theo NGÀY COMMIT
-                            (!minDate.HasValue || c.CommitDate >= minDate.Value) &&
-                            (c.CommitDate <= effectiveMaxDate) &&// Áp dụng maxDate
- 
-                            // Điều kiện tìm kiếm theo TÁC GIẢ
-                            (searchAllAuthors || string.IsNullOrEmpty(author) || c.Author == author)
-
+                         
 
 
                         select new SearchResult

@@ -196,8 +196,8 @@ CREATE TABLE CommitPeriods (
     PeriodID INT IDENTITY(1,1),
     PeriodName NVARCHAR(255) NOT NULL,
     PeriodDuration NVARCHAR(50) NOT NULL,
-    PeriodStartDate DATETIME NOT NULL,
-    PeriodEndDate DATETIME NOT NULL,
+    PeriodStartTime TIME NOT NULL, -- Ví dụ: '08:00:00'
+    PeriodEndTime TIME NOT NULL    -- Ví dụ: '12:00:00'
     CreatedAt DATETIME,
     UpdatedAt DATETIME
 );
@@ -217,38 +217,10 @@ ALTER TABLE CommitPeriods
 ADD CONSTRAINT DF_CommitPeriods_UpdatedAt DEFAULT GETDATE() FOR UpdatedAt;
 GO
 
--- Tạo bảng CommitGroupMembers
-CREATE TABLE CommitGroupMembers (
-    PeriodID INT NOT NULL,
-    CommitId INT NOT NULL,
-    AddedAt DATETIME
-);
-GO
-
--- Thêm khóa chính phức hợp cho bảng CommitGroupMembers
-ALTER TABLE CommitGroupMembers
-ADD CONSTRAINT PK_CommitGroupMembers PRIMARY KEY (PeriodID, CommitId);
-GO
-
--- Thêm khóa ngoại liên kết đến bảng CommitPeriods
-ALTER TABLE CommitGroupMembers
-ADD CONSTRAINT FK_CommitGroupMembers_CommitPeriods FOREIGN KEY (PeriodID) REFERENCES CommitPeriods(PeriodID);
-GO
-
--- Thêm khóa ngoại liên kết đến bảng Commits
-ALTER TABLE CommitGroupMembers
-ADD CONSTRAINT FK_CommitGroupMembers_Commits FOREIGN KEY (CommitId) REFERENCES Commits(CommitId);
-GO
-
--- Thêm ràng buộc giá trị mặc định cho AddedAt
-ALTER TABLE CommitGroupMembers
-ADD CONSTRAINT DF_CommitGroupMembers_AddedAt DEFAULT GETDATE() FOR AddedAt;
-GO
 
 -- Tạo bảng ChatbotSummary
 CREATE TABLE ChatbotSummary (
-    ID INT IDENTITY(1,1),
-    PeriodID INT NOT NULL,
+    ChatbotSummaryID INT IDENTITY(1,1),
     Attendance NVARCHAR(255),
     AssignedTasks TEXT,
     ContentResults TEXT,
@@ -263,12 +235,7 @@ GO
 ALTER TABLE ChatbotSummary
 ADD CONSTRAINT PK_ChatbotSummary PRIMARY KEY (ID);
 GO
-
--- Thêm khóa ngoại liên kết đến bảng CommitPeriods
-ALTER TABLE ChatbotSummary
-ADD CONSTRAINT FK_ChatbotSummary_CommitPeriods FOREIGN KEY (PeriodID) REFERENCES CommitPeriods(PeriodID);
-GO
-
+  
 -- Thêm ràng buộc giá trị mặc định cho CreatedAt và UpdatedAt
 ALTER TABLE ChatbotSummary
 ADD CONSTRAINT DF_ChatbotSummary_CreatedAt DEFAULT GETDATE() FOR CreatedAt;
@@ -276,4 +243,39 @@ GO
 
 ALTER TABLE ChatbotSummary
 ADD CONSTRAINT DF_ChatbotSummary_UpdatedAt DEFAULT GETDATE() FOR UpdatedAt;
+GO
+
+-- Tạo bảng CommitGroupMembers
+CREATE TABLE CommitGroupMembers (
+    PeriodID INT NOT NULL,
+    CommitId INT NOT NULL,
+	--ChatbotSummaryID INT NOT NULL,
+    AddedAt DATETIME
+);
+GO
+
+-- Thêm khóa chính phức hợp cho bảng CommitGroupMembers
+ALTER TABLE CommitGroupMembers
+ADD CONSTRAINT PK_CommitGroupMembers PRIMARY KEY (PeriodID, CommitId, ChatbotSummaryID);
+GO
+
+-- Thêm khóa ngoại liên kết đến bảng CommitPeriods
+ALTER TABLE CommitGroupMembers
+ADD CONSTRAINT FK_CommitGroupMembers_CommitPeriods FOREIGN KEY (PeriodID) REFERENCES CommitPeriods(PeriodID);
+GO
+
+-- Thêm khóa ngoại liên kết đến bảng Commits
+ALTER TABLE CommitGroupMembers
+ADD CONSTRAINT FK_CommitGroupMembers_Commits FOREIGN KEY (CommitId) REFERENCES Commits(CommitId);
+GO
+
+-- Thêm khóa ngoại liên kết đến bảng ChatbotSummary
+--ALTER TABLE CommitGroupMembers
+--ADD CONSTRAINT FK_CommitGroupMembers_ChatbotSummary FOREIGN KEY (ChatbotSummaryID) REFERENCES CommitGroupMembers(ChatbotSummaryID);
+--GO
+
+
+-- Thêm ràng buộc giá trị mặc định cho AddedAt
+ALTER TABLE CommitGroupMembers
+ADD CONSTRAINT DF_CommitGroupMembers_AddedAt DEFAULT GETDATE() FOR AddedAt;
 GO

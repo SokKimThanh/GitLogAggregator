@@ -74,9 +74,10 @@
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.label11 = new System.Windows.Forms.Label();
             this.cboSearchByWeek = new System.Windows.Forms.ComboBox();
-            this.chkSearchAllWeeks = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.cboSearchByAuthor = new System.Windows.Forms.ComboBox();
+            this.clbSearchCriteria = new System.Windows.Forms.CheckedListBox();
+            this.chkSearchAllWeeks = new System.Windows.Forms.CheckBox();
             this.chkPhanTrang = new System.Windows.Forms.CheckBox();
             this.chkSearchAllAuthors = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
@@ -101,7 +102,6 @@
             this.chatbotSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cònToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crudImageList = new System.Windows.Forms.ImageList(this.components);
-            this.clbSearchCriteria = new System.Windows.Forms.CheckedListBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.txtNumericsWeek)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -531,7 +531,7 @@
             this.btnCreateWeek.TabIndex = 25;
             this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;
-            this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeek_Click);
+            this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeekAndPeriod_Click);
             // 
             // chkConfirmInternshipDate
             // 
@@ -678,17 +678,6 @@
             this.cboSearchByWeek.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByWeek.TabIndex = 9;
             // 
-            // chkSearchAllWeeks
-            // 
-            this.chkSearchAllWeeks.AutoSize = true;
-            this.chkSearchAllWeeks.Location = new System.Drawing.Point(298, 40);
-            this.chkSearchAllWeeks.Name = "chkSearchAllWeeks";
-            this.chkSearchAllWeeks.Size = new System.Drawing.Size(167, 21);
-            this.chkSearchAllWeeks.TabIndex = 10;
-            this.chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần";
-            this.chkSearchAllWeeks.UseVisualStyleBackColor = true;
-            this.chkSearchAllWeeks.CheckedChanged += new System.EventHandler(this.chkSearchAllWeeks_CheckedChanged);
-            // 
             // label12
             // 
             this.label12.AutoSize = true;
@@ -711,6 +700,27 @@
             this.cboSearchByAuthor.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByAuthor.TabIndex = 11;
             this.cboSearchByAuthor.SelectedIndexChanged += new System.EventHandler(this.cboSearchByAuthor_SelectedIndexChanged);
+            // 
+            // clbSearchCriteria
+            // 
+            this.clbSearchCriteria.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clbSearchCriteria.FormattingEnabled = true;
+            this.clbSearchCriteria.Location = new System.Drawing.Point(410, 3);
+            this.clbSearchCriteria.Name = "clbSearchCriteria";
+            this.tableLayoutPanel4.SetRowSpan(this.clbSearchCriteria, 3);
+            this.clbSearchCriteria.Size = new System.Drawing.Size(208, 97);
+            this.clbSearchCriteria.TabIndex = 12;
+            // 
+            // chkSearchAllWeeks
+            // 
+            this.chkSearchAllWeeks.AutoSize = true;
+            this.chkSearchAllWeeks.Location = new System.Drawing.Point(298, 40);
+            this.chkSearchAllWeeks.Name = "chkSearchAllWeeks";
+            this.chkSearchAllWeeks.Size = new System.Drawing.Size(167, 21);
+            this.chkSearchAllWeeks.TabIndex = 10;
+            this.chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần";
+            this.chkSearchAllWeeks.UseVisualStyleBackColor = true;
+            this.chkSearchAllWeeks.CheckedChanged += new System.EventHandler(this.chkSearchAllWeeks_CheckedChanged);
             // 
             // chkPhanTrang
             // 
@@ -1002,16 +1012,6 @@
             this.crudImageList.Images.SetKeyName(0, "edit_icon.png");
             this.crudImageList.Images.SetKeyName(1, "add_icon.png");
             this.crudImageList.Images.SetKeyName(2, "delete_icon.png");
-            // 
-            // clbSearchCriteria
-            // 
-            this.clbSearchCriteria.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clbSearchCriteria.FormattingEnabled = true;
-            this.clbSearchCriteria.Location = new System.Drawing.Point(410, 3);
-            this.clbSearchCriteria.Name = "clbSearchCriteria";
-            this.tableLayoutPanel4.SetRowSpan(this.clbSearchCriteria, 3);
-            this.clbSearchCriteria.Size = new System.Drawing.Size(208, 97);
-            this.clbSearchCriteria.TabIndex = 12;
             // 
             // GitLogAggregator
             // 

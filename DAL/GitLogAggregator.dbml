@@ -37,12 +37,11 @@
       <Column Name="PeriodID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="PeriodName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="PeriodDuration" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="PeriodStartDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="PeriodEndDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="PeriodStartTime" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
+      <Column Name="PeriodEndTime" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Association Name="CommitPeriod_CommitGroupMember" Member="CommitGroupMembers" ThisKey="PeriodID" OtherKey="PeriodID" Type="CommitGroupMember" />
-      <Association Name="CommitPeriod_ChatbotSummary" Member="ChatbotSummaries" ThisKey="PeriodID" OtherKey="PeriodID" Type="ChatbotSummary" />
     </Type>
   </Table>
   <Table Name="dbo.Commits" Member="Commits">
@@ -90,8 +89,7 @@
   </Table>
   <Table Name="dbo.ChatbotSummary" Member="ChatbotSummaries">
     <Type Name="ChatbotSummary">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="PeriodID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ChatbotSummaryID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Attendance" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="AssignedTasks" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="ContentResults" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
@@ -99,7 +97,6 @@
       <Column Name="Notes" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="CommitPeriod_ChatbotSummary" Member="CommitPeriod" ThisKey="PeriodID" OtherKey="PeriodID" Type="CommitPeriod" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.InternshipDirectories" Member="InternshipDirectories">

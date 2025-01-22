@@ -161,6 +161,15 @@ namespace GitLogAggregator
                     SearchCommitWhenLoadForm();
                 }
 
+                // Thêm các mục vào CheckedListBox trước
+                clbSearchCriteria.Items.AddRange(new object[]
+                {
+                    "Bật phân trang",
+                    "Tìm kiếm theo ngày commit đầu tiên đến hiện tại",
+                    "Tìm kiếm tất cả tuần",
+                    "Tìm kiếm tất cả tác giả"
+                });
+
                 // Danh sách các tiêu chí cần check sẵn
                 var defaultCheckedItems = new List<string>
                 {
@@ -181,7 +190,6 @@ namespace GitLogAggregator
                         clbSearchCriteria.SetItemChecked(i, true);
                     }
                 }
-
                 DisableControls();
             }
             catch (Exception ex)
@@ -846,54 +854,6 @@ namespace GitLogAggregator
             }
         }
 
-        private bool IsGitRepository(string directory)
-        {
-            string gitFolder = Path.Combine(directory, ".git");
-            return Directory.Exists(gitFolder);
-        }
-
-        private (string since, string until, string periodName) GetTimeRange(DateTime date, string period)
-        {
-            string since, until, periodName;
-            switch (period)
-            {
-                case "Sáng":
-                    since = $"{date:yyyy-MM-dd} 06:00:00"; // Buổi sáng bắt đầu từ 6:00
-                    until = $"{date:yyyy-MM-dd} 12:00:00"; // Buổi sáng kết thúc lúc 12:00
-                    periodName = "morning";
-                    break;
-                case "Chiều":
-                    since = $"{date:yyyy-MM-dd} 12:00:00"; // Buổi chiều bắt đầu từ 12:00
-                    until = $"{date:yyyy-MM-dd} 18:00:00"; // Buổi chiều kết thúc lúc 18:00
-                    periodName = "afternoon";
-                    break;
-                case "Tối":
-                    since = $"{date:yyyy-MM-dd} 18:00:00"; // Buổi tối bắt đầu từ 18:00
-                    until = $"{date:yyyy-MM-dd} 23:59:59"; // Buổi tối kết thúc lúc 23:59
-                    periodName = "evening";
-                    break;
-                default:
-                    throw new ArgumentException("Invalid timePeriod");
-            }
-            return (since, until, periodName);
-        }
-        /// <summary>
-        /// Chuyển đổi từ DayOfWeek sang tên tiếng Việt
-        /// </summary>
-        private string GetDayOfWeekName(DayOfWeek dayOfWeek)
-        {
-            return dayOfWeek switch
-            {
-                DayOfWeek.Monday => "Thứ Hai",
-                DayOfWeek.Tuesday => "Thứ Ba",
-                DayOfWeek.Wednesday => "Thứ Tư",
-                DayOfWeek.Thursday => "Thứ Năm",
-                DayOfWeek.Friday => "Thứ Sáu",
-                DayOfWeek.Saturday => "Thứ Bảy",
-                DayOfWeek.Sunday => "Chủ Nhật",
-                _ => throw new ArgumentException("Invalid day of week")
-            };
-        }
 
         private void AppendToFile(string filePath, string content)
         {
@@ -1343,11 +1303,7 @@ namespace GitLogAggregator
         private void NumericWeeks_ValueChanged(object sender, EventArgs e)
         {
             // Khi ngày thực tập thay đổi, kiểm tra lại tính hợp lệ của ngày
-            if (chkConfirmInternshipDate.Checked)
-            {
-                ValidateInternshipDate();
-            }
-            else
+            if (!chkConfirmInternshipDate.Checked)
             {
                 DateTime startDate = txtInternshipStartDate.Value;
                 int weeks = (int)txtNumericsWeek.Value;
@@ -1356,6 +1312,10 @@ namespace GitLogAggregator
                 // Hiển thị ngày kết thúc
                 txtInternshipEndDate.Value = endDate;
                 btnOpenGitFolder.Enabled = true;// chọn tuần thực tập xong mới được thêm dự án
+            }
+            else
+            {
+                ValidateInternshipDate();
             }
         }
 
@@ -1669,46 +1629,45 @@ git %*
                     }
                 }
 
-                // Bước 2: Tạo CommitGroupMembers sau khi đã thêm tất cả các commit
-                foreach (var week in weeks)
+                // Bước 2: Phân loại commit vào CommitGroupMembers dựa trên thời gian trong ngày (buổi)
+                foreach (var commit in insertedCommits)
                 {
-                    // Lấy nhóm commit tương ứng với tuần hiện tại
-                    var commitPeriod = commitPeriodBUS.GetAll()
-                        .FirstOrDefault(g => g.PeriodName == week.ProjectWeekName);
-
-                    if (commitPeriod == null)
+                    try
                     {
-                        AppendTextWithScroll($"Không tìm thấy nhóm commit cho tuần {week.ProjectWeekName}.\n");
-                        continue;
-                    }
+                        // 1. Lấy thời gian trong ngày của commit (bỏ qua ngày/tháng/năm)
+                        TimeSpan commitTime = commit.CommitDate.TimeOfDay;
+                        // 2. Tìm period phù hợp dựa trên thời gian commit
+                        var commitPeriod = commitPeriodBUS.GetAll()
+                            .FirstOrDefault(p => commitTime >= p.PeriodStartTime.TimeOfDay
+                                              && commitTime <= p.PeriodEndTime.TimeOfDay);
 
-                    // Lấy các commit thuộc tuần hiện tại từ danh sách đã thêm vào
-                    var weekCommits = insertedCommits
-                        .Where(c => c.CommitDate >= week.WeekStartDate && c.CommitDate <= week.WeekEndDate)
-                        .ToList();
-
-                    foreach (var commit in weekCommits)
-                    {
-                        try
+                        if (commitPeriod == null)
                         {
-                            // Thêm commit vào nhóm commit của tuần hiện tại
+                            AppendTextWithScroll($"Không tìm thấy period phù hợp cho commit {commit.CommitHash}.\n");
+                            continue;
+                        }
+
+                        // 3. Kiểm tra xem commit đã được thêm vào period này chưa
+                        bool isDuplicate = commitGroupMembersBUS.GetAll()
+                            .Any(gm => gm.PeriodID == commitPeriod.PeriodID && gm.CommitId == commit.CommitId);
+
+                        if (!isDuplicate)
+                        {
+                        // 4. Thêm commit vào CommitGroupMembers
                             var commitGroupMember = new CommitGroupMemberET
                             {
                                 PeriodID = commitPeriod.PeriodID,
                                 CommitId = commit.CommitId,
-                                AddedAt = DateTime.Now
+                                AddedAt = commit.CommitDate
                             };
-
-                            // Thêm commit vào nhóm
                             commitGroupMembersBUS.Add(commitGroupMember);
-                        }
-                        catch (Exception ex)
-                        {
-                            AppendTextWithScroll($"Lỗi khi thêm commit {commit.CommitHash} vào nhóm: {ex.Message}\n");
+                            AppendTextWithScroll($"Đã thêm commit {commit.CommitHash} vào {commitPeriod.PeriodName}.\n");
                         }
                     }
-
-                    AppendTextWithScroll($"Week {week.ProjectWeekName} commits đã tổng hợp vào db.\n");
+                    catch (Exception ex)
+                    {
+                        AppendTextWithScroll($"Lỗi khi xử lý commit {commit.CommitHash}: {ex.Message}\n");
+                    }
                 }
             }
             catch (FileNotFoundException ex)
@@ -1882,14 +1841,14 @@ git %*
             try
             {
                 // Lấy các tiêu chí từ CheckedListBox
-                bool enablePagination = clbSearchCriteria.CheckedItems.Contains("Bật phân trang"); 
+                bool enablePagination = clbSearchCriteria.CheckedItems.Contains("Bật phân trang");
                 bool searchAllWeeks = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
                 bool searchAllAuthors = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
                 bool searchByFirstCommitDate = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm theo ngày commit đầu tiên");
 
                 // Lấy projectWeekId (ví dụ từ ComboBox)
                 int? selectedWeekId = (cboSearchByWeek.SelectedItem as ProjectWeekET)?.ProjectWeekId;
-
+                var author = (cboAuthorCommit.SelectedItem as AuthorET)?.AuthorID;
                 // Lấy minDate và maxDate
                 DateTime? minDate = GetMinDateFromInput(searchByFirstCommitDate, txtFirstCommitDate.Text);
                 DateTime? maxDate = null;
@@ -1902,37 +1861,39 @@ git %*
                     projectWeekId: searchAllWeeks ? null : selectedWeekId,
                     searchAllWeeks: searchAllWeeks,
                     searchAllAuthors: searchAllAuthors,
-                    minDate: minDate,
-                    maxDate: maxDate,
-                    out requireUserConfirmation,
-                    out internshipEndDate
+                    //minDate: minDate,
+                    //maxDate: maxDate,
+                    //out requireUserConfirmation,
+                    //out internshipEndDate
+                    author: author
                 );
 
                 // Xử lý xác nhận người dùng nếu cần
-                if (requireUserConfirmation && internshipEndDate.HasValue)
-                {
-                    DialogResult dialogResult = MessageBox.Show(
-                        "Đã qua ngày kết thúc thực tập. Bạn có muốn hiển thị commit đến hôm nay?",
-                        "Xác nhận",
-                        MessageBoxButtons.YesNo
-                    );
+                //if (requireUserConfirmation && internshipEndDate.HasValue)
+                //{
+                //    DialogResult dialogResult = MessageBox.Show(
+                //        "Đã qua ngày kết thúc thực tập. Bạn có muốn hiển thị commit đến hôm nay?",
+                //        "Xác nhận",
+                //        MessageBoxButtons.YesNo
+                //    );
 
-                    maxDate = (dialogResult == DialogResult.Yes) ? DateTime.Now : internshipEndDate.Value;
+                //    maxDate = (dialogResult == DialogResult.Yes) ? DateTime.Now : internshipEndDate.Value;
 
-                    // Gọi lại phương thức BUS với maxDate đã xác định
-                    results = searchBUS.SearchCommits(
-                        keyword: txtSearchReport.Text,
-                        projectWeekId: searchAllWeeks ? null : selectedWeekId,
-                        searchAllWeeks: searchAllWeeks,
-                        searchAllAuthors: searchAllAuthors,
-                        minDate: minDate,
-                        maxDate: maxDate,
-                        out requireUserConfirmation,
-                        out internshipEndDate
-                    );
+                //    // Gọi lại phương thức BUS với maxDate đã xác định
+                //    results = searchBUS.SearchCommits(
+                //        keyword: txtSearchReport.Text,
+                //        projectWeekId: searchAllWeeks ? null : selectedWeekId,
+                //        searchAllWeeks: searchAllWeeks,
+                //        searchAllAuthors: searchAllAuthors,
+                //        //minDate: minDate,
+                //        //maxDate: maxDate,
+                //        //out requireUserConfirmation,
+                //        //out internshipEndDate
+                //        author: author
+                //    );
 
-                   
-                }
+
+                //}
                 // Cập nhật giao diện và phân trang
                 currentPage = 1; // Reset về trang đầu tiên
                 DisplaySearchResults(enablePagination); // Truyền tham số phân trang
@@ -2101,10 +2062,9 @@ git %*
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnCreateWeek_Click(object sender, EventArgs e)
+        private void btnCreateWeekAndPeriod_Click(object sender, EventArgs e)
         {
-
-
+            // Kiểm tra đầu vào
             if (cboInternshipFolder.SelectedValue == null)
             {
                 AppendTextWithScroll("Vui lòng chọn thư mục thực tập trước khi tạo tuần thực tập.\n");
@@ -2113,11 +2073,6 @@ git %*
             int internshipDirectoryId = int.Parse(cboInternshipFolder.SelectedValue.ToString());
 
             DateTime internshipStartDate = txtInternshipStartDate.Value.Date;
-            if (internshipStartDate == null)
-            {
-                AppendTextWithScroll("Vui lòng chọn ngày bắt đầu thực tập.\n");
-                return;
-            }
             DateTime internshipEndDate = txtInternshipEndDate.Value.Date;
 
             int weeks = (int)txtNumericsWeek.Value;
@@ -2134,45 +2089,34 @@ git %*
                 return;
             }
 
-            // Kiểm tra ngày commit đầu tiên của các project xem nó có nằm trong tuần thực tập không
-            var check = false;
-            foreach (var c in configs)
-            {
-                if (internshipStartDate <= c.FirstCommitDate.Date && c.FirstCommitDate.Date <= internshipEndDate)
-                {
-                    check = true;
-                }
-            }
-            if (!check)
+            // Kiểm tra ngày commit đầu tiên của các project
+            bool isWithinInternship = configs.Any(c =>
+                c.FirstCommitDate.Date >= internshipStartDate &&
+                c.FirstCommitDate.Date <= internshipEndDate
+            );
+            if (!isWithinInternship)
             {
                 AppendTextWithScroll("Không thể tạo tuần thực tập vì dự án không nằm trong kỳ thực tập.\n");
-                check = false;
                 return;
             }
 
-            // Kiểm tra xem đã có dữ liệu CommitPeriod và ProjectWeek trong khoảng thời gian thực tập chưa
-            var existingCommitGroups = commitPeriodBUS.GetAll()
-                .Where(g => g.PeriodStartDate >= internshipStartDate && g.PeriodEndDate <= internshipEndDate)
-                .ToList();
-
+            // Kiểm tra dữ liệu đã tồn tại
             var existingProjectWeeks = projectWeeksBUS.GetAll()
                 .Where(w => w.WeekStartDate >= internshipStartDate && w.WeekEndDate <= internshipEndDate)
                 .ToList();
-
-            if (existingCommitGroups.Count > 0 || existingProjectWeeks.Count > 0)
+            if (existingProjectWeeks.Count > 0)
             {
-                AppendTextWithScroll("Đã có dữ liệu CommitPeriod và ProjectWeek trong khoảng thời gian thực tập, không cần tạo thêm.\n");
+                AppendTextWithScroll("Đã có dữ liệu ProjectWeek trong khoảng thời gian thực tập, không cần tạo thêm.\n");
                 return;
             }
 
-            // Tạo các tuần và CommitGroup mới
+            // Tạo các tuần thực tập
             for (int weekOffset = 0; weekOffset < weeks; weekOffset++)
             {
                 DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
                 DateTime weekEndDate = weekStartDate.AddDays(6);
-                string projectWeekName = $"Tuần {weekOffset + 1}"; // Bắt đầu từ Tuần 1
+                string projectWeekName = $"Tuần {weekOffset + 1}";
 
-                // Tạo ProjectWeek
                 var projectWeek = new ProjectWeekET
                 {
                     InternshipDirectoryId = internshipDirectoryId,
@@ -2183,41 +2127,61 @@ git %*
                     UpdatedAt = DateTime.Now,
                 };
                 projectWeeksBUS.Add(projectWeek);
+            }
 
-                // Tạo các CommitGroup (buổi) cho từng ngày trong tuần
-                for (int dayOffset = 0; dayOffset < 7; dayOffset++) // 7 ngày trong tuần
+            // Tạo các buổi (CommitPeriods) nếu chưa tồn tại
+            var existingCommitPeriods = commitPeriodBUS.GetAll();
+            if (existingCommitPeriods.Count == 0)
+            {
+                string[] periods = { "Sáng", "Chiều", "Tối" };
+                foreach (var period in periods)
                 {
-                    DateTime currentDate = weekStartDate.AddDays(dayOffset);
-
-                    // Tạo CommitGroup cho từng buổi (sáng, chiều, tối)
-                    string[] periods = { "Sáng", "Chiều", "Tối" };
-                    foreach (var period in periods)
+                    var (since, until, _) = GetTimeRange(period);
+                    var commitPeriod = new CommitPeriodET
                     {
-                        var (since, until, periodName) = GetTimeRange(currentDate, period);
-
-                        var commitGroup = new CommitPeriodET
-                        {
-                            PeriodName = $"Buổi {period.ToLower()} {currentDate:dd/MM/yyyy}", // Ví dụ: "Buổi sáng 16/01/2025"
-                            PeriodDuration = periodName, // Ví dụ: "morning"
-                            PeriodStartDate = DateTime.Parse(since), // Ví dụ: "2025-01-16 06:00:00"
-                            PeriodEndDate = DateTime.Parse(until),   // Ví dụ: "2025-01-16 12:00:00"
-                            CreatedAt = DateTime.Now,
-                            UpdatedAt = DateTime.Now
-                        };
-                        commitPeriodBUS.Add(commitGroup);
-                    }
+                        PeriodName = $"Buổi {period.ToLower()}",
+                        PeriodStartTime = TimeSpan.Parse(since),
+                        PeriodEndTime = TimeSpan.Parse(until),
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    commitPeriodBUS.Add(commitPeriod);
                 }
             }
 
-            AppendTextWithScroll("Tạo xong commitgroup.\n");
-            AppendTextWithScroll("Tạo xong projectweek.\n");
+            AppendTextWithScroll("Tạo xong ProjectWeek và CommitPeriod.\n");
 
-            // Cập nhật lại danh sách tuần trên ComboBox
+            // Cập nhật ComboBox
             cboSearchByWeek.DataSource = projectWeeksBUS.GetAll();
             cboSearchByWeek.ValueMember = "ProjectWeekId";
             cboSearchByWeek.DisplayMember = "ProjectWeekName";
         }
 
+        private (string since, string until, string periodName) GetTimeRange(string period)
+        {
+            string since, until, periodName;
+            switch (period)
+            {
+                case "Sáng":
+                    since = "06:00:00";
+                    until = "12:00:00";
+                    periodName = "morning";
+                    break;
+                case "Chiều":
+                    since = "12:00:00";
+                    until = "18:00:00";
+                    periodName = "afternoon";
+                    break;
+                case "Tối":
+                    since = "18:00:00";
+                    until = "23:59:59";
+                    periodName = "evening";
+                    break;
+                default:
+                    throw new ArgumentException("Invalid period");
+            }
+            return (since, until, periodName);
+        }
         private void chkConfirmInternshipDate_CheckedChanged(object sender, EventArgs e)
         {
             // Khi CheckBox được chọn, kích hoạt DateTimePicker

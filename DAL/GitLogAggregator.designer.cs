@@ -827,17 +827,15 @@ namespace DAL
 		
 		private string _PeriodDuration;
 		
-		private System.DateTime _PeriodStartDate;
+		private System.TimeSpan _PeriodStartTime;
 		
-		private System.DateTime _PeriodEndDate;
+		private System.TimeSpan _PeriodEndTime;
 		
 		private System.Nullable<System.DateTime> _CreatedAt;
 		
 		private System.Nullable<System.DateTime> _UpdatedAt;
 		
 		private EntitySet<CommitGroupMember> _CommitGroupMembers;
-		
-		private EntitySet<ChatbotSummary> _ChatbotSummaries;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -849,10 +847,10 @@ namespace DAL
     partial void OnPeriodNameChanged();
     partial void OnPeriodDurationChanging(string value);
     partial void OnPeriodDurationChanged();
-    partial void OnPeriodStartDateChanging(System.DateTime value);
-    partial void OnPeriodStartDateChanged();
-    partial void OnPeriodEndDateChanging(System.DateTime value);
-    partial void OnPeriodEndDateChanged();
+    partial void OnPeriodStartTimeChanging(System.TimeSpan value);
+    partial void OnPeriodStartTimeChanged();
+    partial void OnPeriodEndTimeChanging(System.TimeSpan value);
+    partial void OnPeriodEndTimeChanged();
     partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
     partial void OnCreatedAtChanged();
     partial void OnUpdatedAtChanging(System.Nullable<System.DateTime> value);
@@ -862,7 +860,6 @@ namespace DAL
 		public CommitPeriod()
 		{
 			this._CommitGroupMembers = new EntitySet<CommitGroupMember>(new Action<CommitGroupMember>(this.attach_CommitGroupMembers), new Action<CommitGroupMember>(this.detach_CommitGroupMembers));
-			this._ChatbotSummaries = new EntitySet<ChatbotSummary>(new Action<ChatbotSummary>(this.attach_ChatbotSummaries), new Action<ChatbotSummary>(this.detach_ChatbotSummaries));
 			OnCreated();
 		}
 		
@@ -926,42 +923,42 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodStartDate", DbType="DateTime NOT NULL")]
-		public System.DateTime PeriodStartDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodStartTime", DbType="Time NOT NULL")]
+		public System.TimeSpan PeriodStartTime
 		{
 			get
 			{
-				return this._PeriodStartDate;
+				return this._PeriodStartTime;
 			}
 			set
 			{
-				if ((this._PeriodStartDate != value))
+				if ((this._PeriodStartTime != value))
 				{
-					this.OnPeriodStartDateChanging(value);
+					this.OnPeriodStartTimeChanging(value);
 					this.SendPropertyChanging();
-					this._PeriodStartDate = value;
-					this.SendPropertyChanged("PeriodStartDate");
-					this.OnPeriodStartDateChanged();
+					this._PeriodStartTime = value;
+					this.SendPropertyChanged("PeriodStartTime");
+					this.OnPeriodStartTimeChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodEndDate", DbType="DateTime NOT NULL")]
-		public System.DateTime PeriodEndDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodEndTime", DbType="Time NOT NULL")]
+		public System.TimeSpan PeriodEndTime
 		{
 			get
 			{
-				return this._PeriodEndDate;
+				return this._PeriodEndTime;
 			}
 			set
 			{
-				if ((this._PeriodEndDate != value))
+				if ((this._PeriodEndTime != value))
 				{
-					this.OnPeriodEndDateChanging(value);
+					this.OnPeriodEndTimeChanging(value);
 					this.SendPropertyChanging();
-					this._PeriodEndDate = value;
-					this.SendPropertyChanged("PeriodEndDate");
-					this.OnPeriodEndDateChanged();
+					this._PeriodEndTime = value;
+					this.SendPropertyChanged("PeriodEndTime");
+					this.OnPeriodEndTimeChanged();
 				}
 			}
 		}
@@ -1019,19 +1016,6 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_ChatbotSummary", Storage="_ChatbotSummaries", ThisKey="PeriodID", OtherKey="PeriodID")]
-		public EntitySet<ChatbotSummary> ChatbotSummaries
-		{
-			get
-			{
-				return this._ChatbotSummaries;
-			}
-			set
-			{
-				this._ChatbotSummaries.Assign(value);
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1059,18 +1043,6 @@ namespace DAL
 		}
 		
 		private void detach_CommitGroupMembers(CommitGroupMember entity)
-		{
-			this.SendPropertyChanging();
-			entity.CommitPeriod = null;
-		}
-		
-		private void attach_ChatbotSummaries(ChatbotSummary entity)
-		{
-			this.SendPropertyChanging();
-			entity.CommitPeriod = this;
-		}
-		
-		private void detach_ChatbotSummaries(ChatbotSummary entity)
 		{
 			this.SendPropertyChanging();
 			entity.CommitPeriod = null;
@@ -2017,9 +1989,7 @@ namespace DAL
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _ID;
-		
-		private int _PeriodID;
+		private int _ChatbotSummaryID;
 		
 		private string _Attendance;
 		
@@ -2035,16 +2005,12 @@ namespace DAL
 		
 		private System.Nullable<System.DateTime> _UpdatedAt;
 		
-		private EntityRef<CommitPeriod> _CommitPeriod;
-		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnIDChanging(int value);
-    partial void OnIDChanged();
-    partial void OnPeriodIDChanging(int value);
-    partial void OnPeriodIDChanged();
+    partial void OnChatbotSummaryIDChanging(int value);
+    partial void OnChatbotSummaryIDChanged();
     partial void OnAttendanceChanging(string value);
     partial void OnAttendanceChanged();
     partial void OnAssignedTasksChanging(string value);
@@ -2063,50 +2029,25 @@ namespace DAL
 		
 		public ChatbotSummary()
 		{
-			this._CommitPeriod = default(EntityRef<CommitPeriod>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int ID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChatbotSummaryID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ChatbotSummaryID
 		{
 			get
 			{
-				return this._ID;
+				return this._ChatbotSummaryID;
 			}
 			set
 			{
-				if ((this._ID != value))
+				if ((this._ChatbotSummaryID != value))
 				{
-					this.OnIDChanging(value);
+					this.OnChatbotSummaryIDChanging(value);
 					this.SendPropertyChanging();
-					this._ID = value;
-					this.SendPropertyChanged("ID");
-					this.OnIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", DbType="Int NOT NULL")]
-		public int PeriodID
-		{
-			get
-			{
-				return this._PeriodID;
-			}
-			set
-			{
-				if ((this._PeriodID != value))
-				{
-					if (this._CommitPeriod.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnPeriodIDChanging(value);
-					this.SendPropertyChanging();
-					this._PeriodID = value;
-					this.SendPropertyChanged("PeriodID");
-					this.OnPeriodIDChanged();
+					this._ChatbotSummaryID = value;
+					this.SendPropertyChanged("ChatbotSummaryID");
+					this.OnChatbotSummaryIDChanged();
 				}
 			}
 		}
@@ -2247,40 +2188,6 @@ namespace DAL
 					this._UpdatedAt = value;
 					this.SendPropertyChanged("UpdatedAt");
 					this.OnUpdatedAtChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommitPeriod_ChatbotSummary", Storage="_CommitPeriod", ThisKey="PeriodID", OtherKey="PeriodID", IsForeignKey=true)]
-		public CommitPeriod CommitPeriod
-		{
-			get
-			{
-				return this._CommitPeriod.Entity;
-			}
-			set
-			{
-				CommitPeriod previousValue = this._CommitPeriod.Entity;
-				if (((previousValue != value) 
-							|| (this._CommitPeriod.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._CommitPeriod.Entity = null;
-						previousValue.ChatbotSummaries.Remove(this);
-					}
-					this._CommitPeriod.Entity = value;
-					if ((value != null))
-					{
-						value.ChatbotSummaries.Add(this);
-						this._PeriodID = value.PeriodID;
-					}
-					else
-					{
-						this._PeriodID = default(int);
-					}
-					this.SendPropertyChanged("CommitPeriod");
 				}
 			}
 		}
