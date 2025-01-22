@@ -1361,8 +1361,8 @@ namespace GitLogAggregator
                         {
                             // Hiển thị thông báo yêu cầu làm trống thư mục
                             DialogResult resultDeleteFolderInternship = MessageBox.Show(
-                                "Thư mục thực tập đã tồn tại. Bạn có muốn xóa thư mục này không?", // Nội dung thông báo
-                                "Xác nhận xóa thư mục",                                           // Tiêu đề hộp thoại
+                                "Thư mục thực tập đang có dữ liệu. Bạn có muốn xóa trống thư mục này không?", // Nội dung thông báo
+                                "Xác nhận xóa trống thư mục",                                           // Tiêu đề hộp thoại
                                 MessageBoxButtons.OKCancel,                                        // Nút OK và Cancel
                                 MessageBoxIcon.Warning                                             // Biểu tượng cảnh báo
                             );
