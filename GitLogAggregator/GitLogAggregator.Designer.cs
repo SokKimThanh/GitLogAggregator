@@ -802,7 +802,7 @@
             this.btnExportTXT.TabIndex = 6;
             this.btnExportTXT.Text = "Ghi File";
             this.btnExportTXT.UseVisualStyleBackColor = false;
-            this.btnExportTXT.Click += new System.EventHandler(this.BtnAggregateCommits_Click);
+            this.btnExportTXT.Click += new System.EventHandler(this.btnExportTXT_Click);
             // 
             // searchPanel
             // 

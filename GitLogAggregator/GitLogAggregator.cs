@@ -581,7 +581,7 @@ namespace GitLogAggregator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BtnAggregateCommits_Click(object sender, EventArgs e)
+        private void btnExportTXT_Click(object sender, EventArgs e)
         {
             try
             {
@@ -690,6 +690,8 @@ namespace GitLogAggregator
                     var internshipWeekFolder = iswf.InternshipWeekFolder;
                     var internshipStartDate = configFile.InternshipStartDate;
 
+                    bool isAggregatedSuccessfully = false;
+
                     try
                     {
                         // Tạo thư mục tổng hợp Combined nếu chưa tồn tại
@@ -728,7 +730,6 @@ namespace GitLogAggregator
                             {
                                 DateTime currentDate = weekStartDate.AddDays(dayOffset);
                                 string dayFolder = weekFolder;
-                                //bool hasCommitsInDay = false;
 
                                 // Tạo thư mục ngày nếu chưa tồn tại
                                 if (!Directory.Exists(dayFolder))
@@ -738,13 +739,8 @@ namespace GitLogAggregator
 
                                 foreach (var period in new[] { "Sáng", "Chiều", "Tối" })
                                 {
-                                    // Chuyển đổi period sang dạng viết tắt
                                     var periodAbb = GetPeriodAbbreviation(period);
-
-                                    // Tạo đường dẫn file
                                     string dailyFile = Path.Combine(dayFolder, $"{currentDate:yyyy-MM-dd}_{periodAbb}_commits.txt");
-
-                                    // Lấy danh sách các commit trong buổi từ CSDL
                                     var periodCommits = weekCommits
                                         .Where(c => c.Date == currentDate.Date && c.Period == periodAbb)
                                         .ToList();
@@ -756,40 +752,46 @@ namespace GitLogAggregator
                                             string commitInfo = $"[{commit.CommitHash}] {commit.CommitMessage} - {commit.CommitDate} - {commit.Author}\n";
                                             AppendToFile(dailyFile, commitInfo); // Ghi vào file hàng ngày
                                             AppendToFile(combinedFile, $"[{currentDate:yyyy-MM-dd} {periodAbb}] {commitInfo}"); // Ghi vào file tổng hợp
-
-                                            //hasCommitsInDay = true;
                                             hasCommitsInWeek = true;
                                         }
                                     }
                                     else
                                     {
-                                        // Tạo file trống nếu không có commit
                                         File.WriteAllText(dailyFile, string.Empty);
                                     }
                                 }
                             }
 
-                            // Kiểm tra và xóa thư mục/file trống sau khi xử lý xong tuần
                             DeleteEmptyFoldersAndFiles(weekFolder);
 
                             if (hasCommitsInWeek)
                             {
+                                isAggregatedSuccessfully = true;
                                 AppendTextWithScroll($"Week {currentWeek} commits đã tổng hợp vào: {combinedFile}");
                             }
                         }
 
-                        // Kiểm tra và xóa thư mục Combined nếu trống
                         DeleteEmptyFoldersAndFiles(combinedFolder);
                     }
                     catch (Exception ex)
                     {
                         AppendTextWithScroll($"Lỗi: {ex.Message}\n");
                     }
-
-                    AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
+                    finally
+                    {
+                        if (isAggregatedSuccessfully)
+                        {
+                            AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
+                        }
+                        else
+                        {
+                            AppendTextWithScroll($"Không có commit nào được tổng hợp cho dự án: {projectDirectory}.\n");
+                        }
+                    }
                 }
             }
         }
+
 
 
         private void AppendToFile(string filePath, string content)
@@ -1353,7 +1355,7 @@ namespace GitLogAggregator
 
                     // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
                     cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
-                    
+
                     // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
                     txtFolderInternshipPath = GetLatestInternshipFolderPath();
 
