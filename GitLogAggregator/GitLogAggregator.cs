@@ -1378,6 +1378,15 @@ namespace GitLogAggregator
 
                                     // Tạo lại thư mục trống
                                     Directory.CreateDirectory(txtFolderInternshipPath);
+                                    // Thư mục rỗng, thiết lập thao tác cài đặt mới
+                                    InternshipDirectoryET internshipDirectory = new InternshipDirectoryET
+                                    {
+                                        InternshipWeekFolder = txtFolderInternshipPath,
+                                        DateModified = DateTime.Now
+                                    };
+
+                                    // Lưu đường dẫn thư mục mới vào cơ sở dữ liệu
+                                    internshipDirectoryBUS.Add(internshipDirectory);
                                     AppendTextWithScroll($"Thư mục {txtFolderInternshipPath} đã được tạo lại.\n");
                                 }
                                 catch (Exception ex)
