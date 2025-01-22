@@ -1783,6 +1783,13 @@ git %*
         {
             try
             {
+                // Kiểm tra ComboBox đã được bind dữ liệu chưa
+                if (cboSearchByWeek.DataSource == null || cboAuthorCommit.DataSource == null)
+                {
+                    AppendTextWithScroll("Vui lòng tải dữ liệu tuần/tác giả trước!\n");
+                    return;
+                }
+
                 // Lấy các tiêu chí từ CheckedListBox
                 bool enablePagination = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkEnablePagination);
                 bool searchAllWeeks = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkSearchAllWeeks);
@@ -1825,8 +1832,9 @@ git %*
                 {
                     if (enablePagination)
                     {
-                        // Khởi tạo hoặc cập nhật PaginationHelper
+                        // Khởi tạo lại paginationHelper với dữ liệu mới
                         paginationHelper = new PaginationHelper<SearchResult>(allSearchResults, pageSize);
+                        paginationHelper.SetCurrentPage(currentPage); // Đặt trang hiện tại
 
                         // Lấy dữ liệu cho trang hiện tại
                         var pagedResults = paginationHelper.GetCurrentPageData();
@@ -1875,29 +1883,39 @@ git %*
             btnNextReport.Enabled = paginationHelper.GetCurrentPage() < totalPages;
         }
 
-        private void BtnPreviousReport_Click(object sender, EventArgs e)
-        {
-            paginationHelper.PreviousPage();
-            var chkSimpleView = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView);
-            DisplaySearchResults(true, chkSimpleView);
-        }
-
+        // Trong sự kiện nút phân trang
         private void BtnNextReport_Click(object sender, EventArgs e)
         {
-            paginationHelper.NextPage();
-            var chkSimpleView = CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView);
-            DisplaySearchResults(true, chkSimpleView);
+            if (paginationHelper != null)
+            {
+                paginationHelper.NextPage();
+                currentPage = paginationHelper.GetCurrentPage(); // Cập nhật currentPage
+                bool chkSimpleView = chkSearchCriteria.IsItemChecked(SearchCriteria.chkIsSimpleView);
+                DisplaySearchResults(true, chkSimpleView);
+            }
         }
+
+        private void BtnPreviousReport_Click(object sender, EventArgs e)
+        {
+            if (paginationHelper != null)
+            {
+                paginationHelper.PreviousPage();
+                currentPage = paginationHelper.GetCurrentPage(); // Cập nhật currentPage
+                bool chkSimpleView = chkSearchCriteria.IsItemChecked(SearchCriteria.chkIsSimpleView);
+                DisplaySearchResults(true, chkSimpleView);
+            }
+        }
+        // Trong phương thức EnablePagination
         private void EnablePagination(bool enable)
         {
-            // Hiển thị/Ẩn các nút phân trang
             btnPreviousReport.Visible = enable;
             btnNextReport.Visible = enable;
 
-            // Reset về trang đầu nếu tắt phân trang
             if (!enable)
             {
-                DisplaySearchResults(false, CheckedListBoxHelper.IsItemChecked(chkSearchCriteria, SearchCriteria.chkIsSimpleView)); // Hiển thị kết quả theo trang mới
+                paginationHelper = null; // Reset helper khi tắt phân trang
+                bool chkSimpleView = chkSearchCriteria.IsItemChecked(SearchCriteria.chkIsSimpleView);
+                DisplaySearchResults(false, chkSimpleView);
             }
         }
         private void btnRemoveAll_Click(object sender, EventArgs e)
@@ -2255,6 +2273,11 @@ git %*
         }
 
         private void cboSearchByAuthor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SearchCommitsAndUpdateUI();
+        }
+
+        private void txtSearchReport_TextChanged(object sender, EventArgs e)
         {
             SearchCommitsAndUpdateUI();
         }

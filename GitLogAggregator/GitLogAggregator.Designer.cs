@@ -827,6 +827,7 @@
             this.txtSearchReport.Name = "txtSearchReport";
             this.txtSearchReport.Size = new System.Drawing.Size(517, 25);
             this.txtSearchReport.TabIndex = 33;
+            this.txtSearchReport.TextChanged += new System.EventHandler(this.txtSearchReport_TextChanged);
             // 
             // btnSearchReport
             // 

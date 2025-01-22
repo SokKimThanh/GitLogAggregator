@@ -22,8 +22,12 @@ namespace GitLogAggregator.Utilities
         {
             foreach (DataGridViewColumn column in _dataGridView.Columns)
             {
-                column.Visible = column.Name == "CommitMessage";
+                column.Visible = false;
             }
+            _dataGridView.Columns["CommitMessage"].Visible = true;
+            _dataGridView.Columns["ProjectWeekName"].Visible = true;
+
+            _dataGridView.Columns["ProjectWeekName"].Width = 100;
         }
 
         // Cấu hình hiển thị đầy đủ

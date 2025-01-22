@@ -31,8 +31,7 @@ WHERE
     c.ProjectWeekId = pw.ProjectWeekId
     AND c.Author = a.AuthorName
     AND c.CommitId = cgm.CommitId
-	and cp.PeriodID = cgm.PeriodID
-	and pw.InternshipDirectoryId = 
+	and cp.PeriodID = cgm.PeriodID 
     -- Điều kiện lọc theo tiêu chí tìm kiếm
     AND (
         -- Lọc theo tuần (nếu không chọn "Tất cả")

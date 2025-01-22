@@ -17,9 +17,10 @@ namespace DAL
 
             var query = from c in db.Commits
                         join pw in db.ProjectWeeks on c.ProjectWeekId equals pw.ProjectWeekId
-                        join a in db.Authors on c.Author equals a.AuthorName
+                        join a in db.Authors on c.AuthorEmail equals a.AuthorEmail
                         join cgm in db.CommitGroupMembers on c.CommitId equals cgm.CommitId
                         join cp in db.CommitPeriods on cgm.PeriodID equals cp.PeriodID
+                        orderby c.CommitDate ascending
                         where (searchAllWeeks || projectWeekId == null || c.ProjectWeekId == projectWeekId)
                               && (searchAllAuthors || authorId == null || a.AuthorID == authorId)
                               && (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword))
