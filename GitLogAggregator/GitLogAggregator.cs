@@ -1871,7 +1871,6 @@ git %*
                 else
                 {
                     dgvReportCommits.DataSource = null;
-                    AppendTextWithScroll("Không tìm thấy kết quả phù hợp.\n");
                     btnPreviousReport.Enabled = false;
                     btnNextReport.Enabled = false;
                 }
@@ -1972,25 +1971,25 @@ git %*
             // Kiểm tra đầu vào
             if (cboInternshipFolder.SelectedValue == null)
             {
-                AppendTextWithScroll("Vui lòng chọn thư mục thực tập trước khi tạo tuần thực tập.\n");
+                AppendTextWithScroll("[Lỗi] Vui lòng chọn thư mục thực tập trước khi tạo tuần thực tập.\n");
                 return;
             }
-            int internshipDirectoryId = int.Parse(cboInternshipFolder.SelectedValue.ToString());
 
+            int internshipDirectoryId = int.Parse(cboInternshipFolder.SelectedValue.ToString());
             DateTime internshipStartDate = txtInternshipStartDate.Value.Date;
             DateTime internshipEndDate = txtInternshipEndDate.Value.Date;
 
             int weeks = (int)txtNumericsWeek.Value;
             if (weeks <= 0)
             {
-                AppendTextWithScroll("Số tuần phải lớn hơn 0.\n");
+                AppendTextWithScroll("[Lỗi] Số tuần phải lớn hơn 0.\n");
                 return;
             }
 
             var configs = configBus.GetAll();
             if (configs.Count == 0)
             {
-                AppendTextWithScroll("Vui lòng chọn dự án trước khi tạo tuần thực tập.\n");
+                AppendTextWithScroll("[Lỗi] Vui lòng chọn dự án trước khi tạo tuần thực tập.\n");
                 return;
             }
 
@@ -2001,16 +2000,15 @@ git %*
             );
             if (!isWithinInternship)
             {
-                AppendTextWithScroll("Không thể tạo tuần thực tập vì dự án không nằm trong kỳ thực tập.\n");
+                AppendTextWithScroll("[Lỗi] Không thể tạo tuần thực tập vì dự án không nằm trong kỳ thực tập.\n");
                 return;
             }
 
-            // Kiểm tra ProjectWeek đã tồn tại trong khoảng thời gian thực tập
+            // Kiểm tra ProjectWeek đã tồn tại
             var existingProjectWeeks = projectWeeksBUS.GetAll()
                 .Where(w => w.WeekStartDate >= internshipStartDate && w.WeekEndDate <= internshipEndDate)
                 .ToList();
 
-            // Chỉ tạo ProjectWeek nếu CHƯA tồn tại
             if (existingProjectWeeks.Count == 0)
             {
                 // Tạo ProjectWeek
@@ -2031,17 +2029,30 @@ git %*
                     };
                     projectWeeksBUS.Add(projectWeek);
                 }
-                AppendTextWithScroll("Tạo xong ProjectWeek.\n");
+
+                // Kiểm tra dữ liệu đã được thêm thành công
+                var newProjectWeeks = projectWeeksBUS.GetAll()
+                    .Where(w => w.WeekStartDate >= internshipStartDate && w.WeekEndDate <= internshipEndDate)
+                    .ToList();
+
+                if (newProjectWeeks.Count == weeks)
+                {
+                    AppendTextWithScroll("[Thành công] Đã tạo và lưu ProjectWeek vào database.\n");
+                }
+                else
+                {
+                    AppendTextWithScroll("[Lỗi] Không thể xác nhận ProjectWeek được lưu trong database.\n");
+                    return;
+                }
             }
             else
             {
-                AppendTextWithScroll("Đã có dữ liệu ProjectWeek, không tạo mới.\n");
+                AppendTextWithScroll("[Thông báo] Dữ liệu ProjectWeek đã tồn tại, không tạo mới.\n");
             }
 
             // Kiểm tra CommitPeriod đã tồn tại
             var existingCommitPeriods = commitPeriodBUS.GetAll();
 
-            // Chỉ tạo CommitPeriod nếu CHƯA tồn tại
             if (existingCommitPeriods.Count == 0)
             {
                 string[] periods = { "Sáng", "Chiều", "Tối" };
@@ -2059,20 +2070,30 @@ git %*
                     };
                     commitPeriodBUS.Add(commitPeriod);
                 }
-                AppendTextWithScroll("Tạo xong CommitPeriod.\n");
+
+                // Kiểm tra dữ liệu đã được thêm thành công
+                var newCommitPeriods = commitPeriodBUS.GetAll();
+                if (newCommitPeriods.Count == 3) // Vì có 3 buổi: Sáng, Chiều, Tối
+                {
+                    AppendTextWithScroll("[Thành công] Đã tạo và lưu CommitPeriod vào database.\n");
+                }
+                else
+                {
+                    AppendTextWithScroll("[Lỗi] Không thể xác nhận CommitPeriod được lưu trong database.\n");
+                    return;
+                }
             }
             else
             {
-                AppendTextWithScroll("Đã có dữ liệu CommitPeriod, không tạo mới.\n");
+                AppendTextWithScroll("[Thông báo] Dữ liệu CommitPeriod đã tồn tại, không tạo mới.\n");
             }
 
-            AppendTextWithScroll("Tạo xong ProjectWeek và CommitPeriod.\n");
+            AppendTextWithScroll("[Hoàn tất] Tạo ProjectWeek và CommitPeriod thành công.\n");
 
-            // Cập nhật ComboBox
+            // Cập nhật ComboBox sau khi hoàn thành
             cboSearchByWeek.DataSource = projectWeeksBUS.GetAll();
-            cboSearchByWeek.ValueMember = "ProjectWeekId";
-            cboSearchByWeek.DisplayMember = "ProjectWeekName";
         }
+
 
         private (string since, string until, string periodName) GetTimeRange(string period)
         {
