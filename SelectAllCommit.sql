@@ -29,7 +29,7 @@ FROM
 WHERE 
     -- Điều kiện kết nối các bảng (thay thế JOIN)
     c.ProjectWeekId = pw.ProjectWeekId
-    AND c.Author = a.AuthorName
+    AND c.AuthorEmail = a.AuthorEmail
     AND c.CommitId = cgm.CommitId
 	and cp.PeriodID = cgm.PeriodID 
     -- Điều kiện lọc theo tiêu chí tìm kiếm
