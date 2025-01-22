@@ -148,32 +148,14 @@ namespace GitLogAggregator
 
                 // Hiển thị hint cho các control
                 SetupHoverEventsForControls(txtResultMouseEvents);
-                // Thêm các mục vào CheckedListBox trước
-                clbSearchCriteria.Items.AddRange(new object[]
-                {
-                    "Bật phân trang",
-                    "Tìm kiếm tất cả tuần",
-                    "Tìm kiếm tất cả tác giả"
-                });
 
-                // Danh sách các tiêu chí cần check sẵn
-                var defaultCheckedItems = new List<string>
-                {
-                    "Bật phân trang",
-                    "Tìm kiếm tất cả tuần",
-                    "Tìm kiếm tất cả tác giả"
-                };
+                // Thêm các mục mặc định
+                chkSearchCriteria.AddItem(SearchCriteria.chkEnablePagination, "Bật phân trang", true);
+                chkSearchCriteria.AddItem(SearchCriteria.chkSearchAllWeeks, "Tìm kiếm tất cả tuần", true);
+                chkSearchCriteria.AddItem(SearchCriteria.chkSearchAllAuthors, "Tìm kiếm tất cả tác giả", true);
 
-                // Duyệt qua tất cả các mục trong CheckedListBox
-                for (int i = 0; i < clbSearchCriteria.Items.Count; i++)
-                {
-                    string itemText = clbSearchCriteria.Items[i].ToString();
-                    // Check các mục mặc định
-                    clbSearchCriteria.SetItemChecked(i, defaultCheckedItems.Contains(itemText));
-                }
-
-                // Thực hiện tìm kiếm tự động khi load form
-                SearchCommitWhenLoadForm();
+                // Load dữ liệu ban đầu
+                SearchCommitsAndUpdateUI();
 
                 DisableControls();
             }
@@ -246,61 +228,6 @@ namespace GitLogAggregator
 
             // Hiển thị danh sách tác giả lên ComboBox
             UpdateAuthorList(authors);
-        }
-
-        private async void SearchCommitWhenLoadForm()
-        {
-            try
-            {
-                if (clbSearchCriteria.Items.Count == 0)
-                {
-                    AppendTextWithScroll("Vui lòng cấu hình tiêu chí tìm kiếm trước.\n");
-                    return;
-                }
-
-                // Hiển thị thông báo đang tải dữ liệu
-                AppendTextWithScroll("Đang tải dữ liệu...\n");
-
-                // Thiết lập tiêu chí mặc định
-                bool enablePagination = clbSearchCriteria.CheckedItems.Contains("Bật phân trang");
-                bool searchAllWeeks = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
-                bool searchAllAuthors = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
-
-                // Tải dữ liệu bất đồng bộ để không block UI
-                await Task.Run(() =>
-                {
-                    allSearchResults = searchBUS.SearchCommits(
-                        keyword: "",
-                        projectWeekId: null, // Mặc định tìm tất cả tuần
-                        searchAllWeeks: searchAllWeeks,
-                        searchAllAuthors: searchAllAuthors,
-                        authorId: null // Mặc định tìm tất cả tác giả
-                    );
-                });
-
-                // Cập nhật UI sau khi tải xong
-                currentPage = 1;
-                DisplaySearchResults(enablePagination);
-
-                // Thông báo kết quả
-                if (allSearchResults != null && allSearchResults.Any())
-                {
-                    AppendTextWithScroll($"Đã tìm thấy {allSearchResults.Count} kết quả.\n");
-                }
-                else
-                {
-                    AppendTextWithScroll("Không có dữ liệu nào để hiển thị.\n");
-                }
-            }
-            catch (Exception ex)
-            {
-                AppendTextWithScroll($"Lỗi khi tải dữ liệu ban đầu: {ex.Message}\n");
-            }
-            finally
-            {
-                // Ẩn indicator loading nếu có
-                //loadingIndicator.Visible = false;
-            }
         }
 
         private void SetAllComboBoxesToDropDownList(Control parentControl)
@@ -386,7 +313,6 @@ namespace GitLogAggregator
                 { txtResultMouseEvents, "Hiển thị thông báo khi rê chuột vào các control" },
                 { txtResult, "Hiển thị kết quả của các thao tác" },
                 { txtFirstCommitDate, "Hiển thị ngày commit đầu tiên" },
-                { chkSearchAllWeeks, "Tìm kiếm tất cả các tuần của commit trong datagridview" },
                 { btnExportTXT, "Xuất ra file combined_commits.txt cho các tuần thực tập" },
 
             };
@@ -1839,7 +1765,7 @@ git %*
             cboInternshipFolder.SelectedIndex = -1;  // Đặt lại ComboBox về trạng thái không chọn
 
             // Nếu CheckBox được chọn, thực hiện tìm kiếm tất cả các tuần
-            if (chkSearchAllWeeks.Checked)
+            if (chkSearchCriteria.GetItemChecked(0))
             {
                 // Logic tìm kiếm commit và cập nhật UI
                 SearchCommitsAndUpdateUI();
@@ -1850,28 +1776,27 @@ git %*
         {
             try
             {
-                // Lấy các tiêu chí từ UI
-                bool enablePagination = clbSearchCriteria.CheckedItems.Contains("Bật phân trang");
-                bool searchAllWeeks = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
-                bool searchAllAuthors = clbSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
+                // Lấy các tiêu chí từ CheckedListBox
+                bool enablePagination = chkSearchCriteria.CheckedItems.Contains("Bật phân trang");
+                bool searchAllWeeks = chkSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tuần");
+                bool searchAllAuthors = chkSearchCriteria.CheckedItems.Contains("Tìm kiếm tất cả tác giả");
 
-                // Lấy giá trị từ ComboBox
-                int? selectedWeekId = (cboSearchByWeek.SelectedItem as ProjectWeekET)?.ProjectWeekId;
-                int? selectedAuthorId = (cboAuthorCommit.SelectedItem as AuthorET)?.AuthorID;
+                // Lấy giá trị từ ComboBox (nếu không chọn "Tất cả")
+                int? selectedWeekId = searchAllWeeks ? null : (int?)cboSearchByWeek.SelectedValue;
+                int? selectedAuthorId = searchAllAuthors ? null : (int?)cboAuthorCommit.SelectedValue;
 
-                // Gọi phương thức tìm kiếm
+                // Gọi phương thức tìm kiếm từ BUS
                 allSearchResults = searchBUS.SearchCommits(
-                    keyword: txtSearchReport.Text.Trim(),
-                    projectWeekId: searchAllWeeks ? null : selectedWeekId,
+                    keyword: txtSearchReport.Text,
+                    projectWeekId: selectedWeekId,
                     searchAllWeeks: searchAllWeeks,
                     searchAllAuthors: searchAllAuthors,
-                    authorId: searchAllAuthors ? null : selectedAuthorId
+                    authorId: selectedAuthorId
                 );
 
                 // Hiển thị kết quả
                 currentPage = 1;
                 DisplaySearchResults(enablePagination);
-                txtSearchReport.Clear();
             }
             catch (Exception ex)
             {
@@ -1894,40 +1819,27 @@ git %*
                     {
                         // Tính toán phân trang
                         int totalPages = (int)Math.Ceiling((double)allSearchResults.Count / pageSize);
-
-                        // Lấy kết quả phân trang
                         var pagedResults = allSearchResults
                             .Skip((currentPage - 1) * pageSize)
                             .Take(pageSize)
                             .ToList();
 
-                        // Hiển thị lên DataGridView
                         dgvReportCommits.DataSource = pagedResults;
-
-                        // Thông báo trạng thái
                         AppendTextWithScroll($"Trang {currentPage}/{totalPages} | Hiển thị {pagedResults.Count} kết quả.\n");
-
-                        // Cập nhật trạng thái các nút điều khiển phân trang
                         UpdatePaginationControls(totalPages);
                     }
                     else
                     {
-                        // Hiển thị tất cả kết quả nếu không bật phân trang
                         dgvReportCommits.DataSource = allSearchResults;
                         AppendTextWithScroll($"Hiển thị tất cả {allSearchResults.Count} kết quả.\n");
-
-                        // Vô hiệu hóa các nút điều khiển phân trang
                         btnPreviousReport.Enabled = false;
                         btnNextReport.Enabled = false;
                     }
                 }
                 else
                 {
-                    // Nếu không có kết quả, xóa DataGridView và hiển thị thông báo
                     dgvReportCommits.DataSource = null;
                     AppendTextWithScroll("Không tìm thấy kết quả phù hợp.\n");
-
-                    // Vô hiệu hóa các nút điều khiển phân trang
                     btnPreviousReport.Enabled = false;
                     btnNextReport.Enabled = false;
                 }
@@ -1942,7 +1854,7 @@ git %*
             if (currentPage > 1)
             {
                 currentPage--; // Giảm số trang hiện tại
-                DisplaySearchResults(clbSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
+                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
             }
             else
             {
@@ -1956,7 +1868,7 @@ git %*
             if (currentPage < totalPages)
             {
                 currentPage++; // Tăng số trang hiện tại
-                DisplaySearchResults(clbSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
+                DisplaySearchResults(chkSearchCriteria.CheckedItems.Contains("Bật phân trang")); // Hiển thị kết quả theo trang mới
             }
             else
             {
@@ -1970,6 +1882,19 @@ git %*
 
             // Vô hiệu hóa nút "Trang sau" nếu đang ở trang cuối cùng
             btnNextReport.Enabled = (currentPage < totalPages);
+        }
+        private void EnablePagination(bool enable)
+        {
+            // Hiển thị/Ẩn các nút phân trang
+            btnPreviousReport.Visible = enable;
+            btnNextReport.Visible = enable;
+
+            // Reset về trang đầu nếu tắt phân trang
+            if (!enable)
+            {
+                currentPage = 1;
+                DisplaySearchResults(false);
+            }
         }
         private void btnRemoveAll_Click(object sender, EventArgs e)
         {
@@ -2186,40 +2111,6 @@ git %*
             }
         }
 
-        private void chkSearchAllWeeks_CheckedChanged(object sender, EventArgs e)
-        {
-            // Cập nhật text trên checkbox dựa vào trạng thái checked
-            if (chkSearchAllWeeks.Checked)
-            {
-                chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần"; // Text khi check
-                cboSearchByWeek.Enabled = false; // Khóa ComboBox
-                cboSearchByWeek.SelectedIndex = 0; // Đặt giá trị mặc định (ví dụ: "Tất cả")
-            }
-            else
-            {
-                chkSearchAllWeeks.Text = "Tìm kiếm theo tuần cụ thể"; // Text khi uncheck
-                cboSearchByWeek.Enabled = true; // Mở khóa ComboBox
-            }
-
-            // Tùy chọn: Tự động cập nhật kết quả tìm kiếm
-            SearchCommitsAndUpdateUI();
-        }
-
-        private void chkSearchAllAuthors_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkSearchAllAuthors.Checked)
-            {
-                chkSearchAllAuthors.Text = "Tìm kiếm tất cả tác giả";
-                cboSearchByAuthor.Enabled = false;
-                cboSearchByAuthor.SelectedIndex = 0;
-            }
-            else
-            {
-                chkSearchAllAuthors.Text = "Tìm kiếm theo tác giả cụ thể";
-                cboSearchByAuthor.Enabled = true;
-            }
-            SearchCommitsAndUpdateUI();
-        }
 
         private void cboConfigFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -2302,26 +2193,34 @@ git %*
             }
         }
 
-        private Dictionary<int, (string CheckedText, string UncheckedText)> itemTexts = new Dictionary<int, (string, string)>
-{
-    { 0, ("Đã bật phân trang", "Bật phân trang") },
-    { 1, ("Đang tìm tất cả tuần", "Tìm kiếm tất cả tuần") },
-    { 2, ("Đang tìm tất cả tác giả", "Tìm kiếm tất cả tác giả") }
-};
-
-        private void clbSearchCriteria_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void chkSearchCriteria_ItemCheck(object sender, ItemCheckEventArgs e)
         {
+            // Đợi sự kiện check hoàn tất trước khi xử lý
             this.BeginInvoke((MethodInvoker)delegate
             {
-                int itemIndex = e.Index;
-                bool isChecked = clbSearchCriteria.GetItemChecked(itemIndex);
+                // Lấy trạng thái mới của item (Checked/Unchecked)
+                bool isChecked = chkSearchCriteria.GetItemChecked(e.Index);
+                string itemText = chkSearchCriteria.Items[e.Index].ToString();
 
-                if (itemTexts.TryGetValue(itemIndex, out var texts))
+                // Xử lý logic dựa trên item được check
+                switch (itemText)
                 {
-                    clbSearchCriteria.Items[itemIndex] = isChecked
-                        ? texts.CheckedText
-                        : texts.UncheckedText;
+                    case "Bật phân trang":
+                        // Cập nhật trạng thái phân trang
+                        EnablePagination(isChecked);
+                        break;
+                    case "Tìm kiếm tất cả tuần":
+                        // Khóa/Mở khóa ComboBox chọn tuần
+                        cboSearchByWeek.Enabled = !isChecked;
+                        break;
+                    case "Tìm kiếm tất cả tác giả":
+                        // Khóa/Mở khóa ComboBox chọn tác giả
+                        cboAuthorCommit.Enabled = !isChecked;
+                        break;
                 }
+
+                // Thực hiện tìm kiếm ngay lập tức
+                SearchCommitsAndUpdateUI();
             });
         }
     }

@@ -12,21 +12,16 @@ namespace DAL
     public class SearchDAL
     {
         private readonly GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
-        public List<SearchResult> SearchCommits(
-         string keyword,
-         int? projectWeekId,
-         bool searchAllWeeks,
-         bool searchAllAuthors,
-         int? authorId = null)
+        public List<SearchResult> SearchCommits(bool searchAllWeeks, int? projectWeekId, bool searchAllAuthors, int? authorId, string keyword)
         {
             var query = from c in db.Commits
                         join pw in db.ProjectWeeks on c.ProjectWeekId equals pw.ProjectWeekId
-                        join a in db.Authors on c.Author equals a.AuthorName // Giả sử Commits.Author là AuthorName
-                        join cp in db.CommitPeriods on c.Period equals cp.PeriodName // Giả sử Commits.Period lưu tên period
-                        where
-                            (searchAllWeeks || (projectWeekId == null || c.ProjectWeekId == projectWeekId)) &&
-                            (searchAllAuthors || (authorId == null || a.AuthorID == authorId)) &&
-                            (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword))
+                        join a in db.Authors on c.Author equals a.AuthorName
+                        join cgm in db.CommitGroupMembers on c.CommitId equals cgm.CommitId
+                        join cp in db.CommitPeriods on cgm.PeriodID equals cp.PeriodID
+                        where (searchAllWeeks || projectWeekId == null || c.ProjectWeekId == projectWeekId)
+                              && (searchAllAuthors || authorId == null || a.AuthorID == authorId)
+                              && (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword))
                         select new SearchResult
                         {
                             CommitHash = c.CommitHash,
@@ -40,10 +35,9 @@ namespace DAL
                             CreatedAt = c.CreatedAt.Value,
                             UpdatedAt = c.UpdatedAt.Value
                         };
-
             return query.ToList();
-        }
 
+        }
 
         public DateTime? GetFirstCommitDateByProject(int projectId)
         {

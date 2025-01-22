@@ -12,9 +12,9 @@ namespace BUS
     {
         private readonly SearchDAL _searchDAL = new SearchDAL();
 
-        public List<SearchResult> SearchCommits(string keyword, int? projectWeekId, bool searchAllWeeks, bool searchAllAuthors, int? authorId = null)
+        public List<SearchResult> SearchCommits(bool searchAllWeeks, int? projectWeekId, bool searchAllAuthors, int? authorId, string keyword)
         {
-            return _searchDAL.SearchCommits(keyword, projectWeekId, searchAllWeeks, searchAllAuthors, authorId = null);
+            return _searchDAL.SearchCommits(searchAllWeeks, projectWeekId, searchAllAuthors, authorId, keyword);
         }
         public DateTime? GetFirstCommitDateByProject(int projectId)
         {

@@ -75,10 +75,7 @@
             this.cboSearchByWeek = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
             this.cboSearchByAuthor = new System.Windows.Forms.ComboBox();
-            this.clbSearchCriteria = new System.Windows.Forms.CheckedListBox();
-            this.chkSearchAllWeeks = new System.Windows.Forms.CheckBox();
-            this.chkPhanTrang = new System.Windows.Forms.CheckBox();
-            this.chkSearchAllAuthors = new System.Windows.Forms.CheckBox();
+            this.chkSearchCriteria = new System.Windows.Forms.CheckedListBox();
             this.tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
             this.btnNextReport = new System.Windows.Forms.Button();
@@ -293,7 +290,7 @@
             this.dgvReportCommits.Margin = new System.Windows.Forms.Padding(0);
             this.dgvReportCommits.Name = "dgvReportCommits";
             this.dgvReportCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dgvReportCommits.Size = new System.Drawing.Size(599, 318);
+            this.dgvReportCommits.Size = new System.Drawing.Size(599, 399);
             this.dgvReportCommits.TabIndex = 18;
             // 
             // label8
@@ -375,7 +372,7 @@
             this.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportExcel.Location = new System.Drawing.Point(392, 0);
+            this.btnExportExcel.Location = new System.Drawing.Point(449, 0);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(169, 37);
@@ -642,7 +639,7 @@
             this.tableLayoutPanel4.Controls.Add(this.cboSearchByWeek, 1, 1);
             this.tableLayoutPanel4.Controls.Add(this.label12, 0, 2);
             this.tableLayoutPanel4.Controls.Add(this.cboSearchByAuthor, 1, 2);
-            this.tableLayoutPanel4.Controls.Add(this.clbSearchCriteria, 2, 0);
+            this.tableLayoutPanel4.Controls.Add(this.chkSearchCriteria, 2, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel4.Location = new System.Drawing.Point(381, 0);
             this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
@@ -698,49 +695,16 @@
             this.cboSearchByAuthor.TabIndex = 11;
             this.cboSearchByAuthor.SelectedIndexChanged += new System.EventHandler(this.cboSearchByAuthor_SelectedIndexChanged);
             // 
-            // clbSearchCriteria
+            // chkSearchCriteria
             // 
-            this.clbSearchCriteria.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clbSearchCriteria.FormattingEnabled = true;
-            this.clbSearchCriteria.Location = new System.Drawing.Point(410, 3);
-            this.clbSearchCriteria.Name = "clbSearchCriteria";
-            this.tableLayoutPanel4.SetRowSpan(this.clbSearchCriteria, 3);
-            this.clbSearchCriteria.Size = new System.Drawing.Size(208, 97);
-            this.clbSearchCriteria.TabIndex = 12;
-            this.clbSearchCriteria.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbSearchCriteria_ItemCheck);
-            // 
-            // chkSearchAllWeeks
-            // 
-            this.chkSearchAllWeeks.AutoSize = true;
-            this.chkSearchAllWeeks.Location = new System.Drawing.Point(298, 40);
-            this.chkSearchAllWeeks.Name = "chkSearchAllWeeks";
-            this.chkSearchAllWeeks.Size = new System.Drawing.Size(167, 21);
-            this.chkSearchAllWeeks.TabIndex = 10;
-            this.chkSearchAllWeeks.Text = "Tìm kiếm tất cả các tuần";
-            this.chkSearchAllWeeks.UseVisualStyleBackColor = true;
-            this.chkSearchAllWeeks.CheckedChanged += new System.EventHandler(this.chkSearchAllWeeks_CheckedChanged);
-            // 
-            // chkPhanTrang
-            // 
-            this.chkPhanTrang.AutoSize = true;
-            this.chkPhanTrang.Location = new System.Drawing.Point(471, 40);
-            this.chkPhanTrang.Name = "chkPhanTrang";
-            this.chkPhanTrang.Size = new System.Drawing.Size(90, 21);
-            this.chkPhanTrang.TabIndex = 10;
-            this.chkPhanTrang.Text = "Phân trang";
-            this.chkPhanTrang.UseVisualStyleBackColor = true;
-            this.chkPhanTrang.CheckedChanged += new System.EventHandler(this.chkSearchAllWeeks_CheckedChanged);
-            // 
-            // chkSearchAllAuthors
-            // 
-            this.chkSearchAllAuthors.AutoSize = true;
-            this.chkSearchAllAuthors.Location = new System.Drawing.Point(28, 3);
-            this.chkSearchAllAuthors.Name = "chkSearchAllAuthors";
-            this.chkSearchAllAuthors.Size = new System.Drawing.Size(181, 21);
-            this.chkSearchAllAuthors.TabIndex = 10;
-            this.chkSearchAllAuthors.Text = "Tìm kiếm tất cả các tác giả";
-            this.chkSearchAllAuthors.UseVisualStyleBackColor = true;
-            this.chkSearchAllAuthors.CheckedChanged += new System.EventHandler(this.chkSearchAllAuthors_CheckedChanged);
+            this.chkSearchCriteria.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkSearchCriteria.FormattingEnabled = true;
+            this.chkSearchCriteria.Location = new System.Drawing.Point(410, 3);
+            this.chkSearchCriteria.Name = "chkSearchCriteria";
+            this.tableLayoutPanel4.SetRowSpan(this.chkSearchCriteria, 3);
+            this.chkSearchCriteria.Size = new System.Drawing.Size(208, 97);
+            this.chkSearchCriteria.TabIndex = 12;
+            this.chkSearchCriteria.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkSearchCriteria_ItemCheck);
             // 
             // tableLayoutPanel5
             // 
@@ -777,7 +741,7 @@
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 119F));
+            this.tableLayoutPanel7.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel7.Size = new System.Drawing.Size(621, 437);
             this.tableLayoutPanel7.TabIndex = 37;
             // 
@@ -791,7 +755,7 @@
             this.btnNextReport.Location = new System.Drawing.Point(610, 0);
             this.btnNextReport.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.btnNextReport.Name = "btnNextReport";
-            this.btnNextReport.Size = new System.Drawing.Size(8, 318);
+            this.btnNextReport.Size = new System.Drawing.Size(8, 399);
             this.btnNextReport.TabIndex = 38;
             this.btnNextReport.UseVisualStyleBackColor = false;
             this.btnNextReport.Click += new System.EventHandler(this.BtnNextReport_Click);
@@ -806,7 +770,7 @@
             this.btnPreviousReport.Location = new System.Drawing.Point(3, 0);
             this.btnPreviousReport.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.btnPreviousReport.Name = "btnPreviousReport";
-            this.btnPreviousReport.Size = new System.Drawing.Size(8, 318);
+            this.btnPreviousReport.Size = new System.Drawing.Size(8, 399);
             this.btnPreviousReport.TabIndex = 38;
             this.btnPreviousReport.UseVisualStyleBackColor = false;
             this.btnPreviousReport.Click += new System.EventHandler(this.BtnPreviousReport_Click);
@@ -817,14 +781,12 @@
             this.tableLayoutPanel7.SetColumnSpan(this.flowLayoutPanel1, 3);
             this.flowLayoutPanel1.Controls.Add(this.btnExportExcel);
             this.flowLayoutPanel1.Controls.Add(this.btnExportTXT);
-            this.flowLayoutPanel1.Controls.Add(this.chkSearchAllAuthors);
-            this.flowLayoutPanel1.Controls.Add(this.chkPhanTrang);
-            this.flowLayoutPanel1.Controls.Add(this.chkSearchAllWeeks);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 318);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 399);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(564, 94);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(621, 38);
             this.flowLayoutPanel1.TabIndex = 37;
             // 
             // btnExportTXT
@@ -833,7 +795,7 @@
             this.btnExportTXT.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportTXT.FlatAppearance.BorderSize = 0;
             this.btnExportTXT.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportTXT.Location = new System.Drawing.Point(212, 0);
+            this.btnExportTXT.Location = new System.Drawing.Point(269, 0);
             this.btnExportTXT.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
             this.btnExportTXT.Name = "btnExportTXT";
             this.btnExportTXT.Size = new System.Drawing.Size(177, 37);
@@ -1047,7 +1009,6 @@
             this.tableLayoutPanel5.ResumeLayout(false);
             this.tableLayoutPanel7.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
             this.searchPanel.ResumeLayout(false);
             this.searchPanel.PerformLayout();
             this.tableLayoutPanel6.ResumeLayout(false);
@@ -1123,16 +1084,13 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox cboSearchByWeek;
-        private System.Windows.Forms.CheckBox chkSearchAllWeeks;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.ComboBox cboSearchByAuthor;
-        private System.Windows.Forms.CheckBox chkPhanTrang;
         private System.Windows.Forms.Button btnExportTXT;
         private System.Windows.Forms.ComboBox cboConfigFiles;
         private System.Windows.Forms.ComboBox cboAuthorCommit;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
-        private System.Windows.Forms.CheckBox chkSearchAllAuthors;
         private System.Windows.Forms.CheckBox chkDeleteAllProject;
-        private System.Windows.Forms.CheckedListBox clbSearchCriteria;
+        private System.Windows.Forms.CheckedListBox chkSearchCriteria;
     }
 }
