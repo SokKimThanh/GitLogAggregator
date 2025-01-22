@@ -65,7 +65,6 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnCreateWeek = new System.Windows.Forms.Button();
             this.chkConfirmInternshipDate = new System.Windows.Forms.CheckBox();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnSaveGit = new System.Windows.Forms.Button();
             this.btnRemoveAll = new System.Windows.Forms.Button();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
@@ -108,7 +107,6 @@
             this.tableLayoutPanel9.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.btnSetupThuMucThucTap)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel8.SuspendLayout();
             this.tableLayoutPanel4.SuspendLayout();
@@ -194,9 +192,9 @@
             this.columnHeader1});
             this.weekListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.weekListView.HideSelection = false;
-            this.weekListView.Location = new System.Drawing.Point(3, 47);
+            this.weekListView.Location = new System.Drawing.Point(3, 50);
             this.weekListView.Name = "weekListView";
-            this.weekListView.Size = new System.Drawing.Size(115, 310);
+            this.weekListView.Size = new System.Drawing.Size(120, 307);
             this.weekListView.TabIndex = 12;
             this.weekListView.UseCompatibleStateImageBehavior = false;
             this.weekListView.View = System.Windows.Forms.View.Details;
@@ -261,9 +259,9 @@
             this.columnHeader5});
             this.fileListView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fileListView.HideSelection = false;
-            this.fileListView.Location = new System.Drawing.Point(124, 47);
+            this.fileListView.Location = new System.Drawing.Point(129, 50);
             this.fileListView.Name = "fileListView";
-            this.fileListView.Size = new System.Drawing.Size(254, 310);
+            this.fileListView.Size = new System.Drawing.Size(249, 307);
             this.fileListView.TabIndex = 12;
             this.fileListView.UseCompatibleStateImageBehavior = false;
             this.fileListView.View = System.Windows.Forms.View.Details;
@@ -521,13 +519,15 @@
             // btnCreateWeek
             // 
             this.btnCreateWeek.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(224)))), ((int)(((byte)(192)))));
+            this.btnCreateWeek.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnCreateWeek.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnCreateWeek.FlatAppearance.BorderSize = 0;
             this.btnCreateWeek.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCreateWeek.ImageKey = "plus.png";
-            this.btnCreateWeek.Location = new System.Drawing.Point(129, 73);
+            this.btnCreateWeek.Location = new System.Drawing.Point(127, 71);
+            this.btnCreateWeek.Margin = new System.Windows.Forms.Padding(1);
             this.btnCreateWeek.Name = "btnCreateWeek";
-            this.btnCreateWeek.Size = new System.Drawing.Size(120, 31);
+            this.btnCreateWeek.Size = new System.Drawing.Size(124, 35);
             this.btnCreateWeek.TabIndex = 25;
             this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;
@@ -546,27 +546,17 @@
             this.chkConfirmInternshipDate.UseVisualStyleBackColor = true;
             this.chkConfirmInternshipDate.CheckedChanged += new System.EventHandler(this.chkConfirmInternshipDate_CheckedChanged);
             // 
-            // flowLayoutPanel2
-            // 
-            this.flowLayoutPanel2.Controls.Add(this.btnSaveGit);
-            this.flowLayoutPanel2.Controls.Add(this.btnRemoveAll);
-            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(254, 38);
-            this.flowLayoutPanel2.TabIndex = 27;
-            // 
             // btnSaveGit
             // 
             this.btnSaveGit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.btnSaveGit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSaveGit.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnSaveGit.FlatAppearance.BorderSize = 0;
             this.btnSaveGit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSaveGit.Location = new System.Drawing.Point(129, 1);
+            this.btnSaveGit.Location = new System.Drawing.Point(128, 1);
             this.btnSaveGit.Margin = new System.Windows.Forms.Padding(1);
             this.btnSaveGit.Name = "btnSaveGit";
-            this.btnSaveGit.Size = new System.Drawing.Size(124, 39);
+            this.btnSaveGit.Size = new System.Drawing.Size(126, 45);
             this.btnSaveGit.TabIndex = 25;
             this.btnSaveGit.Text = "Tải Commit";
             this.btnSaveGit.UseVisualStyleBackColor = false;
@@ -575,13 +565,14 @@
             // btnRemoveAll
             // 
             this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnRemoveAll.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnRemoveAll.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnRemoveAll.FlatAppearance.BorderSize = 0;
             this.btnRemoveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemoveAll.Location = new System.Drawing.Point(9, 1);
+            this.btnRemoveAll.Location = new System.Drawing.Point(1, 1);
             this.btnRemoveAll.Margin = new System.Windows.Forms.Padding(1);
             this.btnRemoveAll.Name = "btnRemoveAll";
-            this.btnRemoveAll.Size = new System.Drawing.Size(118, 39);
+            this.btnRemoveAll.Size = new System.Drawing.Size(125, 45);
             this.btnRemoveAll.TabIndex = 25;
             this.btnRemoveAll.Text = "Xóa tất cả";
             this.btnRemoveAll.UseVisualStyleBackColor = false;
@@ -590,19 +581,19 @@
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.89189F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.10811F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.07087F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 66.92913F));
             this.tableLayoutPanel3.Controls.Add(this.weekListView, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.fileListView, 1, 1);
-            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel8, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.chkDeleteAllProject, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel8, 1, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 210);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.mainGitPanel.SetRowSpan(this.tableLayoutPanel3, 2);
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 44F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 47F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(381, 360);
@@ -610,15 +601,19 @@
             // 
             // tableLayoutPanel8
             // 
-            this.tableLayoutPanel8.ColumnCount = 1;
+            this.tableLayoutPanel8.ColumnCount = 2;
             this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 5.333333F));
-            this.tableLayoutPanel8.Controls.Add(this.flowLayoutPanel2, 0, 0);
-            this.tableLayoutPanel8.Location = new System.Drawing.Point(124, 3);
+            this.tableLayoutPanel8.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 128F));
+            this.tableLayoutPanel8.Controls.Add(this.btnSaveGit, 1, 0);
+            this.tableLayoutPanel8.Controls.Add(this.btnRemoveAll, 0, 0);
+            this.tableLayoutPanel8.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel8.Location = new System.Drawing.Point(126, 0);
+            this.tableLayoutPanel8.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(254, 38);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(255, 47);
             this.tableLayoutPanel8.TabIndex = 13;
             // 
             // chkDeleteAllProject
@@ -627,7 +622,7 @@
             this.chkDeleteAllProject.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chkDeleteAllProject.Location = new System.Drawing.Point(3, 3);
             this.chkDeleteAllProject.Name = "chkDeleteAllProject";
-            this.chkDeleteAllProject.Size = new System.Drawing.Size(115, 38);
+            this.chkDeleteAllProject.Size = new System.Drawing.Size(120, 41);
             this.chkDeleteAllProject.TabIndex = 14;
             this.chkDeleteAllProject.Text = "Xóa All dự án";
             this.chkDeleteAllProject.UseVisualStyleBackColor = true;
@@ -1041,7 +1036,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.btnSetupThuMucThucTap)).EndInit();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel8.ResumeLayout(false);
@@ -1127,7 +1121,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox cboSearchByWeek;
         private System.Windows.Forms.CheckBox chkSearchAllWeeks;
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.ComboBox cboSearchByAuthor;
         private System.Windows.Forms.CheckBox chkPhanTrang;

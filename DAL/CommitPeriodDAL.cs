@@ -22,8 +22,8 @@ namespace DAL
                                 PeriodID = c.PeriodID,
                                 PeriodName = c.PeriodName,
                                 PeriodDuration = c.PeriodDuration,
-                                PeriodStartTime = c.PeriodStartDate,
-                                PeriodEndTime = c.PeriodEndDate,
+                                PeriodStartTime = c.PeriodStartTime,
+                                PeriodEndTime = c.PeriodEndTime,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -47,8 +47,8 @@ namespace DAL
                                 PeriodID = c.PeriodID,
                                 PeriodName = c.PeriodName,
                                 PeriodDuration = c.PeriodDuration,
-                                PeriodStartTime = c.PeriodStartDate,
-                                PeriodEndTime = c.PeriodEndDate,
+                                PeriodStartTime = c.PeriodStartTime,
+                                PeriodEndTime = c.PeriodEndTime,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -75,8 +75,8 @@ namespace DAL
                                 PeriodID = c.PeriodID,
                                 PeriodName = c.PeriodName,
                                 PeriodDuration = c.PeriodDuration,
-                                PeriodStartTime = c.PeriodStartDate,
-                                PeriodEndTime = c.PeriodEndDate,
+                                PeriodStartTime = c.PeriodStartTime,
+                                PeriodEndTime = c.PeriodEndTime,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -96,8 +96,8 @@ namespace DAL
                 {
                     PeriodName = et.PeriodName,
                     PeriodDuration = et.PeriodDuration,
-                    PeriodStartDate = et.PeriodStartTime,
-                    PeriodEndDate = et.PeriodEndTime,
+                    PeriodStartTime = et.PeriodStartTime,
+                    PeriodEndTime = et.PeriodEndTime,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
@@ -123,8 +123,8 @@ namespace DAL
 
                 entity.PeriodName = et.PeriodName;
                 entity.PeriodDuration = et.PeriodDuration;
-                entity.PeriodStartDate = et.PeriodStartTime;
-                entity.PeriodEndDate = et.PeriodEndTime;
+                entity.PeriodStartTime = et.PeriodStartTime;
+                entity.PeriodEndTime = et.PeriodEndTime;
                 entity.UpdatedAt = DateTime.Now;
 
                 db.SubmitChanges();

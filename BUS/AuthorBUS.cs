@@ -18,7 +18,7 @@ namespace BUS
             return authorDAL.GetAll();
         }
 
-        // Lấy tác giả theo ID
+        // Lấy tác giả theo ChatbotSummaryID
         public AuthorET GetByID(int authorID)
         {
             return authorDAL.GetByID(authorID);

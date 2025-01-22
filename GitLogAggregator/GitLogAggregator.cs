@@ -545,16 +545,16 @@ namespace GitLogAggregator
                                 AuthorID = author.AuthorID
                             });
 
-                            AppendTextWithScroll($"Đã thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ID: {author.AuthorID}).\n");
+                            AppendTextWithScroll($"Đã thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ChatbotSummaryID: {author.AuthorID}).\n");
                         }
                         else
                         {
-                            AppendTextWithScroll($"Mối quan hệ giữa dự án và tác giả {author.AuthorName} (ID: {author.AuthorID}) đã tồn tại.\n");
+                            AppendTextWithScroll($"Mối quan hệ giữa dự án và tác giả {author.AuthorName} (ChatbotSummaryID: {author.AuthorID}) đã tồn tại.\n");
                         }
                     }
                     catch (Exception ex)
                     {
-                        AppendTextWithScroll($"Lỗi khi thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ID: {author.AuthorID}): {ex.Message}\n");
+                        AppendTextWithScroll($"Lỗi khi thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ChatbotSummaryID: {author.AuthorID}): {ex.Message}\n");
                     }
                 }
 
@@ -904,7 +904,7 @@ namespace GitLogAggregator
                 // Làm mới combobox thư mục thực tập
                 cboInternshipFolder.DataSource = null;
                 cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
-                cboInternshipFolder.ValueMember = "ID";
+                cboInternshipFolder.ValueMember = "ChatbotSummaryID";
                 cboInternshipFolder.DisplayMember = "InternshipWeekFolder";
                 AppendTextWithScroll("Danh sách thư mục thực tập đã được làm mới.\n");
 
@@ -1419,7 +1419,7 @@ namespace GitLogAggregator
 
                     // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
                     cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
-                    cboInternshipFolder.ValueMember = "ID"; // Thiết lập trường sẽ làm giá trị
+                    cboInternshipFolder.ValueMember = "ChatbotSummaryID"; // Thiết lập trường sẽ làm giá trị
                     cboInternshipFolder.DisplayMember = "InternshipWeekFolder"; // Thiết lập trường sẽ hiển thị trên combobox
 
                     // Lấy đường dẫn thư mục thực tập đã được chọn hoặc mặc định nếu không có
@@ -1647,8 +1647,8 @@ git %*
                         TimeSpan commitTime = commit.CommitDate.TimeOfDay;
                         // 2. Tìm period phù hợp dựa trên thời gian commit
                         var commitPeriod = commitPeriodBUS.GetAll()
-                            .FirstOrDefault(p => commitTime >= p.PeriodStartTime.TimeOfDay
-                                              && commitTime <= p.PeriodEndTime.TimeOfDay);
+                            .FirstOrDefault(p => commitTime >= p.PeriodStartTime
+                                              && commitTime <= p.PeriodEndTime);
 
                         if (commitPeriod == null)
                         {
@@ -1662,7 +1662,7 @@ git %*
 
                         if (!isDuplicate)
                         {
-                        // 4. Thêm commit vào CommitGroupMembers
+                            // 4. Thêm commit vào CommitGroupMembers
                             var commitGroupMember = new CommitGroupMemberET
                             {
                                 PeriodID = commitPeriod.PeriodID,
@@ -2109,37 +2109,43 @@ git %*
                 return;
             }
 
-            // Kiểm tra dữ liệu đã tồn tại
+            // Kiểm tra ProjectWeek đã tồn tại trong khoảng thời gian thực tập
             var existingProjectWeeks = projectWeeksBUS.GetAll()
                 .Where(w => w.WeekStartDate >= internshipStartDate && w.WeekEndDate <= internshipEndDate)
                 .ToList();
-            if (existingProjectWeeks.Count > 0)
-            {
-                AppendTextWithScroll("Đã có dữ liệu ProjectWeek trong khoảng thời gian thực tập, không cần tạo thêm.\n");
-                return;
-            }
 
-            // Tạo các tuần thực tập
-            for (int weekOffset = 0; weekOffset < weeks; weekOffset++)
+            // Chỉ tạo ProjectWeek nếu CHƯA tồn tại
+            if (existingProjectWeeks.Count == 0)
             {
-                DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
-                DateTime weekEndDate = weekStartDate.AddDays(6);
-                string projectWeekName = $"Tuần {weekOffset + 1}";
-
-                var projectWeek = new ProjectWeekET
+                // Tạo ProjectWeek
+                for (int weekOffset = 0; weekOffset < weeks; weekOffset++)
                 {
-                    InternshipDirectoryId = internshipDirectoryId,
-                    ProjectWeekName = projectWeekName,
-                    WeekStartDate = weekStartDate.Date,
-                    WeekEndDate = weekEndDate.Date,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                };
-                projectWeeksBUS.Add(projectWeek);
+                    DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
+                    DateTime weekEndDate = weekStartDate.AddDays(6);
+                    string projectWeekName = $"Tuần {weekOffset + 1}";
+
+                    var projectWeek = new ProjectWeekET
+                    {
+                        InternshipDirectoryId = internshipDirectoryId,
+                        ProjectWeekName = projectWeekName,
+                        WeekStartDate = weekStartDate.Date,
+                        WeekEndDate = weekEndDate.Date,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                    };
+                    projectWeeksBUS.Add(projectWeek);
+                }
+                AppendTextWithScroll("Tạo xong ProjectWeek.\n");
+            }
+            else
+            {
+                AppendTextWithScroll("Đã có dữ liệu ProjectWeek, không tạo mới.\n");
             }
 
-            // Tạo các buổi (CommitPeriods) nếu chưa tồn tại
+            // Kiểm tra CommitPeriod đã tồn tại
             var existingCommitPeriods = commitPeriodBUS.GetAll();
+
+            // Chỉ tạo CommitPeriod nếu CHƯA tồn tại
             if (existingCommitPeriods.Count == 0)
             {
                 string[] periods = { "Sáng", "Chiều", "Tối" };
@@ -2149,6 +2155,7 @@ git %*
                     var commitPeriod = new CommitPeriodET
                     {
                         PeriodName = $"Buổi {period.ToLower()}",
+                        PeriodDuration = $"{since} - {until}",
                         PeriodStartTime = TimeSpan.Parse(since),
                         PeriodEndTime = TimeSpan.Parse(until),
                         CreatedAt = DateTime.Now,
@@ -2156,6 +2163,11 @@ git %*
                     };
                     commitPeriodBUS.Add(commitPeriod);
                 }
+                AppendTextWithScroll("Tạo xong CommitPeriod.\n");
+            }
+            else
+            {
+                AppendTextWithScroll("Đã có dữ liệu CommitPeriod, không tạo mới.\n");
             }
 
             AppendTextWithScroll("Tạo xong ProjectWeek và CommitPeriod.\n");
@@ -2309,7 +2321,7 @@ git %*
             // Gán danh sách tác giả vào ComboBox (sử dụng DataSource)
             cboSearchByAuthor.DataSource = authors; // <-- Sửa ở đây
             cboSearchByAuthor.DisplayMember = "AuthorName"; // Hiển thị tên
-            cboSearchByAuthor.ValueMember = "AuthorID"; // Giá trị thực là ID
+            cboSearchByAuthor.ValueMember = "AuthorID"; // Giá trị thực là ChatbotSummaryID
 
             // Đồng bộ với cboAuthorCommit (nếu cần)
             cboAuthorCommit.DataSource = authors;

@@ -197,7 +197,7 @@ CREATE TABLE CommitPeriods (
     PeriodName NVARCHAR(255) NOT NULL,
     PeriodDuration NVARCHAR(50) NOT NULL,
     PeriodStartTime TIME NOT NULL, -- Ví dụ: '08:00:00'
-    PeriodEndTime TIME NOT NULL    -- Ví dụ: '12:00:00'
+    PeriodEndTime TIME NOT NULL,    -- Ví dụ: '12:00:00'
     CreatedAt DATETIME,
     UpdatedAt DATETIME
 );
@@ -233,7 +233,7 @@ GO
 
 -- Thêm khóa chính cho bảng ChatbotSummary
 ALTER TABLE ChatbotSummary
-ADD CONSTRAINT PK_ChatbotSummary PRIMARY KEY (ID);
+ADD CONSTRAINT PK_ChatbotSummary PRIMARY KEY (ChatbotSummaryID);
 GO
   
 -- Thêm ràng buộc giá trị mặc định cho CreatedAt và UpdatedAt
@@ -256,7 +256,7 @@ GO
 
 -- Thêm khóa chính phức hợp cho bảng CommitGroupMembers
 ALTER TABLE CommitGroupMembers
-ADD CONSTRAINT PK_CommitGroupMembers PRIMARY KEY (PeriodID, CommitId, ChatbotSummaryID);
+ADD CONSTRAINT PK_CommitGroupMembers PRIMARY KEY (PeriodID, CommitId);
 GO
 
 -- Thêm khóa ngoại liên kết đến bảng CommitPeriods

@@ -24,7 +24,7 @@ namespace DAL
             }).ToList();
         }
 
-        // Lấy tác giả theo ID
+        // Lấy tác giả theo ChatbotSummaryID
         public AuthorET GetByID(int authorID)
         {
             return db.Authors.Where(a => a.AuthorID == authorID)

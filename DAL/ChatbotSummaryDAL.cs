@@ -19,8 +19,7 @@ namespace DAL
                             orderby c.CreatedAt descending
                             select new ChatbotSummaryET
                             {
-                                ID = c.ID,
-                                PeriodID = c.PeriodID,
+                                ChatbotSummaryID = c.ChatbotSummaryID,
                                 Attendance = c.Attendance,
                                 AssignedTasks = c.AssignedTasks,
                                 ContentResults = c.ContentResults,
@@ -38,16 +37,15 @@ namespace DAL
             }
         }
 
-        public ChatbotSummaryET GetByID(int id)
+        public ChatbotSummaryET GetByID(int chatbotSummaryID)
         {
             try
             {
                 var query = from c in db.ChatbotSummaries
-                            where c.ID == id
+                            where c.ChatbotSummaryID == chatbotSummaryID
                             select new ChatbotSummaryET
                             {
-                                ID = c.ID,
-                                PeriodID = c.PeriodID,
+                                ChatbotSummaryID = c.ChatbotSummaryID,
                                 Attendance = c.Attendance,
                                 AssignedTasks = c.AssignedTasks,
                                 ContentResults = c.ContentResults,
@@ -71,7 +69,6 @@ namespace DAL
             {
                 var entity = new ChatbotSummary
                 {
-                    PeriodID = et.PeriodID,
                     Attendance = et.Attendance,
                     AssignedTasks = et.AssignedTasks,
                     ContentResults = et.ContentResults,
@@ -94,13 +91,12 @@ namespace DAL
             try
             {
                 var query = from c in db.ChatbotSummaries
-                            where c.ID == et.ID
+                            where c.ChatbotSummaryID == et.ChatbotSummaryID
                             select c;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                entity.PeriodID = et.PeriodID;
                 entity.Attendance = et.Attendance;
                 entity.AssignedTasks = et.AssignedTasks;
                 entity.ContentResults = et.ContentResults;
@@ -116,12 +112,12 @@ namespace DAL
             }
         }
 
-        public void Delete(int id)
+        public void Delete(int chatbotSummaryID)
         {
             try
             {
                 var query = from c in db.ChatbotSummaries
-                            where c.ID == id
+                            where c.ChatbotSummaryID == chatbotSummaryID
                             select c;
 
                 var entity = query.SingleOrDefault();

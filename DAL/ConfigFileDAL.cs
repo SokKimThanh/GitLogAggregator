@@ -34,7 +34,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetAll: " + ex.Message);
+                throw new Exception("Error in GetAll ConfigFileDAL: " + ex.Message);
             }
         }
 
@@ -117,7 +117,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetAuthorByConfig: " + ex.Message);
+                throw new Exception("Error in GetAuthorByConfig ConfigFileDAL: " + ex.Message);
             }
         }
 
@@ -143,7 +143,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in Add: " + ex.Message);
+                throw new Exception("Error in Add ConfigFileDAL: " + ex.Message);
             }
         }
 
@@ -171,7 +171,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in Update: " + ex.Message);
+                throw new Exception("Error in Update ConfigFileDAL: " + ex.Message);
             }
         }
 
@@ -191,7 +191,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in Delete: " + ex.Message);
+                throw new Exception("Error in Delete ConfigFileDAL: " + ex.Message);
             }
         }
 
