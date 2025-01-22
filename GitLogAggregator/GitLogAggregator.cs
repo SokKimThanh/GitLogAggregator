@@ -483,16 +483,16 @@ namespace GitLogAggregator
                                 AuthorID = author.AuthorID
                             });
 
-                            AppendTextWithScroll($"Đã thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ChatbotSummaryID: {author.AuthorID}).\n");
+                            AppendTextWithScroll($"Đã thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (AuthorID: {author.AuthorID}).\n");
                         }
                         else
                         {
-                            AppendTextWithScroll($"Mối quan hệ giữa dự án và tác giả {author.AuthorName} (ChatbotSummaryID: {author.AuthorID}) đã tồn tại.\n");
+                            AppendTextWithScroll($"Mối quan hệ giữa dự án và tác giả {author.AuthorName} (AuthorID: {author.AuthorID}) đã tồn tại.\n");
                         }
                     }
                     catch (Exception ex)
                     {
-                        AppendTextWithScroll($"Lỗi khi thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (ChatbotSummaryID: {author.AuthorID}): {ex.Message}\n");
+                        AppendTextWithScroll($"Lỗi khi thêm mối quan hệ giữa dự án và tác giả {author.AuthorName} (AuthorID: {author.AuthorID}): {ex.Message}\n");
                     }
                 }
 
