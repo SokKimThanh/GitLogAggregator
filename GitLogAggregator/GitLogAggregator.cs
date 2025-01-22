@@ -2211,10 +2211,6 @@ git %*
                 bool isChecked = (e.NewValue == CheckState.Checked);
                 SearchCriteria criteria = (SearchCriteria)e.Index;
 
-                // Lấy index của item được check/uncheck
-                int itemIndex = e.Index;
-
-
                 // Xử lý logic dựa trên item được check
                 switch (criteria)
                 {
@@ -2223,21 +2219,35 @@ git %*
                         EnablePagination(isChecked);
                         UpdateCheckedItemText(criteria, isChecked);
                         break;
+
                     case SearchCriteria.chkSearchAllWeeks:
                         // Khóa/Mở khóa ComboBox chọn tuần
                         cboSearchByWeek.Enabled = !isChecked;
-                        cboSearchByWeek.SelectedIndex = 0;
+                        if (!isChecked && cboSearchByWeek.Items.Count > 0)
+                        {
+                            cboSearchByWeek.SelectedIndex = 0;
+                        }
                         UpdateCheckedItemText(criteria, isChecked);
-
                         break;
+
                     case SearchCriteria.chkSearchAllAuthors:
                         // Khóa/Mở khóa ComboBox chọn tác giả
                         cboAuthorCommit.Enabled = !isChecked;
-                        cboAuthorCommit.SelectedIndex = 0;
                         cboSearchByAuthor.Enabled = !isChecked;
-                        cboSearchByAuthor.SelectedIndex = 0;
+                        if (!isChecked)
+                        {
+                            if (cboAuthorCommit.Items.Count > 0)
+                            {
+                                cboAuthorCommit.SelectedIndex = 0;
+                            }
+                            if (cboSearchByAuthor.Items.Count > 0)
+                            {
+                                cboSearchByAuthor.SelectedIndex = 0;
+                            }
+                        }
                         UpdateCheckedItemText(criteria, isChecked);
                         break;
+
                     case SearchCriteria.chkIsSimpleView:
                         // Cập nhật trạng thái hiển thị
                         UpdateCheckedItemText(criteria, isChecked);
@@ -2248,6 +2258,7 @@ git %*
                 SearchCommitsAndUpdateUI();
             });
         }
+
         // Cập nhật text của item dựa trên trạng thái
         private void UpdateCheckedItemText(SearchCriteria criteria, bool isChecked)
         {
