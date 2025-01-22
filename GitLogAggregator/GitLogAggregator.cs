@@ -614,8 +614,6 @@ namespace GitLogAggregator
                     // Hiển thị dữ liệu thư mục và commit
                     BuildWeekFileListView(txtFolderInternshipPath);
                 }
-
-                AppendTextWithScroll("Đã tổng hợp tất cả commit từ tất cả các dự án.\n");
             }
             catch (Exception ex)
             {
@@ -688,7 +686,6 @@ namespace GitLogAggregator
                     // Tạo thư mục theo tuần > Thứ > Buổi
                     var iswf = internshipDirectoryBUS.GetByID(configFile.InternshipDirectoryId);
                     var internshipWeekFolder = iswf.InternshipWeekFolder;
-                    var internshipStartDate = configFile.InternshipStartDate;
 
                     bool isAggregatedSuccessfully = false;
 
@@ -713,6 +710,7 @@ namespace GitLogAggregator
                             int currentWeek = weeks.IndexOf(week) + 1;
                             string weekFolder = Path.Combine(internshipWeekFolder, $"Week_{currentWeek}");
                             string combinedFile = Path.Combine(combinedFolder, $"combined_week_{currentWeek}.txt");
+
                             bool hasCommitsInWeek = false;
 
                             // Tạo thư mục tuần nếu chưa tồn tại
@@ -741,6 +739,7 @@ namespace GitLogAggregator
                                 {
                                     var periodAbb = GetPeriodAbbreviation(period);
                                     string dailyFile = Path.Combine(dayFolder, $"{currentDate:yyyy-MM-dd}_{periodAbb}_commits.txt");
+
                                     var periodCommits = weekCommits
                                         .Where(c => c.Date == currentDate.Date && c.Period == periodAbb)
                                         .ToList();
@@ -779,18 +778,24 @@ namespace GitLogAggregator
                     }
                     finally
                     {
-                        if (isAggregatedSuccessfully)
+                        // Kiểm tra trạng thái các file tổng hợp
+                        bool hasGeneratedFiles = Directory.EnumerateFiles(internshipWeekFolder, "*.txt", SearchOption.AllDirectories)
+                            .Any(file => new FileInfo(file).Length > 0);
+
+                        if (hasGeneratedFiles)
                         {
                             AppendTextWithScroll($"Đã tổng hợp commit cho dự án: {projectDirectory}.\n");
                         }
                         else
                         {
-                            AppendTextWithScroll($"Không có commit nào được tổng hợp cho dự án: {projectDirectory}.\n");
+                            AppendTextWithScroll($"Không có commit nào được tổng hợp hoặc không có file nào được tạo cho dự án: {projectDirectory}.\n");
                         }
                     }
                 }
             }
         }
+
+
 
 
 
