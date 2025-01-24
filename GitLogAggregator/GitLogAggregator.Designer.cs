@@ -600,13 +600,14 @@
             // chkDeleteAllProject
             // 
             this.chkDeleteAllProject.AutoSize = true;
+            this.chkDeleteAllProject.BackColor = System.Drawing.Color.Transparent;
             this.chkDeleteAllProject.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chkDeleteAllProject.Location = new System.Drawing.Point(3, 3);
             this.chkDeleteAllProject.Name = "chkDeleteAllProject";
             this.chkDeleteAllProject.Size = new System.Drawing.Size(120, 41);
             this.chkDeleteAllProject.TabIndex = 14;
             this.chkDeleteAllProject.Text = "Xóa All dự án";
-            this.chkDeleteAllProject.UseVisualStyleBackColor = true;
+            this.chkDeleteAllProject.UseVisualStyleBackColor = false;
             this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.chkDeleteAllProject_CheckedChanged);
             // 
             // tableLayoutPanel8
@@ -978,6 +979,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
+            this.BackgroundImage = global::GitLogAggregator.Properties.Resources.git_aggregation_logo;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1002, 711);
             this.Controls.Add(this.mainGitPanel);

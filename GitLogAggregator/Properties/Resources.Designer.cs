@@ -73,6 +73,16 @@ namespace GitLogAggregator.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap git_aggregation_logo {
+            get {
+                object obj = ResourceManager.GetObject("git-aggregation-logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Git_commit_aggregation_tool {
             get {
                 object obj = ResourceManager.GetObject("Git-commit-aggregation-tool", resourceCulture);
