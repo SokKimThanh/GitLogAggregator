@@ -34,43 +34,6 @@ namespace DAL
                 throw new Exception("Error in GetAll ConfigFileDAL: " + ex.Message);
             }
         }
-
-
-        /// <summary>
-        /// Lấy ngày bắt đầu thực tập
-        /// </summary>
-        public DateTime GetInternshipStartDate(int configId)
-        {
-            try
-            {
-                // Nếu configId = 0, trả về null
-                if (configId == 0)
-                {
-                    return DateTime.Now;
-                }
-
-                // Truy vấn để lấy ngày bắt đầu thực tập dựa trên ConfigID cấu hình
-                var internshipStartDate = (from config in db.ConfigFiles
-                                           join internshipDirectory in db.InternshipDirectories
-                                           on config.InternshipDirectoryId equals internshipDirectory.InternshipDirectoryId
-                                           where config.ConfigID == configId
-                                           select internshipDirectory.InternshipStartDate).FirstOrDefault();
-
-                // Kiểm tra nếu internshipStartDate là DateTime.MinValue (01/01/0001)
-                if (internshipStartDate == DateTime.MinValue)
-                {
-                    return DateTime.Now;
-                }
-
-                // Trả về ngày bắt đầu thực tập
-                return internshipStartDate;
-            }
-            catch (Exception ex)
-            {
-                // Xử lý ngoại lệ và thông báo lỗi
-                throw new Exception("Lỗi khi lấy ngày bắt đầu thực tập: " + ex.Message);
-            }
-        }
         public ConfigET GetLastAddedConfigFile()
         {
             // Sử dụng LINQ để lấy đối tượng vừa thêm

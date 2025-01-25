@@ -102,11 +102,7 @@ namespace GitLogAggregator
 
                 // Xây dựng danh sách các tuần và tệp
                 BuildWeekFileListView(txtFolderInternshipPath);
-
-                // Tải ngày bắt đầu thực tập mặc định
-                int configID = (int)cboConfigFiles.SelectedValue;
-                LoadProjectDetails(0);
-
+                 
                 // Tự động điều chỉnh kích thước cột
                 fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
@@ -166,24 +162,7 @@ namespace GitLogAggregator
             {
                 AppendTextWithScroll($"Lỗi: {ex.Message}");
             }
-        }
-
-        private void LoadProjectDetails(int configId)
-        {
-            // Lấy ngày bắt đầu thực tập
-            DateTime? startDate = configBus.GetInternshipStartDate(configId);
-
-            if (startDate == null)
-            {
-                // Hiển thị thông báo nếu không có ngày bắt đầu thực tập
-                MessageBox.Show("Vui lòng chọn ngày bắt đầu thực tập.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                // Thiết lập giá trị cho DateTimePicker
-                txtInternshipStartDate.Value = startDate.Value;
-            }
-        }
+        } 
         private void LoadConfigsIntoCombobox(int configID)
         {
             // Lấy danh sách cấu hình từ BUS
@@ -493,7 +472,7 @@ namespace GitLogAggregator
         /// <param name="configInfo">Đối tượng ConfigFile chứa thông tin cấu hình</param>
         private void UpdateControlInternshipConfig(ConfigET configInfo)
         {
-            var internship = internshipDirectoryBUS.GetByID(configInfo.InternshipDirectoryId);
+            var internship = internshipDirectoryBUS.GetByID((int)cboInternshipFolder.SelectedValue);
 
             txtInternshipStartDate.Value = internship.InternshipStartDate;
             txtInternshipEndDate.Value = internship.InternshipEndDate;
@@ -1306,7 +1285,6 @@ namespace GitLogAggregator
             }
         }
 
-
         private void CboThuMucThucTap_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
@@ -1319,6 +1297,7 @@ namespace GitLogAggregator
                 {
                     internshipId = selectedId;
                 }
+
                 else if (int.TryParse(comboBox.SelectedValue.ToString(), out int parsedId))
                 {
                     internshipId = parsedId;
@@ -1338,17 +1317,11 @@ namespace GitLogAggregator
                     AppendTextWithScroll("Không tìm thấy thư mục thực tập\n");
                     return;
                 }
-
-                // Xử lý config
-                int configId = cboConfigFiles.SelectedValue is int configVal ? configVal : 0;
-                var cet = configBus?.GetByID(configId);
-
                 // Kiểm tra logic nghiệp vụ
                 txtFolderInternshipPath = internship.InternshipWeekFolder;
                 txtInternshipStartDate.Value = internship.InternshipStartDate;
                 txtInternshipEndDate.Value = internship.InternshipEndDate;
                 AppendTextWithScroll($"Đã chọn đường dẫn: {txtFolderInternshipPath}\n");
-
             }
             catch (Exception ex)
             {

@@ -24,10 +24,6 @@ namespace BUS
         {
             return dal.GetLastAddedConfigFile();
         }
-        public DateTime GetInternshipStartDate(int configId)
-        {
-            return dal.GetInternshipStartDate(configId);
-        }
 
         public void Add(ConfigET entity)
         {

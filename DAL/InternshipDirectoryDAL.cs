@@ -3,6 +3,7 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using ET;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Linq;
 using System.Linq;
 public class InternshipDirectoryDAL
@@ -121,27 +122,24 @@ public class InternshipDirectoryDAL
         }
         catch (Exception ex)
         {
-            throw new Exception("Error in Update: " + ex.Message);
+            throw new Exception("Error in Update InternshipDirectoryET: " + ex.Message);
         }
     }
 
     public void Delete(int id)
     {
+        var entity = db.InternshipDirectories
+                     .FirstOrDefault(i => i.InternshipDirectoryId == id)
+                     ?? throw new ArgumentException("ID không tồn tại");
+
         try
         {
-            var query = from i in db.InternshipDirectories
-                        where i.InternshipDirectoryId == id
-                        select i;
-
-            var entity = query.SingleOrDefault();
-            if (entity == null) return;
-
             db.InternshipDirectories.DeleteOnSubmit(entity);
             db.SubmitChanges();
         }
         catch (Exception ex)
         {
-            throw new Exception("Error in Delete: " + ex.Message);
+            throw new DataException("Error in Delete InternshipDirectoryET: ", ex);
         }
     }
     public int GetLatestInternshipDirectoryId()
