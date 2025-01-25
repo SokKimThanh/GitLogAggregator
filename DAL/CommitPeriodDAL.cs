@@ -154,5 +154,29 @@ namespace DAL
                 throw new Exception("Error in Delete CommitPeriodDAL: " + ex.Message);
             }
         }
+        public CommitPeriod GetCommitPeriod(DateTime commitDate)
+        {
+            try
+            {
+                TimeSpan checkTime = commitDate.TimeOfDay;
+
+                var query = db.CommitPeriods
+                    .Where(p =>
+                        (p.PeriodStartTime <= p.PeriodEndTime &&
+                         checkTime >= p.PeriodStartTime &&
+                         checkTime < p.PeriodEndTime) ||
+                        (p.PeriodStartTime > p.PeriodEndTime &&
+                         (checkTime >= p.PeriodStartTime ||
+                          checkTime < p.PeriodEndTime))
+                    )
+                    .OrderBy(p => p.PeriodStartTime);
+
+                return query.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Không thể lấy thông tin khung giờ", ex);
+            }
+        }
     }
 }

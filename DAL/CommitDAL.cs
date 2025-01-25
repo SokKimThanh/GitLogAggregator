@@ -23,6 +23,7 @@ namespace DAL
                                 CommitHash = c.CommitHash,
                                 CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
+                                ConfigID = c.ConfigID,
                                 AuthorID = c.AuthorID,
                                 WeekId = c.WeekId,
                                 PeriodID = c.PeriodID,
@@ -55,6 +56,7 @@ namespace DAL
                                 CommitHash = c.CommitHash,
                                 CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
+                                ConfigID = c.ConfigID,
                                 AuthorID = c.AuthorID,
                                 WeekId = c.WeekId,
                                 PeriodID = c.PeriodID,
@@ -81,6 +83,7 @@ namespace DAL
                                 CommitHash = c.CommitHash,
                                 CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
+                                ConfigID = c.ConfigID,
                                 AuthorID = c.AuthorID,
                                 WeekId = c.WeekId,
                                 PeriodID = c.PeriodID,
@@ -98,54 +101,39 @@ namespace DAL
         // Thêm commit mới
         public void Add(CommitET c)
         {
-            try
+            // Kiểm tra trùng CommitHash
+            if (db.Commits.Any(x => x.CommitHash == c.CommitHash))
+                throw new Exception("Commit này đã tồn tại");
+
+            // Kiểm tra các ID có tồn tại trong bảng khác không
+            if (!db.ConfigFiles.Any(cf => cf.ConfigID == c.ConfigID))
+                throw new Exception("ConfigID không tồn tại");
+
+            if (!db.Authors.Any(a => a.AuthorID == c.AuthorID))
+                throw new Exception("AuthorID không tồn tại");
+
+            if (!db.Weeks.Any(w => w.WeekId == c.WeekId))
+                throw new Exception("WeekId không tồn tại");
+
+            if (!db.CommitPeriods.Any(p => p.PeriodID == c.PeriodID))
+                throw new Exception("PeriodID không tồn tại");
+
+            // Thêm vào database
+            var newCommit = new Commit
             {
-                // Kiểm tra xem CommitHash đã tồn tại chưa
-                var isDuplicate = db.Commits.Any(x => x.CommitHash == c.CommitHash);
-                if (isDuplicate)
-                {
-                    throw new Exception("Trùng dữ liệu.");
-                }
+                CommitHash = c.CommitHash,
+                CommitMessages = c.CommitMessages,
+                CommitDate = c.CommitDate,
+                ConfigID = c.ConfigID,
+                AuthorID = c.AuthorID,
+                WeekId = c.WeekId,
+                PeriodID = c.PeriodID,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
 
-                // Kiểm tra xem WeekId có tồn tại không
-                var projectWeekExists = db.Weeks.Any(pw => pw.WeekId == c.WeekId);
-                if (!projectWeekExists)
-                {
-                    // Nếu tuần thực tập chưa tồn tại, tạo mới
-                    var newProjectWeek = new Week
-                    {
-                        WeekId = c.WeekId,
-                        WeekName = $"Tuần {c.WeekId}", // Tên tuần mặc định
-                        WeekStartDate = DateTime.Now, // Ngày bắt đầu mặc định
-                        WeekEndDate = DateTime.Now.AddDays(6), // Ngày kết thúc mặc định 
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    };
-
-                    db.Weeks.InsertOnSubmit(newProjectWeek);
-                    db.SubmitChanges();
-                }
-
-                // Thêm commit vào database
-                var entity = new Commit
-                {
-                    CommitHash = c.CommitHash,
-                    CommitMessages = c.CommitMessages,
-                    CommitDate = c.CommitDate,
-                    AuthorID = c.AuthorID,
-                    WeekId = c.WeekId,
-                    PeriodID = c.PeriodID,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                };
-
-                db.Commits.InsertOnSubmit(entity);
-                db.SubmitChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error in Add: " + ex.Message);
-            }
+            db.Commits.InsertOnSubmit(newCommit);
+            db.SubmitChanges();
         }
 
         public void Update(CommitET et)
@@ -162,6 +150,7 @@ namespace DAL
                 entity.CommitHash = et.CommitHash;
                 entity.CommitMessages = et.CommitMessages;
                 entity.CommitDate = et.CommitDate;
+                entity.ConfigID = et.ConfigID;
                 entity.AuthorID = et.AuthorID;
                 entity.WeekId = et.WeekId;
                 entity.PeriodID = et.PeriodID;

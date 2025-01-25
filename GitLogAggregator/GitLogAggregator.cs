@@ -102,7 +102,7 @@ namespace GitLogAggregator
 
                 // Xây dựng danh sách các tuần và tệp
                 BuildWeekFileListView(txtFolderInternshipPath);
-                 
+
                 // Tự động điều chỉnh kích thước cột
                 fileListView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
 
@@ -121,8 +121,8 @@ namespace GitLogAggregator
 
                 // Cập nhật danh sách tuần trên ComboBox
                 cboSearchByWeek.DataSource = projectWeeksBUS.GetAll();
-                cboSearchByWeek.ValueMember = "ProjectWeekId";
-                cboSearchByWeek.DisplayMember = "ProjectWeekName";
+                cboSearchByWeek.ValueMember = "WeekId";
+                cboSearchByWeek.DisplayMember = "WeekName";
 
                 // Danh sách các nút crud và icon tương ứng
                 var buttonsToConfigure = new Dictionary<Button, ButtonImage>
@@ -162,7 +162,7 @@ namespace GitLogAggregator
             {
                 AppendTextWithScroll($"Lỗi: {ex.Message}");
             }
-        } 
+        }
         private void LoadConfigsIntoCombobox(int configID)
         {
             // Lấy danh sách cấu hình từ BUS
@@ -1456,7 +1456,7 @@ git %*
                 // Xác định thư mục dự án Git và chạy lệnh git thông qua file batch để lấy thông tin commit
                 string gitLogCommand = $"log --reverse --pretty=format:\"%H|%s|%ci|%an|%ae\"";
                 string logOutput = RunGitCommandViaBatch(batchFilePath, gitLogCommand, config.ConfigDirectory); // Hàm chạy lệnh git qua batch
-                var commits = ParseGitLog(logOutput); // Process the log output
+                var commits = ParseGitLog(logOutput, config); // Process the log output
 
                 // Lấy danh sách các tuần từ database
                 List<WeekET> weeks = projectWeeksBUS.GetAll();
@@ -1474,10 +1474,7 @@ git %*
 
                         if (existingCommit == null)
                         {
-                            // Xác định period từ giờ commit
-                            string period = DeterminePeriod(commit.CommitDate.Hour);
-
-                            // Tìm ProjectWeekId tương ứng với ngày của commit
+                            // Tìm WeekId tương ứng với ngày của commit
                             var projectWeek = weeks.FirstOrDefault(w =>
                                 commit.CommitDate >= w.WeekStartDate && commit.CommitDate <= w.WeekEndDate);
 
@@ -1486,16 +1483,15 @@ git %*
                                 AppendTextWithScroll($"Không tìm thấy tuần phù hợp cho commit {commit.CommitHash}.\n");
                                 continue;
                             }
-
                             // Tạo thông tin commit để lưu vào DB
                             var commitInfo = new CommitET
                             {
                                 CommitHash = commit.CommitHash,
                                 CommitMessages = commit.CommitMessages,
                                 CommitDate = commit.CommitDate,
-                                Author = commit.Author,
+                                ConfigID = commit.ConfigID,
                                 AuthorID = commit.AuthorID,
-                                WeekId = projectWeek.WeekId, // Gán ProjectWeekId chính xác
+                                WeekId = projectWeek.WeekId, // Gán WeekId chính xác
                                 PeriodID = commit.PeriodID, // Gán PeriodID chính xác
                                 CreatedAt = DateTime.Now,
                                 UpdatedAt = DateTime.Now
@@ -1558,29 +1554,13 @@ git %*
             }
         }
 
-        // Helper method to determine the timePeriod of the day
-        private string DeterminePeriod(int hour)
-        {
-            if (hour >= 6 && hour < 12)
-            {
-                return "S"; // Sáng: 6 giờ đến trước 12 giờ
-            }
-            else if (hour >= 12 && hour < 18)
-            {
-                return "C"; // Chiều: 12 giờ đến trước 18 giờ
-            }
-            else
-            {
-                return "T"; // Tối: 18 giờ đến trước 6 giờ sáng hôm sau
-            }
-        }
-
         // Helper method to parse git log output with encoding handling
-        private List<CommitET> ParseGitLog(string logOutput)
+        private List<CommitET> ParseGitLog(string logOutput, ConfigET config)
         {
             var commits = new List<CommitET>();
-            var lines = logOutput.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries); // Loại bỏ các dòng trống
 
+            var lines = logOutput.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries); // Loại bỏ các dòng trống
+                                                                                                // Xác định period từ giờ commit
             foreach (var line in lines)
             {
                 var parts = line.Split('|');
@@ -1594,15 +1574,18 @@ git %*
                             "yyyy-MM-dd HH:mm:ss zzz", // Định dạng thời gian từ Git
                             CultureInfo.InvariantCulture // Sử dụng CultureInfo mặc định
                         );
-
+                        var period = commitPeriodBUS.GetAll().FirstOrDefault(p => commitDate.TimeOfDay >= p.PeriodStartTime && commitDate.TimeOfDay <= p.PeriodEndTime);
+                        var week = projectWeeksBUS.GetAll().FirstOrDefault(w => commitDate.Date >= w.WeekStartDate.Value.Date && commitDate.Date <= w.WeekEndDate.Value.Date);
                         // Thêm commit vào danh sách
                         commits.Add(new CommitET
                         {
                             CommitHash = parts[0].Trim(),
                             CommitMessages = parts[1].Trim(), // Không cần chuyển đổi encoding nếu đầu vào đã là UTF-8
                             CommitDate = commitDate,
-                            //Author = parts[3].Trim(),
-                            //AuthorEmail = parts[4].Trim(),
+                            ConfigID = config.ConfigID,
+                            WeekId = week.WeekId,
+                            AuthorID = authorBUS.GetByEmail(parts[4].Trim()).AuthorID,
+                            PeriodID = period.PeriodID,
                         });
                     }
                     catch (FormatException ex)
@@ -1942,11 +1925,11 @@ git %*
                 {
                     DateTime weekStartDate = internshipStartDate.AddDays(weekOffset * 7);
                     DateTime weekEndDate = weekStartDate.AddDays(6);
-                    string projectWeekName = $"Tuần {weekOffset + 1}";
+                    string WeekName = $"Tuần {weekOffset + 1}";
 
                     var projectWeek = new WeekET
                     {
-                        WeekName = projectWeekName,
+                        WeekName = WeekName,
                         WeekStartDate = weekStartDate.Date,
                         WeekEndDate = weekEndDate.Date,
                         CreatedAt = DateTime.Now,
@@ -1980,7 +1963,7 @@ git %*
 
             if (existingCommitPeriods.Count == 0)
             {
-                string[] periods = { "Sáng", "Chiều", "Tối" };
+                string[] periods = { "Sáng", "Chiều", "Tối", "Khuya" };
                 foreach (var period in periods)
                 {
                     var (since, until, _) = GetTimeRange(period);
@@ -2038,6 +2021,11 @@ git %*
                 case "Tối":
                     since = "18:00:00";
                     until = "23:59:59";
+                    periodName = "evening";
+                    break;
+                case "Khuya":
+                    since = "00:00:00";
+                    until = "05:59:59";
                     periodName = "evening";
                     break;
                 default:

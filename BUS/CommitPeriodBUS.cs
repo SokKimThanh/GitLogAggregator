@@ -43,6 +43,10 @@ namespace BUS
         {
             return dal.GetLastInserted();
         }
+        public CommitPeriod GetCommitPeriod(DateTime commitDate)
+        {
+            return dal.GetCommitPeriod(commitDate);
+        }
     }
 
 }
