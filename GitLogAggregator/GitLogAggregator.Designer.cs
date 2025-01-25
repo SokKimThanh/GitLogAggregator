@@ -462,7 +462,7 @@
             this.cboConfigFiles.Name = "cboConfigFiles";
             this.cboConfigFiles.Size = new System.Drawing.Size(121, 25);
             this.cboConfigFiles.TabIndex = 26;
-            this.cboConfigFiles.SelectedIndexChanged += new System.EventHandler(this.cboConfigFiles_SelectedIndexChanged);
+            this.cboConfigFiles.SelectedIndexChanged += new System.EventHandler(this.CboConfigFiles_SelectedIndexChanged);
             // 
             // cboAuthorCommit
             // 
@@ -529,7 +529,7 @@
             this.btnCreateWeek.TabIndex = 25;
             this.btnCreateWeek.Text = "Tạo tuần";
             this.btnCreateWeek.UseVisualStyleBackColor = false;
-            this.btnCreateWeek.Click += new System.EventHandler(this.btnCreateWeekAndPeriod_Click);
+            this.btnCreateWeek.Click += new System.EventHandler(this.BtnCreateWeekAndPeriod_Click);
             // 
             // chkConfirmInternshipDate
             // 
@@ -542,7 +542,7 @@
             this.chkConfirmInternshipDate.TabIndex = 26;
             this.chkConfirmInternshipDate.Text = "Xác nhậnDateTT";
             this.chkConfirmInternshipDate.UseVisualStyleBackColor = true;
-            this.chkConfirmInternshipDate.CheckedChanged += new System.EventHandler(this.chkConfirmInternshipDate_CheckedChanged);
+            this.chkConfirmInternshipDate.CheckedChanged += new System.EventHandler(this.ChkConfirmInternshipDate_CheckedChanged);
             // 
             // btnSaveGit
             // 
@@ -574,7 +574,7 @@
             this.btnRemoveAll.TabIndex = 25;
             this.btnRemoveAll.Text = "Xóa tất cả";
             this.btnRemoveAll.UseVisualStyleBackColor = false;
-            this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
+            this.btnRemoveAll.Click += new System.EventHandler(this.BtnRemoveAll_Click);
             // 
             // tableLayoutPanel3
             // 
@@ -608,7 +608,7 @@
             this.chkDeleteAllProject.TabIndex = 14;
             this.chkDeleteAllProject.Text = "Xóa All dự án";
             this.chkDeleteAllProject.UseVisualStyleBackColor = false;
-            this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.chkDeleteAllProject_CheckedChanged);
+            this.chkDeleteAllProject.CheckedChanged += new System.EventHandler(this.ChkDeleteAllProject_CheckedChanged);
             // 
             // tableLayoutPanel8
             // 
@@ -671,7 +671,7 @@
             this.cboSearchByWeek.Name = "cboSearchByWeek";
             this.cboSearchByWeek.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByWeek.TabIndex = 9;
-            this.cboSearchByWeek.SelectedIndexChanged += new System.EventHandler(this.cboSearchByWeek_SelectedIndexChanged);
+            this.cboSearchByWeek.SelectedIndexChanged += new System.EventHandler(this.CboSearchByWeek_SelectedIndexChanged);
             // 
             // label12
             // 
@@ -694,7 +694,7 @@
             this.cboSearchByAuthor.Name = "cboSearchByAuthor";
             this.cboSearchByAuthor.Size = new System.Drawing.Size(247, 25);
             this.cboSearchByAuthor.TabIndex = 11;
-            this.cboSearchByAuthor.SelectedIndexChanged += new System.EventHandler(this.cboSearchByAuthor_SelectedIndexChanged);
+            this.cboSearchByAuthor.SelectedIndexChanged += new System.EventHandler(this.CboSearchByAuthor_SelectedIndexChanged);
             // 
             // chkSearchCriteria
             // 
@@ -705,7 +705,7 @@
             this.tableLayoutPanel4.SetRowSpan(this.chkSearchCriteria, 3);
             this.chkSearchCriteria.Size = new System.Drawing.Size(208, 97);
             this.chkSearchCriteria.TabIndex = 12;
-            this.chkSearchCriteria.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkSearchCriteria_ItemCheck);
+            this.chkSearchCriteria.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.ChkSearchCriteria_ItemCheck);
             // 
             // tableLayoutPanel5
             // 
@@ -828,7 +828,7 @@
             this.txtSearchReport.Name = "txtSearchReport";
             this.txtSearchReport.Size = new System.Drawing.Size(517, 25);
             this.txtSearchReport.TabIndex = 33;
-            this.txtSearchReport.TextChanged += new System.EventHandler(this.txtSearchReport_TextChanged);
+            this.txtSearchReport.TextChanged += new System.EventHandler(this.TxtSearchReport_TextChanged);
             // 
             // btnSearchReport
             // 

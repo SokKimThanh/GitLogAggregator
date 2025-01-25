@@ -41,10 +41,15 @@ namespace BUS
         {
             return dal.GetLastInserted();
         }
-         
+
         public void Dispose()
         {
             dal.Dispose();
+        }
+
+        public List<CommitET> GetByWeekId(int weekId)
+        {
+            return dal.GetByWeekId(weekId);
         }
     }
 }

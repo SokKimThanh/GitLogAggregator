@@ -183,6 +183,34 @@ namespace DAL
                 throw new Exception("Error in Delete: " + ex.Message);
             }
         }
+
+        public List<CommitET> GetByWeekId(int weekId)
+        {
+            try
+            {
+                var query = from c in db.Commits
+                            where c.WeekId == weekId
+                            select new CommitET
+                            {
+                                CommitID = c.CommitID,
+                                CommitHash = c.CommitHash,
+                                CommitMessages = c.CommitMessages,
+                                CommitDate = c.CommitDate,
+                                ConfigID = c.ConfigID,
+                                AuthorID = c.AuthorID,
+                                WeekId = c.WeekId,
+                                PeriodID = c.PeriodID,
+                                CreatedAt = c.CreatedAt.Value,
+                                UpdatedAt = c.UpdatedAt.Value
+                            };
+
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error in GetByWeekId: " + ex.Message);
+            }
+        }
     }
 
 }

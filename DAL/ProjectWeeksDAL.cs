@@ -12,6 +12,7 @@ namespace DAL
     public class ProjectWeekDAL
     {
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
+       
         public List<WeekET> GetAll()
         {
             try
