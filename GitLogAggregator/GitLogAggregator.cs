@@ -88,7 +88,7 @@ namespace GitLogAggregator
             try
             {
                 // Tải danh sách các thư mục thực tập từ cơ sở dữ liệu vào ComboBox
-                LoadConfigsIntoCombobox();
+                LoadConfigsIntoCombobox(0);
 
                 // Tải danh sách tác giả 0: getall
                 LoadAuthorsIntoComboBox(0);
@@ -184,29 +184,36 @@ namespace GitLogAggregator
                 txtInternshipStartDate.Value = startDate.Value;
             }
         }
-        private void LoadConfigsIntoCombobox()
+        private void LoadConfigsIntoCombobox(int configID)
         {
-
-            // Lấy danh sách các dự án từ cơ sở dữ liệu
+            // Lấy danh sách cấu hình từ BUS
             var configFiles = configBus.GetAll();
 
-            // Thêm một mục tùy chọn "Tất cả dự án" vào danh sách
-            var allProjectsOption = new ConfigET
+            // Thêm mục "Tất cả dự án" vào đầu danh sách
+            configFiles.Insert(0, new ConfigET
             {
-                ConfigID = 0, // Sử dụng ConfigID đặc biệt (ví dụ: 0) để phân biệt "Tất cả dự án"
-                ConfigDirectory = "Tất cả dự án" // Hiển thị "Tất cả dự án"
-            };
+                ConfigID = 0,
+                ConfigDirectory = "Tất cả dự án"
+            });
 
-            // làm trống danh sách trước khi thêm
-            cboConfigFiles.DataSource = null;
-
-            // Chèn "Tất cả dự án" vào đầu danh sách
-            configFiles.Insert(0, allProjectsOption);
-
-            // Gán danh sách làm nguồn dữ liệu cho ComboBox
+            // Gán dữ liệu cho ComboBox
             cboConfigFiles.DataSource = configFiles;
             cboConfigFiles.ValueMember = "ConfigID";
             cboConfigFiles.DisplayMember = "ConfigDirectory";
+
+            // Xử lý chọn mục theo configID
+            if (configID == 0)
+            {
+                cboConfigFiles.SelectedValue = 0; // Chọn "Tất cả dự án"
+            }
+            else
+            {
+                // Kiểm tra configID có tồn tại trong danh sách không
+                var exists = configFiles.Any(c => c.ConfigID == configID);
+
+                // Nếu tồn tại thì chọn, không thì mặc định chọn "Tất cả"
+                cboConfigFiles.SelectedValue = exists ? configID : 0;
+            }
         }
         private void LoadAuthorsIntoComboBox(int authorId)
         {
@@ -455,44 +462,20 @@ namespace GitLogAggregator
                     FirstCommitAuthor = gitgui_bus.GetFirstCommitAuthor(configDirectory),
                     InternshipDirectoryId = (int)cboInternshipFolder.SelectedValue,
                 };
-
                 configBus.Add(configFile);
 
-                // Bước 3: Thêm mối quan hệ giữa dự án và tác giả vào bảng ConfigAuthors
-                ConfigET lastAddedConfigFile = configBus.GetLastAddedConfigFile();
-
-                if (lastAddedConfigFile == null)
-                {
-                    AppendTextWithScroll("Lỗi: Không thể lấy thông tin dự án vừa thêm.\n");
-                    return;
-                }
-
-                // Chú ý: authors là danh sach tác giả tham gia dự án thực tập mà hàm này đang chọn configDirectory
-
-                foreach (var (authorName, authorEmail) in authors)
-                {
-                    // Lấy thông tin tác giả từ cơ sở dữ liệu dựa trên email
-                    AuthorET author = authorBUS.GetByEmail(authorEmail);
-
-                    if (author == null)
-                    {
-                        AppendTextWithScroll($"Lỗi: Không tìm thấy tác giả với email {authorEmail} trong cơ sở dữ liệu.\n");
-                        continue;
-                    }
-                }
-
-                AppendTextWithScroll("Thêm mối quan hệ giữa dự án và tác giả hoàn tất.\n");
+                AppendTextWithScroll("Thêm dự án vào database hoàn tất.\n");
 
                 // Cập nhật giao diện khi chọn thư mục dự án
                 UpdateControls(configFile);
 
                 // Tải danh sách tác giả của dự án mới vào ComboBox
-                LoadAuthorsIntoComboBox(configFile.ConfigID);
+                LoadAuthorsIntoComboBox(0);
 
                 // Load lại dữ liệu lên combobox
-                LoadConfigsIntoCombobox();
+                LoadConfigsIntoCombobox(0);
 
-                AppendTextWithScroll("Dự án và thông tin cấu hình đã được thêm vào cơ sở dữ liệu thành công.\n");
+                AppendTextWithScroll("Danh sách tác giả và cấu hình tải vào combobo thành công.\n");
 
                 btnOpenGitFolder.Enabled = true; // Bật lại nút mở thư mục
             }
@@ -833,7 +816,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Danh sách thư mục thực tập đã được làm mới.\n");
 
                 // Làm mới dữ liệu trong combobox cboConfigFiles danh sách dự án thực tập
-                LoadConfigsIntoCombobox();
+                LoadConfigsIntoCombobox(0);
                 AppendTextWithScroll("Danh sách dự án thực tập đã được làm mới.\n");
 
                 // Làm mới combobox tác giả commit

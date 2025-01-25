@@ -19,6 +19,7 @@ namespace DAL
                             select new ConfigET
                             {
                                 ConfigID = c.ConfigID,
+                                ConfigDirectory = c.ConfigDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
                                 FirstCommitAuthor = c.FirstCommitAuthor,
                                 FirstCommitDate = c.FirstCommitDate,
