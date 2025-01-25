@@ -947,7 +947,7 @@
             // 
             this.weeksToolStripMenuItem.Name = "weeksToolStripMenuItem";
             this.weeksToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.weeksToolStripMenuItem.Text = "Weeks";
+            this.weeksToolStripMenuItem.Text = "ConfigWeeks";
             // 
             // foldersProjectToolStripMenuItem
             // 

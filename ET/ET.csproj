@@ -47,19 +47,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorET.cs" />
-    <Compile Include="ChatbotSummaryET.cs" />
+    <Compile Include="SummaryET.cs" />
     <Compile Include="CommitET.cs" />
     <Compile Include="CommitPeriodET.cs" />
-    <Compile Include="CommitGroupMemberET.cs" />
-    <Compile Include="ConfigAuthorET.cs" />
-    <Compile Include="ConfigFileET.cs" />
-    <Compile Include="DayData.cs" />
+    <Compile Include="CommitSummary.cs" />
+    <Compile Include="ConfigET.cs" />
     <Compile Include="InternshipDirectoryET.cs" />
-    <Compile Include="ProjectWeekET.cs" />
+    <Compile Include="WeekET.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchResult.cs" />
-    <Compile Include="SessionData.cs" />
-    <Compile Include="WeekData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

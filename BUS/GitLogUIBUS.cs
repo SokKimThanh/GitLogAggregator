@@ -47,20 +47,13 @@ namespace GitLogAggregator.BusinessLogic
         {
             return data.GetFirstCommitDate(folderPath);
         }
-
-        public List<DayData> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
-        {
-            return data.GetCommits(projectDirectory, author, internshipStartDate, internshipEndDate);
-        }
+         
 
         public DateTime CalculateEndDate(DateTime startDate, int weeks)
         {
             return data.CalculateEndDate(startDate, weeks);
         }
-        public DataTable ConvertDayDataListToDataTable(List<DayData> dayDataList)
-        {
-            return data.ConvertDayDataListToDataTable(dayDataList);
-        }
+        
         public List<string> ReadCommitsFromFile(string filePath)
         {
             return data.ReadCommitsFromFile(filePath);

@@ -12,15 +12,15 @@ namespace BUS
     {
         private ConfigFileDAL dal = new ConfigFileDAL();
 
-        public List<ConfigFileET> GetAll()
+        public List<ConfigET> GetAll()
         {
             return dal.GetAll();
         }
-        public ConfigFileET GetByID(int id)
+        public ConfigET GetByID(int id)
         {
             return dal.GetByID(id);
         }
-        public ConfigFileET GetLastAddedConfigFile()
+        public ConfigET GetLastAddedConfigFile()
         {
             return dal.GetLastAddedConfigFile();
         }
@@ -29,12 +29,12 @@ namespace BUS
             return dal.GetInternshipStartDate(configId);
         }
 
-        public void Add(ConfigFileET entity)
+        public void Add(ConfigET entity)
         {
             dal.Add(entity);
         }
 
-        public void Update(ConfigFileET entity)
+        public void Update(ConfigET entity)
         {
             dal.Update(entity);
         }

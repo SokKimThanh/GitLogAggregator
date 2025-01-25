@@ -33,5 +33,16 @@ namespace DAL.Properties {
                 return ((string)(this["GitLogAggregatorDBConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SOKKIMTHANH;Initial Catalog=GitTongHop;Integrated Security=True;Trust" +
+            "ServerCertificate=True")]
+        public string GitTongHopConnectionString {
+            get {
+                return ((string)(this["GitTongHopConnectionString"]));
+            }
+        }
     }
 }

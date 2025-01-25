@@ -12,22 +12,22 @@ namespace BUS
     {
         private ChatbotSummaryDAL dal = new ChatbotSummaryDAL();
 
-        public List<ChatbotSummaryET> GetAll()
+        public List<SummaryET> GetAll()
         {
             return dal.GetAll();
         }
 
-        public ChatbotSummaryET GetByID(int id)
+        public SummaryET GetByID(int id)
         {
             return dal.GetByID(id);
         }
 
-        public void Add(ChatbotSummaryET entity)
+        public void Add(SummaryET entity)
         {
             dal.Add(entity);
         }
 
-        public void Update(ChatbotSummaryET entity)
+        public void Update(SummaryET entity)
         {
             dal.Update(entity);
         }

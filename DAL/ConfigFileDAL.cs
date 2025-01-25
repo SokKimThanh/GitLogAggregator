@@ -10,21 +10,17 @@ namespace DAL
     {
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
 
-        public List<ConfigFileET> GetAll()
+        public List<ConfigET> GetAll()
         {
             try
             {
                 var query = from c in db.ConfigFiles
                             orderby c.FirstCommitDate ascending
-                            select new ConfigFileET
+                            select new ConfigET
                             {
                                 ConfigID = c.ConfigID,
-                                ProjectDirectory = c.ProjectDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
                                 FirstCommitAuthor = c.FirstCommitAuthor,
-                                InternshipStartDate = c.InternshipStartDate,
-                                InternshipEndDate = c.InternshipEndDate,
-                                Weeks = c.Weeks,
                                 FirstCommitDate = c.FirstCommitDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
@@ -54,8 +50,10 @@ namespace DAL
 
                 // Truy vấn để lấy ngày bắt đầu thực tập dựa trên ConfigID cấu hình
                 var internshipStartDate = (from config in db.ConfigFiles
+                                           join internshipDirectory in db.InternshipDirectories
+                                           on config.InternshipDirectoryId equals internshipDirectory.InternshipDirectoryId
                                            where config.ConfigID == configId
-                                           select config.InternshipStartDate).FirstOrDefault();
+                                           select internshipDirectory.InternshipStartDate).FirstOrDefault();
 
                 // Kiểm tra nếu internshipStartDate là DateTime.MinValue (01/01/0001)
                 if (internshipStartDate == DateTime.MinValue)
@@ -72,42 +70,41 @@ namespace DAL
                 throw new Exception("Lỗi khi lấy ngày bắt đầu thực tập: " + ex.Message);
             }
         }
-        public ConfigFileET GetLastAddedConfigFile()
+        public ConfigET GetLastAddedConfigFile()
         {
             // Sử dụng LINQ để lấy đối tượng vừa thêm
             var configFile = db.ConfigFiles
-                      .OrderByDescending(cf => cf.ConfigID)
-                      .FirstOrDefault(); // Lấy bản ghi đầu tiên
+                               .OrderByDescending(cf => cf.ConfigID)
+                               .FirstOrDefault(); // Lấy bản ghi đầu tiên
 
-            return new ConfigFileET()
+            if (configFile == null) return null;
+
+            return new ConfigET()
             {
                 ConfigID = configFile.ConfigID,
-                ProjectDirectory = configFile.ProjectDirectory,
+                ConfigDirectory = configFile.ConfigDirectory,
                 InternshipDirectoryId = configFile.InternshipDirectoryId,
                 FirstCommitAuthor = configFile.FirstCommitAuthor,
-                InternshipStartDate = configFile.InternshipStartDate,
-                InternshipEndDate = configFile.InternshipEndDate,
-                Weeks = configFile.Weeks,
+                ConfigWeeks = configFile.ConfigWeeks,
                 FirstCommitDate = configFile.FirstCommitDate,
-                CreatedAt = configFile.CreatedAt.Value,
-                UpdatedAt = configFile.UpdatedAt.Value
+                CreatedAt = configFile.CreatedAt.HasValue ? configFile.CreatedAt.Value : DateTime.MinValue,
+                UpdatedAt = configFile.UpdatedAt.HasValue ? configFile.UpdatedAt.Value : DateTime.MinValue
             };
         }
-        public ConfigFileET GetByID(int configID)
+
+        public ConfigET GetByID(int configID)
         {
             try
             {
                 var query = from c in db.ConfigFiles
                             where c.ConfigID == configID
-                            select new ConfigFileET
+                            select new ConfigET
                             {
                                 ConfigID = c.ConfigID,
-                                ProjectDirectory = c.ProjectDirectory,
+                                ConfigDirectory = c.ConfigDirectory,
+                                ConfigWeeks = c.ConfigWeeks,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
                                 FirstCommitAuthor = c.FirstCommitAuthor,
-                                InternshipStartDate = c.InternshipStartDate,
-                                InternshipEndDate = c.InternshipEndDate,
-                                Weeks = c.Weeks,
                                 FirstCommitDate = c.FirstCommitDate,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
@@ -121,18 +118,16 @@ namespace DAL
             }
         }
 
-        public void Add(ConfigFileET et)
+        public void Add(ConfigET et)
         {
             try
             {
                 var entity = new ConfigFile
                 {
-                    ProjectDirectory = et.ProjectDirectory,
+                    ConfigDirectory = et.ConfigDirectory,
+                    ConfigWeeks = et.ConfigWeeks,
                     InternshipDirectoryId = et.InternshipDirectoryId,
                     FirstCommitAuthor = et.FirstCommitAuthor,
-                    InternshipStartDate = et.InternshipStartDate,
-                    InternshipEndDate = et.InternshipEndDate,
-                    Weeks = et.Weeks,
                     FirstCommitDate = et.FirstCommitDate,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
@@ -147,7 +142,7 @@ namespace DAL
             }
         }
 
-        public void Update(ConfigFileET et)
+        public void Update(ConfigET et)
         {
             try
             {
@@ -158,12 +153,10 @@ namespace DAL
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                entity.ProjectDirectory = et.ProjectDirectory;
+                entity.ConfigDirectory = et.ConfigDirectory;
                 entity.InternshipDirectoryId = et.InternshipDirectoryId;
                 entity.FirstCommitAuthor = et.FirstCommitAuthor;
-                entity.InternshipStartDate = et.InternshipStartDate;
-                entity.InternshipEndDate = et.InternshipEndDate;
-                entity.Weeks = et.Weeks;
+                entity.ConfigWeeks = et.ConfigWeeks;
                 entity.FirstCommitDate = et.FirstCommitDate;
                 entity.UpdatedAt = DateTime.Now;
 
@@ -194,8 +187,5 @@ namespace DAL
                 throw new Exception("Error in Delete ConfigFileDAL: " + ex.Message);
             }
         }
-
-
     }
-
 }

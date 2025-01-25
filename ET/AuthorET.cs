@@ -8,10 +8,10 @@ namespace ET
 {
     public class AuthorET
     {
-        public int AuthorID { get; set; } // Khóa chính
-        public string AuthorName { get; set; } // Tên tác giả
-        public string AuthorEmail { get; set; } // Email tác giả
-        public DateTime CreatedAt { get; set; } // Ngày tạo
-        public DateTime UpdatedAt { get; set; } // Ngày cập nhật
+        public int AuthorID { get; set; }
+        public string AuthorName { get; set; }
+        public string AuthorEmail { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

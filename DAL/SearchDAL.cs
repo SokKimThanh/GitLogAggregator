@@ -16,47 +16,48 @@ namespace DAL
         {
 
             var query = from c in db.Commits
-                        join pw in db.ProjectWeeks on c.ProjectWeekId equals pw.ProjectWeekId
-                        join a in db.Authors on c.AuthorEmail equals a.AuthorEmail
-                        join cgm in db.CommitGroupMembers on c.CommitId equals cgm.CommitId
-                        join cp in db.CommitPeriods on cgm.PeriodID equals cp.PeriodID
+                        join pw in db.Weeks on c.WeekId equals pw.WeekId
+                        join a in db.Authors on c.AuthorID equals a.AuthorID
+                        join cp in db.CommitPeriods on c.PeriodID equals cp.PeriodID
                         orderby c.CommitDate ascending
-                        where (searchAllWeeks || projectWeekId == null || c.ProjectWeekId == projectWeekId)
+                        where (searchAllWeeks || projectWeekId == null || c.WeekId == projectWeekId)
                               && (searchAllAuthors || authorId == null || a.AuthorID == authorId)
-                              && (string.IsNullOrEmpty(keyword) || c.CommitMessage.Contains(keyword))
+                              && (string.IsNullOrEmpty(keyword) || c.CommitMessages.Contains(keyword))
                         select new SearchResult
                         {
-                            ProjectWeekName = pw.ProjectWeekName,
+                            ProjectWeekName = pw.WeekName,
                             WeekStartDate = pw.WeekStartDate.Value,
                             WeekEndDate = pw.WeekEndDate.Value,
                             Period = cp.PeriodName,
                             PeriodDuration = cp.PeriodDuration,
                             Author = a.AuthorName,
                             AuthorEmail = a.AuthorEmail,
-                            CommitMessage = c.CommitMessage
+                            CommitMessages = c.CommitMessages
                         };
             return query.ToList();
 
         }
 
-        public DateTime? GetFirstCommitDateByProject(int projectId)
+        public DateTime? GetFirstCommitDateByProject(int weekID)
         {
             var firstCommit = db.Commits
-                                .Where(c => c.ProjectWeekId == projectId)
+                                .Where(c => c.WeekId == weekID)
                                 .OrderBy(c => c.CommitDate)
                                 .FirstOrDefault();
 
             return firstCommit?.CommitDate; // Trả về ngày commit đầu tiên hoặc null nếu không có commit nào
         }
-        public DateTime? GetInternshipEndDate(int? projectWeekId)
+        public DateTime? GetInternshipEndDate(int? id)
         {
-            if (!projectWeekId.HasValue) return null;
+            if (!id.HasValue) return null;
 
-            var config = db.ConfigFiles
-                         .FirstOrDefault(cf => db.ProjectWeeks
-                                                 .Any(pw => pw.ProjectWeekId == projectWeekId &&
-                                                            pw.InternshipDirectoryId == cf.InternshipDirectoryId));
-            return config?.InternshipEndDate;
+            // Nối ConfigFiles và InternshipDirectories để lấy ngày kết thúc thực tập
+            var internshipEndDate = (from cf in db.ConfigFiles
+                                     join idir in db.InternshipDirectories on cf.InternshipDirectoryId equals idir.InternshipDirectoryId
+                                     where cf.ConfigID == id
+                                     select idir.InternshipEndDate).FirstOrDefault();
+
+            return internshipEndDate;
         }
     }
 }

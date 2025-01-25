@@ -15,7 +15,6 @@ namespace ET
         public string PeriodDuration { get; set; }
         public string Author { get; set; }
         public string AuthorEmail { get; set; }
-        public string CommitMessage { get; set; } // Có thể null nếu isSimpleView = true
+        public string CommitMessages { get; set; } // Có thể null nếu isSimpleView = true
     }
-
 }

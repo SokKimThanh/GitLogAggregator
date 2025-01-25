@@ -12,19 +12,18 @@ namespace DAL
     public class ProjectWeekDAL
     {
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
-        public List<ProjectWeekET> GetAll()
+        public List<WeekET> GetAll()
         {
             try
             {
-                var query = from p in db.ProjectWeeks
-                            orderby p.ProjectWeekName ascending
-                            select new ProjectWeekET
+                var query = from p in db.Weeks
+                            orderby p.WeekName ascending
+                            select new WeekET
                             {
-                                ProjectWeekId = p.ProjectWeekId,
-                                ProjectWeekName = p.ProjectWeekName,
+                                WeekId = p.WeekId,
+                                WeekName = p.WeekName,
                                 WeekStartDate = p.WeekStartDate.Value,
                                 WeekEndDate = p.WeekEndDate.Value,
-                                InternshipDirectoryId = p.InternshipDirectoryId,
                                 CreatedAt = p.CreatedAt.Value,
                                 UpdatedAt = p.UpdatedAt.Value
                             };
@@ -37,19 +36,18 @@ namespace DAL
             }
         }
 
-        public ProjectWeekET GetByID(int id)
+        public WeekET GetByID(int id)
         {
             try
             {
-                var query = from p in db.ProjectWeeks
-                            where p.ProjectWeekId == id
-                            select new ProjectWeekET
+                var query = from p in db.Weeks
+                            where p.WeekId == id
+                            select new WeekET
                             {
-                                ProjectWeekId = p.ProjectWeekId,
-                                ProjectWeekName = p.ProjectWeekName,
+                                WeekId = p.WeekId,
+                                WeekName = p.WeekName,
                                 WeekStartDate = p.WeekStartDate.Value,
                                 WeekEndDate = p.WeekEndDate.Value,
-                                InternshipDirectoryId = p.InternshipDirectoryId,
                                 CreatedAt = p.CreatedAt.Value,
                                 UpdatedAt = p.UpdatedAt.Value
                             };
@@ -62,20 +60,19 @@ namespace DAL
             }
         }
 
-        public void Add(ProjectWeekET et)
+        public void Add(WeekET et)
         {
             try
             {
-                var entity = new ProjectWeek
+                var entity = new Week
                 {
-                    ProjectWeekName = et.ProjectWeekName,
+                    WeekName = et.WeekName,
                     WeekStartDate = et.WeekStartDate,
                     WeekEndDate = et.WeekEndDate,
-                    InternshipDirectoryId = et.InternshipDirectoryId,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
-                db.ProjectWeeks.InsertOnSubmit(entity);
+                db.Weeks.InsertOnSubmit(entity);
                 db.SubmitChanges();
             }
             catch (Exception ex)
@@ -86,22 +83,21 @@ namespace DAL
         /// <summary>
         /// Lấy ra bản ghi cuối cùng
         /// </summary> 
-        public ProjectWeekET GetLastInserted()
+        public WeekET GetLastInserted()
         {
 
-            var projectweek = db.ProjectWeeks
-                          .OrderByDescending(pw => pw.ProjectWeekId) // Giả sử Id là khóa chính, tự tăng
+            var projectweek = db.Weeks
+                          .OrderByDescending(pw => pw.WeekId) // Giả sử Id là khóa chính, tự tăng
                           .FirstOrDefault();
 
             if (projectweek != null)
             {
-                return new ProjectWeekET()
+                return new WeekET()
                 {
-                    ProjectWeekId = projectweek.ProjectWeekId,
-                    ProjectWeekName = projectweek.ProjectWeekName,
+                    WeekId = projectweek.WeekId,
+                    WeekName = projectweek.WeekName,
                     WeekStartDate = projectweek.WeekStartDate.Value,
                     WeekEndDate = projectweek.WeekEndDate.Value,
-                    InternshipDirectoryId = projectweek.InternshipDirectoryId,
                     CreatedAt = projectweek.CreatedAt.Value,
                     UpdatedAt = projectweek.UpdatedAt.Value
                 };
@@ -109,20 +105,19 @@ namespace DAL
             return null;
         }
 
-        public void Update(ProjectWeekET et)
+        public void Update(WeekET et)
         {
             try
             {
-                var query = from p in db.ProjectWeeks
-                            where p.ProjectWeekId == et.ProjectWeekId
+                var query = from p in db.Weeks
+                            where p.WeekId == et.WeekId
                             select p;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
-                entity.ProjectWeekName = et.ProjectWeekName;
+                entity.WeekName = et.WeekName;
                 entity.WeekStartDate = et.WeekStartDate;
                 entity.WeekEndDate = et.WeekEndDate;
-                entity.InternshipDirectoryId = et.InternshipDirectoryId;
                 entity.UpdatedAt = DateTime.Now;
 
                 db.SubmitChanges();
@@ -137,14 +132,14 @@ namespace DAL
         {
             try
             {
-                var query = from p in db.ProjectWeeks
-                            where p.ProjectWeekId == id
+                var query = from p in db.Weeks
+                            where p.WeekId == id
                             select p;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                db.ProjectWeeks.DeleteOnSubmit(entity);
+                db.Weeks.DeleteOnSubmit(entity);
                 db.SubmitChanges();
             }
             catch (Exception ex)
@@ -158,7 +153,7 @@ namespace DAL
         /// </summary> 
         public bool IsInternshipWeekListCreated()
         {
-            return db.ProjectWeeks.Any(); // Trả về true nếu có ít nhất một tuần thực tập
+            return db.Weeks.Any(); // Trả về true nếu có ít nhất một tuần thực tập
         }
     }
 }

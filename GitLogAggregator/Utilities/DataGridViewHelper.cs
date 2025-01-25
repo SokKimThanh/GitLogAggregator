@@ -17,14 +17,14 @@ namespace GitLogAggregator.Utilities
             _dataGridView = dataGridView;
         }
 
-        // Cấu hình hiển thị đơn giản (chỉ hiển thị CommitMessage)
+        // Cấu hình hiển thị đơn giản (chỉ hiển thị CommitMessages)
         public void ConfigureSimpleView()
         {
             foreach (DataGridViewColumn column in _dataGridView.Columns)
             {
                 column.Visible = false;
             }
-            _dataGridView.Columns["CommitMessage"].Visible = true;
+            _dataGridView.Columns["CommitMessages"].Visible = true;
             _dataGridView.Columns["ProjectWeekName"].Visible = true;
 
             _dataGridView.Columns["ProjectWeekName"].Width = 100;

@@ -182,60 +182,9 @@ namespace GitLogAggregator.DataAccess
                 throw new Exception($"Ngày không hợp lệ: {dateStr}");
             }
         }
-        public List<DayData> GetCommits(string projectDirectory, string author, DateTime internshipStartDate, DateTime internshipEndDate)
-        {
-            List<DayData> dayDataList = new List<DayData>();
-
-            for (DateTime date = internshipStartDate; date <= internshipEndDate; date = date.AddDays(1))
-            {
-                string gitLogCommand = $"log --author=\"{author}\" --since=\"{date:yyyy-MM-dd} 00:00\" --until=\"{date:yyyy-MM-dd} 23:59\" --pretty=format:\"%s\"";
-                string output = RunGitCommand(gitLogCommand, projectDirectory);
-
-                if (!string.IsNullOrEmpty(output))
-                {
-                    var tasks = output.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                                      .Select(task => task.Trim())
-                                      .ToArray();
-
-                    dayDataList.Add(new DayData
-                    {
-                        DayOfWeek = date.DayOfWeek.ToString(),
-                        Session = "Sáng", // hoặc "Chiều", "Tối" tùy theo thông tin bạn có
-                        Attendance = "Có mặt",
-                        AssignedTasks = string.Join("\n", tasks),
-                        AchievedResults = "N/A",
-                        Comments = "N/A",
-                        Notes = "N/A"
-                    });
-                }
-            }
-
-            return dayDataList;
-        }
-
-
         public DateTime CalculateEndDate(DateTime startDate, int weeks)
         {
             return startDate.AddDays(weeks * 7 - 1); // -1 để bao gồm ngày bắt đầu
-        }
-        public DataTable ConvertDayDataListToDataTable(List<DayData> dayDataList)
-        {
-            DataTable dataTable = new DataTable();
-
-            dataTable.Columns.Add("DayOfWeek", typeof(string));
-            dataTable.Columns.Add("Session", typeof(string));
-            dataTable.Columns.Add("Attendance", typeof(string));
-            dataTable.Columns.Add("AssignedTasks", typeof(string));
-            dataTable.Columns.Add("AchievedResults", typeof(string));
-            dataTable.Columns.Add("Comments", typeof(string));
-            dataTable.Columns.Add("Notes", typeof(string));
-
-            foreach (var dayData in dayDataList)
-            {
-                dataTable.Rows.Add(dayData.DayOfWeek, dayData.Session, dayData.Attendance, dayData.AssignedTasks, dayData.AchievedResults, dayData.Comments, dayData.Notes);
-            }
-
-            return dataTable;
         }
         public List<string> ReadCommitsFromFile(string filePath)
         {

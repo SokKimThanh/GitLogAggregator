@@ -17,9 +17,10 @@ public class InternshipDirectoryDAL
                         orderby i.CreatedAt descending
                         select new InternshipDirectoryET
                         {
-                            ID = i.ID,
+                            InternshipDirectoryId = i.InternshipDirectoryId,
                             InternshipWeekFolder = i.InternshipWeekFolder,
-                            DateModified = i.DateModified,
+                            InternshipStartDate = i.InternshipStartDate,
+                            InternshipEndDate = i.InternshipEndDate,
                             CreatedAt = i.CreatedAt.Value,
                             UpdatedAt = i.UpdatedAt.Value
                         };
@@ -37,12 +38,13 @@ public class InternshipDirectoryDAL
         try
         {
             var query = from i in db.InternshipDirectories
-                        where i.ID == id
+                        where i.InternshipDirectoryId == id
                         select new InternshipDirectoryET
                         {
-                            ID = i.ID,
+                            InternshipDirectoryId = i.InternshipDirectoryId,
                             InternshipWeekFolder = i.InternshipWeekFolder,
-                            DateModified = i.DateModified,
+                            InternshipStartDate = i.InternshipStartDate,
+                            InternshipEndDate = i.InternshipEndDate,
                             CreatedAt = i.CreatedAt.Value,
                             UpdatedAt = i.UpdatedAt.Value
                         };
@@ -62,9 +64,10 @@ public class InternshipDirectoryDAL
                         where i.InternshipWeekFolder == internshipWeekFolder
                         select new InternshipDirectoryET
                         {
-                            ID = i.ID,
+                            InternshipDirectoryId = i.InternshipDirectoryId,
                             InternshipWeekFolder = i.InternshipWeekFolder,
-                            DateModified = i.DateModified,
+                            InternshipStartDate = i.InternshipStartDate,
+                            InternshipEndDate = i.InternshipEndDate,
                             CreatedAt = i.CreatedAt.Value,
                             UpdatedAt = i.UpdatedAt.Value
                         };
@@ -83,7 +86,8 @@ public class InternshipDirectoryDAL
             var entity = new InternshipDirectory
             {
                 InternshipWeekFolder = et.InternshipWeekFolder,
-                DateModified = et.DateModified,
+                InternshipStartDate = et.InternshipStartDate,
+                InternshipEndDate = et.InternshipEndDate,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now
             };
@@ -93,7 +97,7 @@ public class InternshipDirectoryDAL
         }
         catch (Exception ex)
         {
-            throw new Exception("Error in Add: " + ex.Message);
+            throw new Exception("Error in Add InternshipDirectory: " + ex.Message);
         }
     }
 
@@ -102,14 +106,15 @@ public class InternshipDirectoryDAL
         try
         {
             var query = from i in db.InternshipDirectories
-                        where i.ID == et.ID
+                        where i.InternshipDirectoryId == et.InternshipDirectoryId
                         select i;
 
             var entity = query.SingleOrDefault();
             if (entity == null) return;
 
             entity.InternshipWeekFolder = et.InternshipWeekFolder;
-            entity.DateModified = et.DateModified;
+            entity.InternshipStartDate = et.InternshipStartDate;
+            entity.InternshipEndDate = et.InternshipEndDate;
             entity.UpdatedAt = DateTime.Now;
 
             db.SubmitChanges();
@@ -125,7 +130,7 @@ public class InternshipDirectoryDAL
         try
         {
             var query = from i in db.InternshipDirectories
-                        where i.ID == id
+                        where i.InternshipDirectoryId == id
                         select i;
 
             var entity = query.SingleOrDefault();
@@ -142,8 +147,8 @@ public class InternshipDirectoryDAL
     public int GetLatestInternshipDirectoryId()
     {
         var query = from directory in db.InternshipDirectories
-                    orderby directory.DateModified descending
-                    select directory.ID;
+                    orderby directory.CreatedAt descending
+                    select directory.InternshipDirectoryId;
         return query.FirstOrDefault();
     }
 }

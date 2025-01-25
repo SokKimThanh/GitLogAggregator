@@ -95,8 +95,6 @@
     <Compile Include="ChatbotSummaryDAL.cs" />
     <Compile Include="CommitDAL.cs" />
     <Compile Include="CommitPeriodDAL.cs" />
-    <Compile Include="CommitGroupMemberDAL.cs" />
-    <Compile Include="ConfigAuthorDAL.cs" />
     <Compile Include="ConfigFileDAL.cs" />
     <Compile Include="GitLogAggregator.designer.cs">
       <AutoGen>True</AutoGen>
@@ -113,8 +111,6 @@
     <Compile Include="RemoveAllTableDAL.cs" />
     <Compile Include="SearchDAL.cs" />
     <Compile Include="Utilities\DateHelpers.cs" />
-    <Compile Include="GitCheckCommitDAL.cs" />
-    <Compile Include="GitFormatDAL.cs" />
     <Compile Include="GitUIDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\FileHelper.cs" />

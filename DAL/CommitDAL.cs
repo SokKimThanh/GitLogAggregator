@@ -19,15 +19,13 @@ namespace DAL
                             orderby c.CreatedAt descending
                             select new CommitET
                             {
-                                CommitId = c.CommitId,
+                                CommitID = c.CommitID,
                                 CommitHash = c.CommitHash,
-                                CommitMessage = c.CommitMessage,
+                                CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
-                                Author = c.Author,
-                                AuthorEmail = c.AuthorEmail,
-                                ProjectWeekId = c.ProjectWeekId,
-                                Date = c.Date,
-                                Period = c.Period,
+                                AuthorID = c.AuthorID,
+                                WeekId = c.WeekId,
+                                PeriodID = c.PeriodID,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -50,18 +48,16 @@ namespace DAL
             try
             {
                 var query = from c in db.Commits
-                            where c.CommitId == id
+                            where c.CommitID == id
                             select new CommitET
                             {
-                                CommitId = c.CommitId,
+                                CommitID = c.CommitID,
                                 CommitHash = c.CommitHash,
-                                CommitMessage = c.CommitMessage,
+                                CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
-                                Author = c.Author,
-                                AuthorEmail = c.AuthorEmail,
-                                ProjectWeekId = c.ProjectWeekId,
-                                Date = c.Date,
-                                Period = c.Period,
+                                AuthorID = c.AuthorID,
+                                WeekId = c.WeekId,
+                                PeriodID = c.PeriodID,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -70,7 +66,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetAuthorByConfig: " + ex.Message);
+                throw new Exception("Error in GetAuthorIDByConfig: " + ex.Message);
             }
         }
         public CommitET GetLastInserted()
@@ -81,15 +77,13 @@ namespace DAL
                             orderby c.CreatedAt descending
                             select new CommitET
                             {
-                                CommitId = c.CommitId,
+                                CommitID = c.CommitID,
                                 CommitHash = c.CommitHash,
-                                CommitMessage = c.CommitMessage,
+                                CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
-                                Author = c.Author,
-                                AuthorEmail = c.AuthorEmail,
-                                ProjectWeekId = c.ProjectWeekId,
-                                Date = c.Date,
-                                Period = c.Period,
+                                AuthorID = c.AuthorID,
+                                WeekId = c.WeekId,
+                                PeriodID = c.PeriodID,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -113,23 +107,22 @@ namespace DAL
                     throw new Exception("Trùng dữ liệu.");
                 }
 
-                // Kiểm tra xem ProjectWeekId có tồn tại không
-                var projectWeekExists = db.ProjectWeeks.Any(pw => pw.ProjectWeekId == c.ProjectWeekId);
+                // Kiểm tra xem WeekId có tồn tại không
+                var projectWeekExists = db.Weeks.Any(pw => pw.WeekId == c.WeekId);
                 if (!projectWeekExists)
                 {
                     // Nếu tuần thực tập chưa tồn tại, tạo mới
-                    var newProjectWeek = new ProjectWeek
+                    var newProjectWeek = new Week
                     {
-                        ProjectWeekId = c.ProjectWeekId,
-                        ProjectWeekName = $"Tuần {c.ProjectWeekId}", // Tên tuần mặc định
+                        WeekId = c.WeekId,
+                        WeekName = $"Tuần {c.WeekId}", // Tên tuần mặc định
                         WeekStartDate = DateTime.Now, // Ngày bắt đầu mặc định
-                        WeekEndDate = DateTime.Now.AddDays(6), // Ngày kết thúc mặc định
-                        InternshipDirectoryId = 1, // ConfigID thư mục thực tập mặc định
+                        WeekEndDate = DateTime.Now.AddDays(6), // Ngày kết thúc mặc định 
                         CreatedAt = DateTime.Now,
                         UpdatedAt = DateTime.Now
                     };
 
-                    db.ProjectWeeks.InsertOnSubmit(newProjectWeek);
+                    db.Weeks.InsertOnSubmit(newProjectWeek);
                     db.SubmitChanges();
                 }
 
@@ -137,13 +130,11 @@ namespace DAL
                 var entity = new Commit
                 {
                     CommitHash = c.CommitHash,
-                    CommitMessage = c.CommitMessage,
+                    CommitMessages = c.CommitMessages,
                     CommitDate = c.CommitDate,
-                    Author = c.Author,
-                    AuthorEmail = c.AuthorEmail,
-                    ProjectWeekId = c.ProjectWeekId,
-                    Date = c.Date,
-                    Period = c.Period,
+                    AuthorID = c.AuthorID,
+                    WeekId = c.WeekId,
+                    PeriodID = c.PeriodID,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
@@ -162,20 +153,18 @@ namespace DAL
             try
             {
                 var query = from c in db.Commits
-                            where c.CommitId == et.CommitId
+                            where c.CommitID == et.CommitID
                             select c;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
                 entity.CommitHash = et.CommitHash;
-                entity.CommitMessage = et.CommitMessage;
+                entity.CommitMessages = et.CommitMessages;
                 entity.CommitDate = et.CommitDate;
-                entity.Author = et.Author;
-                entity.AuthorEmail = et.AuthorEmail;
-                entity.ProjectWeekId = et.ProjectWeekId;
-                entity.Date = et.Date;
-                entity.Period = et.Period;
+                entity.AuthorID = et.AuthorID;
+                entity.WeekId = et.WeekId;
+                entity.PeriodID = et.PeriodID;
                 entity.UpdatedAt = DateTime.Now;
 
                 db.SubmitChanges();
@@ -191,7 +180,7 @@ namespace DAL
             try
             {
                 var query = from c in db.Commits
-                            where c.CommitId == id
+                            where c.CommitID == id
                             select c;
 
                 var entity = query.SingleOrDefault();

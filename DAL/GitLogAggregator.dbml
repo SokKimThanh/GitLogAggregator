@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="GitLogAggregatorDB" Class="GitLogAggregatorDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=SOKKIMTHANH;Initial Catalog=GitLogAggregatorDB;Integrated Security=True;Trust Server Certificate=True" SettingsObjectName="DAL.Properties.Settings" SettingsPropertyName="GitLogAggregatorDBConnectionString" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="GitTongHop" Class="GitLogAggregatorDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=SOKKIMTHANH;Initial Catalog=GitTongHop;Integrated Security=True;Trust Server Certificate=True" SettingsObjectName="DAL.Properties.Settings" SettingsPropertyName="GitTongHopConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Authors" Member="Authors">
     <Type Name="Author">
       <Column Name="AuthorID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -7,89 +7,90 @@
       <Column Name="AuthorEmail" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="Author_ConfigAuthor" Member="ConfigAuthors" ThisKey="AuthorID" OtherKey="AuthorID" Type="ConfigAuthor" />
+      <Association Name="Author_Commit" Member="Commits" ThisKey="AuthorID" OtherKey="AuthorID" Type="Commit" />
     </Type>
   </Table>
-  <Table Name="dbo.ProjectWeeks" Member="ProjectWeeks">
-    <Type Name="ProjectWeek">
-      <Column Name="ProjectWeekId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ProjectWeekName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+  <Table Name="dbo.Weeks" Member="Weeks">
+    <Type Name="Week">
+      <Column Name="WeekId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="WeekName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
       <Column Name="WeekStartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="WeekEndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="InternshipDirectoryId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="ProjectWeek_Commit" Member="Commits" ThisKey="ProjectWeekId" OtherKey="ProjectWeekId" Type="Commit" />
-      <Association Name="InternshipDirectory_ProjectWeek" Member="InternshipDirectory" ThisKey="InternshipDirectoryId" OtherKey="ID" Type="InternshipDirectory" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.CommitGroupMembers" Member="CommitGroupMembers">
-    <Type Name="CommitGroupMember">
-      <Column Name="PeriodID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="CommitId" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="AddedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="CommitPeriod_CommitGroupMember" Member="CommitPeriod" ThisKey="PeriodID" OtherKey="PeriodID" Type="CommitPeriod" IsForeignKey="true" />
-      <Association Name="Commit_CommitGroupMember" Member="Commit" ThisKey="CommitId" OtherKey="CommitId" Type="Commit" IsForeignKey="true" />
+      <Association Name="Week_Commit" Member="Commits" ThisKey="WeekId" OtherKey="WeekId" Type="Commit" />
     </Type>
   </Table>
   <Table Name="dbo.CommitPeriods" Member="CommitPeriods">
     <Type Name="CommitPeriod">
       <Column Name="PeriodID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="PeriodName" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="PeriodName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="PeriodDuration" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="PeriodStartTime" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
       <Column Name="PeriodEndTime" Type="System.TimeSpan" DbType="Time NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="CommitPeriod_CommitGroupMember" Member="CommitGroupMembers" ThisKey="PeriodID" OtherKey="PeriodID" Type="CommitGroupMember" />
+      <Association Name="CommitPeriod_Commit" Member="Commits" ThisKey="PeriodID" OtherKey="PeriodID" Type="Commit" />
     </Type>
   </Table>
   <Table Name="dbo.Commits" Member="Commits">
     <Type Name="Commit">
-      <Column Name="CommitId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CommitID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="CommitHash" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="CommitMessage" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="CommitMessages" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
       <Column Name="CommitDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Author" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="AuthorEmail" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="ProjectWeekId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Period" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="ConfigID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AuthorID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WeekId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PeriodID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="Commit_CommitGroupMember" Member="CommitGroupMembers" ThisKey="CommitId" OtherKey="CommitId" Type="CommitGroupMember" />
-      <Association Name="ProjectWeek_Commit" Member="ProjectWeek" ThisKey="ProjectWeekId" OtherKey="ProjectWeekId" Type="ProjectWeek" IsForeignKey="true" />
+      <Association Name="Commit_CommitSummary" Member="CommitSummaries" ThisKey="CommitID" OtherKey="CommitID" Type="CommitSummary" />
+      <Association Name="Author_Commit" Member="Author" ThisKey="AuthorID" OtherKey="AuthorID" Type="Author" IsForeignKey="true" />
+      <Association Name="CommitPeriod_Commit" Member="CommitPeriod" ThisKey="PeriodID" OtherKey="PeriodID" Type="CommitPeriod" IsForeignKey="true" />
+      <Association Name="Week_Commit" Member="Week" ThisKey="WeekId" OtherKey="WeekId" Type="Week" IsForeignKey="true" />
+      <Association Name="ConfigFile_Commit" Member="ConfigFile" ThisKey="ConfigID" OtherKey="ConfigID" Type="ConfigFile" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ConfigAuthors" Member="ConfigAuthors">
-    <Type Name="ConfigAuthor">
-      <Column Name="ConfigID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="AuthorID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+  <Table Name="dbo.CommitSummary" Member="CommitSummaries">
+    <Type Name="CommitSummary">
+      <Column Name="CommitSummaryID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CommitID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SummaryID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="Author_ConfigAuthor" Member="Author" ThisKey="AuthorID" OtherKey="AuthorID" Type="Author" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-      <Association Name="ConfigFile_ConfigAuthor" Member="ConfigFile" ThisKey="ConfigID" OtherKey="ConfigID" Type="ConfigFile" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Commit_CommitSummary" Member="Commit" ThisKey="CommitID" OtherKey="CommitID" Type="Commit" IsForeignKey="true" />
+      <Association Name="Summary_CommitSummary" Member="Summary" ThisKey="SummaryID" OtherKey="SummaryID" Type="Summary" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ConfigFiles" Member="ConfigFiles">
     <Type Name="ConfigFile">
       <Column Name="ConfigID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ProjectDirectory" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="InternshipDirectoryId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="InternshipStartDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="InternshipEndDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Weeks" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ConfigDirectory" Type="System.String" DbType="NVarChar(MAX) NOT NULL" CanBeNull="false" />
+      <Column Name="ConfigWeeks" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="FirstCommitDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="FirstCommitAuthor" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="InternshipDirectoryId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="ConfigFile_ConfigAuthor" Member="ConfigAuthors" ThisKey="ConfigID" OtherKey="ConfigID" Type="ConfigAuthor" />
-      <Association Name="InternshipDirectory_ConfigFile" Member="InternshipDirectory" ThisKey="InternshipDirectoryId" OtherKey="ID" Type="InternshipDirectory" IsForeignKey="true" />
+      <Association Name="ConfigFile_Commit" Member="Commits" ThisKey="ConfigID" OtherKey="ConfigID" Type="Commit" />
+      <Association Name="InternshipDirectory_ConfigFile" Member="InternshipDirectory" ThisKey="InternshipDirectoryId" OtherKey="InternshipDirectoryId" Type="InternshipDirectory" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.ChatbotSummary" Member="ChatbotSummaries">
-    <Type Name="ChatbotSummary">
-      <Column Name="ChatbotSummaryID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+  <Table Name="dbo.InternshipDirectories" Member="InternshipDirectories">
+    <Type Name="InternshipDirectory">
+      <Column Name="InternshipDirectoryId" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="InternshipWeekFolder" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="InternshipStartDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="InternshipEndDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="InternshipDirectory_ConfigFile" Member="ConfigFiles" ThisKey="InternshipDirectoryId" OtherKey="InternshipDirectoryId" Type="ConfigFile" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Summary" Member="Summaries">
+    <Type Name="Summary">
+      <Column Name="SummaryID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Attendance" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="AssignedTasks" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="ContentResults" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
@@ -97,17 +98,7 @@
       <Column Name="Notes" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.InternshipDirectories" Member="InternshipDirectories">
-    <Type Name="InternshipDirectory">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="InternshipWeekFolder" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="DateModified" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="UpdatedAt" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="InternshipDirectory_ProjectWeek" Member="ProjectWeeks" ThisKey="ID" OtherKey="InternshipDirectoryId" Type="ProjectWeek" />
-      <Association Name="InternshipDirectory_ConfigFile" Member="ConfigFiles" ThisKey="ID" OtherKey="InternshipDirectoryId" Type="ConfigFile" />
+      <Association Name="Summary_CommitSummary" Member="CommitSummaries" ThisKey="SummaryID" OtherKey="SummaryID" Type="CommitSummary" />
     </Type>
   </Table>
 </Database>

@@ -32,7 +32,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetAll: " + ex.Message);
+                throw new Exception("Error in GetAll CommitPeriodDAL: " + ex.Message);
             }
         }
 
@@ -57,7 +57,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetAuthorByConfig: " + ex.Message);
+                throw new Exception("Error in GetAuthorByConfig CommitPeriodDAL: " + ex.Message);
             }
         }
 
@@ -84,7 +84,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in GetLastInserted: " + ex.Message);
+                throw new Exception("Error in GetLastInserted CommitPeriodDAL: " + ex.Message);
             }
         }
 
@@ -106,7 +106,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in Add: " + ex.Message);
+                throw new Exception("Error in Add CommitPeriodDAL: " + ex.Message);
             }
         }
 
@@ -131,7 +131,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in Update: " + ex.Message);
+                throw new Exception("Error in Update CommitPeriodDAL: " + ex.Message);
             }
         }
 
@@ -151,7 +151,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception("Error in Delete: " + ex.Message);
+                throw new Exception("Error in Delete CommitPeriodDAL: " + ex.Message);
             }
         }
     }

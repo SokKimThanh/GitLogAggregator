@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace ET
 {
-    public class ConfigAuthorET
+    public class WeekET
     {
-        public int ConfigID { get; set; } // Khóa ngoại tham chiếu đến ConfigFiles
-        public int AuthorID { get; set; } // Khóa ngoại tham chiếu đến Authors
-
+        public int WeekId { get; set; }
+        public string WeekName { get; set; }
+        public DateTime? WeekStartDate { get; set; }
+        public DateTime? WeekEndDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

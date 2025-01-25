@@ -11,15 +11,15 @@ namespace DAL
     {
         private readonly GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
 
-        public List<ChatbotSummaryET> GetAll()
+        public List<SummaryET> GetAll()
         {
             try
             {
-                var query = from c in db.ChatbotSummaries
+                var query = from c in db.Summaries
                             orderby c.CreatedAt descending
-                            select new ChatbotSummaryET
+                            select new SummaryET
                             {
-                                ChatbotSummaryID = c.ChatbotSummaryID,
+                                SummaryID = c.SummaryID,
                                 Attendance = c.Attendance,
                                 AssignedTasks = c.AssignedTasks,
                                 ContentResults = c.ContentResults,
@@ -37,15 +37,15 @@ namespace DAL
             }
         }
 
-        public ChatbotSummaryET GetByID(int chatbotSummaryID)
+        public SummaryET GetByID(int summaryID)
         {
             try
             {
-                var query = from c in db.ChatbotSummaries
-                            where c.ChatbotSummaryID == chatbotSummaryID
-                            select new ChatbotSummaryET
+                var query = from c in db.Summaries
+                            where c.SummaryID == summaryID
+                            select new SummaryET
                             {
-                                ChatbotSummaryID = c.ChatbotSummaryID,
+                                SummaryID = c.SummaryID,
                                 Attendance = c.Attendance,
                                 AssignedTasks = c.AssignedTasks,
                                 ContentResults = c.ContentResults,
@@ -63,11 +63,11 @@ namespace DAL
             }
         }
 
-        public void Add(ChatbotSummaryET et)
+        public void Add(SummaryET et)
         {
             try
             {
-                var entity = new ChatbotSummary
+                var entity = new Summary
                 {
                     Attendance = et.Attendance,
                     AssignedTasks = et.AssignedTasks,
@@ -77,7 +77,7 @@ namespace DAL
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
-                db.ChatbotSummaries.InsertOnSubmit(entity);
+                db.Summaries.InsertOnSubmit(entity);
                 db.SubmitChanges();
             }
             catch (Exception ex)
@@ -86,12 +86,12 @@ namespace DAL
             }
         }
 
-        public void Update(ChatbotSummaryET et)
+        public void Update(SummaryET et)
         {
             try
             {
-                var query = from c in db.ChatbotSummaries
-                            where c.ChatbotSummaryID == et.ChatbotSummaryID
+                var query = from c in db.Summaries
+                            where c.SummaryID == et.SummaryID
                             select c;
 
                 var entity = query.SingleOrDefault();
@@ -116,14 +116,14 @@ namespace DAL
         {
             try
             {
-                var query = from c in db.ChatbotSummaries
-                            where c.ChatbotSummaryID == chatbotSummaryID
+                var query = from c in db.Summaries
+                            where c.SummaryID == chatbotSummaryID
                             select c;
 
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
 
-                db.ChatbotSummaries.DeleteOnSubmit(entity);
+                db.Summaries.DeleteOnSubmit(entity);
                 db.SubmitChanges();
             }
             catch (Exception ex)

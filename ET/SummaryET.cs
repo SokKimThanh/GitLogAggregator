@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ET
 {
-    public class ChatbotSummaryET
+    public class SummaryET
     {
-        public int ChatbotSummaryID { get; set; }
+        public int SummaryID { get; set; }
         public string Attendance { get; set; }
         public string AssignedTasks { get; set; }
         public string ContentResults { get; set; }
@@ -17,5 +17,4 @@ namespace ET
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
-
 }

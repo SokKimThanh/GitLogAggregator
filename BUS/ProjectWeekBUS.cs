@@ -12,22 +12,22 @@ namespace BUS
     {
         private ProjectWeekDAL dal = new ProjectWeekDAL();
 
-        public List<ProjectWeekET> GetAll()
+        public List<WeekET> GetAll()
         {
             return dal.GetAll();
         }
 
-        public ProjectWeekET GetByID(int id)
+        public WeekET GetByID(int id)
         {
             return dal.GetByID(id);
         }
 
-        public void Add(ProjectWeekET entity)
+        public void Add(WeekET entity)
         {
             dal.Add(entity);
         }
 
-        public void Update(ProjectWeekET entity)
+        public void Update(WeekET entity)
         {
             dal.Update(entity);
         }
@@ -39,7 +39,7 @@ namespace BUS
         /// <summary>
         /// Lấy ra bản ghi cuối cùng
         /// </summary> 
-        public ProjectWeekET GetLastInserted()
+        public WeekET GetLastInserted()
         {
 
             return dal.GetLastInserted();
