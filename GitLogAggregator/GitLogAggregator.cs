@@ -467,7 +467,7 @@ namespace GitLogAggregator
                 AppendTextWithScroll("Thêm dự án vào database hoàn tất.\n");
 
                 // Cập nhật giao diện khi chọn thư mục dự án
-                UpdateControls(configFile);
+                UpdateControlInternshipConfig(configFile);
 
                 // Tải danh sách tác giả của dự án mới vào ComboBox
                 LoadAuthorsIntoComboBox(0);
@@ -491,7 +491,7 @@ namespace GitLogAggregator
         /// Cập nhật giao diện với thông tin cấu hình
         /// </summary>
         /// <param name="configInfo">Đối tượng ConfigFile chứa thông tin cấu hình</param>
-        private void UpdateControls(ConfigET configInfo)
+        private void UpdateControlInternshipConfig(ConfigET configInfo)
         {
             var internship = internshipDirectoryBUS.GetByID(configInfo.InternshipDirectoryId);
 
@@ -1309,17 +1309,51 @@ namespace GitLogAggregator
 
         private void CboThuMucThucTap_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Lấy đối tượng ComboBox
-            ComboBox comboBox = (ComboBox)sender;
-
-            // Lấy thư mục thực tập được chọn
-            InternshipDirectoryET selectedDirectory = (InternshipDirectoryET)comboBox.SelectedItem;
-
-            if (selectedDirectory != null)
+            try
             {
-                // Cập nhật đường dẫn thư mục thực tập trên giao diện
-                txtFolderInternshipPath = selectedDirectory.InternshipWeekFolder;
-                AppendTextWithScroll($"Đã chọn đường dẫn thư mục thực tập: {txtFolderInternshipPath}\n");
+                if (!(sender is ComboBox comboBox) || comboBox.SelectedValue == null) return;
+
+                // Xử lý giá trị SelectedValue
+                int internshipId = 0;
+                if (comboBox.SelectedValue is int selectedId)
+                {
+                    internshipId = selectedId;
+                }
+                else if (int.TryParse(comboBox.SelectedValue.ToString(), out int parsedId))
+                {
+                    internshipId = parsedId;
+                }
+
+                // Kiểm tra giá trị hợp lệ
+                if (internshipId == 0)
+                {
+                    AppendTextWithScroll("Đã chọn tất cả thư mục\n");
+                    return;
+                }
+
+                // Lấy dữ liệu từ BUS với kiểm tra null
+                var internship = internshipDirectoryBUS?.GetByID(internshipId);
+                if (internship == null)
+                {
+                    AppendTextWithScroll("Không tìm thấy thư mục thực tập\n");
+                    return;
+                }
+
+                // Xử lý config
+                int configId = cboConfigFiles.SelectedValue is int configVal ? configVal : 0;
+                var cet = configBus?.GetByID(configId);
+
+                // Kiểm tra logic nghiệp vụ
+                txtFolderInternshipPath = internship.InternshipWeekFolder;
+                txtInternshipStartDate.Value = internship.InternshipStartDate;
+                txtInternshipEndDate.Value = internship.InternshipEndDate;
+                AppendTextWithScroll($"Đã chọn đường dẫn: {txtFolderInternshipPath}\n");
+
+            }
+            catch (Exception ex)
+            {
+                // Xử lý exception
+                AppendTextWithScroll($"Lỗi: {ex.Message}\n");
             }
         }
 
