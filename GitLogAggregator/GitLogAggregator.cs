@@ -29,7 +29,7 @@ namespace GitLogAggregator
 
             // Load hình ảnh vào ToolStrip
             LoadImageToolStrip();
-            //OpenOrBringToFrontControl<ucMainForm>();
+            OpenOrBringToFrontControl<ucMainForm>();
         }
         /// <summary>
         /// Load hình ảnh vào ToolStrip
@@ -86,8 +86,10 @@ namespace GitLogAggregator
             if (!cachedControls.TryGetValue(controlType, out UserControl control))
             {
                 // Tạo mới UserControl và cache lại
-                control = new TControl();
-                control.Dock = DockStyle.Fill;
+                control = new TControl
+                {
+                    Dock = DockStyle.Fill
+                };
                 cachedControls.Add(controlType, control);
 
                 // Thêm UserControl vào Panel (nhưng ẩn đi)
@@ -104,6 +106,7 @@ namespace GitLogAggregator
             // Hiển thị UserControl mong muốn
             control.Visible = true;
             control.BringToFront();
+            control.BackColor = SystemColors.ControlLight;
         }
     }
 }

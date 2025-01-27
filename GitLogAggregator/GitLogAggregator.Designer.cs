@@ -58,7 +58,7 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.Color.LightGray;
+            this.menuStrip1.BackColor = System.Drawing.SystemColors.Control;
             this.menuStrip1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hệThốngToolStripMenuItem,
@@ -82,7 +82,7 @@
             // MainFormToolStripItem
             // 
             this.MainFormToolStripItem.Name = "MainFormToolStripItem";
-            this.MainFormToolStripItem.Size = new System.Drawing.Size(180, 22);
+            this.MainFormToolStripItem.Size = new System.Drawing.Size(158, 22);
             this.MainFormToolStripItem.Text = "Màn hình chính";
             this.MainFormToolStripItem.Click += new System.EventHandler(this.BtnMainForm_Click);
             // 
@@ -118,12 +118,14 @@
             // BtnExportReport
             // 
             this.BtnExportReport.Name = "BtnExportReport";
-            this.BtnExportReport.Size = new System.Drawing.Size(180, 22);
+            this.BtnExportReport.Size = new System.Drawing.Size(143, 22);
             this.BtnExportReport.Text = "Xuất báo cáo";
             this.BtnExportReport.Click += new System.EventHandler(this.BtnExportReport_Click);
             // 
             // MDIContextMenuTrip
             // 
+            this.MDIContextMenuTrip.BackColor = System.Drawing.SystemColors.Control;
+            this.MDIContextMenuTrip.BackgroundImage = global::GitLogAggregator.Properties.Resources.Git_commit_aggregation_tool;
             this.MDIContextMenuTrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CloseAllToolStripMenuItem,
             this.TileVerticalToolStripMenuItem});
@@ -155,7 +157,7 @@
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.BackColor = System.Drawing.Color.LightGray;
+            this.tableLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.menuStrip1, 0, 0);
@@ -175,7 +177,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.BackgroundImage = global::GitLogAggregator.Properties.Resources.git_aggregation_logo;
+            this.BackgroundImage = global::GitLogAggregator.Properties.Resources.Git_commit_aggregation_tool;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1019, 901);
             this.ContextMenuStrip = this.MDIContextMenuTrip;
