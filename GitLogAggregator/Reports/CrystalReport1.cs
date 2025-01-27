@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GitLogAggregator {
+namespace GitLogAggregator.Reports {
     using System;
     using System.ComponentModel;
     using CrystalDecisions.Shared;
@@ -41,7 +41,7 @@ namespace GitLogAggregator {
         
         public override string FullResourceName {
             get {
-                return "GitLogAggregator.CrystalReport1.rpt";
+                return "GitLogAggregator.Reports.CrystalReport1.rpt";
             }
             set {
                 // Do nothing
