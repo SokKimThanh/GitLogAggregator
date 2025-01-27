@@ -82,9 +82,9 @@
             // MainFormToolStripItem
             // 
             this.MainFormToolStripItem.Name = "MainFormToolStripItem";
-            this.MainFormToolStripItem.Size = new System.Drawing.Size(158, 22);
+            this.MainFormToolStripItem.Size = new System.Drawing.Size(180, 22);
             this.MainFormToolStripItem.Text = "Màn hình chính";
-            this.MainFormToolStripItem.Click += new System.EventHandler(this.MainFormToolStripItem_Click);
+            this.MainFormToolStripItem.Click += new System.EventHandler(this.BtnMainForm_Click);
             // 
             // thoátToolStripMenuItem
             // 

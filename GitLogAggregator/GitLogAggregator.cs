@@ -61,40 +61,15 @@ namespace GitLogAggregator
                 childForm.Close();
             }
         }
-
-        private void MainFormToolStripItem_Click(object sender, EventArgs e)
-        {
-            OpenChildFormFullScreen();
-        }
-
-        private void OpenChildFormFullScreen()
-        {
-            // Kiểm tra xem UserControl đã được thêm vào Panel chưa
-            var existingControl = panelContainer.Controls.OfType<ucMainForm>().FirstOrDefault();
-
-            if (existingControl == null)
-            {
-                // Tạo mới UserControl
-                ucMainForm mainFormControl = new()
-                {
-                    Dock = DockStyle.Fill // Lấp đầy Panel
-                };
-
-                // Thêm UserControl vào Panel
-                panelContainer.Controls.Add(mainFormControl);
-            }
-            else
-            {
-                // Đưa UserControl lên trước nếu đã tồn tại
-                existingControl.BringToFront();
-            }
-        }
-
+         
         private void BtnUpdateCommit_Click(object sender, EventArgs e)
         {
             OpenOrBringToFrontControl<ucCommit>();
         }
-
+        private void BtnMainForm_Click(object sender, EventArgs e)
+        {
+            OpenOrBringToFrontControl<ucMainForm>();
+        }
         private void BtnExportReport_Click(object sender, EventArgs e)
         {
             OpenOrBringToFrontControl<ucReport>();
