@@ -1,14 +1,7 @@
 ﻿using BUS;
 using CrystalDecisions.CrystalReports.Engine;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GitLogAggregator.GUI
@@ -20,22 +13,53 @@ namespace GitLogAggregator.GUI
             InitializeComponent();
         }
 
-        private void uReport_Load(object sender, EventArgs e)
+        private void ucReport_Load(object sender, EventArgs e)
+        {
+            LoadReport();
+        }
+
+        private void LoadReport()
         {
             try
             {
-                ReportDocument report = new();
-                report.Load(Path.Combine(Application.StartupPath, "Reports\\CrystalReport1.rpt"));
+                string reportPath = LoadReportPath();
+                if (string.IsNullOrEmpty(reportPath))
+                {
+                    MessageBox.Show("Vui lòng chọn file báo cáo.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
 
-                report.SetDataSource(new ReportBUS().GetWorkHistoryData());
+                using (ReportDocument report = new ReportDocument())
+                {
+                    report.Load(reportPath);
+                    report.SetDataSource(new ReportBUS().GetWorkHistoryData());
 
-                crystalReportViewer1.ReportSource = report;
-                crystalReportViewer1.Refresh();
+                    crystalReportViewer1.ReportSource = report;
+                    crystalReportViewer1.Refresh();
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show($"Lỗi khi tải báo cáo: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private string LoadReportPath()
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = Path.Combine(Application.StartupPath, "Reports");
+                openFileDialog.Filter = "Crystal Reports files (*.rpt)|*.rpt|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    return openFileDialog.FileName;
+                }
+            }
+
+            return null;
         }
     }
 }

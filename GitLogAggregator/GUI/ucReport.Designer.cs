@@ -42,14 +42,14 @@
             this.crystalReportViewer1.Size = new System.Drawing.Size(965, 642);
             this.crystalReportViewer1.TabIndex = 0;
             // 
-            // uReport
+            // ucReport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.crystalReportViewer1);
-            this.Name = "uReport";
+            this.Name = "ucReport";
             this.Size = new System.Drawing.Size(965, 642);
-            this.Load += new System.EventHandler(this.uReport_Load);
+            this.Load += new System.EventHandler(this.ucReport_Load);
             this.ResumeLayout(false);
 
         }

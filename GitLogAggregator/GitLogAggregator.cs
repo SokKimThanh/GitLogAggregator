@@ -1,6 +1,7 @@
 ﻿using GitLogAggregator.GUI;
 using GitLogAggregator.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ namespace GitLogAggregator
     /// </summary>
     public partial class GitLogAggregator : Form
     {
+        private readonly Dictionary<Type, UserControl> cachedControls = [];
 
 
         public GitLogAggregator()
@@ -27,7 +29,7 @@ namespace GitLogAggregator
 
             // Load hình ảnh vào ToolStrip
             LoadImageToolStrip();
-            OpenChildFormFullScreen();
+            //OpenOrBringToFrontControl<ucMainForm>();
         }
         /// <summary>
         /// Load hình ảnh vào ToolStrip
@@ -61,7 +63,7 @@ namespace GitLogAggregator
                 childForm.Close();
             }
         }
-         
+
         private void BtnUpdateCommit_Click(object sender, EventArgs e)
         {
             OpenOrBringToFrontControl<ucCommit>();
@@ -75,35 +77,34 @@ namespace GitLogAggregator
             OpenOrBringToFrontControl<ucReport>();
         }
 
+
         private void OpenOrBringToFrontControl<TControl>() where TControl : UserControl, new()
         {
-            // Kiểm tra xem UserControl đã tồn tại trong panelContainer chưa
-            var existingControl = panelContainer.Controls.OfType<TControl>().FirstOrDefault();
+            Type controlType = typeof(TControl);
 
-            if (existingControl == null)
+            // Kiểm tra xem UserControl đã được cache chưa
+            if (!cachedControls.TryGetValue(controlType, out UserControl control))
             {
-                // Xóa tất cả các UserControl hiện có trong panelContainer
-                foreach (Control controll in panelContainer.Controls.OfType<UserControl>().ToList())
-                {
-                    panelContainer.Controls.Remove(controll);
-                    controll.Dispose(); // Giải phóng tài nguyên
-                }
+                // Tạo mới UserControl và cache lại
+                control = new TControl();
+                control.Dock = DockStyle.Fill;
+                cachedControls.Add(controlType, control);
 
-                // Tạo mới UserControl
-                TControl control = new TControl();
-                control.Dock = DockStyle.Fill; // Lấp đầy Panel
-
-                // Thêm UserControl vào Panel
+                // Thêm UserControl vào Panel (nhưng ẩn đi)
                 panelContainer.Controls.Add(control);
+                control.Visible = false;
             }
-            else
+
+            // Ẩn tất cả các UserControl khác
+            foreach (UserControl uc in cachedControls.Values)
             {
-                // Đưa UserControl lên trước nếu đã tồn tại
-                existingControl.BringToFront();
+                uc.Visible = false;
             }
+
+            // Hiển thị UserControl mong muốn
+            control.Visible = true;
+            control.BringToFront();
         }
-
-
     }
 }
 

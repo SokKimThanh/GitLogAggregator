@@ -58,7 +58,7 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.Color.Silver;
+            this.menuStrip1.BackColor = System.Drawing.Color.LightGray;
             this.menuStrip1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hệThốngToolStripMenuItem,
