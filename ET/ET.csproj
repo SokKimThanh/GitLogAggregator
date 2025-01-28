@@ -50,7 +50,7 @@
     <Compile Include="SummaryET.cs" />
     <Compile Include="CommitET.cs" />
     <Compile Include="CommitPeriodET.cs" />
-    <Compile Include="CommitSummary.cs" />
+    <Compile Include="CommitSummaryET.cs" />
     <Compile Include="ConfigET.cs" />
     <Compile Include="InternshipDirectoryET.cs" />
     <Compile Include="WeekET.cs" />

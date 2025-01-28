@@ -12,6 +12,12 @@ namespace BUS
     {
         private CommitDAL dal = new CommitDAL();
 
+
+
+        public List<CommitET> GetByDateAndPeriod(DateTime date, TimeSpan startTime, TimeSpan endTime)
+        {
+            return dal.GetByDateAndPeriod(date, startTime, endTime);
+        }
         public List<CommitET> GetAll()
         {
             return dal.GetAll();

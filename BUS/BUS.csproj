@@ -48,9 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorBUS.cs" />
-    <Compile Include="ChatbotSummaryBUS.cs" />
     <Compile Include="CommitBUS.cs" />
     <Compile Include="CommitPeriodBUS.cs" />
+    <Compile Include="CommitSummaryBUS.cs" />
     <Compile Include="ConfigFileBUS.cs" />
     <Compile Include="GitLogUIBUS.cs" />
     <Compile Include="InternshipDirectoryBUS.cs" />
@@ -59,6 +59,7 @@
     <Compile Include="RemoveBUS.cs" />
     <Compile Include="ReportBUS.cs" />
     <Compile Include="SearchBUS.cs" />
+    <Compile Include="SummaryBUS.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">

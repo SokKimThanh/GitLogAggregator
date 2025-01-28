@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 
 namespace ET
 {
-    public class CommitSummary
+    public class CommitSummaryET
     {
         public int CommitSummaryID { get; set; }
         public int CommitID { get; set; }
         public int SummaryID { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
-        // Navigation properties
-        public CommitET Commit { get; set; }
-        public SummaryET Summary { get; set; }
     }
 }

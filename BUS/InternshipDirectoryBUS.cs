@@ -11,7 +11,7 @@ namespace BUS
 
     public class InternshipDirectoryBUS
     {
-        private InternshipDirectoryDAL dal = new InternshipDirectoryDAL();
+        private readonly InternshipDirectoryDAL dal = new InternshipDirectoryDAL();
         public int GetLatestInternshipDirectoryId()
         {
             return dal.GetLatestInternshipDirectoryId();

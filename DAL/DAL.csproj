@@ -92,9 +92,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorDAL.cs" />
-    <Compile Include="ChatbotSummaryDAL.cs" />
     <Compile Include="CommitDAL.cs" />
     <Compile Include="CommitPeriodDAL.cs" />
+    <Compile Include="CommitSummaryDAL.cs" />
     <Compile Include="ConfigFileDAL.cs" />
     <Compile Include="GitLogAggregator.designer.cs">
       <AutoGen>True</AutoGen>
@@ -111,6 +111,7 @@
     <Compile Include="RemoveAllTableDAL.cs" />
     <Compile Include="ReportDAL.cs" />
     <Compile Include="SearchDAL.cs" />
+    <Compile Include="SummaryDAL.cs" />
     <Compile Include="Utilities\DateHelpers.cs" />
     <Compile Include="GitUIDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

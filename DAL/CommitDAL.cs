@@ -38,7 +38,27 @@ namespace DAL
                 throw new Exception("Error in GetAll: " + ex.Message);
             }
         }
-
+        public List<CommitET> GetByDateAndPeriod(DateTime date, TimeSpan startTime, TimeSpan endTime)
+        {
+            return db.Commits
+                .Where(c => c.CommitDate.Date == date.Date
+                    && c.CommitDate.TimeOfDay >= startTime
+                    && c.CommitDate.TimeOfDay <= endTime)
+                .Select(c => new CommitET
+                {
+                    CommitID = c.CommitID,
+                    CommitHash = c.CommitHash,
+                    CommitMessages = c.CommitMessages,
+                    CommitDate = c.CommitDate,
+                    ConfigID = c.ConfigID,
+                    AuthorID = c.AuthorID.Value,
+                    WeekId = c.WeekId.Value,
+                    PeriodID = c.PeriodID.Value,
+                    CreatedAt = c.CreatedAt.Value,
+                    UpdatedAt = c.UpdatedAt.Value
+                })
+                .ToList();
+        }
         // Giải phóng tài nguyên khi đối tượng CommitDAL bị hủy
         public void Dispose()
         {

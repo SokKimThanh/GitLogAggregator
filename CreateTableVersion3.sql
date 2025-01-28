@@ -118,7 +118,33 @@ CREATE TABLE CommitSummary (
     CreatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian tạo bản ghi
     UpdatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian cập nhật cuối
     FOREIGN KEY (CommitID) REFERENCES Commits(CommitID),
-    FOREIGN KEY (SummaryID) REFERENCES Summary(SummaryID)
+    FOREIGN KEY (SummaryID) REFERENCES Summary(SummaryID),
 );
 
- 
+ -- Thêm ràng buộc CHECK cho Weeks
+ALTER TABLE Weeks ADD CONSTRAINT CHK_WeekDates CHECK (WeekStartDate <= WeekEndDate);
+
+-- Thêm ràng buộc CHECK cho CommitPeriods
+ALTER TABLE CommitPeriods ADD CONSTRAINT CHK_PeriodTimes CHECK (PeriodStartTime < PeriodEndTime);
+  
+IF OBJECT_ID('dbo.CheckCommitSummaryExists', 'P') IS NOT NULL
+    DROP PROCEDURE dbo.CheckCommitSummaryExists;
+GO
+
+CREATE PROCEDURE CheckCommitSummaryExists
+    @CommitID INT,
+    @SummaryID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT CASE 
+        WHEN EXISTS (
+            SELECT 1 
+            FROM CommitSummary 
+            WHERE CommitID = @CommitID 
+              AND SummaryID = @SummaryID
+        ) THEN 1 
+        ELSE 0 
+    END
+END
