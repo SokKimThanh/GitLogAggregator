@@ -22,7 +22,7 @@ namespace DAL
                                 ConfigDirectory = c.ConfigDirectory,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
                                 FirstCommitAuthor = c.FirstCommitAuthor,
-                                FirstCommitDate = c.FirstCommitDate,
+                                FirstCommitDate = c.FirstCommitDate.Value,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -49,8 +49,8 @@ namespace DAL
                 ConfigDirectory = configFile.ConfigDirectory,
                 InternshipDirectoryId = configFile.InternshipDirectoryId,
                 FirstCommitAuthor = configFile.FirstCommitAuthor,
-                ConfigWeeks = configFile.ConfigWeeks,
-                FirstCommitDate = configFile.FirstCommitDate,
+                ConfigWeeks = configFile.ConfigWeeks.Value,
+                FirstCommitDate = configFile.FirstCommitDate.Value,
                 CreatedAt = configFile.CreatedAt.HasValue ? configFile.CreatedAt.Value : DateTime.MinValue,
                 UpdatedAt = configFile.UpdatedAt.HasValue ? configFile.UpdatedAt.Value : DateTime.MinValue
             };
@@ -66,10 +66,10 @@ namespace DAL
                             {
                                 ConfigID = c.ConfigID,
                                 ConfigDirectory = c.ConfigDirectory,
-                                ConfigWeeks = c.ConfigWeeks,
+                                ConfigWeeks = c.ConfigWeeks.Value,
                                 InternshipDirectoryId = c.InternshipDirectoryId,
                                 FirstCommitAuthor = c.FirstCommitAuthor,
-                                FirstCommitDate = c.FirstCommitDate,
+                                FirstCommitDate = c.FirstCommitDate.Value,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };

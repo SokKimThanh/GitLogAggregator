@@ -24,9 +24,9 @@ namespace DAL
                                 CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
                                 ConfigID = c.ConfigID,
-                                AuthorID = c.AuthorID,
-                                WeekId = c.WeekId,
-                                PeriodID = c.PeriodID,
+                                AuthorID = c.AuthorID.Value,
+                                WeekId = c.WeekId.Value,
+                                PeriodID = c.PeriodID.Value,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -57,9 +57,9 @@ namespace DAL
                                 CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
                                 ConfigID = c.ConfigID,
-                                AuthorID = c.AuthorID,
-                                WeekId = c.WeekId,
-                                PeriodID = c.PeriodID,
+                                AuthorID = c.AuthorID.Value,
+                                WeekId = c.WeekId.Value,
+                                PeriodID = c.PeriodID.Value,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -84,9 +84,9 @@ namespace DAL
                                 CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
                                 ConfigID = c.ConfigID,
-                                AuthorID = c.AuthorID,
-                                WeekId = c.WeekId,
-                                PeriodID = c.PeriodID,
+                                AuthorID = c.AuthorID.Value,
+                                WeekId = c.WeekId.Value,
+                                PeriodID = c.PeriodID.Value,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };
@@ -197,9 +197,9 @@ namespace DAL
                                 CommitMessages = c.CommitMessages,
                                 CommitDate = c.CommitDate,
                                 ConfigID = c.ConfigID,
-                                AuthorID = c.AuthorID,
-                                WeekId = c.WeekId,
-                                PeriodID = c.PeriodID,
+                                AuthorID = c.AuthorID.Value,
+                                WeekId = c.WeekId.Value,
+                                PeriodID = c.PeriodID.Value,
                                 CreatedAt = c.CreatedAt.Value,
                                 UpdatedAt = c.UpdatedAt.Value
                             };

@@ -41,7 +41,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -51,7 +51,7 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dgvReportCommits = new System.Windows.Forms.DataGridView();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -60,7 +60,7 @@
             this.tabControl1.SuspendLayout();
             this.tabPage5.SuspendLayout();
             this.tabPage6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).BeginInit();
             this.SuspendLayout();
             // 
             // button3
@@ -213,14 +213,15 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(880, 209);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
-            // button2
+            // btnRefresh
             // 
-            this.button2.Location = new System.Drawing.Point(653, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(113, 33);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "Làm mới";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnRefresh.Location = new System.Drawing.Point(653, 3);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(113, 33);
+            this.btnRefresh.TabIndex = 10;
+            this.btnRefresh.Text = "Làm mới";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // tabPage2
             // 
@@ -321,28 +322,34 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(200, 20);
             this.dateTimePicker1.TabIndex = 6;
             // 
-            // dataGridView1
+            // dgvReportCommits
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(4, 298);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(889, 298);
-            this.dataGridView1.TabIndex = 5;
+            this.dgvReportCommits.BackgroundColor = System.Drawing.Color.Gainsboro;
+            this.dgvReportCommits.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dgvReportCommits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvReportCommits.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.dgvReportCommits.Location = new System.Drawing.Point(0, 286);
+            this.dgvReportCommits.Margin = new System.Windows.Forms.Padding(0);
+            this.dgvReportCommits.Name = "dgvReportCommits";
+            this.dgvReportCommits.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.dgvReportCommits.Size = new System.Drawing.Size(900, 323);
+            this.dgvReportCommits.TabIndex = 19;
             // 
             // ucCommit
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.dgvReportCommits);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.dateTimePicker2);
             this.Controls.Add(this.dateTimePicker1);
-            this.Controls.Add(this.dataGridView1);
             this.Name = "ucCommit";
             this.Size = new System.Drawing.Size(900, 609);
+            this.Load += new System.EventHandler(this.ucCommit_Load);
             this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
@@ -352,7 +359,7 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage5.ResumeLayout(false);
             this.tabPage6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvReportCommits)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -372,7 +379,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage4;
@@ -382,6 +389,6 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.DateTimePicker dateTimePicker2;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgvReportCommits;
     }
 }

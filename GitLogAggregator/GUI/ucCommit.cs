@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BUS;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,22 @@ namespace GitLogAggregator.GUI
 {
     public partial class ucCommit : UserControl
     {
+        private readonly ReportBUS reportBUS = new();
+
         public ucCommit()
         {
             InitializeComponent();
         }
+
+        private void ucCommit_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            dgvReportCommits.DataSource = reportBUS.GetWorkHistoryData();
+        }
+
     }
 }

@@ -26,8 +26,8 @@ namespace DAL
                         select new SearchResult
                         {
                             ProjectWeekName = pw.WeekName,
-                            WeekStartDate = pw.WeekStartDate.Value,
-                            WeekEndDate = pw.WeekEndDate.Value,
+                            WeekStartDate = pw.WeekStartDate,
+                            WeekEndDate = pw.WeekEndDate,
                             Period = cp.PeriodName,
                             PeriodDuration = cp.PeriodDuration,
                             Author = a.AuthorName,

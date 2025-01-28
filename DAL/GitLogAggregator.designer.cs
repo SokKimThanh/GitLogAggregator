@@ -231,7 +231,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorEmail", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorEmail", DbType="NVarChar(255)")]
 		public string AuthorEmail
 		{
 			get
@@ -347,9 +347,9 @@ namespace DAL
 		
 		private string _WeekName;
 		
-		private System.Nullable<System.DateTime> _WeekStartDate;
+		private System.DateTime _WeekStartDate;
 		
-		private System.Nullable<System.DateTime> _WeekEndDate;
+		private System.DateTime _WeekEndDate;
 		
 		private System.Nullable<System.DateTime> _CreatedAt;
 		
@@ -365,9 +365,9 @@ namespace DAL
     partial void OnWeekIdChanged();
     partial void OnWeekNameChanging(string value);
     partial void OnWeekNameChanged();
-    partial void OnWeekStartDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnWeekStartDateChanging(System.DateTime value);
     partial void OnWeekStartDateChanged();
-    partial void OnWeekEndDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnWeekEndDateChanging(System.DateTime value);
     partial void OnWeekEndDateChanged();
     partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
     partial void OnCreatedAtChanged();
@@ -421,8 +421,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WeekStartDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> WeekStartDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WeekStartDate", DbType="DateTime NOT NULL")]
+		public System.DateTime WeekStartDate
 		{
 			get
 			{
@@ -441,8 +441,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WeekEndDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> WeekEndDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WeekEndDate", DbType="DateTime NOT NULL")]
+		public System.DateTime WeekEndDate
 		{
 			get
 			{
@@ -635,7 +635,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodDuration", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodDuration", DbType="NVarChar(50)")]
 		public string PeriodDuration
 		{
 			get
@@ -797,11 +797,11 @@ namespace DAL
 		
 		private int _ConfigID;
 		
-		private int _AuthorID;
+		private System.Nullable<int> _AuthorID;
 		
-		private int _WeekId;
+		private System.Nullable<int> _WeekId;
 		
-		private int _PeriodID;
+		private System.Nullable<int> _PeriodID;
 		
 		private System.Nullable<System.DateTime> _CreatedAt;
 		
@@ -831,11 +831,11 @@ namespace DAL
     partial void OnCommitDateChanged();
     partial void OnConfigIDChanging(int value);
     partial void OnConfigIDChanged();
-    partial void OnAuthorIDChanging(int value);
+    partial void OnAuthorIDChanging(System.Nullable<int> value);
     partial void OnAuthorIDChanged();
-    partial void OnWeekIdChanging(int value);
+    partial void OnWeekIdChanging(System.Nullable<int> value);
     partial void OnWeekIdChanged();
-    partial void OnPeriodIDChanging(int value);
+    partial void OnPeriodIDChanging(System.Nullable<int> value);
     partial void OnPeriodIDChanged();
     partial void OnCreatedAtChanging(System.Nullable<System.DateTime> value);
     partial void OnCreatedAtChanged();
@@ -957,8 +957,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorID", DbType="Int NOT NULL")]
-		public int AuthorID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorID", DbType="Int")]
+		public System.Nullable<int> AuthorID
 		{
 			get
 			{
@@ -981,8 +981,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WeekId", DbType="Int NOT NULL")]
-		public int WeekId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WeekId", DbType="Int")]
+		public System.Nullable<int> WeekId
 		{
 			get
 			{
@@ -1005,8 +1005,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", DbType="Int NOT NULL")]
-		public int PeriodID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PeriodID", DbType="Int")]
+		public System.Nullable<int> PeriodID
 		{
 			get
 			{
@@ -1109,7 +1109,7 @@ namespace DAL
 					}
 					else
 					{
-						this._AuthorID = default(int);
+						this._AuthorID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Author");
 				}
@@ -1143,7 +1143,7 @@ namespace DAL
 					}
 					else
 					{
-						this._PeriodID = default(int);
+						this._PeriodID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("CommitPeriod");
 				}
@@ -1177,7 +1177,7 @@ namespace DAL
 					}
 					else
 					{
-						this._WeekId = default(int);
+						this._WeekId = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Week");
 				}
@@ -1501,9 +1501,9 @@ namespace DAL
 		
 		private string _ConfigDirectory;
 		
-		private int _ConfigWeeks;
+		private System.Nullable<int> _ConfigWeeks;
 		
-		private System.DateTime _FirstCommitDate;
+		private System.Nullable<System.DateTime> _FirstCommitDate;
 		
 		private string _FirstCommitAuthor;
 		
@@ -1525,9 +1525,9 @@ namespace DAL
     partial void OnConfigIDChanged();
     partial void OnConfigDirectoryChanging(string value);
     partial void OnConfigDirectoryChanged();
-    partial void OnConfigWeeksChanging(int value);
+    partial void OnConfigWeeksChanging(System.Nullable<int> value);
     partial void OnConfigWeeksChanged();
-    partial void OnFirstCommitDateChanging(System.DateTime value);
+    partial void OnFirstCommitDateChanging(System.Nullable<System.DateTime> value);
     partial void OnFirstCommitDateChanged();
     partial void OnFirstCommitAuthorChanging(string value);
     partial void OnFirstCommitAuthorChanged();
@@ -1586,8 +1586,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConfigWeeks", DbType="Int NOT NULL")]
-		public int ConfigWeeks
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ConfigWeeks", DbType="Int")]
+		public System.Nullable<int> ConfigWeeks
 		{
 			get
 			{
@@ -1606,8 +1606,8 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstCommitDate", DbType="DateTime NOT NULL")]
-		public System.DateTime FirstCommitDate
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstCommitDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> FirstCommitDate
 		{
 			get
 			{
@@ -1626,7 +1626,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstCommitAuthor", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstCommitAuthor", DbType="NVarChar(255)")]
 		public string FirstCommitAuthor
 		{
 			get
@@ -1854,7 +1854,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipWeekFolder", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternshipWeekFolder", DbType="NVarChar(MAX) NOT NULL", CanBeNull=false)]
 		public string InternshipWeekFolder
 		{
 			get
@@ -2072,7 +2072,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Attendance", DbType="NVarChar(255)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Attendance", DbType="NVarChar(MAX)")]
 		public string Attendance
 		{
 			get
@@ -2092,7 +2092,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedTasks", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AssignedTasks", DbType="NVarChar(MAX)")]
 		public string AssignedTasks
 		{
 			get
@@ -2112,7 +2112,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ContentResults", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ContentResults", DbType="NVarChar(MAX)")]
 		public string ContentResults
 		{
 			get
@@ -2132,7 +2132,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SupervisorComments", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SupervisorComments", DbType="NVarChar(MAX)")]
 		public string SupervisorComments
 		{
 			get
@@ -2152,7 +2152,7 @@ namespace DAL
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Notes", DbType="Text", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Notes", DbType="NVarChar(MAX)")]
 		public string Notes
 		{
 			get

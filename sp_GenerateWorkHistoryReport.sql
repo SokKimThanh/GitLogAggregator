@@ -27,3 +27,5 @@ BEGIN
         CP.PeriodStartTime
 END
 GO
+
+exec sp_GenerateWorkHistoryReport

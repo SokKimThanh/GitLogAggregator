@@ -12,7 +12,7 @@ namespace DAL
     public class ProjectWeekDAL
     {
         private GitLogAggregatorDataContext db = new GitLogAggregatorDataContext();
-       
+
         public List<WeekET> GetAll()
         {
             try
@@ -23,8 +23,8 @@ namespace DAL
                             {
                                 WeekId = p.WeekId,
                                 WeekName = p.WeekName,
-                                WeekStartDate = p.WeekStartDate.Value,
-                                WeekEndDate = p.WeekEndDate.Value,
+                                WeekStartDate = p.WeekStartDate,
+                                WeekEndDate = p.WeekEndDate,
                                 CreatedAt = p.CreatedAt.Value,
                                 UpdatedAt = p.UpdatedAt.Value
                             };
@@ -47,8 +47,8 @@ namespace DAL
                             {
                                 WeekId = p.WeekId,
                                 WeekName = p.WeekName,
-                                WeekStartDate = p.WeekStartDate.Value,
-                                WeekEndDate = p.WeekEndDate.Value,
+                                WeekStartDate = p.WeekStartDate,
+                                WeekEndDate = p.WeekEndDate,
                                 CreatedAt = p.CreatedAt.Value,
                                 UpdatedAt = p.UpdatedAt.Value
                             };
@@ -68,8 +68,8 @@ namespace DAL
                 var entity = new Week
                 {
                     WeekName = et.WeekName,
-                    WeekStartDate = et.WeekStartDate,
-                    WeekEndDate = et.WeekEndDate,
+                    WeekStartDate = et.WeekStartDate.Value,
+                    WeekEndDate = et.WeekEndDate.Value,
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now
                 };
@@ -97,8 +97,8 @@ namespace DAL
                 {
                     WeekId = projectweek.WeekId,
                     WeekName = projectweek.WeekName,
-                    WeekStartDate = projectweek.WeekStartDate.Value,
-                    WeekEndDate = projectweek.WeekEndDate.Value,
+                    WeekStartDate = projectweek.WeekStartDate,
+                    WeekEndDate = projectweek.WeekEndDate,
                     CreatedAt = projectweek.CreatedAt.Value,
                     UpdatedAt = projectweek.UpdatedAt.Value
                 };
@@ -117,8 +117,8 @@ namespace DAL
                 var entity = query.SingleOrDefault();
                 if (entity == null) return;
                 entity.WeekName = et.WeekName;
-                entity.WeekStartDate = et.WeekStartDate;
-                entity.WeekEndDate = et.WeekEndDate;
+                entity.WeekStartDate = et.WeekStartDate.Value;
+                entity.WeekEndDate = et.WeekEndDate.Value;
                 entity.UpdatedAt = DateTime.Now;
 
                 db.SubmitChanges();

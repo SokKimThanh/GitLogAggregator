@@ -12,32 +12,29 @@ SET @searchAllAuthors = 1;       -- 1: true (tìm tất cả tác giả), 0: fal
 SET @authorId = NULL;            -- NULL: không lọc theo tác giả cụ thể
 SET @keyword = '';        -- Từ khóa tìm kiếm
 SELECT  
-	pw.ProjectWeekName, 
+	pw.WeekName, 
 	pw.WeekStartDate,
 	pw.WeekEndDate,
     cp.PeriodName AS Period,
 	cp.PeriodDuration,
 	a.AuthorName AS Author,
-    c.CommitMessage,
+    c.CommitMessages,
     a.AuthorEmail   
 FROM 
     Commits c,
-    ProjectWeeks pw,
-    Authors a,
-	CommitGroupMembers cgm,
+    Weeks pw,
+    Authors a, 
     CommitPeriods cp
 WHERE 
     -- Điều kiện kết nối các bảng (thay thế JOIN)
-    c.ProjectWeekId = pw.ProjectWeekId
-    AND c.AuthorEmail = a.AuthorEmail
-    AND c.CommitId = cgm.CommitId
-	and cp.PeriodID = cgm.PeriodID 
+    c.WeekId = pw.WeekId
+    AND c.AuthorID = a.AuthorID
     -- Điều kiện lọc theo tiêu chí tìm kiếm
     AND (
         -- Lọc theo tuần (nếu không chọn "Tất cả")
-        (@searchAllWeeks = 1 OR @projectWeekId IS NULL OR c.ProjectWeekId = @projectWeekId)
+        (@searchAllWeeks = 1 OR @projectWeekId IS NULL OR c.WeekId = @projectWeekId)
         -- Lọc theo tác giả (nếu không chọn "Tất cả")
         AND (@searchAllAuthors = 1 OR @authorId IS NULL OR a.AuthorID = @authorId)
         -- Lọc theo từ khóa (nếu có)
-        AND (ISNULL(@keyword, '') = '' OR c.CommitMessage LIKE '%' + @keyword + '%')
+        AND (ISNULL(@keyword, '') = '' OR c.CommitMessages LIKE '%' + @keyword + '%')
     );
