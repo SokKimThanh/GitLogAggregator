@@ -978,7 +978,7 @@ namespace GitLogAggregator
                 ListViewItem selectedItem = weekListView.SelectedItems[0];
 
                 // Kiểm tra null trước khi sử dụng thuộc tính Tag
-                if (selectedItem.Tag != null)
+                if (selectedItem?.Tag != null)
                 {
                     string basePath = txtFolderInternshipPath; // Sử dụng biến txtFolderInternshipPath
 
@@ -1433,7 +1433,6 @@ git %*
                 {
                     try
                     {
-                        // Phân tích thời gian commit từ định dạng ISO 8601 kèm theo múi giờ
                         var commitDate = DateTime.ParseExact(
                             parts[2].Trim(), // Loại bỏ khoảng trắng thừa
                             "yyyy-MM-dd HH:mm:ss zzz", // Định dạng thời gian từ Git
@@ -1441,6 +1440,10 @@ git %*
                         );
                         var period = commitPeriodBUS.GetAll().FirstOrDefault(p => commitDate.TimeOfDay >= p.PeriodStartTime && commitDate.TimeOfDay <= p.PeriodEndTime);
                         var week = projectWeeksBUS.GetAll().FirstOrDefault(w => commitDate.Date >= w.WeekStartDate.Value.Date && commitDate.Date <= w.WeekEndDate.Value.Date);
+                        if (week == null)
+                        {
+                            throw new InvalidOperationException("Week not found for the given commit date.");
+                        }
                         // Thêm commit vào danh sách
                         commits.Add(new CommitET
                         {
@@ -1453,13 +1456,18 @@ git %*
                             PeriodID = period.PeriodID,
                         });
                     }
+
                     catch (FormatException ex)
                     {
-                        Console.WriteLine($"Error parsing date: {ex.Message}");
+                        AppendTextWithScroll($"Lỗi phân tích ngày tháng: {ex.Message}");
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        AppendTextWithScroll($"Week not found error: {ex.Message}");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Unexpected error: {ex.Message}");
+                        AppendTextWithScroll($"Lỗi không xác định: {ex.Message}");
                     }
                 }
             }

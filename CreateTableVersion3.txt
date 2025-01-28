@@ -4,14 +4,14 @@ GO
 USE GitTongHop;
 
 -- ----------------------------
--- Table: IntermshipDirectories
+-- Table: InternshipDirectories
 -- Mục đích: Quản lý thông tin thư mục thực tập theo tuần
 -- ----------------------------
-CREATE TABLE IntermshipDirectories (
-    IntermshipDirectoryId INT PRIMARY KEY IDENTITY(1,1), -- ID tự động tăng, khóa chính
-    IntermshipWeekFolder NVARCHAR(MAX) NOT NULL,         -- Tên thư mục tuần thực tập (VD: "Week1")
-    IntermshipStartDate DATETIME NOT NULL,               -- Ngày bắt đầu thực tập
-    IntermshipEndDate DATETIME NOT NULL,                 -- Ngày kết thúc thực tập
+CREATE TABLE InternshipDirectories (
+    InternshipDirectoryId INT PRIMARY KEY IDENTITY(1,1), -- ID tự động tăng, khóa chính
+    InternshipWeekFolder NVARCHAR(MAX) NOT NULL,         -- Tên thư mục tuần thực tập (VD: "Week1")
+    InternshipStartDate DATETIME NOT NULL,               -- Ngày bắt đầu thực tập
+    InternshipEndDate DATETIME NOT NULL,                 -- Ngày kết thúc thực tập
     CreatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian tạo bản ghi (mặc định: hiện tại)
     UpdatedAt DATETIME DEFAULT GETDATE()                 -- Thời gian cập nhật cuối (mặc định: hiện tại)
 );
@@ -23,13 +23,13 @@ CREATE TABLE IntermshipDirectories (
 CREATE TABLE ConfigFiles (
     ConfigID INT PRIMARY KEY IDENTITY(1,1),              -- ID tự động tăng, khóa chính
     ConfigDirectory NVARCHAR(MAX) NOT NULL,              -- Đường dẫn thư mục chứa file cấu hình
-    ConfigWeeks NVARCHAR(MAX),                           -- Số tuần được cấu hình (VD: "1,2,3")
+    ConfigWeeks int,									 -- Số tuần được cấu hình (VD: "1,2,3")
     FirstCommitDate DATETIME,                            -- Ngày commit đầu tiên (nếu có)
     FirstCommitAuthor NVARCHAR(255),                     -- Tác giả commit đầu tiên (nếu có)
-    InternshipDirectoryId INT NOT NULL,                  -- Khóa ngoại tham chiếu đến IntermshipDirectories
+    InternshipDirectoryId INT NOT NULL,                  -- Khóa ngoại tham chiếu đến InternshipDirectories
     CreatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian tạo bản ghi
     UpdatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian cập nhật cuối
-    FOREIGN KEY (InternshipDirectoryId) REFERENCES IntermshipDirectories(IntermshipDirectoryId)
+    FOREIGN KEY (InternshipDirectoryId) REFERENCES InternshipDirectories(InternshipDirectoryId)
 );
 
 -- ----------------------------
@@ -49,7 +49,7 @@ CREATE TABLE Authors (
 -- Mục đích: Định nghĩa các tuần trong dự án
 -- ----------------------------
 CREATE TABLE Weeks (
-    WeeklyId INT PRIMARY KEY IDENTITY(1,1),              -- ID tự động tăng, khóa chính
+    WeekId INT PRIMARY KEY IDENTITY(1,1),              -- ID tự động tăng, khóa chính
     WeekName NVARCHAR(255) NOT NULL,                     -- Tên tuần (VD: "Tuần 1 - Khởi động")
     WeekStartDate DATETIME NOT NULL,                     -- Ngày bắt đầu tuần
     WeekEndDate DATETIME NOT NULL,                       -- Ngày kết thúc tuần
@@ -65,8 +65,8 @@ CREATE TABLE CommitPeriods (
     PeriodID INT PRIMARY KEY IDENTITY(1,1),              -- ID tự động tăng, khóa chính
     PeriodName NVARCHAR(50) NOT NULL UNIQUE,             -- Tên buổi (VD: "Sáng", "Chiều" - duy nhất)
     PeriodDuration NVARCHAR(50),                         -- Thời lượng buổi (VD: "2 giờ")
-    PeriodStartTime DATETIME NOT NULL,                   -- Thời gian bắt đầu buổi
-    PeriodEndTime DATETIME NOT NULL,                     -- Thời gian kết thúc buổi
+    PeriodStartTime Time NOT NULL,                   -- Thời gian bắt đầu buổi
+    PeriodEndTime Time NOT NULL,                     -- Thời gian kết thúc buổi
     CreatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian tạo bản ghi
     UpdatedAt DATETIME DEFAULT GETDATE()                 -- Thời gian cập nhật cuối
 );
@@ -97,13 +97,13 @@ CREATE TABLE Commits (
     CommitDate DATETIME NOT NULL,                        -- Thời gian thực hiện commit
     ConfigID INT NOT NULL,                               -- Khóa ngoại tham chiếu đến ConfigFiles
     AuthorID INT,                                        -- Khóa ngoại tham chiếu đến Authors
-    WeeklyId INT,                                        -- Khóa ngoại tham chiếu đến Weeks
+    WeekId INT,                                        -- Khóa ngoại tham chiếu đến Weeks
     PeriodID INT,                                        -- Khóa ngoại tham chiếu đến CommitPeriods
     CreatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian tạo bản ghi
     UpdatedAt DATETIME DEFAULT GETDATE(),                -- Thời gian cập nhật cuối
     FOREIGN KEY (ConfigID) REFERENCES ConfigFiles(ConfigID),
     FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID),
-    FOREIGN KEY (WeeklyId) REFERENCES Weeks(WeeklyId),
+    FOREIGN KEY (WeekId) REFERENCES Weeks(WeekId),
     FOREIGN KEY (PeriodID) REFERENCES CommitPeriods(PeriodID)
 );
 
