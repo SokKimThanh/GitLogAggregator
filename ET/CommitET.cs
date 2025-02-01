@@ -17,12 +17,6 @@ namespace ET
         public int WeekId { get; set; }
         public int PeriodID { get; set; }
         public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-
-        // Navigation properties
-        public ConfigET ConfigFile { get; set; }
-        public AuthorET Author { get; set; }
-        public WeekET Week { get; set; }
-        public CommitPeriodET CommitPeriod { get; set; }
+        public DateTime UpdatedAt { get; set; }  
     }
 }

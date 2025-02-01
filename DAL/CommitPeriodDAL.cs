@@ -60,6 +60,7 @@ namespace DAL
                 throw new Exception("Error in GetAuthorByConfig CommitPeriodDAL: " + ex.Message);
             }
         }
+         
 
         /// <summary>
         /// Lấy thông tin của bản ghi cuối cùng được thêm vào

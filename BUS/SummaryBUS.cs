@@ -18,12 +18,11 @@ namespace BUS
             dal.Add(summaryET);
         }
 
+
         public SummaryET GetLastInserted()
         {
             return dal.GetLastInserted();
         }
-
-
         // READ BY ID
         public SummaryET GetById(int id)
         {

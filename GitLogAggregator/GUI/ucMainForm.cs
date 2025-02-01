@@ -52,6 +52,10 @@ namespace GitLogAggregator
 
         private readonly CommitPeriodBUS commitPeriodBUS = new();
 
+        private readonly CommitSummaryBUS commitSummaryBUS = new();
+
+        private readonly SummaryBUS summaryBUS = new();
+
 
         // FirstCommitAuthor BUS
         private readonly AuthorBUS authorBUS = new();
@@ -707,16 +711,6 @@ namespace GitLogAggregator
             try
             {
                 DisableControls(); // Vô hiệu hóa các control trong quá trình làm mới
-
-                // Làm mới đường dẫn thư mục thực tập
-                txtFolderInternshipPath = GetLatestInternshipFolderPath();
-
-                // Kiểm tra sự tồn tại của thư mục internship_week
-                if (!Directory.Exists(txtFolderInternshipPath))
-                {
-                    AppendTextWithScroll("Thư mục thực tập không tồn tại. Vui lòng kiểm tra lại.\n");
-                    return; // Dừng nếu thư mục không tồn tại
-                }
 
                 // Làm mới combobox thư mục thực tập
                 cboInternshipFolder.DataSource = internshipDirectoryBUS.GetAll();
@@ -1404,6 +1398,49 @@ git %*
                         AppendTextWithScroll($"Lỗi khi xử lý commit {commit.CommitHash}: {ex.Message}\n");
                     }
                 }
+                // -----------------------------
+                // Bổ sung: Bước 3 & 4 - Lưu dữ liệu SummaryET và CommitSummaryET theo logic của SaveSummary
+                // -----------------------------
+                try
+                {
+                    // Lấy danh sách các CommitPeriodET từ database (sử dụng commitPeriodBUS đã có)
+                    var allPeriods = commitPeriodBUS.GetAll();
+
+                    // Lấy danh sách các ngày (Date) từ các commit đã thêm (insertedCommits)
+                    var distinctDates = insertedCommits.Select(c => c.CommitDate.Date).Distinct();
+
+                    // Với mỗi ngày và mỗi period, xử lý lưu summary nếu có commit thuộc phạm vi đó
+                    foreach (var date in distinctDates)
+                    {
+                        foreach (var period in allPeriods)
+                        {
+                            // Sử dụng commitsBUS.GetByDateAndPeriod(date, period.PeriodStartTime, period.PeriodEndTime)
+                            // để lấy danh sách commit thuộc ngày và buổi hiện hành.
+                            var commitsForDatePeriod = commitBUS.GetByDateAndPeriod(date, period.PeriodStartTime, period.PeriodEndTime);
+
+                            // Nếu có commit trong khoảng này, tiến hành lưu Summary
+                            if (commitsForDatePeriod != null && commitsForDatePeriod.Count > 0)
+                            {
+                                // Xây dựng chuỗi contentResults dựa trên danh sách commit.
+                                // Ví dụ: tổng hợp các commit messages hoặc thống kê số lượng commit theo từ khóa.
+                                // Bạn có thể sử dụng hàm BuildContentResults nếu đã có, hoặc viết logic riêng.
+                                string contentResults = BuildContentResults(commitsForDatePeriod);
+
+                                // Gọi hàm SaveSummary theo logic đã định nghĩa:
+                                // - Nếu Summary cho (date, period) chưa có, sẽ tạo mới và lưu.
+                                // - Nếu đã tồn tại, sẽ cập nhật lại ContentResults.
+                                // - Sau đó, liên kết các commit của (date, period) vào CommitSummaryET nếu chưa tồn tại.
+                                SaveSummary(date, period, contentResults);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AppendTextWithScroll($"Lỗi khi tạo Summary/CommitSummary: {ex.Message}\n");
+                }
+
+
             }
             catch (FileNotFoundException ex)
             {
@@ -1418,7 +1455,82 @@ git %*
                 AppendTextWithScroll($"Lỗi: Đã xảy ra lỗi khi tổng hợp commits. Chi tiết: {ex.Message}\n");
             }
         }
+        private void SaveSummary(DateTime date, CommitPeriodET period, string contentResults)
+        {
+            // Lấy dữ liệu Summary từ database hoặc tạo mới nếu chưa có
+            var summary = summaryBUS.GetByDateAndPeriod(date, period.PeriodStartTime, period.PeriodEndTime);
+            if (summary == null)
+            {
+                summary = new SummaryET
+                {
+                    ContentResults = contentResults,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
 
+                // Thêm mới Summary và lấy SummaryID vừa tạo
+                summaryBUS.Add(summary);
+                summary = summaryBUS.GetLastInserted(); // Giả định GetLastInserted trả về Summary vừa thêm
+            }
+            else
+            {
+                // Cập nhật nội dung Summary nếu đã tồn tại
+                summary.ContentResults = contentResults;
+                summary.UpdatedAt = DateTime.Now;
+                summaryBUS.Update(summary);
+            }
+
+            // Lấy danh sách commit thuộc ngày và buổi này
+            var commits = commitBUS.GetByDateAndPeriod(date, period.PeriodStartTime, period.PeriodEndTime);
+
+            foreach (var commit in commits)
+            {
+                // Kiểm tra nếu liên kết giữa Commit và Summary chưa tồn tại trong CommitSummary
+                if (!commitSummaryBUS.Exists(commit.CommitID, summary.SummaryID))
+                {
+                    // Tạo liên kết mới trong bảng CommitSummary
+                    var commitSummary = new CommitSummaryET
+                    {
+                        CommitID = commit.CommitID,
+                        SummaryID = summary.SummaryID,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    };
+                    commitSummaryBUS.Add(commitSummary);
+                }
+            }
+        }
+        /// <summary>
+        /// Xây dựng chuỗi ContentResults dựa trên danh sách CommitET.
+        /// Ví dụ: "4 commits: 2 Fixes, 1 Feature, 1 Refactor"
+        /// </summary>
+        private string BuildContentResults(List<CommitET> commits)
+        {
+            var keywordCounts = new Dictionary<string, int>
+            {
+                { "fix", 0 },
+                { "add", 0 },
+                { "refactor", 0 }
+            };
+
+            foreach (var keyword in keywordCounts.Keys.ToList())
+            {
+                keywordCounts[keyword] = commits.Count(c => !string.IsNullOrEmpty(c.CommitMessages) &&
+                                                            c.CommitMessages.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            var details = keywordCounts
+                .Where(kvp => kvp.Value > 0)
+                .Select(kvp => $"{kvp.Value} {kvp.Key}{(kvp.Value > 1 ? "es" : "")}")
+                .ToList();
+
+            string result = $"{commits.Count} commit{(commits.Count > 1 ? "s" : "")}";
+            if (details.Any())
+            {
+                result += ": " + string.Join(", ", details);
+            }
+            return result;
+        }
         // Helper method to parse git log output with encoding handling
         private List<CommitET> ParseGitLog(string logOutput, ConfigET config)
         {
@@ -1771,7 +1883,7 @@ git %*
             var configs = configBus.GetAll();
             if (configs.Count == 0)
             {
-                AppendTextWithScroll("[Lỗi] Vui lòng chọn dự án trước khi tạo tuần thực tập.\n");
+                AppendTextWithScroll("[Lỗi] Vui lòng thêm dự án trước khi tạo tuần thực tập.\n");
                 return;
             }
 
