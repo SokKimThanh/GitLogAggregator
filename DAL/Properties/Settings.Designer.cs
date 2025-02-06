@@ -44,5 +44,16 @@ namespace DAL.Properties {
                 return ((string)(this["GitTongHopConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=SOKKIMTHANH\\SQLEXPRESS;Initial Catalog=GitTongHop;Integrated Security" +
+            "=True;Encrypt=True;TrustServerCertificate=True")]
+        public string GitTongHopConnectionString1 {
+            get {
+                return ((string)(this["GitTongHopConnectionString1"]));
+            }
+        }
     }
 }

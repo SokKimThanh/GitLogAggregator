@@ -57,7 +57,7 @@ namespace DAL
     #endregion
 		
 		public GitLogAggregatorDataContext() : 
-				base(global::DAL.Properties.Settings.Default.GitTongHopConnectionString, mappingSource)
+				base(global::DAL.Properties.Settings.Default.GitTongHopConnectionString1, mappingSource)
 		{
 			OnCreated();
 		}

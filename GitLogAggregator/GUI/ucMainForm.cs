@@ -642,7 +642,7 @@ namespace GitLogAggregator
                         var dailyGroups = commits
                             .GroupBy(c => new
                             {
-                                c.CommitDate.Date,
+                                c.CommitDate,
                                 c.PeriodID
                             });
 
@@ -651,14 +651,14 @@ namespace GitLogAggregator
                             var period = commitPeriodBUS.GetByID(group.Key.PeriodID);
                             if (period == null) continue;
 
-                            string dayFolder = Path.Combine(weekFolder, group.Key.Date.ToString("yyyy-MM-dd"));
+                            string dayFolder = Path.Combine(weekFolder, group.Key.CommitDate.ToString("yyyy-MM-dd"));
                             Directory.CreateDirectory(dayFolder);
 
                             string periodFile = Path.Combine(dayFolder, $"{period.PeriodName}.txt");
                             var periodContent = string.Join("\n", group.Select(c =>
                                 $"[{c.CommitHash}] {c.CommitMessages}\n" +
                                 $"Tác giả: {GetAuthorName(c.AuthorID)}\n" +
-                                $"Thời gian: {c.CommitDate:HH:mm}\n" +
+                                $"Thời gian: {c.CommitDate:f}\n" +
                                 new string('-', 50)));
 
                             File.WriteAllText(periodFile, periodContent);
